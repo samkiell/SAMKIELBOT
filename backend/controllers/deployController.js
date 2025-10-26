@@ -2,12 +2,8 @@ const Deployment = require("../models/Deployment");
 const { successResponse, errorResponse } = require("../utils/response");
 const axios = require("axios");
 const { Octokit } = require("@octokit/rest");
-const fs = require("fs").promises;
-const path = require("path");
 
-// @desc    Deploy a bot
-// @route   POST /api/deploy
-// @access  Private
+// Deploy a bot manually
 const deployBot = async (req, res) => {
   try {
     const { botName, version } = req.body;
@@ -25,9 +21,7 @@ const deployBot = async (req, res) => {
   }
 };
 
-// @desc    Get user deployments
-// @route   GET /api/deploy
-// @access  Private
+// Get user deployments
 const getDeployments = async (req, res) => {
   try {
     const deployments = await Deployment.find({ user: req.user.id });
@@ -37,21 +31,14 @@ const getDeployments = async (req, res) => {
   }
 };
 
-// @desc    Update deployment status
-// @route   PUT /api/deploy/:id
-// @access  Private
+// Update deployment
 const updateDeployment = async (req, res) => {
   try {
     const deployment = await Deployment.findById(req.params.id);
+    if (!deployment) return errorResponse(res, "Deployment not found", 404);
 
-    if (!deployment) {
-      return errorResponse(res, "Deployment not found", 404);
-    }
-
-    // Check if user owns the deployment
-    if (deployment.user.toString() !== req.user.id) {
+    if (deployment.user.toString() !== req.user.id)
       return errorResponse(res, "Not authorized", 401);
-    }
 
     const updatedDeployment = await Deployment.findByIdAndUpdate(
       req.params.id,
@@ -65,26 +52,22 @@ const updateDeployment = async (req, res) => {
   }
 };
 
-// @desc    Create and deploy a bot with custom WhatsApp number
-// @route   POST /api/deploy/create
-// @access  Private
+// Create deployment
 const createDeployment = async (req, res) => {
   try {
     const { botNumber } = req.body;
 
-    // Validate botNumber format
     if (!/^\d{10,15}$/.test(botNumber)) {
       return errorResponse(res, "Invalid WhatsApp number format", 400);
     }
 
-    // Create deployment record
     const deployment = await Deployment.create({
       user: req.user.id,
       botNumber,
       status: "deploying",
     });
 
-    // Start deployment process asynchronously
+    // Run async deployment
     processDeployment(deployment._id);
 
     successResponse(res, deployment, 201);
@@ -93,48 +76,51 @@ const createDeployment = async (req, res) => {
   }
 };
 
-// Helper function to handle the deployment process
+// Actual deployment process
 const processDeployment = async (deploymentId) => {
   try {
     const deployment = await Deployment.findById(deploymentId);
     if (!deployment) return;
+
+    if (!process.env.GITHUB_TOKEN) {
+      console.error("Missing GITHUB_TOKEN in env");
+      await Deployment.findByIdAndUpdate(deploymentId, {
+        status: "failed",
+        errorMessage: "GitHub token missing in environment variables.",
+      });
+      return;
+    }
 
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
     const owner = "samkiel488";
     const repo = "SAMKIEL-AI";
     const baseBranch = "main";
 
-    // Fetch settings.js from GitHub
-    const response = await octokit.request(
+    // ✅ 1. Fetch current settings.js
+    const settingsResponse = await octokit.request(
       "GET /repos/{owner}/{repo}/contents/{path}",
-      {
-        owner,
-        repo,
-        path: "settings.js",
-        ref: "main",
-      }
+      { owner, repo, path: "settings.js", ref: baseBranch }
     );
-    const settingsFile = response.data;
 
     const settingsContent = Buffer.from(
-      settingsFile.content,
+      settingsResponse.data.content,
       "base64"
     ).toString("utf-8");
 
-    // Modify bot number in settings.js
+    // ✅ 2. Replace bot number
     const modifiedSettings = settingsContent
       .replace(
-        /global\.ownernumber\s*=\s*['"`][^'"`]*['"`]/,
-        `global.ownernumber = '${deployment.botNumber}'`
+        /botNumber:\s*["'`][^"'`]*["'`]/,
+        `botNumber: "${deployment.botNumber}"`
       )
       .replace(
-        /global\.botNumber\s*=\s*['"`][^'"`]*['"`]/,
-        `global.botNumber = '${deployment.botNumber}'`
+        /ownerNumber:\s*jidNormalizedUser\(["'`][^"'`]*["'`]\)/,
+        `ownerNumber: jidNormalizedUser("${deployment.botNumber}@s.whatsapp.net")`
       );
 
-    // Create new branch
+    // ✅ 3. Create new branch
     const branchName = `blackboxai/bot-${deployment.botNumber}-${Date.now()}`;
-    const { data: baseRef } = await octokit.git.getRef({
+    const baseRef = await octokit.git.getRef({
       owner,
       repo,
       ref: `heads/${baseBranch}`,
@@ -144,31 +130,32 @@ const processDeployment = async (deploymentId) => {
       owner,
       repo,
       ref: `refs/heads/${branchName}`,
-      sha: baseRef.object.sha,
+      sha: baseRef.data.object.sha,
     });
 
-    // Commit modified settings.js
-    const { data: commit } = await octokit.repos.createOrUpdateFileContents({
+    // ✅ 4. Commit new settings.js
+    await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
       path: "settings.js",
-      message: `Update bot number to ${deployment.botNumber}`,
+      message: `Set bot number to ${deployment.botNumber}`,
       content: Buffer.from(modifiedSettings).toString("base64"),
       branch: branchName,
-      sha: settingsFile.sha,
+      sha: settingsResponse.data.sha,
     });
 
-    // Deploy to Render
+    // ✅ 5. Deploy to Render
     const renderResponse = await axios.post(
       "https://api.render.com/v1/services",
       {
+        ownerId: process.env.RENDER_OWNER_ID,
         type: "web_service",
         name: `samkiel-bot-${deployment.botNumber}`,
         repo: `https://github.com/${owner}/${repo}`,
         branch: branchName,
         buildCommand: "npm install",
         startCommand: "npm start",
-        plan: process.env.RENDER_SERVICE_PLAN || "starter",
+        plan: "free",
         envVars: [{ key: "NODE_ENV", value: "production" }],
       },
       {
@@ -181,25 +168,36 @@ const processDeployment = async (deploymentId) => {
 
     const serviceId = renderResponse.data.id;
 
-    // Update deployment with serviceId
     await Deployment.findByIdAndUpdate(deploymentId, {
       serviceId,
       status: "running",
     });
 
-    // Poll for pairing code from logs
     await pollForPairingCode(deploymentId, serviceId);
   } catch (error) {
     console.error("Deployment error:", error);
+    let errorMessage = "Deployment failed due to an unexpected error.";
+
+    if (error.status === 401)
+      errorMessage =
+        "Unauthorized — check your GitHub or Render API credentials.";
+    else if (error.status === 403)
+      errorMessage = "Access forbidden — verify GitHub token permissions.";
+    else if (error.status === 404)
+      errorMessage = "Repository or file not found.";
+    else if (error.code === "ENOTFOUND" || error.code === "ECONNREFUSED")
+      errorMessage = "Network error — check internet connection.";
+
     await Deployment.findByIdAndUpdate(deploymentId, {
       status: "failed",
+      errorMessage,
     });
   }
 };
 
-// Helper function to poll Render logs for pairing code
+// Poll Render logs for pairing code
 const pollForPairingCode = async (deploymentId, serviceId) => {
-  const maxAttempts = 30; // 5 minutes with 10s intervals
+  const maxAttempts = 30;
   let attempts = 0;
 
   while (attempts < maxAttempts) {
@@ -207,14 +205,14 @@ const pollForPairingCode = async (deploymentId, serviceId) => {
       const logsResponse = await axios.get(
         `https://api.render.com/v1/services/${serviceId}/logs`,
         {
-          headers: {
-            Authorization: `Bearer ${process.env.RENDER_API_KEY}`,
-          },
+          headers: { Authorization: `Bearer ${process.env.RENDER_API_KEY}` },
         }
       );
 
       const logs = logsResponse.data;
-      const pairingCodeMatch = logs.join("\n").match(/Pairing code: (\d{6})/);
+      const pairingCodeMatch = logs
+        .join("\n")
+        .match(/(\d{6})\s*(?:pairing code|is your code)/i);
 
       if (pairingCodeMatch) {
         await Deployment.findByIdAndUpdate(deploymentId, {
@@ -224,18 +222,15 @@ const pollForPairingCode = async (deploymentId, serviceId) => {
         return;
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
+      await new Promise((resolve) => setTimeout(resolve, 10000));
       attempts++;
     } catch (error) {
-      console.error("Error polling logs:", error);
+      console.error("Error polling logs:", error.message);
       attempts++;
     }
   }
 
-  // If no pairing code found after max attempts
-  await Deployment.findByIdAndUpdate(deploymentId, {
-    status: "failed",
-  });
+  await Deployment.findByIdAndUpdate(deploymentId, { status: "failed" });
 };
 
 module.exports = {

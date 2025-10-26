@@ -1,17 +1,44 @@
-[00:00:03.367] Server  LOG      ✓ Ready in 1986ms
-[00:00:06.440] Server  LOG      ○ Compiling /deploy ...
-[00:00:10.102] Browser LOG     ⚙️ AuthProvider initialized...
-[00:00:10.102] Browser LOG     📦 Saved token detected: {"exp":1764026591,"iat":1761434591,"id":"68fa340812371bf92d74f95f"}
-[00:00:10.102] Browser LOG     📆 Expiration: "2025-11-24T23:23:11.000Z"
-[00:00:10.103] Browser LOG     ✅ Token still valid, restoring session...
-[00:00:10.103] Browser LOG     ⚙️ AuthProvider initialized...
-[00:00:10.103] Browser LOG     📦 Saved token detected: {"exp":1764026591,"iat":1761434591,"id":"68fa340812371bf92d74f95f"}
-[00:00:10.103] Browser LOG     📆 Expiration: "2025-11-24T23:23:11.000Z"
-[00:00:10.103] Browser LOG     ✅ Token still valid, restoring session...
-[00:00:10.259] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:00:12.954] Browser LOG     🟢 Attached token to request: /deploy
-[00:00:12.954] Browser LOG     🟢 Attached token to request: /deploy
-[00:00:27.340] Browser LOG     🟢 Attached token to request: /deploy/create
-[00:00:34.028] Browser LOG     🟢 Attached token to request: /deploy/68fd8358ffd955e735de2475
-[00:02:14.028] Browser LOG     🟢 Attached token to request: /deploy/create
-[00:02:21.027] Browser LOG     🟢 Attached token to request: /deploy/68fd83c3e14aecef4df654b4
+[00:00:01.733] Server  LOG      ✓ Ready in 1126ms
+[00:00:04.786] Server  LOG      ○ Compiling /deploy ...
+[00:00:47.844] Browser LOG     ⚙️ AuthProvider initialized...
+[00:00:47.844] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[00:00:47.844] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[00:00:47.844] Browser LOG     ✅ Token still valid, restoring session...
+[00:00:47.844] Browser LOG     ⚙️ AuthProvider initialized...
+[00:00:47.844] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[00:00:47.844] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[00:00:47.845] Browser LOG     ✅ Token still valid, restoring session...
+[00:00:47.845] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:48.642] Browser LOG     🟢 Attached token to request: /deploy
+[00:00:48.643] Browser LOG     🟢 Attached token to request: /deploy
+[00:00:54.388] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:00:59.767] Browser LOG     🟢 Attached token to request: /deploy/68fd8dd9466055d135dfc8fd
+[00:07:42.673] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:07:48.068] Browser LOG     🟢 Attached token to request: /deploy/68fd8f7177a58414dc912dce
+[00:20:32.061] Browser LOG     ⚙️ AuthProvider initialized...
+[00:20:32.062] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[00:20:32.062] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[00:20:32.062] Browser LOG     ✅ Token still valid, restoring session...
+[00:20:32.062] Browser LOG     ⚙️ AuthProvider initialized...
+[00:20:32.062] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[00:20:32.062] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[00:20:32.062] Browser LOG     ✅ Token still valid, restoring session...
+[00:20:32.062] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:20:32.340] Browser LOG     🟢 Attached token to request: /deploy
+[00:20:32.340] Browser LOG     🟢 Attached token to request: /deploy
+[00:20:35.586] Browser ERROR   🚨 Response error: undefined undefined
+[00:20:35.586] Browser ERROR   Error fetching deployments: {"code":"ERR_NETWORK","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmEzNDA4MTIzNzFiZjkyZDc0Zjk1ZiIsImlhdCI6MTc2MTQ0NjUwMCwiZXhwIjoxNzY0MDM4NTAwfQ.3grDqxd7je1cDZydirTml7R-kLetKQ6XP5kAeS5nW3g"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Network Error","name":"AxiosError","stack":"AxiosError: Network Error\n    at XMLHttpRequest.handleError (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2502:25)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeployments (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__5e636851._.js:1375:22)\n    at async fetchDeployments (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__5e636851._.js:1454:26)"}
+[00:20:35.586] Browser ERROR   🚨 Response error: undefined undefined
+[00:20:35.586] Browser ERROR   Error fetching deployments: {"code":"ERR_NETWORK","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmEzNDA4MTIzNzFiZjkyZDc0Zjk1ZiIsImlhdCI6MTc2MTQ0NjUwMCwiZXhwIjoxNzY0MDM4NTAwfQ.3grDqxd7je1cDZydirTml7R-kLetKQ6XP5kAeS5nW3g"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Network Error","name":"AxiosError","stack":"AxiosError: Network Error\n    at XMLHttpRequest.handleError (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2502:25)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeployments (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__5e636851._.js:1375:22)\n    at async fetchDeployments (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__5e636851._.js:1454:26)"}
+[00:26:23.209] Browser LOG     ⚙️ AuthProvider initialized...
+[00:26:23.209] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[00:26:23.209] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[00:26:23.209] Browser LOG     ✅ Token still valid, restoring session...
+[00:26:23.209] Browser LOG     ⚙️ AuthProvider initialized...
+[00:26:23.209] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[00:26:23.209] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[00:26:23.209] Browser LOG     ✅ Token still valid, restoring session...
+[00:26:23.209] Browser LOG     🟢 Attached token to request: /deploy
+[00:26:23.209] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:28:10.998] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:28:16.731] Browser LOG     🟢 Attached token to request: /deploy/68fd943ee1b3b74437c1f397

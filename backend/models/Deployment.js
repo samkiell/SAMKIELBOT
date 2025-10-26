@@ -27,6 +27,9 @@ const deploymentSchema = new mongoose.Schema({
     enum: ["pending", "deploying", "running", "failed"],
     default: "pending",
   },
+  errorMessage: {
+    type: String,
+  },
   deployedAt: {
     type: Date,
     default: Date.now,

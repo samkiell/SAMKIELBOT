@@ -58,11 +58,14 @@ export default function DeployPage() {
           clearInterval(pollInterval);
           toast.success("Bot deployed successfully! Pairing code retrieved.");
         } else if (deploymentData.status === "failed") {
-          setError("Deployment failed. Please try again.");
+          const errorMsg =
+            deploymentData.errorMessage ||
+            "Deployment failed. Please try again.";
+          setError(errorMsg);
           setDeploymentStatus("idle");
           setLoading(false);
           clearInterval(pollInterval);
-          toast.error("Deployment failed.");
+          toast.error(errorMsg);
         }
       } catch (error) {
         console.error("Error polling deployment status:", error);

@@ -3,5 +3,6 @@
   "/_document": "pages/_document.js",
   "/dashboard": "pages/dashboard.js",
   "/deploy": "pages/deploy.js",
-  "/login": "pages/login.js"
+  "/login": "pages/login.js",
+  "/terms": "pages/terms.js"
 }

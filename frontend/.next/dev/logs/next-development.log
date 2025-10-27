@@ -46,3 +46,110 @@
 [00:41:04.617] Browser LOG     🟢 Attached token to request: /deploy/68fd973e400fee584001b57f
 [00:42:22.122] Browser LOG     🟢 Attached token to request: /deploy/create
 [00:42:27.552] Browser LOG     🟢 Attached token to request: /deploy/68fd9791088a2a3ede991939
+[00:47:22.090] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:47:29.386] Browser LOG     🟢 Attached token to request: /deploy/68fd98bd107cafd3aae2760d
+[00:53:37.593] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:53:42.986] Browser LOG     🟢 Attached token to request: /deploy/68fd9a34cc4f3d8965b8810e
+[00:53:57.564] Browser LOG     ⚙️ AuthProvider initialized...
+[00:53:57.564] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[00:53:57.564] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[00:53:57.564] Browser LOG     ✅ Token still valid, restoring session...
+[00:53:57.564] Browser LOG     ⚙️ AuthProvider initialized...
+[00:53:57.564] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[00:53:57.564] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[00:53:57.564] Browser LOG     ✅ Token still valid, restoring session...
+[00:53:57.564] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:53:57.844] Browser LOG     🟢 Attached token to request: /deploy
+[00:53:57.844] Browser LOG     🟢 Attached token to request: /deploy
+[00:54:06.299] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:54:13.385] Browser LOG     🟢 Attached token to request: /deploy/68fd9a5123bd998ae692865b
+[00:54:28.937] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:54:34.323] Browser LOG     🟢 Attached token to request: /deploy/68fd9a68f5997381d64552b8
+[00:56:53.786] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:57:00.387] Browser LOG     🟢 Attached token to request: /deploy/68fd9af88d3bf347c77862d7
+[32:54:47.675] Browser LOG     🟢 Attached token to request: /deploy
+[32:54:47.676] Browser LOG     🟢 Attached token to request: /deploy
+[32:54:51.455] Browser ERROR   Warning: validateDOMNesting(...): %s cannot appear as a descendant of <%s>.%s <div> p 
+    at div
+    at div
+    at p
+    at div
+    at div
+    at div
+    at div
+    at NotificationDropdown (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0725b2be._.js:785:184)
+    at div
+    at div
+    at nav
+    at Navbar (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0725b2be._.js:1190:161)
+    at div
+    at Layout (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0725b2be._.js:1524:19)
+    at AuthProvider (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0725b2be._.js:496:25)
+    at LoadableComponent (http://localhost:3000/_next/static/chunks/9e883_next_dist_shared_lib_02edf08a._.js:5489:9)
+    at ThemeProvider (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0725b2be._.js:699:26)
+    at App (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0725b2be._.js:1592:16)
+    at PathnameContextProviderAdapter (http://localhost:3000/_next/static/chunks/9e883_next_dist_shared_lib_02edf08a._.js:5040:43)
+    at PagesDevOverlayErrorBoundary (http://localhost:3000/_next/static/chunks/9e883_next_dist_4bfa5b9e._.js:1129:9)
+    at PagesDevOverlayBridge (http://localhost:3000/_next/static/chunks/9e883_next_dist_4bfa5b9e._.js:1906:34)
+    at Container (http://localhost:3000/_next/static/chunks/9e883_next_dist_client_e36166f9._.js:3041:1)
+    at AppContainer (http://localhost:3000/_next/static/chunks/9e883_next_dist_client_e36166f9._.js:3140:25)
+    at Root (http://localhost:3000/_next/static/chunks/9e883_next_dist_client_e36166f9._.js:3348:17)
+[32:54:58.709] Browser LOG     🟢 Attached token to request: /deploy
+[32:58:06.305] Browser LOG     🟢 Attached token to request: /deploy
+[32:58:06.305] Browser LOG     🟢 Attached token to request: /deploy
+[32:58:23.593] Browser LOG     🟢 Attached token to request: /deploy/create
+[32:58:31.387] Browser LOG     🟢 Attached token to request: /deploy/68ff5d319346c36ea74c0485
+[32:58:35.359] Browser LOG     🟢 Attached token to request: /deploy/68ff5d319346c36ea74c0485
+[32:58:40.361] Browser LOG     🟢 Attached token to request: /deploy/68ff5d319346c36ea74c0485
+[33:09:48.997] Browser LOG     🟢 Attached token to request: /deploy/create
+[33:10:00.126] Browser LOG     🟢 Attached token to request: /deploy/68ff5fe340fec007a764fd6c
+[33:10:05.126] Browser LOG     🟢 Attached token to request: /deploy/68ff5fe340fec007a764fd6c
+[33:10:10.126] Browser LOG     🟢 Attached token to request: /deploy/68ff5fe340fec007a764fd6c
+[33:18:54.508] Browser LOG     ⚙️ AuthProvider initialized...
+[33:18:54.509] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[33:18:54.509] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[33:18:54.509] Browser LOG     ✅ Token still valid, restoring session...
+[33:18:54.509] Browser LOG     ⚙️ AuthProvider initialized...
+[33:18:54.509] Browser LOG     📦 Saved token detected: {"exp":1764038500,"iat":1761446500,"id":"68fa340812371bf92d74f95f"}
+[33:18:54.509] Browser LOG     📆 Expiration: "2025-11-25T02:41:40.000Z"
+[33:18:54.509] Browser LOG     ✅ Token still valid, restoring session...
+[33:18:54.720] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[33:18:55.214] Browser LOG     🟢 Attached token to request: /deploy
+[33:18:55.215] Browser LOG     🟢 Attached token to request: /deploy
+[33:19:03.239] Browser LOG     🟢 Attached token to request: /deploy
+[33:19:03.239] Browser LOG     🟢 Attached token to request: /deploy
+[33:20:03.118] Browser LOG     🟢 Attached token to request: /deploy/create
+[33:20:09.382] Browser LOG     🟢 Attached token to request: /deploy/68ff6244c5db76a43e5d7ce8
+[33:20:14.382] Browser LOG     🟢 Attached token to request: /deploy/68ff6244c5db76a43e5d7ce8
+[33:22:46.012] Browser LOG     🟢 Attached token to request: /deploy/create
+[33:22:58.691] Browser LOG     🟢 Attached token to request: /deploy/68ff62ed375462c1695c888b
+[33:23:03.691] Browser LOG     🟢 Attached token to request: /deploy/68ff62ed375462c1695c888b
+[33:23:08.693] Browser LOG     🟢 Attached token to request: /deploy/68ff62ed375462c1695c888b
+[33:23:44.969] Browser LOG     🟢 Attached token to request: /deploy/create
+[33:23:55.212] Browser ERROR   🚨 Response error: 401 {"code":"general_error","message":"Not authorized, token failed","success":false}
+[33:23:55.212] Browser WARN    🔴 Unauthorized (401). Clearing session...
+[33:23:57.800] Browser LOG     ⚙️ AuthProvider initialized...
+[33:23:57.800] Browser LOG     ℹ️ No token found in storage.
+[33:23:57.800] Browser LOG     ⚙️ AuthProvider initialized...
+[33:23:57.800] Browser LOG     ℹ️ No token found in storage.
+[33:23:57.800] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[33:24:01.362] Browser LOG     🟢 Logging in...
+[33:24:02.519] Browser LOG     ✅ Token received:
+[33:24:02.519] Browser LOG     ✅ User successfully logged in: admin
+[33:24:02.716] Browser LOG     🟢 Attached token to request: /deploy
+[33:24:02.716] Browser LOG     🟢 Attached token to request: /deploy
+[33:24:14.997] Browser LOG     🟢 Attached token to request: /deploy/create
+[33:24:22.975] Browser LOG     🟢 Attached token to request: /deploy/68ff634123f51767b9bc10ed
+[33:24:27.975] Browser LOG     🟢 Attached token to request: /deploy/68ff634123f51767b9bc10ed
+[33:24:34.385] Browser LOG     🟢 Attached token to request: /deploy/68ff634123f51767b9bc10ed
+[34:24:48.404] Browser LOG     🟢 Attached token to request: /deploy/create
+[34:24:53.822] Browser LOG     🟢 Attached token to request: /deploy/68ff717140ff5817789fc8b4
+[34:43:31.529] Browser LOG     🟢 Attached token to request: /deploy/create
+[34:43:36.946] Browser LOG     🟢 Attached token to request: /deploy/68ff75d4ab8b63319557b5be
+[34:44:40.180] Browser LOG     🟢 Attached token to request: /deploy/create
+[34:44:45.586] Browser LOG     🟢 Attached token to request: /deploy/68ff76193f0e263cc7fadb01
+[34:45:53.056] Browser LOG     🟢 Attached token to request: /deploy/create
+[34:45:58.479] Browser LOG     🟢 Attached token to request: /deploy/68ff7662aca29d6f3a5b03c4
+[34:46:04.386] Browser LOG     🟢 Attached token to request: /deploy/68ff7662aca29d6f3a5b03c4
+[34:46:20.715] Browser LOG     🟢 Attached token to request: /deploy/create
+[34:46:28.402] Browser LOG     🟢 Attached token to request: /deploy/68ff767e244dc1cc52530e45

@@ -8,6 +8,9 @@ self.__BUILD_MANIFEST = {
   "/login": [
     "static/chunks/pages/login.js"
   ],
+  "/terms": [
+    "static/chunks/pages/terms.js"
+  ],
   "__rewrites": {
     "afterFiles": [],
     "beforeFiles": [],

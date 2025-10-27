@@ -167,11 +167,22 @@ const processDeployment = async (deploymentId) => {
         name: `samkiel-bot-${deployment.botNumber}`,
         repo: `https://github.com/${owner}/${repo}`,
         branch: branchName,
+        plan: "free",
         serviceDetails: {
+          runtime: "node",
           buildCommand: "npm install",
           startCommand: "npm start",
-          envVars: [{ key: "NODE_ENV", value: "production" }],
+          envSpecificDetails: {
+            plan: "free",
+            node: {
+              version: "18",
+            },
+            buildCommand: "npm install",
+            startCommand: "npm start",
+          },
         },
+
+        envVars: [{ key: "NODE_ENV", value: "production" }],
         plan: "free",
       },
       {
@@ -263,3 +274,4 @@ module.exports = {
   getDeployments,
   updateDeployment,
   createDeployment,
+};

@@ -1083,7 +1083,7 @@ function Layout({ children }) {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
-                className: "pt-20",
+                className: "pt-21",
                 children: children
             }, void 0, false, {
                 fileName: "[project]/frontend/components/Layout.js",

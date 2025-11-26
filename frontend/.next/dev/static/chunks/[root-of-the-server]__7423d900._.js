@@ -1041,7 +1041,7 @@ function Login() {
         e.preventDefault();
         const read = localStorage.getItem("samkiel_read_terms") === "true"; // user actually visited terms
         if (!read) {
-            __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$client$5d$__$28$ecmascript$29$__["default"].error("Abeg go read the evTerms & Conditions and Privacy Policy first.");
+            __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$client$5d$__$28$ecmascript$29$__["default"].error("Abeg go read the Terms & Conditions and Privacy Policy first.");
             return;
         }
         setLoading(true);

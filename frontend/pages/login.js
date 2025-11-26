@@ -51,7 +51,7 @@ export default function Login() {
 
     if (!read) {
       toast.error(
-        "Abeg go read the evTerms & Conditions and Privacy Policy first."
+        "Abeg go read the Terms & Conditions and Privacy Policy first."
       );
       return;
     }

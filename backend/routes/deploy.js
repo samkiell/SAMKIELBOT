@@ -25,7 +25,7 @@ router
           .json({ success: false, error: "Deployment not found" });
       }
 
-      // Check if user owns the deployment
+      // Check if user owns the deploymentt
       if (deployment.user.toString() !== req.user.id) {
         return res
           .status(401)

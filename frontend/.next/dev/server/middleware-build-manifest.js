@@ -1,5 +1,23 @@
 globalThis.__BUILD_MANIFEST = {
   "pages": {
+    "/": [
+      "static/chunks/9e883_next_dist_compiled_4f871763._.js",
+      "static/chunks/9e883_next_dist_shared_lib_e1cf71dc._.js",
+      "static/chunks/9e883_next_dist_client_e36166f9._.js",
+      "static/chunks/9e883_next_dist_4bfa5b9e._.js",
+      "static/chunks/9e883_next_e1a96803._.js",
+      "static/chunks/9e883_react_4afec026._.js",
+      "static/chunks/9e883_react-dom_cjs_react-dom_development_2d164baf.js",
+      "static/chunks/9e883_react-dom_68830139._.js",
+      "static/chunks/9e883_motion-dom_dist_es_7d8d3397._.js",
+      "static/chunks/9e883_framer-motion_dist_es_ed45868f._.js",
+      "static/chunks/9e883_react-icons_fa_index_mjs_d956662c._.js",
+      "static/chunks/9e883_react-icons_lib_a4910764._.js",
+      "static/chunks/9e883_ade81ad1._.js",
+      "static/chunks/[root-of-the-server]__07dc9a7c._.js",
+      "static/chunks/frontend_pages_index_2da965e7._.js",
+      "static/chunks/turbopack-frontend_pages_index_a33211ce._.js"
+    ],
     "/_app": [
       "static/chunks/frontend_lib_auth_61d33e31.js",
       "static/chunks/9e883_next_dist_compiled_4f871763._.js",
@@ -15,21 +33,6 @@ globalThis.__BUILD_MANIFEST = {
       "static/chunks/frontend_styles_globals_0b42ea6c.css",
       "static/chunks/frontend_pages__app_2da965e7._.js",
       "static/chunks/turbopack-frontend_pages__app_75ef9c7d._.js"
-    ],
-    "/_error": [
-      "static/chunks/9e883_next_dist_compiled_712bffdb._.js",
-      "static/chunks/9e883_next_dist_shared_lib_8ad05970._.js",
-      "static/chunks/9e883_next_dist_client_fe082e00._.js",
-      "static/chunks/9e883_next_dist_91312c1c._.js",
-      "static/chunks/9e883_next_error_43788141.js",
-      "static/chunks/[next]_entry_page-loader_ts_b9ef54ef._.js",
-      "static/chunks/9e883_react_bd4f1e8c._.js",
-      "static/chunks/9e883_react-dom_cjs_react-dom_development_2d164baf.js",
-      "static/chunks/9e883_react-dom_68830139._.js",
-      "static/chunks/9e883_2a3b8b9f._.js",
-      "static/chunks/[root-of-the-server]__2b803f7d._.js",
-      "static/chunks/frontend_pages__error_2da965e7._.js",
-      "static/chunks/turbopack-frontend_pages__error_e9357b1d._.js"
     ],
     "/dashboard": [
       "static/chunks/9e883_next_dist_compiled_15b2531f._.js",

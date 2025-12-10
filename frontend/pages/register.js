@@ -23,7 +23,7 @@ export default function Register() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   useEffect(() => {
-    // Restore agreement state if user has agreed or read terms
+    // Restore agreement state if user has agreed or read termss
     const agreed = localStorage.getItem("samkiel_agreed") === "true";
     const read = localStorage.getItem("samkiel_read_terms") === "true";
     if (agreed || read) setAgreeToTerms(true);

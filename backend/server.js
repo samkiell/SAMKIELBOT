@@ -2,14 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+
+// ✅ Detect environment properly and load env first
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
 const next = require("next");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth");
 const deployRoutes = require("./routes/deploy");
 const updateRoutes = require("./routes/update");
 const { errorHandler } = require("./utils/errorHandler");
-
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 // ✅ Detect environment properly
 const dev = process.env.NODE_ENV !== "production";

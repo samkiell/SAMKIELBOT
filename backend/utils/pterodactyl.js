@@ -206,6 +206,13 @@ const getWebsocketDetails = async (uuid) => {
   }
 };
 
+// Helper to strip ANSI codes
+const stripAnsi = (str) =>
+  str.replace(
+    /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+    ""
+  );
+
 // Monitor Console for Pairing Code and Success
 const monitorDeployment = async (
   uuid,
@@ -245,20 +252,34 @@ const monitorDeployment = async (
 
           // Check console output
           if (msg.event === "console output") {
-            const logLine = msg.args[0];
+            // Strip ANSI codes
+            const logLine = stripAnsi(msg.args[0]);
 
             // 1. Detect Pairing Code
-            const codeMatch =
-              logLine.match(
-                /Pairing Code:\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/i
-              ) || logLine.match(/Code:\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/i);
-
-            if (codeMatch && codeMatch[1]) {
-              if (onCode) onCode(codeMatch[1]);
+            // Require "pairing" keyword or standard "Code:" format, but match Alphanumeric XXXX-XXXX
+            // Broad search for pattern: 8 chars, alphanumeric, optional hyphen in middle
+            // Example match: "Pairing Code: K2J5-9B2A" or just "K2J59B2A" if keyword "pairing" is present
+            if (
+              logLine.toLowerCase().includes("pairing") ||
+              logLine.toLowerCase().includes("code")
+            ) {
+              const codeMatch = logLine.match(
+                /([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/
+              );
+              // Avoid matching "Pairing Code" string itself by checking length or excludes
+              if (codeMatch && codeMatch[1]) {
+                const potentialCode = codeMatch[1];
+                // basic filter to avoid "Pairing" or "Code"
+                if (
+                  !potentialCode.toLowerCase().includes("code") &&
+                  potentialCode.length >= 8
+                ) {
+                  if (onCode) onCode(potentialCode);
+                }
+              }
             }
 
             // 2. Detect Success/Connection
-            // Patterns: "Bot Connected", "Opened connection to", "Client ready"
             const successMatch =
               /Bot Connected|Opened connection|Client ready|Success/i.test(
                 logLine
@@ -281,6 +302,9 @@ const monitorDeployment = async (
       });
 
       ws.on("close", () => {
+        // Did we timeout or was it closed manually?
+        // If closed by us (success/timeout), promise is already resolved.
+        // If closed by remote, we might want to resolve or just let it be.
         resolve("closed");
       });
     } catch (error) {

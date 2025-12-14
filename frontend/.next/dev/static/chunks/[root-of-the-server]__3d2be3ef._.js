@@ -560,7 +560,7 @@ const updateDeployment = async (id, updateData)=>{
     return response.data.data;
 };
 const getDeploymentById = async (id)=>{
-    const response = await api.get(`/deploy/${id}/status`); // Adjusted path to use getDeploymentStatus
+    const response = await api.get(`/deploy/${id}`);
     return response.data;
 };
 const controlBot = async (id, action)=>{

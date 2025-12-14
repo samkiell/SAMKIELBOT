@@ -96,7 +96,7 @@ export const updateDeployment = async (id, updateData) => {
 };
 
 export const getDeploymentById = async (id) => {
-  const response = await api.get(`/deploy/${id}/status`); // Adjusted path to use getDeploymentStatus
+  const response = await api.get(`/deploy/${id}`);
   return response.data;
 };
 

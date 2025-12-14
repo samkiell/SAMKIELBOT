@@ -218,7 +218,9 @@ const monitorDeployment = async (
   return new Promise(async (resolve, reject) => {
     try {
       const { token, socket } = await getWebsocketDetails(uuid);
-      ws = new WebSocket(socket);
+      ws = new WebSocket(socket, {
+        origin: PTERODACTYL_DOMAIN,
+      });
 
       // Set timeout (default 10 minutes)
       timer = setTimeout(() => {

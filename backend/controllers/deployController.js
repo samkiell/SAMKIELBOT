@@ -115,7 +115,7 @@ const createDeployment = async (req, res) => {
     const deployment = await Deployment.create({
       user: req.user.id,
       botNumber,
-      status: "deploying",
+      status: "creating",
     });
 
     // Begin deployment process asynchronously

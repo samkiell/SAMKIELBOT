@@ -107,7 +107,7 @@ const processDeployment = async (deploymentId) => {
     }
 
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-    const owner = "samkiel488";
+    const owner = "samkiell";
     const repo = "SAMKIEL-AI";
     const baseBranch = "main";
 
@@ -119,7 +119,8 @@ const processDeployment = async (deploymentId) => {
         { owner, repo, path: "settings.js", ref: baseBranch }
       );
     } catch (e) {
-      throw new Error("Could not fetch settings.js from repo.");
+      console.error("GitHub Fetch Error:", e);
+      throw new Error(`Could not fetch settings.js from repo: ${e.message}`);
     }
 
     const settingsContent = Buffer.from(

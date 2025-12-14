@@ -118,7 +118,7 @@ const createServer = async (deploymentData) => {
         "if [ -f /home/container/package.json ]; then npm install; fi; echo \"module.exports = { botNumber: '{{BOT_NUMBER}}' }\" > settings.js; node index.js",
       environment: {
         BOT_NUMBER: botNumber,
-        REPO_URL: "https://github.com/samkiell/SAMKIELBOT",
+        REPO_URL: "https://github.com/samkiell/SAMKIEL-AI",
         BRANCH: branch,
       },
       limits: {

@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "name": "NodeJS – Katabump Mode",
+  "author": "chatgpt@samkiel.dev",
+  "description": "High-performance NodeJS egg modeled after Katabump hosting. Supports ES modules, PM2, Git deployment, and production npm workflows.",
+  "features": null,
+
+  "docker_images": {
+    "nodejs-22": "ghcr.io/parkervcp/yolks:nodejs_22",
+    "nodejs-20": "ghcr.io/parkervcp/yolks:nodejs_20"
+  },
+
+  "file_denylist": [],
+
+  "startup": "{{START_CMD}}",
+
+  "config": {
+    "files": "{}",
+    "startup": "{ \"done\": \"ready\" }",
+    "stop": "^^C"
+  },
+
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\n\
+apt update -y\n\
+apt install -y git curl unzip python3 make g++\n\
+\n\
+cd /mnt/server\n\
+\n\
+# KATABUMP-STYLE BEHAVIOR: Auto-git if provided\n\
+if [ ! -z \"${REPO_URL}\" ]; then\n\
+  echo \"Cloning project from ${REPO_URL}\"\n\
+  if [ -z \"${BRANCH}\" ]; then\n\
+    git clone ${REPO_URL} .\n\
+  else\n\
+    git clone --branch ${BRANCH} ${REPO_URL} .\n\
+  fi\n\
+fi\n\
+\n\
+# Install dependencies (Katabump mimics clean npm install)\n\
+if [ -f package.json ]; then\n\
+  echo \"Installing production dependencies...\"\n\
+  npm install --omit=dev\n\
+fi\n\
+\n\
+echo \"Installation complete.\"\n\
+exit 0",
+      "container": "ghcr.io/parkervcp/yolks:nodejs_22",
+      "entrypoint": "bash"
+    }
+  },
+
+  "variables": [
+    {
+      "name": "Start Command",
+      "description": "Command used to launch the bot.",
+      "env_variable": "START_CMD",
+      "default_value": "node index.js",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Git Repository URL",
+      "description": "Optional: Auto-deploy your bot using Git.",
+      "env_variable": "REPO_URL",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Git Branch",
+      "description": "Default is main. Only used if REPO_URL is set.",
+      "env_variable": "BRANCH",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string",
+      "field_type": "text"
+    }
+  ]
+}

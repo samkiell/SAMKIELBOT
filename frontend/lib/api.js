@@ -101,7 +101,7 @@ export const getDeploymentById = async (id) => {
 };
 
 export const controlBot = async (id, action) => {
-  const response = await api.post(`/deploy/${id}/control`, { action }); // start, stop, restart, kill
+  const response = await api.post(`/deploy/${id}/power`, { signal: action }); // start, stop, restart, kill
   return response.data;
 };
 

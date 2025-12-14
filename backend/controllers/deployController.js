@@ -127,6 +127,81 @@ const createDeployment = async (req, res) => {
   }
 };
 
+// @desc    Control server power state
+// @route   POST /api/deploy/:id/power
+// @access  Private
+const controlServer = async (req, res) => {
+  try {
+    const { signal } = req.body; // start, stop, restart, kill
+    const deployment = await Deployment.findById(req.params.id);
+
+    if (!deployment) {
+      return errorResponse(res, "Deployment not found", 404);
+    }
+
+    if (deployment.user.toString() !== req.user.id) {
+      return errorResponse(res, "Not authorized", 401);
+    }
+
+    if (!["start", "stop", "restart", "kill"].includes(signal)) {
+      return errorResponse(res, "Invalid signal", 400);
+    }
+
+    // Send signal to Pterodactyl
+    await pterodactyl.requestPowerAction(deployment.identifier, signal);
+
+    // Update status locally
+    let newStatus = deployment.status;
+    if (signal === "start") newStatus = "starting";
+    if (signal === "stop" || signal === "kill") newStatus = "stopped";
+    if (signal === "restart") newStatus = "starting";
+
+    // Trigger monitoring if starting
+    if (signal === "start" || signal === "restart") {
+      monitorDeploymentFlow(deployment._id, deployment.identifier);
+    }
+
+    const updatedDeployment = await Deployment.findByIdAndUpdate(
+      req.params.id,
+      { status: newStatus },
+      { new: true }
+    );
+
+    successResponse(res, {
+      message: `Signal ${signal} sent`,
+      status: newStatus,
+      deployment: updatedDeployment,
+    });
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @helper: Monitor Deployment for Pairing Code and Success
+const monitorDeploymentFlow = async (deploymentId, identifier) => {
+  try {
+    console.log(`Starting monitoring for ${identifier}`);
+    await pterodactyl.monitorDeployment(identifier, {
+      onCode: async (code) => {
+        console.log(`Pairing code found for ${identifier}: ${code}`);
+        await Deployment.findByIdAndUpdate(deploymentId, {
+          pairingCode: code,
+          status: "awaiting_pairing",
+        });
+      },
+      onReady: async () => {
+        console.log(`Deployment ${identifier} is now running`);
+        await Deployment.findByIdAndUpdate(deploymentId, {
+          status: "running",
+          pairingCode: null, // Optional: clear code
+        });
+      },
+    });
+  } catch (error) {
+    console.error("Monitoring flow error:", error.message);
+  }
+};
+
 // @helper: Main deployment process logic
 const processDeployment = async (deploymentId) => {
   try {
@@ -279,7 +354,11 @@ const processDeployment = async (deploymentId) => {
       console.log(`Starting server ${pteroData.identifier}...`);
       await pterodactyl.requestPowerAction(pteroData.identifier, "start");
 
-      // Update status to likely 'starting' or keep 'installing' as polling will update it.
+      // Update status to likely 'starting'
+      await Deployment.findByIdAndUpdate(deploymentId, { status: "starting" });
+
+      // Start Monitoring
+      monitorDeploymentFlow(deploymentId, pteroData.identifier);
     } catch (startError) {
       console.error(
         "Error starting server after creation:",
@@ -301,6 +380,7 @@ module.exports = {
   getDeployments,
   updateDeployment,
   createDeployment,
+  controlServer,
   deleteDeployment, // Exported
   // ... other exports ...
 };

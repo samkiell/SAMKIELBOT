@@ -12,7 +12,7 @@
   "static/chunks/9e883_react-icons_fa_index_mjs_d956662c._.js",
   "static/chunks/9e883_react-icons_lib_a4910764._.js",
   "static/chunks/9e883_axios_lib_afe0686f._.js",
-  "static/chunks/9e883_4228836e._.js",
+  "static/chunks/9e883_b74be094._.js",
   "static/chunks/[root-of-the-server]__16640615._.js"
 ],
     source: "entry"

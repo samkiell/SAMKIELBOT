@@ -206,8 +206,12 @@ const getWebsocketDetails = async (uuid) => {
   }
 };
 
-// Monitor Console for Pairing Code
-const monitorConsoleForPairingCode = async (uuid, timeoutMs = 300000) => {
+// Monitor Console for Pairing Code and Success
+const monitorDeployment = async (
+  uuid,
+  { onCode, onReady },
+  timeoutMs = 600000
+) => {
   let ws;
   let timer;
 
@@ -216,12 +220,12 @@ const monitorConsoleForPairingCode = async (uuid, timeoutMs = 300000) => {
       const { token, socket } = await getWebsocketDetails(uuid);
       ws = new WebSocket(socket);
 
-      // Set timeout (default 5 minutes)
+      // Set timeout (default 10 minutes)
       timer = setTimeout(() => {
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.close();
         }
-        resolve(null); // Return null if not found in time
+        resolve("timeout");
       }, timeoutMs);
 
       ws.on("open", () => {
@@ -240,20 +244,33 @@ const monitorConsoleForPairingCode = async (uuid, timeoutMs = 300000) => {
           // Check console output
           if (msg.event === "console output") {
             const logLine = msg.args[0];
-            // Match pattern for pairing code (e.g. "Pairing Code: AbC1-23d4")
-            const match =
+
+            // 1. Detect Pairing Code
+            const codeMatch =
               logLine.match(
                 /Pairing Code:\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/i
               ) || logLine.match(/Code:\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/i);
 
-            if (match && match[1]) {
+            if (codeMatch && codeMatch[1]) {
+              if (onCode) onCode(codeMatch[1]);
+            }
+
+            // 2. Detect Success/Connection
+            // Patterns: "Bot Connected", "Opened connection to", "Client ready"
+            const successMatch =
+              /Bot Connected|Opened connection|Client ready|Success/i.test(
+                logLine
+              );
+
+            if (successMatch) {
+              if (onReady) onReady();
               clearTimeout(timer);
               ws.close();
-              resolve(match[1]);
+              resolve("connected");
             }
           }
         } catch (parseError) {
-          // Ignore parse errors
+          // Ignore
         }
       });
 
@@ -262,9 +279,7 @@ const monitorConsoleForPairingCode = async (uuid, timeoutMs = 300000) => {
       });
 
       ws.on("close", () => {
-        // Resolve null if closed without finding code (unless resolved above)
-        // Note: Promise state cannot change if already resolved.
-        // We'll rely on the timeout or code finding to resolve.
+        resolve("closed");
       });
     } catch (error) {
       if (timer) clearTimeout(timer);
@@ -356,6 +371,6 @@ module.exports = {
   deleteServer,
   getResources,
   waitForInstallation,
-  monitorConsoleForPairingCode,
+  monitorDeployment,
   getWebsocketDetails,
 };

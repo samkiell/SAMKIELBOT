@@ -10,3 +10,6 @@
 [00:00:35.479] Browser LOG     ✅ Token still valid, restoring session...
 [00:00:35.479] Browser LOG     🟢 Attached token to request: /deploy
 [00:00:37.041] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:04:19.536] Server  LOG      ✓ Compiled in 46ms
+[00:04:44.880] Server  LOG      ✓ Compiled in 746ms
+[00:05:04.909] Server  LOG      ✓ Compiled in 185ms

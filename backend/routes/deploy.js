@@ -4,7 +4,8 @@ const {
   getDeployments,
   updateDeployment,
   createDeployment,
-  deleteDeployment, // Import this
+  deleteDeployment,
+  controlServer, // Import this
 } = require("../controllers/deployController");
 const { protect } = require("../utils/authMiddleware");
 
@@ -15,32 +16,33 @@ router.route("/create").post(protect, createDeployment);
 router
   .route("/:id")
   .put(protect, updateDeployment)
-  .delete(protect, deleteDeployment) // Added DELETE route
-  .get(protect, async (req, res) => {
-    try {
-      const Deployment = require("../models/Deployment");
-      const deployment = await Deployment.findById(req.params.id);
+  .delete(protect, deleteDeployment); // Previous chain end
 
-      if (!deployment) {
-        return res
-          .status(404)
-          .json({ success: false, error: "Deployment not found" });
-      }
+router.route("/:id/power").post(protect, controlServer); // Power control route
 
-      // Check if user owns the deploymentt
-      if (deployment.user.toString() !== req.user.id) {
-        return res
-          .status(401)
-          .json({ success: false, error: "Not authorized" });
-      }
+router.route("/:id").get(protect, async (req, res) => {
+  try {
+    const Deployment = require("../models/Deployment");
+    const deployment = await Deployment.findById(req.params.id);
 
-      res.status(200).json({
-        success: true,
-        data: deployment,
-      });
-    } catch (error) {
-      res.status(500).json({ success: false, error: error.message });
+    if (!deployment) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Deployment not found" });
     }
-  });
+
+    // Check if user owns the deploymentt
+    if (deployment.user.toString() !== req.user.id) {
+      return res.status(401).json({ success: false, error: "Not authorized" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: deployment,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 module.exports = router;

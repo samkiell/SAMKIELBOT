@@ -1,4 +1,12 @@
-import { Eye, RotateCcw, Square, Play, Trash2 } from "lucide-react";
+import {
+  Eye,
+  RotateCcw,
+  Square,
+  Play,
+  Trash2,
+  Copy,
+  Smartphone,
+} from "lucide-react";
 import { controlBot, deleteBot } from "../lib/api";
 import toast from "react-hot-toast";
 import { useState } from "react";
@@ -6,36 +14,39 @@ import { useState } from "react";
 export default function BotCard({ deployment, refreshData }) {
   const [loading, setLoading] = useState(false);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "running":
-        return "bg-green-600";
-      case "stopped":
-        return "bg-red-600";
-      case "installing":
-      case "pending":
-        return "bg-yellow-600";
-      case "failed":
-        return "bg-red-600";
-      default:
-        return "bg-gray-600";
-    }
+  const getStatusConfig = (status) => {
+    const config = {
+      running: { label: "✅ Running", color: "green" },
+      stopped: { label: "⛔ Stopped", color: "red" },
+      installing: { label: "🛠 Installing", color: "yellow" },
+      creating: { label: "🏗 Creating", color: "blue" },
+      starting: { label: "🔄 Starting", color: "blue" },
+      awaiting_pairing: { label: "📲 Awaiting Pairing", color: "purple" },
+      failed: { label: "❌ Failed", color: "red" },
+      pending: { label: "⏳ Pending", color: "gray" },
+    };
+    return config[status] || { label: status, color: "gray" };
   };
 
   const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case "running":
-        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
-      case "stopped":
-        return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
-      case "installing":
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
-      case "failed":
-        return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
-    }
+    const color = getStatusConfig(status).color;
+    const colors = {
+      green:
+        "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+      red: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+      yellow:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+      blue: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+      purple:
+        "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+      gray: "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400",
+    };
+    return colors[color] || colors.gray;
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Copied to clipboard!");
   };
 
   const handleControl = async (action) => {
@@ -83,66 +94,124 @@ export default function BotCard({ deployment, refreshData }) {
               deployment.status
             )}`}
           >
-            {deployment.status}
+            {getStatusConfig(deployment.status).label}
           </span>
         </div>
       </div>
 
-      <div className="space-y-2 mb-4">
-        {deployment.pairingCode && (
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            <span className="font-medium">Pairing Code:</span>{" "}
-            {deployment.pairingCode}
-          </p>
+      <div className="space-y-4 mb-4">
+        {/* Pairing Code UI */}
+        {(deployment.status === "awaiting_pairing" ||
+          deployment.pairingCode) && (
+          <div className="bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/20 rounded-lg p-4">
+            <h4 className="flex items-center text-purple-800 dark:text-purple-300 font-semibold mb-2">
+              <Smartphone size={18} className="mr-2" />
+              Link Device Required
+            </h4>
+            <div className="flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md p-3 mb-2">
+              <code className="text-lg font-mono font-bold text-gray-800 dark:text-gray-200 tracking-wider">
+                {deployment.pairingCode || "Loading..."}
+              </code>
+              <button
+                onClick={() => copyToClipboard(deployment.pairingCode)}
+                className="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                title="Copy Code"
+              >
+                <Copy size={20} />
+              </button>
+            </div>
+            <p className="text-xs text-gray-600 dark:text-gray-400">
+              1. Tap notification or go to{" "}
+              <strong>Settings &gt; Linked Devices</strong>
+            </p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">
+              2. Tap <strong>Link a Device</strong> &gt; Enter Code
+            </p>
+          </div>
         )}
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          <span className="font-medium">Number:</span> {deployment.botNumber}
-        </p>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          <span className="font-medium">Deployed:</span>{" "}
-          {new Date(
-            deployment.deployedAt || deployment.createdAt
-          ).toLocaleDateString()}
-        </p>
+
+        {/* Info */}
+        <div className="space-y-1">
+          <p className="text-gray-600 dark:text-gray-400 text-sm flex justify-between">
+            <span className="font-medium">Number:</span>
+            <span>{deployment.botNumber}</span>
+          </p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm flex justify-between">
+            <span className="font-medium">Deployed:</span>
+            <span>
+              {new Date(
+                deployment.deployedAt || deployment.createdAt
+              ).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          </p>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {deployment.status !== "running" && (
-          <button
-            onClick={() => handleControl("start")}
-            disabled={loading}
-            className="flex items-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50"
-          >
-            <Play size={16} className="mr-1" />
-            Start
-          </button>
-        )}
-        {deployment.status === "running" && (
-          <button
-            onClick={() => handleControl("stop")}
-            disabled={loading}
-            className="flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50"
-          >
-            <Square size={16} className="mr-1" />
-            Stop
-          </button>
-        )}
-        <button
-          onClick={() => handleControl("restart")}
-          disabled={loading}
-          className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50"
-        >
-          <RotateCcw size={16} className="mr-1" />
-          Restart
-        </button>
-        <button
-          onClick={handleDelete}
-          disabled={loading}
-          className="flex items-center bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50"
-        >
-          <Trash2 size={16} className="mr-1" />
-          Delete
-        </button>
+        {/* Helper values for logic */}
+        {(() => {
+          const isBusy = ["creating", "installing", "pending"].includes(
+            deployment.status
+          );
+          const isActive = ["running", "starting", "awaiting_pairing"].includes(
+            deployment.status
+          );
+          // Start: Show if stopped or failed
+          const showStart = ["stopped", "failed"].includes(deployment.status);
+          // Stop: Show if active (running, starting, waiting)
+          const showStop = isActive;
+          // Restart: Show if not busy/creating (can restart even if stopped usually)
+          const showRestart = !isBusy;
+
+          return (
+            <>
+              {showStart && (
+                <button
+                  onClick={() => handleControl("start")}
+                  disabled={loading || isBusy}
+                  className="flex items-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50"
+                >
+                  <Play size={16} className="mr-1" />
+                  Start
+                </button>
+              )}
+              {showStop && (
+                <button
+                  onClick={() => handleControl("stop")}
+                  disabled={loading || isBusy}
+                  className="flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50"
+                >
+                  <Square size={16} className="mr-1" />
+                  Stop
+                </button>
+              )}
+              {showRestart && (
+                <button
+                  onClick={() => handleControl("restart")}
+                  disabled={loading || isBusy}
+                  className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50"
+                >
+                  <RotateCcw size={16} className="mr-1" />
+                  Restart
+                </button>
+              )}
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className="flex items-center bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50"
+              >
+                <Trash2 size={16} className="mr-1" />
+                Delete
+              </button>
+            </>
+          );
+        })()}
       </div>
     </div>
   );

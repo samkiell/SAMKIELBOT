@@ -564,8 +564,8 @@ const getDeploymentById = async (id)=>{
     return response.data;
 };
 const controlBot = async (id, action)=>{
-    const response = await api.post(`/deploy/${id}/control`, {
-        action
+    const response = await api.post(`/deploy/${id}/power`, {
+        signal: action
     }); // start, stop, restart, kill
     return response.data;
 };

@@ -398,8 +398,8 @@ const getDeploymentById = async (id)=>{
     return response.data;
 };
 const controlBot = async (id, action)=>{
-    const response = await api.post(`/deploy/${id}/control`, {
-        action
+    const response = await api.post(`/deploy/${id}/power`, {
+        signal: action
     }); // start, stop, restart, kill
     return response.data;
 };
@@ -431,6 +431,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$
 var __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$square$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Square$3e$__ = __turbopack_context__.i("[project]/frontend/node_modules/lucide-react/dist/esm/icons/square.js [ssr] (ecmascript) <export default as Square>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$play$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Play$3e$__ = __turbopack_context__.i("[project]/frontend/node_modules/lucide-react/dist/esm/icons/play.js [ssr] (ecmascript) <export default as Play>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trash$2d$2$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Trash2$3e$__ = __turbopack_context__.i("[project]/frontend/node_modules/lucide-react/dist/esm/icons/trash-2.js [ssr] (ecmascript) <export default as Trash2>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__ = __turbopack_context__.i("[project]/frontend/node_modules/lucide-react/dist/esm/icons/copy.js [ssr] (ecmascript) <export default as Copy>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$smartphone$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Smartphone$3e$__ = __turbopack_context__.i("[project]/frontend/node_modules/lucide-react/dist/esm/icons/smartphone.js [ssr] (ecmascript) <export default as Smartphone>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$lib$2f$api$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/frontend/lib/api.js [ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$externals$5d2f$react$2d$hot$2d$toast__$5b$external$5d$__$28$react$2d$hot$2d$toast$2c$__esm_import$29$__ = __turbopack_context__.i("[externals]/react-hot-toast [external] (react-hot-toast, esm_import)");
 var __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/react [external] (react, cjs)");
@@ -446,35 +448,61 @@ var __turbopack_async_dependencies__ = __turbopack_handle_async_dependencies__([
 ;
 function BotCard({ deployment, refreshData }) {
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react__$5b$external$5d$__$28$react$2c$__cjs$29$__["useState"])(false);
-    const getStatusColor = (status)=>{
-        switch(status){
-            case "running":
-                return "bg-green-600";
-            case "stopped":
-                return "bg-red-600";
-            case "installing":
-            case "pending":
-                return "bg-yellow-600";
-            case "failed":
-                return "bg-red-600";
-            default:
-                return "bg-gray-600";
-        }
+    const getStatusConfig = (status)=>{
+        const config = {
+            running: {
+                label: "✅ Running",
+                color: "green"
+            },
+            stopped: {
+                label: "⛔ Stopped",
+                color: "red"
+            },
+            installing: {
+                label: "🛠 Installing",
+                color: "yellow"
+            },
+            creating: {
+                label: "🏗 Creating",
+                color: "blue"
+            },
+            starting: {
+                label: "🔄 Starting",
+                color: "blue"
+            },
+            awaiting_pairing: {
+                label: "📲 Awaiting Pairing",
+                color: "purple"
+            },
+            failed: {
+                label: "❌ Failed",
+                color: "red"
+            },
+            pending: {
+                label: "⏳ Pending",
+                color: "gray"
+            }
+        };
+        return config[status] || {
+            label: status,
+            color: "gray"
+        };
     };
     const getStatusBadgeColor = (status)=>{
-        switch(status){
-            case "running":
-                return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
-            case "stopped":
-                return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
-            case "installing":
-            case "pending":
-                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
-            case "failed":
-                return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
-            default:
-                return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
-        }
+        const color = getStatusConfig(status).color;
+        const colors = {
+            green: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
+            red: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+            yellow: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+            blue: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+            purple: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+            gray: "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
+        };
+        return colors[color] || colors.gray;
+    };
+    const copyToClipboard = (text)=>{
+        navigator.clipboard.writeText(text);
+        __TURBOPACK__imported__module__$5b$externals$5d2f$react$2d$hot$2d$toast__$5b$external$5d$__$28$react$2d$hot$2d$toast$2c$__esm_import$29$__["default"].success("Copied to clipboard!");
     };
     const handleControl = async (action)=>{
         setLoading(true);
@@ -514,187 +542,312 @@ function BotCard({ deployment, refreshData }) {
                             children: deployment.botName || `Bot ${deployment.botNumber}`
                         }, void 0, false, {
                             fileName: "[project]/frontend/components/BotCard.js",
-                            lineNumber: 78,
+                            lineNumber: 89,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
                             className: `inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(deployment.status)}`,
-                            children: deployment.status
+                            children: getStatusConfig(deployment.status).label
                         }, void 0, false, {
                             fileName: "[project]/frontend/components/BotCard.js",
-                            lineNumber: 81,
+                            lineNumber: 92,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/components/BotCard.js",
-                    lineNumber: 77,
+                    lineNumber: 88,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/frontend/components/BotCard.js",
-                lineNumber: 76,
+                lineNumber: 87,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
-                className: "space-y-2 mb-4",
+                className: "space-y-4 mb-4",
                 children: [
-                    deployment.pairingCode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
-                        className: "text-gray-600 dark:text-gray-400 text-sm",
+                    (deployment.status === "awaiting_pairing" || deployment.pairingCode) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                        className: "bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/20 rounded-lg p-4",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
-                                className: "font-medium",
-                                children: "Pairing Code:"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("h4", {
+                                className: "flex items-center text-purple-800 dark:text-purple-300 font-semibold mb-2",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$smartphone$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Smartphone$3e$__["Smartphone"], {
+                                        size: 18,
+                                        className: "mr-2"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 108,
+                                        columnNumber: 15
+                                    }, this),
+                                    "Link Device Required"
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/frontend/components/BotCard.js",
-                                lineNumber: 94,
+                                lineNumber: 107,
                                 columnNumber: 13
                             }, this),
-                            " ",
-                            deployment.pairingCode
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/frontend/components/BotCard.js",
-                        lineNumber: 93,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
-                        className: "text-gray-600 dark:text-gray-400 text-sm",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
-                                className: "font-medium",
-                                children: "Number:"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                                className: "flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md p-3 mb-2",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("code", {
+                                        className: "text-lg font-mono font-bold text-gray-800 dark:text-gray-200 tracking-wider",
+                                        children: deployment.pairingCode || "Loading..."
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 112,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>copyToClipboard(deployment.pairingCode),
+                                        className: "text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors",
+                                        title: "Copy Code",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__["Copy"], {
+                                            size: 20
+                                        }, void 0, false, {
+                                            fileName: "[project]/frontend/components/BotCard.js",
+                                            lineNumber: 120,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 115,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/frontend/components/BotCard.js",
-                                lineNumber: 99,
-                                columnNumber: 11
-                            }, this),
-                            " ",
-                            deployment.botNumber
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/frontend/components/BotCard.js",
-                        lineNumber: 98,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
-                        className: "text-gray-600 dark:text-gray-400 text-sm",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
-                                className: "font-medium",
-                                children: "Deployed:"
-                            }, void 0, false, {
-                                fileName: "[project]/frontend/components/BotCard.js",
-                                lineNumber: 102,
-                                columnNumber: 11
-                            }, this),
-                            " ",
-                            new Date(deployment.deployedAt || deployment.createdAt).toLocaleDateString()
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/frontend/components/BotCard.js",
-                        lineNumber: 101,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/frontend/components/BotCard.js",
-                lineNumber: 91,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
-                className: "flex flex-wrap gap-2",
-                children: [
-                    deployment.status !== "running" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
-                        onClick: ()=>handleControl("start"),
-                        disabled: loading,
-                        className: "flex items-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$play$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Play$3e$__["Play"], {
-                                size: 16,
-                                className: "mr-1"
-                            }, void 0, false, {
-                                fileName: "[project]/frontend/components/BotCard.js",
-                                lineNumber: 116,
+                                lineNumber: 111,
                                 columnNumber: 13
                             }, this),
-                            "Start"
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/frontend/components/BotCard.js",
-                        lineNumber: 111,
-                        columnNumber: 11
-                    }, this),
-                    deployment.status === "running" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
-                        onClick: ()=>handleControl("stop"),
-                        disabled: loading,
-                        className: "flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$square$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Square$3e$__["Square"], {
-                                size: 16,
-                                className: "mr-1"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                                className: "text-xs text-gray-600 dark:text-gray-400",
+                                children: [
+                                    "1. Tap notification or go to",
+                                    " ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("strong", {
+                                        children: "Settings > Linked Devices"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 125,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/frontend/components/BotCard.js",
-                                lineNumber: 126,
+                                lineNumber: 123,
                                 columnNumber: 13
                             }, this),
-                            "Stop"
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                                className: "text-xs text-gray-600 dark:text-gray-400",
+                                children: [
+                                    "2. Tap ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("strong", {
+                                        children: "Link a Device"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 128,
+                                        columnNumber: 22
+                                    }, this),
+                                    " > Enter Code"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/frontend/components/BotCard.js",
+                                lineNumber: 127,
+                                columnNumber: 13
+                            }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/frontend/components/BotCard.js",
-                        lineNumber: 121,
+                        lineNumber: 106,
                         columnNumber: 11
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
-                        onClick: ()=>handleControl("restart"),
-                        disabled: loading,
-                        className: "flex items-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50",
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                        className: "space-y-1",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$rotate$2d$ccw$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RotateCcw$3e$__["RotateCcw"], {
-                                size: 16,
-                                className: "mr-1"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                                className: "text-gray-600 dark:text-gray-400 text-sm flex justify-between",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Number:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 136,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
+                                        children: deployment.botNumber
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 137,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/frontend/components/BotCard.js",
                                 lineNumber: 135,
                                 columnNumber: 11
                             }, this),
-                            "Restart"
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/frontend/components/BotCard.js",
-                        lineNumber: 130,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
-                        onClick: handleDelete,
-                        disabled: loading,
-                        className: "flex items-center bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trash$2d$2$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Trash2$3e$__["Trash2"], {
-                                size: 16,
-                                className: "mr-1"
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("p", {
+                                className: "text-gray-600 dark:text-gray-400 text-sm flex justify-between",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
+                                        className: "font-medium",
+                                        children: "Deployed:"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 140,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("span", {
+                                        children: new Date(deployment.deployedAt || deployment.createdAt).toLocaleDateString(undefined, {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit"
+                                        })
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 141,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/frontend/components/BotCard.js",
-                                lineNumber: 143,
+                                lineNumber: 139,
                                 columnNumber: 11
-                            }, this),
-                            "Delete"
+                            }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/frontend/components/BotCard.js",
-                        lineNumber: 138,
+                        lineNumber: 134,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/frontend/components/BotCard.js",
-                lineNumber: 109,
+                lineNumber: 102,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("div", {
+                className: "flex flex-wrap gap-2",
+                children: (()=>{
+                    const isBusy = [
+                        "creating",
+                        "installing",
+                        "pending"
+                    ].includes(deployment.status);
+                    const isActive = [
+                        "running",
+                        "starting",
+                        "awaiting_pairing"
+                    ].includes(deployment.status);
+                    // Start: Show if stopped or failed
+                    const showStart = [
+                        "stopped",
+                        "failed"
+                    ].includes(deployment.status);
+                    // Stop: Show if active (running, starting, waiting)
+                    const showStop = isActive;
+                    // Restart: Show if not busy/creating (can restart even if stopped usually)
+                    const showRestart = !isBusy;
+                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["Fragment"], {
+                        children: [
+                            showStart && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                                onClick: ()=>handleControl("start"),
+                                disabled: loading || isBusy,
+                                className: "flex items-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$play$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Play$3e$__["Play"], {
+                                        size: 16,
+                                        className: "mr-1"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 180,
+                                        columnNumber: 19
+                                    }, this),
+                                    "Start"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/frontend/components/BotCard.js",
+                                lineNumber: 175,
+                                columnNumber: 17
+                            }, this),
+                            showStop && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                                onClick: ()=>handleControl("stop"),
+                                disabled: loading || isBusy,
+                                className: "flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$square$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Square$3e$__["Square"], {
+                                        size: 16,
+                                        className: "mr-1"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 190,
+                                        columnNumber: 19
+                                    }, this),
+                                    "Stop"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/frontend/components/BotCard.js",
+                                lineNumber: 185,
+                                columnNumber: 17
+                            }, this),
+                            showRestart && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                                onClick: ()=>handleControl("restart"),
+                                disabled: loading || isBusy,
+                                className: "flex items-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$rotate$2d$ccw$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RotateCcw$3e$__["RotateCcw"], {
+                                        size: 16,
+                                        className: "mr-1"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 200,
+                                        columnNumber: 19
+                                    }, this),
+                                    "Restart"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/frontend/components/BotCard.js",
+                                lineNumber: 195,
+                                columnNumber: 17
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])("button", {
+                                onClick: handleDelete,
+                                disabled: loading,
+                                className: "flex items-center bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm disabled:opacity-50",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$externals$5d2f$react$2f$jsx$2d$dev$2d$runtime__$5b$external$5d$__$28$react$2f$jsx$2d$dev$2d$runtime$2c$__cjs$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$frontend$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trash$2d$2$2e$js__$5b$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Trash2$3e$__["Trash2"], {
+                                        size: 16,
+                                        className: "mr-1"
+                                    }, void 0, false, {
+                                        fileName: "[project]/frontend/components/BotCard.js",
+                                        lineNumber: 209,
+                                        columnNumber: 17
+                                    }, this),
+                                    "Delete"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/frontend/components/BotCard.js",
+                                lineNumber: 204,
+                                columnNumber: 15
+                            }, this)
+                        ]
+                    }, void 0, true);
+                })()
+            }, void 0, false, {
+                fileName: "[project]/frontend/components/BotCard.js",
+                lineNumber: 156,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/frontend/components/BotCard.js",
-        lineNumber: 75,
+        lineNumber: 86,
         columnNumber: 5
     }, this);
 }

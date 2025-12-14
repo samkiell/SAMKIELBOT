@@ -97,7 +97,7 @@ export const updateDeployment = async (id, updateData) => {
 
 export const getDeploymentById = async (id) => {
   const response = await api.get(`/deploy/${id}`);
-  return response.data;
+  return response.data.data;
 };
 
 export const controlBot = async (id, action) => {

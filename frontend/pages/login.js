@@ -62,14 +62,14 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const read = localStorage.getItem("samkiel_read_terms") === "true"; // user actually visited terms
+    // const read = localStorage.getItem("samkiel_read_terms") === "true"; // user actually visited terms
 
-    if (!read) {
-      toast.error(
-        "Abeg go read the Terms & Conditions and Privacy Policy first."
-      );
-      return;
-    }
+    // if (!read) {
+    //   toast.error(
+    //     "Abeg go read the Terms & Conditions and Privacy Policy first."
+    //   );
+    //   return;
+    // }
 
     setLoading(true);
     try {

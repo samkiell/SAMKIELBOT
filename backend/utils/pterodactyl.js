@@ -255,6 +255,17 @@ const monitorDeployment = async (
             // Strip ANSI codes
             const logLine = stripAnsi(msg.args[0]);
 
+            // DEBUG: Log to file
+            const fs = require("fs");
+            const path = require("path");
+            const logDir = path.join(__dirname, "../../logs");
+            if (!fs.existsSync(logDir))
+              fs.mkdirSync(logDir, { recursive: true });
+            fs.appendFileSync(
+              path.join(logDir, "ptero-console.log"),
+              `[${new Date().toISOString()}] ${uuid}: ${logLine}\n`
+            );
+
             // 1. Detect Strict Pairing Code
             // Format constraint: "Your Pairing Code : 759P-Z9VD"
             const strictPairingRegex =
@@ -264,6 +275,10 @@ const monitorDeployment = async (
             if (strictMatch && strictMatch[1]) {
               const code = strictMatch[1];
               console.log(`[Monitor] Found pairing code: ${code}`);
+              fs.appendFileSync(
+                path.join(logDir, "ptero-console.log"),
+                `[MATCH] Found code: ${code}\n`
+              );
 
               if (onCode) onCode(code);
 

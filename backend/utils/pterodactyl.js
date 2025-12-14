@@ -2,24 +2,19 @@ const axios = require("axios");
 const dotenv = require("dotenv");
 const path = require("path");
 
-// Load env vars explicitly if not already loaded (though server.js loads them, this file might need them if imported earlier or differently)
-// However, server.js loads them into process.env before routes/controllers are loaded.
-// The issue is likely that when this file is required, process.env.PTERODACTYL_API_KEY is undefined?
-// OR server.js setup of dotenv is slightly late?
-// Actually server.js loads dotenv at line 12.
-// If `deployController` is required at line 8 of server.js (before dotenv), then `require('../utils/pterodactyl')` runs BEFORE dotenv.
-// FIX: Move dotenv config to the top of server.js OR load it here too.
-
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 const PTERODACTYL_DOMAIN =
   process.env.PTERODACTYL_DOMAIN || "https://panel.samkiel.dev";
-const PTERODACTYL_API_KEY = process.env.PTERODACTYL_API_KEY;
+const PTERODACTYL_APP_KEY =
+  process.env.PTERODACTYL_APP_KEY || process.env.PTERODACTYL_API_KEY;
+const PTERODACTYL_CLIENT_KEY =
+  process.env.PTERODACTYL_CLIENT_KEY || process.env.PTERODACTYL_API_KEY;
 
 const api = axios.create({
   baseURL: `${PTERODACTYL_DOMAIN}/api/application`,
   headers: {
-    Authorization: `Bearer ${PTERODACTYL_API_KEY}`,
+    Authorization: `Bearer ${PTERODACTYL_APP_KEY}`,
     "Content-Type": "application/json",
     Accept: "application/json",
   },
@@ -28,7 +23,7 @@ const api = axios.create({
 const clientApi = axios.create({
   baseURL: `${PTERODACTYL_DOMAIN}/api/client`,
   headers: {
-    Authorization: `Bearer ${PTERODACTYL_API_KEY}`,
+    Authorization: `Bearer ${PTERODACTYL_CLIENT_KEY}`,
     "Content-Type": "application/json",
     Accept: "application/json",
   },

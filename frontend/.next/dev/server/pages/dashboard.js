@@ -1,0 +1,13 @@
+var R=require("../chunks/ssr/[turbopack]_runtime.js")("server/pages/dashboard.js")
+R.c("server/chunks/ssr/9e883_next_dist_09b9b27b._.js")
+R.c("server/chunks/ssr/9e883_react-icons_fa_index_mjs_1db3577b._.js")
+R.c("server/chunks/ssr/9e883_react-icons_lib_693f9555._.js")
+R.c("server/chunks/ssr/9e883_lucide-react_dist_esm_icons_f3f04bf8._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__a5da6107._.js")
+R.c("server/chunks/ssr/9e883_08d01a05._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__e6a4d965._.js")
+R.c("server/chunks/ssr/frontend_lib_auth_ee68517b.js")
+R.c("server/chunks/ssr/9e883_8763eb91._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__7f6b7c2d._.js")
+R.m("[project]/frontend/node_modules/next/dist/esm/build/templates/pages.js { INNER_PAGE => \"[project]/frontend/pages/dashboard.js [ssr] (ecmascript)\", INNER_DOCUMENT => \"[project]/frontend/node_modules/next/document.js [ssr] (ecmascript)\", INNER_APP => \"[project]/frontend/pages/_app.js [ssr] (ecmascript)\" } [ssr] (ecmascript)")
+module.exports=R.m("[project]/frontend/node_modules/next/dist/esm/build/templates/pages.js { INNER_PAGE => \"[project]/frontend/pages/dashboard.js [ssr] (ecmascript)\", INNER_DOCUMENT => \"[project]/frontend/node_modules/next/document.js [ssr] (ecmascript)\", INNER_APP => \"[project]/frontend/pages/_app.js [ssr] (ecmascript)\" } [ssr] (ecmascript)").exports

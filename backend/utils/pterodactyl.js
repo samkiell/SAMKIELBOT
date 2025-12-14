@@ -1,4 +1,5 @@
 const axios = require("axios");
+const WebSocket = require("ws");
 const dotenv = require("dotenv");
 const path = require("path");
 
@@ -195,6 +196,83 @@ const createServer = async (deploymentData) => {
   }
 };
 
+// Get Websocket Details
+const getWebsocketDetails = async (uuid) => {
+  try {
+    const response = await clientApi.get(`/servers/${uuid}/websocket`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Monitor Console for Pairing Code
+const monitorConsoleForPairingCode = async (uuid, timeoutMs = 300000) => {
+  let ws;
+  let timer;
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { token, socket } = await getWebsocketDetails(uuid);
+      ws = new WebSocket(socket);
+
+      // Set timeout (default 5 minutes)
+      timer = setTimeout(() => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.close();
+        }
+        resolve(null); // Return null if not found in time
+      }, timeoutMs);
+
+      ws.on("open", () => {
+        ws.send(JSON.stringify({ event: "auth", args: [token] }));
+      });
+
+      ws.on("message", (data) => {
+        try {
+          const msg = JSON.parse(data.toString());
+
+          // On Auth Success, request logs history
+          if (msg.event === "auth success") {
+            ws.send(JSON.stringify({ event: "send logs", args: [null] }));
+          }
+
+          // Check console output
+          if (msg.event === "console output") {
+            const logLine = msg.args[0];
+            // Match pattern for pairing code (e.g. "Pairing Code: AbC1-23d4")
+            const match =
+              logLine.match(
+                /Pairing Code:\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/i
+              ) || logLine.match(/Code:\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/i);
+
+            if (match && match[1]) {
+              clearTimeout(timer);
+              ws.close();
+              resolve(match[1]);
+            }
+          }
+        } catch (parseError) {
+          // Ignore parse errors
+        }
+      });
+
+      ws.on("error", (err) => {
+        console.error("Pterodactyl WS Error:", err.message);
+      });
+
+      ws.on("close", () => {
+        // Resolve null if closed without finding code (unless resolved above)
+        // Note: Promise state cannot change if already resolved.
+        // We'll rely on the timeout or code finding to resolve.
+      });
+    } catch (error) {
+      if (timer) clearTimeout(timer);
+      reject(error);
+    }
+  });
+};
+
 const getServerDetails = async (serverId) => {
   try {
     const response = await api.get(`/servers/${serverId}`);
@@ -277,5 +355,7 @@ module.exports = {
   requestPowerAction,
   deleteServer,
   getResources,
-  waitForInstallation, // Exported
+  waitForInstallation,
+  monitorConsoleForPairingCode,
+  getWebsocketDetails,
 };

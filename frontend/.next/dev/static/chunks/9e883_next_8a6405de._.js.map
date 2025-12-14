@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/SAMKIEL/CODEX/Practise/React%20Projects/samkiel-bot-deployment/frontend/node_modules/next/dynamic.js"],"sourcesContent":["module.exports = require('./dist/shared/lib/dynamic')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}},
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/SAMKIEL/CODEX/Practise/React%20Projects/samkiel-bot-deployment/frontend/node_modules/next/router.js"],"sourcesContent":["module.exports = require('./dist/client/router')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}},
+    {"offset": {"line": 11, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/SAMKIEL/CODEX/Practise/React%20Projects/samkiel-bot-deployment/frontend/node_modules/next/link.js"],"sourcesContent":["module.exports = require('./dist/client/link')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}},
+    {"offset": {"line": 15, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/SAMKIEL/CODEX/Practise/React%20Projects/samkiel-bot-deployment/frontend/node_modules/next/image.js"],"sourcesContent":["module.exports = require('./dist/shared/lib/image-external')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}},
+    {"offset": {"line": 19, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/SAMKIEL/CODEX/Practise/React%20Projects/samkiel-bot-deployment/frontend/node_modules/next/head.js"],"sourcesContent":["module.exports = require('./dist/shared/lib/head')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}}]
+}

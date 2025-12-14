@@ -20,7 +20,7 @@ export default function Terms() {
     }
   };
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 pt-20 p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-8">
       <Head>
         <title>Terms & Conditions - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         <meta name="description" content="Terms & Conditions for SAMKIEL BOT" />

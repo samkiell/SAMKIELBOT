@@ -120,7 +120,7 @@ export default function ProfilePage() {
         <title>Profile - ��������������������� ���������</title>
       </Head>
 
-      <main className="container mx-auto px-4 pt-20 pb-8 md:pb-16 max-w-2xl">
+      <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl">
         {/* Back Button */}
         <div className="mb-6">
           <Link

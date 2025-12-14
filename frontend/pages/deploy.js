@@ -124,7 +124,7 @@ export default function DeployPage() {
         <title>Deploy Bot - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
       </Head>
 
-      <main className="container mx-auto px-4 pt-20 pb-8 md:pb-16 max-w-2xl">
+      <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl">
         {/* Back Button */}
         <div className="mb-6">
           <Link

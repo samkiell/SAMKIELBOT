@@ -100,35 +100,34 @@ export default function BotCard({ deployment, refreshData }) {
       </div>
 
       <div className="space-y-4 mb-4">
-        {/* Pairing Code UI */}
-        {(deployment.status === "awaiting_pairing" ||
-          deployment.pairingCode) && (
-          <div className="bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/20 rounded-lg p-4">
-            <h4 className="flex items-center text-purple-800 dark:text-purple-300 font-semibold mb-2">
-              <Smartphone size={18} className="mr-2" />
-              Link Device Required
-            </h4>
-            <div className="flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md p-3 mb-2">
-              <code className="text-lg font-mono font-bold text-gray-800 dark:text-gray-200 tracking-wider">
-                {deployment.pairingCode || "Loading..."}
-              </code>
-              <button
-                onClick={() => copyToClipboard(deployment.pairingCode)}
-                className="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
-                title="Copy Code"
-              >
-                <Copy size={20} />
-              </button>
+        {(deployment.status === "awaiting_pairing" || deployment.pairingCode) &&
+          !deployment.isActiveDeploy && (
+            <div className="bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/20 rounded-lg p-4">
+              <h4 className="flex items-center text-purple-800 dark:text-purple-300 font-semibold mb-2">
+                <Smartphone size={18} className="mr-2" />
+                Link Device Required
+              </h4>
+              <div className="flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md p-3 mb-2">
+                <code className="text-lg font-mono font-bold text-gray-800 dark:text-gray-200 tracking-wider">
+                  {deployment.pairingCode || "Loading..."}
+                </code>
+                <button
+                  onClick={() => copyToClipboard(deployment.pairingCode)}
+                  className="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                  title="Copy Code"
+                >
+                  <Copy size={20} />
+                </button>
+              </div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                1. Tap notification or go to{" "}
+                <strong>Settings &gt; Linked Devices</strong>
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                2. Tap <strong>Link a Device</strong> &gt; Enter Code
+              </p>
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              1. Tap notification or go to{" "}
-              <strong>Settings &gt; Linked Devices</strong>
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              2. Tap <strong>Link a Device</strong> &gt; Enter Code
-            </p>
-          </div>
-        )}
+          )}
 
         {/* Info */}
         <div className="space-y-1">

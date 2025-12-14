@@ -51,6 +51,12 @@ export default function DeployPage() {
     const pollInterval = setInterval(async () => {
       try {
         const deploymentData = await getDeploymentById(deploymentId);
+        console.log(
+          "Polling Status:",
+          deploymentData.status,
+          "Code:",
+          deploymentData.pairingCode
+        );
 
         // Check for 'installing' or 'running' status. Even 'installing' is a success for 'deployment start'.
         // But if we want to wait for running:
@@ -63,8 +69,15 @@ export default function DeployPage() {
           clearInterval(pollInterval);
           toast.success("Bot is running!");
         }
-        // 2. Awaiting Pairing
-        else if (deploymentData.status === "awaiting_pairing") {
+        // 2. Awaiting Pairing - Check for status OR just presence of code
+        else if (
+          deploymentData.status === "awaiting_pairing" ||
+          deploymentData.pairingCode
+        ) {
+          console.log("Pairing code detected:", deploymentData.pairingCode);
+          if (deploymentStatus !== "pairing") {
+            toast.success("Pairing code received!");
+          }
           setDeployment(deploymentData);
           setDeploymentStatus("pairing");
           setLoading(false);
@@ -89,12 +102,13 @@ export default function DeployPage() {
       } catch (error) {
         console.error("Error polling deployment status:", error);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 2000); // Poll every 2 seconds for faster feedback
 
     // Stop polling after 10 minutes
     setTimeout(() => {
       clearInterval(pollInterval);
       if (deploymentStatus !== "success") {
+        console.log("Polling timed out");
         setError("Deployment timed out. Please check your dashboard.");
         setDeploymentStatus("idle");
         setLoading(false);

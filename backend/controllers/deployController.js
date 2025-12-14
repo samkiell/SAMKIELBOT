@@ -234,7 +234,7 @@ const processDeployment = async (deploymentId) => {
     // ✅ Start the server immediately
     console.log(`Starting server ${pteroData.identifier}...`);
     try {
-      await pterodactyl.requestPowerAction(pteroData.pterodactylUuid, "start");
+      await pterodactyl.requestPowerAction(pteroData.identifier, "start");
       // Update status to likely 'starting' or keep 'installing' as polling will update it.
     } catch (startError) {
       console.error(

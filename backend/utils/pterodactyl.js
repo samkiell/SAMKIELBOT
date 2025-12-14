@@ -255,31 +255,28 @@ const monitorDeployment = async (
             // Strip ANSI codes
             const logLine = stripAnsi(msg.args[0]);
 
-            // 1. Detect Pairing Code
-            // Require "pairing" keyword or standard "Code:" format, but match Alphanumeric XXXX-XXXX
-            // Broad search for pattern: 8 chars, alphanumeric, optional hyphen in middle
-            // Example match: "Pairing Code: K2J5-9B2A" or just "K2J59B2A" if keyword "pairing" is present
-            if (
-              logLine.toLowerCase().includes("pairing") ||
-              logLine.toLowerCase().includes("code")
-            ) {
-              const codeMatch = logLine.match(
-                /([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})/
-              );
-              // Avoid matching "Pairing Code" string itself by checking length or excludes
-              if (codeMatch && codeMatch[1]) {
-                const potentialCode = codeMatch[1];
-                // basic filter to avoid "Pairing" or "Code"
-                if (
-                  !potentialCode.toLowerCase().includes("code") &&
-                  potentialCode.length >= 8
-                ) {
-                  if (onCode) onCode(potentialCode);
-                }
-              }
+            // 1. Detect Strict Pairing Code
+            // Format constraint: "Your Pairing Code : 759P-Z9VD"
+            const strictPairingRegex =
+              /Your Pairing Code\s*:\s*([A-Z0-9]{4}-[A-Z0-9]{4})/;
+            const strictMatch = logLine.match(strictPairingRegex);
+
+            if (strictMatch && strictMatch[1]) {
+              const code = strictMatch[1];
+              console.log(`[Monitor] Found pairing code: ${code}`);
+
+              if (onCode) onCode(code);
+
+              // We don't close immediately here because we might want to wait for "Connected"
+              // But requirements say "Stop scanning once pairing code is detected"?
+              // Actually requirement turned into: "Stop further console monitoring for that server"
+              // So we resolve and close.
+              clearTimeout(timer);
+              ws.close();
+              resolve(code);
             }
 
-            // 2. Detect Success/Connection
+            // 2. Detect Success/Connection (Optional if we stop at pairing code)
             const successMatch =
               /Bot Connected|Opened connection|Client ready|Success/i.test(
                 logLine

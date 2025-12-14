@@ -183,7 +183,7 @@ const monitorDeploymentFlow = async (deploymentId, identifier) => {
     console.log(`Starting monitoring for ${identifier}`);
     await pterodactyl.monitorDeployment(identifier, {
       onCode: async (code) => {
-        console.log(`Pairing code found for ${identifier}: ${code}`);
+        console.log(`[Monitor] Pairing code found for ${identifier}: ${code}`);
         await Deployment.findByIdAndUpdate(deploymentId, {
           pairingCode: code,
           status: "awaiting_pairing",

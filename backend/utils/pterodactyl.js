@@ -159,6 +159,7 @@ const createServer = async (deploymentData) => {
         BOT_NUMBER: botNumber,
         REPO_URL: "https://github.com/samkiell/SAMKIEL-AI",
         BRANCH: branch,
+        START_CMD: "npm install && node index.js",
       },
       limits: {
         memory: memory,

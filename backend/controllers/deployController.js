@@ -142,7 +142,8 @@ const processDeployment = async (deploymentId) => {
     // ✅ Create one branch per bot. Using botNumber to identify it?
     // User flow: "pushes it into settings.js... then deployment start".
     // We create a specific branch for this user/deployment to avoid conflicts.
-    const branchName = `deploy-bot-${deployment.botNumber}`;
+    // SHORTENED NAME to fit Pterodactyl 20-char limit (bot-1234567890 = 14 chars)
+    const branchName = `bot-${deployment.botNumber}`;
 
     // Check if branch exists, if so, update validation or force update
     // We'll try to get the ref, if fails, create it.

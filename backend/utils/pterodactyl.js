@@ -112,14 +112,34 @@ const createServer = async (deploymentData) => {
     // OR safer: rely on Pterodactyl to assign? Pterodactyl API requires `allocation.default` to be an ID.
     // We must fetch allocations first.
 
-    // Fetch free allocations on the node
-    const allocations = await api.get(
-      `/nodes/${nodeId}/allocations?filter[assigned]=false`
-    );
-    if (allocations.data.data.length === 0)
-      throw new Error("No free allocations (ports) available on the node.");
+    // Fetch allocations on the node and find a free one
+    // Note: The API does not allow filtering by 'assigned' status directly.
+    // We will fetch allocations and look for one where assigned is false.
+    let defaultAllocation = null;
+    let page = 1;
 
-    const defaultAllocation = allocations.data.data[0].attributes.id;
+    while (!defaultAllocation && page <= 5) {
+      // Check first 5 pages max to avoid infinite loop
+      const allocationsResponse = await api.get(
+        `/nodes/${nodeId}/allocations?page=${page}`
+      );
+      const allocationList = allocationsResponse.data.data;
+
+      if (allocationList.length === 0) break;
+
+      const freeAllocation = allocationList.find((a) => !a.attributes.assigned);
+      if (freeAllocation) {
+        defaultAllocation = freeAllocation.attributes.id;
+      } else {
+        page++;
+      }
+    }
+
+    if (!defaultAllocation) {
+      throw new Error(
+        "No free allocations (ports) available on the node after checking 5 pages."
+      );
+    }
 
     const payload = {
       name: botName,

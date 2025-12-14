@@ -613,3 +613,320 @@
 </html>
 
 [00:14:52.890] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5a0713b34819dcb87902/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:15:24.350] Browser LOG     🟢 Attached token to request: /deploy/693e5a0713b34819dcb87902/status
+[00:15:24.888] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5a0713b34819dcb87902/status</pre>
+</body>
+</html>
+
+[00:15:24.888] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5a0713b34819dcb87902/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:15:27.325] Browser LOG     🟢 Attached token to request: /deploy/693e5a0713b34819dcb87902/status
+[00:15:27.325] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5a0713b34819dcb87902/status</pre>
+</body>
+</html>
+
+[00:15:27.325] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5a0713b34819dcb87902/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:15:31.674] Browser LOG     ⚙️ AuthProvider initialized...
+[00:15:31.674] Browser LOG     📦 Saved token detected: {"exp":1768277678,"iat":1765685678,"id":"68fbcb61532267db0851afc6"}
+[00:15:31.674] Browser LOG     📆 Expiration: "2026-01-13T04:14:38.000Z"
+[00:15:31.674] Browser LOG     ✅ Token still valid, restoring session...
+[00:15:31.674] Browser LOG     ⚙️ AuthProvider initialized...
+[00:15:31.674] Browser LOG     📦 Saved token detected: {"exp":1768277678,"iat":1765685678,"id":"68fbcb61532267db0851afc6"}
+[00:15:31.674] Browser LOG     📆 Expiration: "2026-01-13T04:14:38.000Z"
+[00:15:31.674] Browser LOG     ✅ Token still valid, restoring session...
+[00:15:31.843] Browser WARN    Image with src "/SAMKIELBOT-LOGO.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:15:32.906] Browser LOG     🟢 Attached token to request: /deploy
+[00:15:32.906] Browser LOG     🟢 Attached token to request: /deploy
+[00:15:32.906] Browser LOG     🟢 Attached token to request: /deploy
+[00:15:36.497] Browser LOG     🟢 Attached token to request: /deploy/693e5a0713b34819dcb87902/control
+[00:15:36.497] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/deploy/693e5a0713b34819dcb87902/control</pre>
+</body>
+</html>
+
+[00:15:36.497] Browser ERROR   {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","data":"{\"action\":\"restart\"}","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg","Content-Type":"application/json"},"maxBodyLength":-1,"maxContentLength":-1,"method":"post","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5a0713b34819dcb87902/control","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async controlBot (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:567:22)\n    at async handleControl (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__16640615._.js:1153:13)","status":404}
+[00:15:40.008] Browser LOG     🟢 Attached token to request: /deploy/693e5a0713b34819dcb87902
+[00:15:41.581] Browser LOG     🟢 Attached token to request: /deploy
+[00:15:55.809] Browser LOG     🟢 Attached token to request: /deploy/create
+[00:16:01.274] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:01.274] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:01.274] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:06.253] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:06.253] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:06.253] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:12.891] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:12.891] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:12.891] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:16.388] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:16.388] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:16.388] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:22.897] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:22.897] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:22.897] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:28.061] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:29.026] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:29.026] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:32.890] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:32.890] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:32.890] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:37.903] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:37.903] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:37.903] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:42.891] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:42.891] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:42.891] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:47.894] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:47.894] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:47.894] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:52.906] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:52.906] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:52.906] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:16:57.898] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:16:57.898] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:16:57.898] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:17:02.900] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:17:02.900] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:17:02.900] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:17:07.897] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:17:07.897] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:17:07.897] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:17:12.900] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:17:12.901] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:17:12.901] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:17:17.887] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:17:17.887] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:17:17.887] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:17:52.895] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:17:52.895] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:17:52.895] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:18:52.891] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:18:52.891] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:18:52.891] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:19:52.895] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:19:52.895] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:19:52.895] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:20:52.888] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:20:52.888] Browser ERROR   🚨 Response error: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot GET /api/deploy/693e5c72b254e979dad82c3e/status</pre>
+</body>
+</html>
+
+[00:20:52.888] Browser ERROR   Error polling deployment status: {"code":"ERR_BAD_REQUEST","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Request failed with status code 404","name":"AxiosError","stack":"AxiosError: Request failed with status code 404\n    at settle (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:1954:16)\n    at XMLHttpRequest.onloadend (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2456:179)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40","status":404}
+[00:21:55.936] Browser LOG     🟢 Attached token to request: /deploy/693e5c72b254e979dad82c3e/status
+[00:21:55.936] Browser ERROR   🚨 Response error: undefined undefined
+[00:21:55.936] Browser ERROR   Error polling deployment status: {"code":"ERR_NETWORK","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:5000/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZmJjYjYxNTMyMjY3ZGIwODUxYWZjNiIsImlhdCI6MTc2NTY4NTY3OCwiZXhwIjoxNzY4Mjc3Njc4fQ.GKSl7liSOaRV0zbQzRsZzzMxgs4El9iC_YG-dZKkcBg"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/deploy/693e5c72b254e979dad82c3e/status","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Network Error","name":"AxiosError","stack":"AxiosError: Network Error\n    at XMLHttpRequest.handleError (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:2502:25)\n    at Axios.request (http://localhost:3000/_next/static/chunks/9e883_axios_lib_afe0686f._.js:3225:49)\n    at async getDeploymentById (http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:563:22)\n    at async http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__3d2be3ef._.js:872:40"}

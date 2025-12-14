@@ -23,14 +23,29 @@ export default function Login() {
     const read = localStorage.getItem("samkiel_read_terms") === "true";
     if (agreed || read) setAgreeToTerms(true);
   }, []);
-  const { login, user } = useAuth();
+  const { login, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
-      router.push("/dashboard");
+    if (!authLoading && user) {
+      const returnRoute = sessionStorage.getItem("return_route");
+      if (returnRoute) {
+        sessionStorage.removeItem("return_route");
+        router.push(returnRoute);
+      } else {
+        router.push("/dashboard");
+      }
     }
-  }, [user, router]);
+  }, [user, authLoading, router]);
+
+  // Loading state handling to prevent flash
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;

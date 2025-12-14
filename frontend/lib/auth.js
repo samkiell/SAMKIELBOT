@@ -26,6 +26,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
     setUser(null);
     setToken(null);
+
+    // Save return route if not on login/register/home
+    if (
+      router.pathname !== "/login" &&
+      router.pathname !== "/register" &&
+      router.pathname !== "/"
+    ) {
+      sessionStorage.setItem("return_route", router.asPath);
+    }
+
     toast.success(`Logged out successfully.`, { duration: 3000 });
     router.push("/login");
   };

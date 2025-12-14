@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,13 +20,23 @@ import {
 } from "react-icons/fa";
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (!authLoading && user) {
+      setIsRedirecting(true); // Keep showing spinner/nothing while redirect happens
       window.location.href = "/dashboard";
     }
-  }, [user]);
+  }, [user, authLoading]);
+
+  if (authLoading || isRedirecting) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
 
   const fadeUp = {
     initial: { opacity: 0, y: 20 },

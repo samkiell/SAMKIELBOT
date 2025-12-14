@@ -16,7 +16,7 @@ export default function DeployPage() {
   const [error, setError] = useState("");
   const [deployment, setDeployment] = useState(null);
   const [deploymentStatus, setDeploymentStatus] = useState("idle"); // idle, deploying, success
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const handleChange = (e) => {
@@ -89,7 +89,18 @@ export default function DeployPage() {
     }, 600000); // 10 minutes
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
+
   if (!user) {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("return_route", router.asPath);
+    }
     router.push("/login");
     return null;
   }

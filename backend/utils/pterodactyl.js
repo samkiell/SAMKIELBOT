@@ -154,7 +154,7 @@ const createServer = async (deploymentData) => {
       egg: eggId,
       docker_image: "ghcr.io/parkervcp/yolks:nodejs_22", // Default common image
       startup:
-        "if [ ! -f /home/container/package.json ]; then echo 'Repo not found, cloning...'; git clone -b $BRANCH $REPO_URL .; fi; npm install; echo \"Writing settings.js...\"; echo \"module.exports = { botNumber: '$BOT_NUMBER' }\" > settings.js; cat settings.js; node index.js",
+        "if [ ! -f /home/container/package.json ]; then echo 'SAMKIEL AI couldnt find any files on the panel, cloning...'; git clone -b $BRANCH $REPO_URL .; fi; npm install; echo \"Checking settings.js from repo...\"; cat settings.js; node index.js",
       environment: {
         BOT_NUMBER: botNumber,
         REPO_URL: "https://github.com/samkiell/SAMKIEL-AI",

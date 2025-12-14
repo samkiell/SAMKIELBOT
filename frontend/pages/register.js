@@ -28,14 +28,23 @@ export default function Register() {
     const read = localStorage.getItem("samkiel_read_terms") === "true";
     if (agreed || read) setAgreeToTerms(true);
   }, []);
-  const { register, user } = useAuth();
+  const { register, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
+    if (!authLoading && user) {
+      // Check for return route or unrelated
       router.push("/dashboard");
     }
-  }, [user, router]);
+  }, [user, authLoading, router]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;

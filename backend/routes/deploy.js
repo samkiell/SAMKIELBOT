@@ -4,6 +4,7 @@ const {
   getDeployments,
   updateDeployment,
   createDeployment,
+  deleteDeployment, // Import this
 } = require("../controllers/deployController");
 const { protect } = require("../utils/authMiddleware");
 
@@ -14,6 +15,7 @@ router.route("/create").post(protect, createDeployment);
 router
   .route("/:id")
   .put(protect, updateDeployment)
+  .delete(protect, deleteDeployment) // Added DELETE route
   .get(protect, async (req, res) => {
     try {
       const Deployment = require("../models/Deployment");

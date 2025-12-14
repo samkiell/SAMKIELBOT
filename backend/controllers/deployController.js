@@ -29,8 +29,46 @@ const deployBot = async (req, res) => {
 // @access  Private
 const getDeployments = async (req, res) => {
   try {
-    const deployments = await Deployment.find({ user: req.user.id });
+    // Sort by createdAt descending (newest first)
+    const deployments = await Deployment.find({ user: req.user.id }).sort({
+      createdAt: -1,
+    });
     successResponse(res, deployments);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Delete a bot deployment
+// @route   DELETE /api/deploy/:id
+// @access  Private
+const deleteDeployment = async (req, res) => {
+  try {
+    const deployment = await Deployment.findById(req.params.id);
+
+    if (!deployment) {
+      return errorResponse(res, "Deployment not found", 404);
+    }
+
+    if (deployment.user.toString() !== req.user.id) {
+      return errorResponse(res, "Not authorized", 401);
+    }
+
+    // Attempt to delete from Pterodactyl if ID exists
+    if (deployment.pterodactylId) {
+      try {
+        await pterodactyl.deleteServer(deployment.pterodactylId);
+      } catch (pteroError) {
+        console.error(
+          "Failed to delete Pterodactyl server:",
+          pteroError.message
+        );
+        // We continue to delete from DB even if Pterodactyl fails (orphaned record cleanup)
+      }
+    }
+
+    await deployment.deleteOne();
+    successResponse(res, { message: "Deployment removed" });
   } catch (error) {
     errorResponse(res, error.message, 500);
   }
@@ -257,4 +295,6 @@ module.exports = {
   getDeployments,
   updateDeployment,
   createDeployment,
+  deleteDeployment, // Exported
+  // ... other exports ...
 };

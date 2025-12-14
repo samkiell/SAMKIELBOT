@@ -154,11 +154,11 @@ const createServer = async (deploymentData) => {
       egg: eggId,
       docker_image: "ghcr.io/parkervcp/yolks:nodejs_22", // Default common image
       startup:
-        "if [ -f /home/container/package.json ]; then npm install; fi; echo \"module.exports = { botNumber: '{{BOT_NUMBER}}' }\" > settings.js; node index.js",
+        "if [ ! -f /home/container/package.json ]; then echo 'Repo not found, cloning...'; git clone -b {{GIT_BRANCH}} {{GIT_REPO_URL}} .; fi; npm install; echo \"module.exports = { botNumber: '{{BOT_NUMBER}}' }\" > settings.js; node index.js",
       environment: {
         BOT_NUMBER: botNumber,
-        REPO_URL: "https://github.com/samkiell/SAMKIEL-AI",
-        BRANCH: branch,
+        GIT_REPO_URL: "https://github.com/samkiell/SAMKIEL-AI",
+        GIT_BRANCH: branch,
         START_CMD: "node index.js",
       },
       limits: {

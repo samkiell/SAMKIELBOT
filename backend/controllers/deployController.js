@@ -218,14 +218,31 @@ const processDeployment = async (deploymentId) => {
     });
 
     // ✅ Update DB
-    await Deployment.findByIdAndUpdate(deploymentId, {
-      pterodactylId: pteroData.pterodactylId,
-      pterodactylUuid: pteroData.pterodactylUuid,
-      identifier: pteroData.identifier,
-      nodeId: pteroData.nodeId,
-      eggId: pteroData.eggId,
-      status: "installing", // Pterodactyl starts as installing
-    });
+    const savedServer = await Deployment.findByIdAndUpdate(
+      deploymentId,
+      {
+        pterodactylId: pteroData.pterodactylId,
+        pterodactylUuid: pteroData.pterodactylUuid,
+        identifier: pteroData.identifier,
+        nodeId: pteroData.nodeId,
+        eggId: pteroData.eggId,
+        status: "installing", // Will be 'running' after we start it? Or installing while it clones?
+      },
+      { new: true }
+    );
+
+    // ✅ Start the server immediately
+    console.log(`Starting server ${pteroData.identifier}...`);
+    try {
+      await pterodactyl.requestPowerAction(pteroData.pterodactylUuid, "start");
+      // Update status to likely 'starting' or keep 'installing' as polling will update it.
+    } catch (startError) {
+      console.error(
+        "Error starting server after creation:",
+        startError.message
+      );
+      // Don't fail the whole request, as the server IS created.
+    }
   } catch (error) {
     console.error("Deployment error:", error);
     await Deployment.findByIdAndUpdate(deploymentId, {

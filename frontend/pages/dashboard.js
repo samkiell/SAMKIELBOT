@@ -95,7 +95,11 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {deployments.map((deployment) => (
-              <BotCard key={deployment._id} deployment={deployment} />
+              <BotCard
+                key={deployment._id}
+                deployment={deployment}
+                refreshData={fetchDeployments}
+              />
             ))}
             {deployments.length === 0 && (
               <div className="col-span-full text-center py-16">

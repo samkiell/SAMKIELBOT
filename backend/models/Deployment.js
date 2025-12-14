@@ -16,8 +16,23 @@ const deploymentSchema = new mongoose.Schema({
       message: "Bot number must be a valid international number (10-15 digits)",
     },
   },
-  serviceId: {
+  pterodactylId: {
+    type: Number,
+  },
+  pterodactylUuid: {
     type: String,
+  },
+  identifier: {
+    type: String,
+  },
+  nodeId: {
+    type: Number,
+  },
+  eggId: {
+    type: Number,
+  },
+  serviceId: {
+    type: String, // Deprecated Render ID, kept for legacy or fallback
   },
   pairingCode: {
     type: String,

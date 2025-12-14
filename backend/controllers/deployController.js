@@ -2,6 +2,7 @@ const Deployment = require("../models/Deployment");
 const { successResponse, errorResponse } = require("../utils/response");
 const axios = require("axios");
 const { Octokit } = require("@octokit/rest");
+const pterodactyl = require("../utils/pterodactyl");
 
 // @desc    Deploy a bot manually
 // @route   POST /api/deploy
@@ -96,11 +97,11 @@ const processDeployment = async (deploymentId) => {
 
     // Check for GitHub token
     if (!process.env.GITHUB_TOKEN) {
+      /* ... same error handling ... */
       console.error("GITHUB_TOKEN not found in environment variables.");
       await Deployment.findByIdAndUpdate(deploymentId, {
         status: "failed",
-        errorMessage:
-          "GitHub token not configured. Please check environment variables.",
+        errorMessage: "GitHub token not configured.",
       });
       return;
     }
@@ -111,10 +112,15 @@ const processDeployment = async (deploymentId) => {
     const baseBranch = "main";
 
     // ✅ Fetch settings.js from repo
-    const settingsResponse = await octokit.request(
-      "GET /repos/{owner}/{repo}/contents/{path}",
-      { owner, repo, path: "settings.js", ref: baseBranch }
-    );
+    let settingsResponse;
+    try {
+      settingsResponse = await octokit.request(
+        "GET /repos/{owner}/{repo}/contents/{path}",
+        { owner, repo, path: "settings.js", ref: baseBranch }
+      );
+    } catch (e) {
+      throw new Error("Could not fetch settings.js from repo.");
+    }
 
     const settingsContent = Buffer.from(
       settingsResponse.data.content,
@@ -132,141 +138,99 @@ const processDeployment = async (deploymentId) => {
         `ownerNumber: jidNormalizedUser("${deployment.botNumber}@s.whatsapp.net")`
       );
 
-    // ✅ Create a new branch
-    const branchName = `blackboxai/bot-${deployment.botNumber}-${Date.now()}`;
-    const baseRef = await octokit.git.getRef({
-      owner,
-      repo,
-      ref: `heads/${baseBranch}`,
-    });
+    // ✅ Create one branch per bot. Using botNumber to identify it?
+    // User flow: "pushes it into settings.js... then deployment start".
+    // We create a specific branch for this user/deployment to avoid conflicts.
+    const branchName = `deploy-bot-${deployment.botNumber}`;
 
-    await octokit.git.createRef({
-      owner,
-      repo,
-      ref: `refs/heads/${branchName}`,
-      sha: baseRef.data.object.sha,
-    });
+    // Check if branch exists, if so, update validation or force update
+    // We'll try to get the ref, if fails, create it.
+    let sha; // sha of the new file
+    try {
+      // Try creating branch from main
+      const baseRef = await octokit.git.getRef({
+        owner,
+        repo,
+        ref: `heads/${baseBranch}`,
+      });
 
-    // ✅ Commit updated settings.js
+      // Check if our branch exists
+      try {
+        await octokit.git.getRef({ owner, repo, ref: `heads/${branchName}` });
+        // It exists, we will commit on top of it or reset it?
+        // Ideally we reset or just update the file in it.
+      } catch (err) {
+        // Create branch
+        await octokit.git.createRef({
+          owner,
+          repo,
+          ref: `refs/heads/${branchName}`,
+          sha: baseRef.data.object.sha,
+        });
+      }
+    } catch (e) {
+      console.error("Git Branch Error", e);
+      throw new Error("Failed to manage Git branches.");
+    }
+
+    // Now update the file in that branch
+    // We need the SHA of the file IN THAT BRANCH if it differs?
+    // Simplified: Just get the file from the branch to get SHA, or use the one we fetched if branch is fresh.
+    // Safer: Get file from branch.
+    let currentFileSha;
+    try {
+      const fileInBranch = await octokit.request(
+        "GET /repos/{owner}/{repo}/contents/{path}",
+        {
+          owner,
+          repo,
+          path: "settings.js",
+          ref: branchName,
+        }
+      );
+      currentFileSha = fileInBranch.data.sha;
+    } catch (e) {
+      // If file doesn't exist in branch (unlikely if branched from main), use null?
+      // logic implies it's there.
+      // If it was a new branch from main, it has the file.
+      // If we just created it, it has the main's file.
+      currentFileSha = settingsResponse.data.sha;
+    }
+
     await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
       path: "settings.js",
-      message: `Set bot number to ${deployment.botNumber}`,
+      message: `Set botNumber to ${deployment.botNumber}`,
       content: Buffer.from(modifiedSettings).toString("base64"),
       branch: branchName,
-      sha: settingsResponse.data.sha,
+      sha: currentFileSha,
     });
 
-    // ✅ Deploy via Render API
-    const renderResponse = await axios.post(
-      "https://api.render.com/v1/services",
-      {
-        ownerId: process.env.RENDER_OWNER_ID,
-        type: "web_service",
-        name: `samkiel-bot-${deployment.botNumber}`,
-        repo: `https://github.com/${owner}/${repo}`,
-        branch: branchName,
-        plan: "free",
-        serviceDetails: {
-          runtime: "node",
-          buildCommand: "npm install",
-          startCommand: "npm start",
-          envSpecificDetails: {
-            plan: "free",
-            node: {
-              version: "18",
-            },
-            buildCommand: "npm install",
-            startCommand: "npm start",
-          },
-        },
+    // ✅ Deploy via Pterodactyl API
+    const pteroData = await pterodactyl.createServer({
+      botName: `Bot ${deployment.botNumber}`,
+      botNumber: deployment.botNumber,
+      userId: deployment.user,
+      branch: branchName,
+    });
 
-        envVars: [{ key: "NODE_ENV", value: "production" }],
-        plan: "free",
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.RENDER_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const serviceId = renderResponse.data.id;
-
-    // ✅ Update DB with Render service info
+    // ✅ Update DB
     await Deployment.findByIdAndUpdate(deploymentId, {
-      serviceId,
-      status: "running",
+      pterodactylId: pteroData.pterodactylId,
+      pterodactylUuid: pteroData.pterodactylUuid,
+      identifier: pteroData.identifier,
+      nodeId: pteroData.nodeId,
+      eggId: pteroData.eggId,
+      status: "installing", // Pterodactyl starts as installing
     });
-
-    // ✅ Poll for pairing code
-    await pollForPairingCode(deploymentId, serviceId);
   } catch (error) {
     console.error("Deployment error:", error);
-
-    let errorMessage = "Deployment failed due to an unexpected error.";
-
-    if (error.status === 401) {
-      errorMessage =
-        "Unauthorized — check your GitHub or Render API credentials.";
-    } else if (error.status === 403) {
-      errorMessage = "Access forbidden — verify GitHub token permissions.";
-    } else if (error.status === 404) {
-      errorMessage = "Repository or file not found.";
-    } else if (error.code === "ENOTFOUND" || error.code === "ECONNREFUSED") {
-      errorMessage = "Network error — please check your internet connection.";
-    }
-
     await Deployment.findByIdAndUpdate(deploymentId, {
       status: "failed",
-      errorMessage,
+      errorMessage: error.message || "Deployment failed.",
     });
   }
-};
-
-// @helper: Poll Render logs for pairing code
-const pollForPairingCode = async (deploymentId, serviceId) => {
-  const maxAttempts = 30; // Retry for ~5 minutes
-  let attempts = 0;
-
-  while (attempts < maxAttempts) {
-    try {
-      const logsResponse = await axios.get(
-        `https://api.render.com/v1/services/${serviceId}/logs`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.RENDER_API_KEY}`,
-          },
-        }
-      );
-
-      const logs = logsResponse.data;
-      const pairingCodeMatch = logs
-        .join("\n")
-        .match(/(\d{6})\s*(?:pairing code|is your code)/i);
-
-      if (pairingCodeMatch) {
-        await Deployment.findByIdAndUpdate(deploymentId, {
-          pairingCode: pairingCodeMatch[1],
-          status: "running",
-        });
-        return;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 10000)); // wait 10s
-      attempts++;
-    } catch (error) {
-      console.error("Error polling logs:", error.message);
-      attempts++;
-    }
-  }
-
-  await Deployment.findByIdAndUpdate(deploymentId, {
-    status: "failed",
-    errorMessage: "Pairing code not found within timeout period.",
-  });
 };
 
 module.exports = {

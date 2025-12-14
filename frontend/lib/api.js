@@ -82,12 +82,12 @@ export const updateProfile = async (profileData) => {
 // Deploy API
 export const deployBot = async (deployData) => {
   const response = await api.post("/deploy/create", deployData);
-  return response.data.data;
+  return response.data.server || response.data.data; // Adjusted to backend response structure
 };
 
 export const getDeployments = async () => {
   const response = await api.get("/deploy");
-  return response.data.data;
+  return response.data.data || response.data; // Adjust based on controller response structure (backend sends successResponse(res, deployments))
 };
 
 export const updateDeployment = async (id, updateData) => {
@@ -96,8 +96,18 @@ export const updateDeployment = async (id, updateData) => {
 };
 
 export const getDeploymentById = async (id) => {
-  const response = await api.get(`/deploy/${id}`);
-  return response.data.data;
+  const response = await api.get(`/deploy/${id}/status`); // Adjusted path to use getDeploymentStatus
+  return response.data;
+};
+
+export const controlBot = async (id, action) => {
+  const response = await api.post(`/deploy/${id}/control`, { action }); // start, stop, restart, kill
+  return response.data;
+};
+
+export const deleteBot = async (id) => {
+  const response = await api.delete(`/deploy/${id}`);
+  return response.data;
 };
 
 // Update API

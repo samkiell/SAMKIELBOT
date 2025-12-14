@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 
 export default function DeployPage() {
   const [formData, setFormData] = useState({
+    botName: "",
     botNumber: "",
   });
   const [loading, setLoading] = useState(false);
@@ -51,12 +52,17 @@ export default function DeployPage() {
       try {
         const deploymentData = await getDeploymentById(deploymentId);
 
-        if (deploymentData.pairingCode) {
+        // Check for 'installing' or 'running' status. Even 'installing' is a success for 'deployment start'.
+        // But if we want to wait for running:
+        if (
+          deploymentData.status === "running" ||
+          deploymentData.status === "installing"
+        ) {
           setDeployment(deploymentData);
           setDeploymentStatus("success");
           setLoading(false);
           clearInterval(pollInterval);
-          toast.success("Bot deployed successfully! Pairing code retrieved.");
+          toast.success("Server created successfully!");
         } else if (deploymentData.status === "failed") {
           const errorMsg =
             deploymentData.errorMessage ||
@@ -126,6 +132,21 @@ export default function DeployPage() {
 
           {deploymentStatus === "idle" && (
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Bot Name
+                </label>
+                <input
+                  type="text"
+                  name="botName"
+                  value={formData.botName}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                  placeholder="My Awesome Bot"
+                  required
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                   WhatsApp Bot Number
@@ -199,19 +220,16 @@ export default function DeployPage() {
               </h3>
               <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  Your pairing code is:
+                  Server is {deployment.status}. Check dashboard for details.
                 </p>
-                <p className="text-2xl font-mono font-bold text-indigo-600 dark:text-indigo-400">
-                  {deployment.pairingCode}
-                </p>
-                <button
-                  onClick={() =>
-                    navigator.clipboard.writeText(deployment.pairingCode)
-                  }
-                  className="mt-2 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 underline"
-                >
-                  Copy to clipboard
-                </button>
+                <div className="flex gap-2 justify-center">
+                  <button
+                    onClick={() => router.push("/dashboard")}
+                    className="bg-indigo-600 text-white px-4 py-2 rounded"
+                  >
+                    Go to Dashboard
+                  </button>
+                </div>
               </div>
               <button
                 onClick={() => router.push("/dashboard")}

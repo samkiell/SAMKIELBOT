@@ -8,9 +8,6 @@ self.__BUILD_MANIFEST = {
   "/login": [
     "static/chunks/pages/login.js"
   ],
-  "/register": [
-    "static/chunks/pages/register.js"
-  ],
   "/terms": [
     "static/chunks/pages/terms.js"
   ],

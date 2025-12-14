@@ -31,6 +31,14 @@ const clientApi = axios.create({
 
 // Helper to find the Node.js Egg
 const findNodeJSEgg = async () => {
+  // If IDs are provided in .env, use them to skip the API lookup (avoids needing 'Read Nests' permission)
+  if (process.env.PTERODACTYL_NEST_ID && process.env.PTERODACTYL_EGG_ID) {
+    return {
+      nestId: parseInt(process.env.PTERODACTYL_NEST_ID),
+      eggId: parseInt(process.env.PTERODACTYL_EGG_ID),
+    };
+  }
+
   try {
     const nests = await api.get("/nests");
     for (const nest of nests.data.data) {
@@ -53,6 +61,10 @@ const findNodeJSEgg = async () => {
 
 // Helper to find the Node by IP (or pick first)
 const findNode = async (ip) => {
+  if (process.env.PTERODACTYL_NODE_ID) {
+    return parseInt(process.env.PTERODACTYL_NODE_ID);
+  }
+
   try {
     const nodes = await api.get("/nodes");
     // If IP provided, try to match, else return first

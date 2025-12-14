@@ -154,7 +154,7 @@ const createServer = async (deploymentData) => {
       egg: eggId,
       docker_image: "ghcr.io/parkervcp/yolks:nodejs_22", // Default common image
       startup:
-        "if [ ! -f /home/container/package.json ]; then echo 'Repo not found, cloning...'; git clone -b {{BRANCH}} {{REPO_URL}} .; fi; npm install; echo \"module.exports = { botNumber: '{{BOT_NUMBER}}' }\" > settings.js; node index.js",
+        "if [ ! -f /home/container/package.json ]; then echo 'Repo not found, cloning...'; git clone -b {{BRANCH}} {{REPO_URL}} .; fi; npm install; echo \"Writing settings.js...\"; echo \"module.exports = { botNumber: '{{BOT_NUMBER}}' }\" > settings.js; cat settings.js; node index.js",
       environment: {
         BOT_NUMBER: botNumber,
         REPO_URL: "https://github.com/samkiell/SAMKIEL-AI",
@@ -234,10 +234,48 @@ const deleteServer = async (serverId) => {
   }
 };
 
+// Helper to wait for installation to complete
+const waitForInstallation = async (identifier) => {
+  const maxRetries = 20; // Wait up to ~100 seconds
+  const delay = 5000; // 5 seconds
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await clientApi.get(`/servers/${identifier}`);
+      const isInstalling = response.data.attributes.is_installing;
+
+      if (!isInstalling) {
+        return true; // Installation complete
+      }
+
+      console.log(
+        `Server ${identifier} is still installing... (Attempt ${
+          i + 1
+        }/${maxRetries})`
+      );
+    } catch (error) {
+      console.error(
+        `Error checking installation status for ${identifier}:`,
+        error.message
+      );
+    }
+
+    // Wait before next poll
+    await new Promise((resolve) => setTimeout(resolve, delay));
+  }
+
+  throw new Error(
+    `Server ${identifier} failed to finish installing after ${
+      maxRetries * delay
+    }ms`
+  );
+};
+
 module.exports = {
   createServer,
   getServerDetails,
   requestPowerAction,
   deleteServer,
   getResources,
+  waitForInstallation, // Exported
 };

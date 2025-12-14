@@ -269,15 +269,21 @@ const processDeployment = async (deploymentId) => {
       { new: true }
     );
 
-    // ✅ Start the server immediately
-    console.log(`Starting server ${pteroData.identifier}...`);
+    // ✅ Start the server after installation completes
+    console.log(
+      `Waiting for server ${pteroData.identifier} to finish installing...`
+    );
     try {
+      await pterodactyl.waitForInstallation(pteroData.identifier);
+
+      console.log(`Starting server ${pteroData.identifier}...`);
       await pterodactyl.requestPowerAction(pteroData.identifier, "start");
+
       // Update status to likely 'starting' or keep 'installing' as polling will update it.
     } catch (startError) {
       console.error(
         "Error starting server after creation:",
-        startError.message
+        startError.response?.data || startError.message
       );
       // Don't fail the whole request, as the server IS created.
     }

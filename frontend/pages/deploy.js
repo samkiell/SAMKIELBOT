@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { deployBot, getDeploymentById } from "../lib/api";
 import { useAuth } from "../lib/auth";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Copy, Smartphone } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function DeployPage() {
@@ -54,16 +54,24 @@ export default function DeployPage() {
 
         // Check for 'installing' or 'running' status. Even 'installing' is a success for 'deployment start'.
         // But if we want to wait for running:
-        if (
-          deploymentData.status === "running" ||
-          deploymentData.status === "installing"
-        ) {
+        // Check for statuses
+        // 1. Success (Running)
+        if (deploymentData.status === "running") {
           setDeployment(deploymentData);
           setDeploymentStatus("success");
           setLoading(false);
           clearInterval(pollInterval);
-          toast.success("Server created successfully!");
-        } else if (deploymentData.status === "failed") {
+          toast.success("Bot is running!");
+        }
+        // 2. Awaiting Pairing
+        else if (deploymentData.status === "awaiting_pairing") {
+          setDeployment(deploymentData);
+          setDeploymentStatus("pairing");
+          setLoading(false);
+          // Don't clear interval, wait for running
+        }
+        // 3. Failed
+        else if (deploymentData.status === "failed") {
           const errorMsg =
             deploymentData.errorMessage ||
             "Deployment failed. Please try again.";
@@ -72,6 +80,11 @@ export default function DeployPage() {
           setLoading(false);
           clearInterval(pollInterval);
           toast.error(errorMsg);
+        }
+        // 4. Intermediate states (installing, starting, creating)
+        else {
+          // Just update deployment object to reflect current intermediate status like 'installing' or 'starting'
+          setDeployment(deploymentData);
         }
       } catch (error) {
         console.error("Error polling deployment status:", error);
@@ -203,9 +216,66 @@ export default function DeployPage() {
                 Deploying your bot...
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                This may take a few minutes. Please wait while we set up your
-                WhatsApp bot.
+                Current Status:{" "}
+                <span className="font-semibold text-indigo-600 dark:text-indigo-400 capitalize">
+                  {deployment?.status || "Initializing"}
+                </span>
               </p>
+              <p className="text-sm text-gray-500 mt-2">
+                This may take a few minutes. Please wait...
+              </p>
+            </div>
+          )}
+
+          {deploymentStatus === "pairing" && deployment && (
+            <div className="text-center py-4">
+              <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Smartphone size={32} className="text-purple-600" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">
+                Link Device Required
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Your bot is ready! Link your WhatsApp account to start.
+              </p>
+
+              <div className="bg-purple-50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/20 rounded-lg p-6 max-w-md mx-auto mb-6">
+                <div className="flex items-center justify-between bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md p-4 mb-4">
+                  <code className="text-2xl font-mono font-bold text-gray-800 dark:text-gray-200 tracking-wider">
+                    {deployment.pairingCode || "Loading code..."}
+                  </code>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(deployment.pairingCode);
+                      toast.success("Copied!");
+                    }}
+                    className="text-gray-500 hover:text-purple-600 dark:hover:text-purple-400 transition-colors p-2"
+                    title="Copy Code"
+                  >
+                    <Copy size={24} />
+                  </button>
+                </div>
+                <div className="text-left space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                  <p>1. Open WhatsApp on your phone.</p>
+                  <p>
+                    2. Go to <strong>Settings &gt; Linked Devices</strong>.
+                  </p>
+                  <p>
+                    3. Tap <strong>Link a Device</strong> &gt;{" "}
+                    <strong>Link with phone number instead</strong>.
+                  </p>
+                  <p>4. Enter the code shown above.</p>
+                </div>
+              </div>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={() => router.push("/dashboard")}
+                  className="text-indigo-600 hover:text-indigo-800 font-medium"
+                >
+                  I'll do this later (Go to Dashboard)
+                </button>
+              </div>
             </div>
           )}
 
@@ -246,7 +316,7 @@ export default function DeployPage() {
                 onClick={() => router.push("/dashboard")}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
               >
-                Go to Dashboard
+                View All Bots
               </button>
             </div>
           )}

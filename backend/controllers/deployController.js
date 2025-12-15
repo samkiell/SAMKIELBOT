@@ -106,7 +106,7 @@ const updateDeployment = async (req, res) => {
 // @access  Private
 const createDeployment = async (req, res) => {
   try {
-    const { botNumber } = req.body;
+    const { botNumber, botName } = req.body;
 
     if (!/^\d{10,15}$/.test(botNumber)) {
       return errorResponse(res, "Invalid WhatsApp number format", 400);
@@ -115,6 +115,7 @@ const createDeployment = async (req, res) => {
     const deployment = await Deployment.create({
       user: req.user.id,
       botNumber,
+      botName,
       status: "creating",
     });
 
@@ -328,7 +329,7 @@ const processDeployment = async (deploymentId) => {
 
     // ✅ Deploy via Pterodactyl API
     const pteroData = await pterodactyl.createServer({
-      botName: `Bot ${deployment.botNumber}`,
+      botName: deployment.botName || `Bot ${deployment.botNumber}`,
       botNumber: deployment.botNumber,
       userId: deployment.user,
       branch: branchName,

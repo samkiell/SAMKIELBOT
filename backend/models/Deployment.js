@@ -6,6 +6,10 @@ const deploymentSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  botName: {
+    type: String,
+    required: true,
+  },
   botNumber: {
     type: String,
     required: true,

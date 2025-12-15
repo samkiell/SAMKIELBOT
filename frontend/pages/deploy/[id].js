@@ -280,7 +280,7 @@ export default function DeploymentSessionPage() {
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
           <h3 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
-            Bot Deployed Successfully!
+            Device Connected Successfully!
           </h3>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             Your bot{" "}

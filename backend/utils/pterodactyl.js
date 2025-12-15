@@ -291,9 +291,9 @@ const monitorDeployment = async (
               resolve(code);
             }
 
-            // 2. Detect Success/Connection (Optional if we stop at pairing code)
+            // 2. Detect Success/Connection
             const successMatch =
-              /Bot Connected|Opened connection|Client ready|Success/i.test(
+              /Bot Connected|Opened connection|Client ready|Success|connected successfully|successfully connected/i.test(
                 logLine
               );
 

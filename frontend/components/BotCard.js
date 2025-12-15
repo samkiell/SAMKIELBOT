@@ -1,12 +1,4 @@
-import {
-  Eye,
-  RotateCcw,
-  Square,
-  Play,
-  Trash2,
-  Copy,
-  Smartphone,
-} from "lucide-react";
+import { Eye, RotateCcw, Square, Play, Trash2 } from "lucide-react";
 import { controlBot, deleteBot } from "../lib/api";
 import toast from "react-hot-toast";
 import { useState } from "react";
@@ -42,11 +34,6 @@ export default function BotCard({ deployment, refreshData }) {
       gray: "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400",
     };
     return colors[color] || colors.gray;
-  };
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard!");
   };
 
   const handleControl = async (action) => {

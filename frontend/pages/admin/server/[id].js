@@ -81,8 +81,10 @@ export default function AdminServerDetail() {
       if (msg.event === "console output") {
         setLogs((prev) => [...prev, msg.args[0]]);
       }
-      if (msg.event === "status") {
-        // Update status live?
+      if (msg.event === "stats") {
+        // stats args: [{memory_bytes, cpu_absolute, ...}]
+        const stats = JSON.parse(msg.args[0]);
+        // We could update local state if we had one for stats
       }
     };
 

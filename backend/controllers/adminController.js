@@ -20,12 +20,26 @@ const getServerConsole = async (req, res) => {
     const deployment = await Deployment.findById(req.params.id);
     if (!deployment) return errorResponse(res, "Deployment not found", 404);
 
-    if (!deployment.pterodactylUuid)
-      return errorResponse(res, "No Pterodactyl UUID", 400);
-
-    // Get Websocket Details from Pterodactyl Client API
-    // We need to use the Client API credentials (which user? Admin's client-key?)
-    // pterodactyl.js has a clientApi configured with PTERODACTYL_CLIENT_KEY which should be an Admin Client Key or similar.
+    if (!deployment.pterodactylUuid) {
+      // Try to recover UUID from ID
+      if (deployment.pterodactylId) {
+        try {
+          const details = await pterodactyl.getServerDetails(
+            deployment.pterodactylId
+          );
+          deployment.pterodactylUuid = details.attributes.uuid;
+          await deployment.save();
+        } catch (err) {
+          return errorResponse(
+            res,
+            "No Pterodactyl UUID and failed to recover it",
+            400
+          );
+        }
+      } else {
+        return errorResponse(res, "No Pterodactyl UUID or ID", 400);
+      }
+    }
 
     const wsDetails = await pterodactyl.getWebsocketDetails(
       deployment.pterodactylUuid
@@ -480,16 +494,37 @@ const updateFeatureFlag = async (req, res) => {
 // @route   POST /api/admin/bots/sync-stats
 const syncServerStats = async (req, res) => {
   try {
-    const bots = await Deployment.find({ pterodactylUuid: { $exists: true } });
+    const bots = await Deployment.find({
+      $or: [
+        { pterodactylUuid: { $exists: true } },
+        { pterodactylId: { $exists: true } },
+      ],
+    });
     const statsUpdates = [];
 
     // Parallel processing with limit? For now map all
     await Promise.all(
       bots.map(async (bot) => {
         try {
+          // Backfill UUID if missing but ID exists
+          if (!bot.pterodactylUuid && bot.pterodactylId) {
+            try {
+              const details = await pterodactyl.getServerDetails(
+                bot.pterodactylId
+              );
+              bot.pterodactylUuid = details.attributes.uuid;
+              await bot.save();
+            } catch (err) {
+              console.error(
+                `Failed to fetch UUID for bot ${bot.botName}: ${err.message}`
+              );
+              return; // Skip if we can't get UUID
+            }
+          }
+
           if (!bot.pterodactylUuid) return;
           const stats = await pterodactyl.getResources(bot.pterodactylUuid);
-          // stats = { current_state, is_suspended, resources: { memory_bytes, cpu_absolute, disk_bytes, ... } }
+          // stats maps to: resources: { memory_bytes, cpu_absolute, disk_bytes, ... }
 
           const usedRam = Math.round(
             stats.resources.memory_bytes / 1024 / 1024
@@ -506,10 +541,12 @@ const syncServerStats = async (req, res) => {
           // Map Ptero state to local status if needed or just use state field
           if (stats.current_state === "running") bot.status = "running";
           else if (stats.current_state === "offline") bot.status = "stopped";
+          else if (stats.current_state === "starting") bot.status = "starting";
 
           await bot.save();
           statsUpdates.push({ id: bot._id, success: true });
         } catch (e) {
+          // If server is suspended or 404, we might get error
           // console.error(`Failed to sync stats for ${bot.botName}:`, e.message);
           statsUpdates.push({ id: bot._id, success: false });
         }

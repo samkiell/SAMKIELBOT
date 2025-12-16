@@ -82,7 +82,7 @@ export default function NotificationDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+        <div className="fixed sm:absolute right-0 sm:right-0 mt-2 w-screen sm:w-80 max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 sm:max-h-[80vh] max-h-screen overflow-hidden">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
               Notifications
@@ -97,7 +97,7 @@ export default function NotificationDropdown() {
             )}
           </div>
 
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-[60vh] sm:max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
               <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                 No notifications

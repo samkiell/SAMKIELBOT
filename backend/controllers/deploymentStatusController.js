@@ -16,19 +16,10 @@ const getDeploymentStatus = async (req, res) => {
       return errorResponse(res, "Not authorized", 401);
     }
 
-    successResponse(res, {
-      id: deployment._id,
-      status: deployment.status,
-      isActive: deployment.isActive,
-      pairingCode: deployment.pairingCode,
-      lastActiveAt: deployment.lastActiveAt,
-      pairedAt: deployment.pairedAt,
-      connectedAt: deployment.connectedAt,
-      uptimeStart: deployment.uptimeStart,
-      resources: deployment.resources,
-      errorMessage: deployment.errorMessage,
-    });
+    // Return the full deployment object
+    successResponse(res, deployment);
   } catch (error) {
+    console.error("[DeploymentStatus] Error:", error);
     errorResponse(res, error.message, 500);
   }
 };

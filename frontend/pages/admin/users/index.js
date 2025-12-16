@@ -163,109 +163,118 @@ export default function UserManagement() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-50 dark:bg-gray-700/50 text-xs uppercase text-gray-500 font-semibold">
-              <tr>
-                <th className="px-6 py-4">User</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Credits</th>
-                <th className="px-6 py-4">Bots</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
-              {users.map((u) => (
-                <tr
-                  key={u._id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700/30"
-                >
-                  <td className="px-6 py-4">
-                    <div className="font-bold text-indigo-600 dark:text-indigo-400">
-                      {u.username}
-                    </div>
-                    <div className="text-gray-500 text-xs">{u.email}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <select
-                      className="bg-transparent border border-gray-200 dark:border-gray-600 rounded px-2 py-1 text-xs"
-                      value={u.role}
-                      onChange={(e) =>
-                        updateUser(u._id, { role: e.target.value })
-                      }
-                    >
-                      <option value="user">User</option>
-                      <option value="power_user">Power User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </td>
-                  <td className="px-6 py-4">
-                    <select
-                      className={`bg-transparent border border-gray-200 dark:border-gray-600 rounded px-2 py-1 text-xs font-bold ${
-                        u.accountStatus === "suspended"
-                          ? "text-red-600"
-                          : "text-green-600"
-                      }`}
-                      value={u.accountStatus || "active"}
-                      onChange={(e) =>
-                        updateUser(u._id, { accountStatus: e.target.value })
-                      }
-                    >
-                      <option value="active">Active</option>
-                      <option value="suspended">Suspended</option>
-                      <option value="deleted">Soft Deleted</option>
-                    </select>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <Coins size={16} className="text-yellow-500" />
-                      <span className="font-bold text-yellow-600 dark:text-yellow-400">
-                        {Math.round(u.credits || 0)}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    {u.stats?.totalBots || 0} bots
-                    <div className="text-xs text-gray-400">
-                      {(u.stats?.totalRamUsage || 0) / 1024} GB Used
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      {/* Add Credits */}
-                      <button
-                        onClick={() => openCreditModal(u, "add")}
-                        className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
-                        title="Add Credits"
-                      >
-                        <Plus size={16} />
-                      </button>
-                      {/* Reduce Credits */}
-                      <button
-                        onClick={() => openCreditModal(u, "reduce")}
-                        className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition-colors"
-                        title="Reduce Credits"
-                      >
-                        <Minus size={16} />
-                      </button>
-                      {/* Hard Delete */}
-                      <button
-                        onClick={() => deleteUser(u._id)}
-                        className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-                        title="Hard Delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {loading ? (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12">
+          <div className="flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mb-4"></div>
+            <p className="text-gray-500 dark:text-gray-400">Loading users...</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-gray-50 dark:bg-gray-700/50 text-xs uppercase text-gray-500 font-semibold">
+                <tr>
+                  <th className="px-6 py-4">User</th>
+                  <th className="px-6 py-4">Role</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Credits</th>
+                  <th className="px-6 py-4">Bots</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
+                {users.map((u) => (
+                  <tr
+                    key={u._id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/30"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="font-bold text-indigo-600 dark:text-indigo-400">
+                        {u.username}
+                      </div>
+                      <div className="text-gray-500 text-xs">{u.email}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <select
+                        className="bg-transparent border border-gray-200 dark:border-gray-600 rounded px-2 py-1 text-xs"
+                        value={u.role}
+                        onChange={(e) =>
+                          updateUser(u._id, { role: e.target.value })
+                        }
+                      >
+                        <option value="user">User</option>
+                        <option value="power_user">Power User</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </td>
+                    <td className="px-6 py-4">
+                      <select
+                        className={`bg-transparent border border-gray-200 dark:border-gray-600 rounded px-2 py-1 text-xs font-bold ${
+                          u.accountStatus === "suspended"
+                            ? "text-red-600"
+                            : "text-green-600"
+                        }`}
+                        value={u.accountStatus || "active"}
+                        onChange={(e) =>
+                          updateUser(u._id, { accountStatus: e.target.value })
+                        }
+                      >
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
+                        <option value="deleted">Soft Deleted</option>
+                      </select>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <Coins size={16} className="text-yellow-500" />
+                        <span className="font-bold text-yellow-600 dark:text-yellow-400">
+                          {Math.round(u.credits || 0)}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      {u.stats?.totalBots || 0} bots
+                      <div className="text-xs text-gray-400">
+                        {(u.stats?.totalRamUsage || 0) / 1024} GB Used
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        {/* Add Credits */}
+                        <button
+                          onClick={() => openCreditModal(u, "add")}
+                          className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
+                          title="Add Credits"
+                        >
+                          <Plus size={16} />
+                        </button>
+                        {/* Reduce Credits */}
+                        <button
+                          onClick={() => openCreditModal(u, "reduce")}
+                          className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition-colors"
+                          title="Reduce Credits"
+                        >
+                          <Minus size={16} />
+                        </button>
+                        {/* Hard Delete */}
+                        <button
+                          onClick={() => deleteUser(u._id)}
+                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                          title="Hard Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Credit Modal */}
       {showCreditModal && selectedUser && (

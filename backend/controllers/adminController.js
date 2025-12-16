@@ -508,15 +508,16 @@ const syncServerStats = async (req, res) => {
               // Check if server exists
               await pterodactyl.getServerDetails(bot.pterodactylId);
             } catch (err) {
-              // If 404, delete local
               if (err.response?.status === 404) {
-                console.log(
-                  `Server ${bot.botName} not found in Pterodactyl. Deleting local record.`
+                console.warn(
+                  `Server ${bot.botName} (ID: ${bot.pterodactylId}) returned 404 from Pterodactyl.`
                 );
-                await bot.deleteOne();
-                return;
+                // Do NOT delete automatically. It might be a permission issue or transient.
+                // bot.status = "unknown";
+                // await bot.save();
+                // return;
               }
-              // Other errors, skip
+              // Continue to try to get UUID or Stats if possible, or just skip
             }
           }
 
@@ -529,8 +530,7 @@ const syncServerStats = async (req, res) => {
               bot.pterodactylUuid = details.attributes.uuid;
               await bot.save();
             } catch (err) {
-              // If failed here, it might have been deleted already or issues
-              return;
+              // Ignore
             }
           }
 
@@ -559,12 +559,12 @@ const syncServerStats = async (req, res) => {
           await bot.save();
           statsUpdates.push({ id: bot._id, success: true });
         } catch (e) {
-          // If 404 on resources (meaning server deleted while getting resources?), delete local
+          // If 404 on resources, it often means server is suspended or installing.
+          // Do NOT delete.
           if (e.response?.status === 404) {
-            await bot.deleteOne();
-          } else {
-            statsUpdates.push({ id: bot._id, success: false });
+            // console.warn(`Resources 404 for ${bot.botName}`);
           }
+          statsUpdates.push({ id: bot._id, success: false });
         }
       })
     );

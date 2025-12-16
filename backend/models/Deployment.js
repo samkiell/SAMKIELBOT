@@ -15,7 +15,7 @@ const deploymentSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function (v) {
-        return /^\d{10,15}$/.test(v); // International WhatsApp number validation
+        return /^\d{10,15}$/.test(v);
       },
       message: "Bot number must be a valid international number (10-15 digits)",
     },
@@ -36,11 +36,12 @@ const deploymentSchema = new mongoose.Schema({
     type: Number,
   },
   serviceId: {
-    type: String, // Deprecated Render ID, kept for legacy or fallback
+    type: String,
   },
   pairingCode: {
     type: String,
   },
+  // BOT STATUS STATE MACHINE
   status: {
     type: String,
     enum: [
@@ -49,20 +50,41 @@ const deploymentSchema = new mongoose.Schema({
       "installing",
       "starting",
       "awaiting_pairing",
-      "running",
+      "paired",
+      "connected",
+      "active",
+      "running", // Legacy compatibility
       "stopped",
+      "offline",
       "failed",
       "suspended",
     ],
     default: "pending",
   },
+  // BOT HEALTH TRACKING
+  isActive: {
+    type: Boolean,
+    default: false,
+  },
+  lastActiveAt: {
+    type: Date,
+  },
+  pairedAt: {
+    type: Date,
+  },
+  connectedAt: {
+    type: Date,
+  },
+  uptimeStart: {
+    type: Date,
+  },
   errorMessage: {
     type: String,
   },
   resources: {
-    ramLimit: { type: Number, default: 1024 }, // MB
-    cpuLimit: { type: Number, default: 100 }, // %
-    diskLimit: { type: Number, default: 1024 }, // MB
+    ramLimit: { type: Number, default: 300 },
+    cpuLimit: { type: Number, default: 25 },
+    diskLimit: { type: Number, default: 500 },
     usedRam: { type: Number, default: 0 },
     usedCpu: { type: Number, default: 0 },
     usedDisk: { type: Number, default: 0 },
@@ -71,7 +93,7 @@ const deploymentSchema = new mongoose.Schema({
   usageStats: {
     uptimeMinutes: { type: Number, default: 0 },
     cpuUsedMinutes: { type: Number, default: 0 },
-    ramInfos: { type: [Number], default: [] }, // Sampling history? Or just keep simple
+    ramInfos: { type: [Number], default: [] },
   },
   lastActivity: { type: Date, default: Date.now },
   deployedAt: {

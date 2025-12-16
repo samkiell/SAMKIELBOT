@@ -3,6 +3,7 @@ const { successResponse, errorResponse } = require("../utils/response");
 const axios = require("axios");
 const { Octokit } = require("@octokit/rest");
 const pterodactyl = require("../utils/pterodactyl");
+const botHealthService = require("../services/botHealthService");
 
 // @desc    Deploy a bot manually
 // @route   POST /api/deploy
@@ -178,39 +179,11 @@ const controlServer = async (req, res) => {
   }
 };
 
-// @helper: Monitor Deployment for Pairing Code and Success
+// @helper: Monitor Deployment using Bot Health Service
 const monitorDeploymentFlow = async (deploymentId, identifier) => {
   try {
-    console.log(`Starting monitoring for ${identifier}`);
-    await pterodactyl.monitorDeployment(identifier, {
-      onCode: async (code) => {
-        console.log(`[Monitor] Pairing code found for ${identifier}: ${code}`);
-        await Deployment.findByIdAndUpdate(
-          deploymentId,
-          {
-            pairingCode: code,
-            status: "awaiting_pairing",
-          },
-          { new: true } // Ensure we get the updated doc if needed, and force update
-        );
-      },
-      onReady: async () => {
-        console.log(`Deployment ${identifier} is now running`);
-        await Deployment.findByIdAndUpdate(deploymentId, {
-          status: "running",
-          pairingCode: null, // Optional: clear code
-        });
-
-        // Notify Success
-        const Notification = require("../models/Notification");
-        await Notification.create({
-          user: (await Deployment.findById(deploymentId)).user,
-          title: "Bot Deployed 🚀",
-          message: `Your bot ${identifier} was deployed successfully.`,
-          type: "success",
-        });
-      },
-    });
+    console.log(`Starting health monitoring for ${identifier}`);
+    await botHealthService.startMonitoring(deploymentId);
   } catch (error) {
     console.error("Monitoring flow error:", error.message);
   }

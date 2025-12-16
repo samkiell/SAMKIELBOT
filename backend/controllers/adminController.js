@@ -664,8 +664,12 @@ const addCreditsToUser = async (req, res) => {
       user: userId,
       title: isAdding ? "Credits Added! 🎁" : "Credits Deducted ⚠️",
       message: isAdding
-        ? `An admin has added ${absoluteCredits} credits to your account. New balance: ${newBalance} credits.`
-        : `An admin has deducted ${absoluteCredits} credits from your account. New balance: ${newBalance} credits.`,
+        ? `An admin has added ${absoluteCredits} credits to your account. New balance: ${Math.round(
+            newBalance
+          )} credits.`
+        : `An admin has deducted ${absoluteCredits} credits from your account. New balance: ${Math.round(
+            newBalance
+          )} credits.`,
       type: isAdding ? "success" : "warning",
     });
 
@@ -674,7 +678,7 @@ const addCreditsToUser = async (req, res) => {
     if (io) {
       io.emit("credits:updated", {
         userId,
-        credits: newBalance,
+        credits: Math.round(newBalance),
       });
     }
 

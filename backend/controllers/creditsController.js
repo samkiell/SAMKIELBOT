@@ -175,7 +175,9 @@ exports.verifyPurchase = async (req, res) => {
     await require("../models/Notification").create({
       user: userId,
       title: "Credits Purchased! 💳",
-      message: `You successfully purchased ${credits} credits. New balance: ${newBalance} credits.`,
+      message: `You successfully purchased ${credits} credits. New balance: ${Math.round(
+        newBalance
+      )} credits.`,
       type: "success",
     });
 
@@ -184,7 +186,7 @@ exports.verifyPurchase = async (req, res) => {
     if (io) {
       io.emit("credits:updated", {
         userId,
-        credits: newBalance,
+        credits: Math.round(newBalance),
       });
     }
 
@@ -193,7 +195,7 @@ exports.verifyPurchase = async (req, res) => {
       message: "Credits added successfully",
       data: {
         credits,
-        balance: newBalance,
+        balance: Math.round(newBalance),
       },
     });
   } catch (error) {

@@ -124,7 +124,7 @@ export default function AdminDashboard() {
                       className={`h-2 rounded-full ${
                         node.ramUsage > 80 ? "bg-red-500" : "bg-indigo-500"
                       }`}
-                      style={{ width: `${node.ramUsage}%` }}
+                      style={{ width: `${Math.min(node.ramUsage, 100)}%` }}
                     ></div>
                   </div>
                 </div>

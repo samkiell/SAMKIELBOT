@@ -5,17 +5,14 @@ import toast from "react-hot-toast";
 
 export default function AdminNotifications() {
   const { token } = useAuth();
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
+  const [form, setForm] = useState({ userId: "", title: "", message: "" });
   const [loading, setLoading] = useState(false);
 
   const sendBroadcast = async (e) => {
     e.preventDefault();
-    if (!title || !message) {
-      return toast.error("Fill all fields");
+    if (!form.message) {
+      return toast.error("Message is required");
     }
-    if (!confirm("This will send a notification to ALL users. Confirm?"))
-      return;
 
     setLoading(true);
     try {
@@ -25,16 +22,20 @@ export default function AdminNotifications() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, message, type: "info" }), // broadcast
+        body: JSON.stringify({
+          userId: form.userId || null,
+          title: form.title,
+          message: form.message,
+          type: "info",
+        }),
       });
-      toast.success("Broadcast sent!");
-      setTitle("");
-      setMessage("");
+      toast.success("Notification sent!");
+      setForm({ userId: "", title: "", message: "" });
     } catch (err) {
       toast.error("Failed to send");
     } finally {
       setLoading(false);
-    }
+    } 
   };
 
   return (
@@ -44,14 +45,24 @@ export default function AdminNotifications() {
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 max-w-2xl">
         <h2 className="text-lg font-bold mb-4">Send Broadcast</h2>
         <form onSubmit={sendBroadcast} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Title</label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">User ID (Optional)</label>
             <input
               type="text"
-              className="w-full p-2 rounded border border-gray-300 dark:border-gray-700 bg-transparent"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="System Maintenance, etc."
+              value={form.userId}
+              onChange={(e) => setForm({ ...form, userId: e.target.value })}
+              className="w-full p-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600"
+              placeholder="Leave empty to broadcast to all users"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Title (Optional)</label>
+            <input
+              type="text"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              className="w-full p-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600"
+              placeholder="Notification Title"
             />
           </div>
           <div>
@@ -59,8 +70,8 @@ export default function AdminNotifications() {
             <textarea
               className="w-full p-2 rounded border border-gray-300 dark:border-gray-700 bg-transparent"
               rows="4"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={form.message}
+              onChange={(e) => setForm({ ...form, message: e.target.value })}
               placeholder="We are updating the system..."
             ></textarea>
           </div>

@@ -109,8 +109,21 @@ const createDeployment = async (req, res) => {
   try {
     const { botNumber, botName, cpu, ram, disk } = req.body;
 
+    // Validation
+    if (!botNumber || !botName) {
+      return errorResponse(
+        res,
+        "Bot name and WhatsApp number are required",
+        400
+      );
+    }
+
     if (!/^\d{10,15}$/.test(botNumber)) {
-      return errorResponse(res, "Invalid WhatsApp number format", 400);
+      return errorResponse(
+        res,
+        "Invalid WhatsApp number format. Please enter a valid number (10-15 digits)",
+        400
+      );
     }
 
     // ✅ CREDIT ENFORCEMENT: Calculate deployment cost
@@ -145,7 +158,7 @@ const createDeployment = async (req, res) => {
       const user = await require("../models/User").findById(req.user.id);
       return errorResponse(
         res,
-        `Insufficient credits. You have ${user.credits} credits but need ${costBreakdown.totalCost} credits to deploy this bot. Buy more credits to continue.`,
+        `Insufficient credits! You have ${user.credits} credits but need ${costBreakdown.totalCost} credits to deploy this bot. Please purchase more credits to continue.`,
         403
       );
     }
@@ -190,7 +203,27 @@ const createDeployment = async (req, res) => {
 
     successResponse(res, deployment, 201);
   } catch (error) {
-    errorResponse(res, error.message, 500);
+    console.error("[Deploy] Create deployment error:", error);
+
+    // Specific error messages based on error type
+    if (error.code === 11000) {
+      return errorResponse(
+        res,
+        "A bot with this WhatsApp number already exists",
+        409
+      );
+    }
+
+    if (error.name === "ValidationError") {
+      return errorResponse(res, `Validation error: ${error.message}`, 400);
+    }
+
+    // Generic server error
+    errorResponse(
+      res,
+      "Failed to create bot deployment. Please try again or contact support if the issue persists.",
+      500
+    );
   }
 };
 

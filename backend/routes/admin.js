@@ -24,6 +24,9 @@ const {
   getServerConsole,
   getNode,
   syncServerStats,
+  addCreditsToUser,
+  getUserCredits,
+  forceSyncBotStatuses,
 } = require("../controllers/adminController");
 
 // @desc    Dashboard
@@ -36,9 +39,14 @@ router.put("/users/:id", protect, admin, updateUser);
 router.delete("/users/:id", protect, admin, deleteUser);
 router.get("/users/:id/bots", protect, admin, getUserBots);
 
+// @desc    Credit Management
+router.get("/users/:id/credits", protect, admin, getUserCredits);
+router.post("/users/:id/credits", protect, admin, addCreditsToUser);
+
 // @desc    Bot Management
 router.get("/bots", protect, admin, getAllBots);
 router.post("/bots/sync-stats", protect, admin, syncServerStats); // Live Sync
+router.post("/bots/sync-status", protect, admin, forceSyncBotStatuses); // Force Status Sync
 router.post("/bots/:id/power", protect, admin, controlBot);
 router.post("/bots/:id/suspend", protect, admin, suspendBot);
 router.delete("/bots/:id", protect, admin, deleteBot);

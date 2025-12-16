@@ -591,6 +591,170 @@ const syncServerStats = async (req, res) => {
   }
 };
 
+// @desc    Add Credits to User (Admin)
+// @route   POST /api/admin/users/:id/credits
+const addCreditsToUser = async (req, res) => {
+  try {
+    const { credits, reason } = req.body;
+    const userId = req.params.id;
+
+    if (!credits || credits === 0) {
+      return errorResponse(res, "Invalid credit amount", 400);
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return errorResponse(res, "User not found", 404);
+    }
+
+    const creditService = require("../services/creditService");
+    const isAdding = credits > 0;
+    const absoluteCredits = Math.abs(credits);
+
+    // If reducing, check if user has enough credits
+    if (!isAdding && user.credits < absoluteCredits) {
+      return errorResponse(
+        res,
+        `Cannot reduce credits. User only has ${user.credits} credits but you're trying to remove ${absoluteCredits} credits.`,
+        400
+      );
+    }
+
+    let newBalance;
+    if (isAdding) {
+      newBalance = await creditService.addCredits(
+        userId,
+        absoluteCredits,
+        "admin_grant",
+        reason || `Admin ${req.user.email} added ${absoluteCredits} credits`,
+        {
+          adminEmail: req.user.email,
+          adminId: req.user.id,
+        }
+      );
+    } else {
+      newBalance = await creditService.deductCredits(
+        userId,
+        absoluteCredits,
+        "admin_deduction",
+        reason || `Admin ${req.user.email} removed ${absoluteCredits} credits`,
+        {
+          adminEmail: req.user.email,
+          adminId: req.user.id,
+        }
+      );
+    }
+
+    // Create audit log
+    await AuditLog.create({
+      adminEmail: req.user.email,
+      targetType: "User",
+      targetId: userId,
+      action: isAdding ? "add_credits" : "deduct_credits",
+      details: {
+        credits: absoluteCredits,
+        reason,
+        newBalance,
+      },
+    });
+
+    // Send notification to user
+    await require("../models/Notification").create({
+      user: userId,
+      title: isAdding ? "Credits Added! 🎁" : "Credits Deducted ⚠️",
+      message: isAdding
+        ? `An admin has added ${absoluteCredits} credits to your account. New balance: ${newBalance} credits.`
+        : `An admin has deducted ${absoluteCredits} credits from your account. New balance: ${newBalance} credits.`,
+      type: isAdding ? "success" : "warning",
+    });
+
+    // Emit socket event
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("credits:updated", {
+        userId,
+        credits: newBalance,
+      });
+    }
+
+    successResponse(res, {
+      message: isAdding
+        ? "Credits added successfully"
+        : "Credits deducted successfully",
+      credits: absoluteCredits,
+      action: isAdding ? "added" : "deducted",
+      newBalance,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error("[Admin] Add/deduct credits error:", error);
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Get User Credits and Transaction History
+// @route   GET /api/admin/users/:id/credits
+const getUserCredits = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const limit = parseInt(req.query.limit) || 50;
+
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      return errorResponse(res, "User not found", 404);
+    }
+
+    const creditService = require("../services/creditService");
+    const history = await creditService.getCreditHistory(userId, limit);
+    const stats = await creditService.getCreditStats(userId);
+
+    successResponse(res, {
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName,
+      },
+      credits: user.credits,
+      referralCode: user.referralCode,
+      totalReferrals: user.totalReferrals,
+      stats,
+      history,
+    });
+  } catch (error) {
+    console.error("[Admin] Get user credits error:", error);
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Force Sync Bot Statuses from Pterodactyl
+// @route   POST /api/admin/bots/sync-status
+const forceSyncBotStatuses = async (req, res) => {
+  try {
+    console.log("[Admin] Force syncing bot statuses...");
+
+    // Run the detection for already-running bots
+    await botHealthService.detectAlreadyRunningBots();
+
+    // Get updated bot list
+    const bots = await Deployment.find({})
+      .populate("user", "email fullName")
+      .sort({ createdAt: -1 });
+
+    successResponse(res, {
+      message: "Bot statuses synced successfully",
+      bots,
+    });
+  } catch (error) {
+    console.error("[Admin] Force sync error:", error);
+    errorResponse(res, error.message, 500);
+  }
+};
+
 module.exports = {
   getSystemStats,
   getAllUsers,
@@ -613,4 +777,7 @@ module.exports = {
   getServerConsole,
   getNode,
   syncServerStats,
+  addCreditsToUser,
+  getUserCredits,
+  forceSyncBotStatuses,
 };

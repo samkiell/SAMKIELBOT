@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import { useAuth } from "../../../lib/auth";
 import toast from "react-hot-toast";
+import Link from "next/link";
 import {
   MoreVertical,
   Shield,
@@ -9,12 +10,21 @@ import {
   Lock,
   Unlock,
   Power,
+  Coins,
+  Plus,
+  X,
 } from "lucide-react";
 
 export default function UserManagement() {
   const { token } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCreditModal, setShowCreditModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [creditAmount, setCreditAmount] = useState("");
+  const [creditReason, setCreditReason] = useState("");
+  const [creditAction, setCreditAction] = useState("add"); // "add" or "reduce"
+  const [addingCredits, setAddingCredits] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -76,6 +86,71 @@ export default function UserManagement() {
     }
   };
 
+  const openCreditModal = (user, action = "add") => {
+    setSelectedUser(user);
+    setCreditAmount("");
+    setCreditReason("");
+    setCreditAction(action);
+    setShowCreditModal(true);
+  };
+
+  const manageCredits = async () => {
+    if (!creditAmount || parseFloat(creditAmount) <= 0) {
+      toast.error("Please enter a valid credit amount");
+      return;
+    }
+
+    const amount = parseFloat(creditAmount);
+
+    // If reducing, check if user has enough credits
+    if (creditAction === "reduce" && selectedUser.credits < amount) {
+      toast.error(
+        `User only has ${selectedUser.credits} credits. Cannot reduce by ${amount}.`
+      );
+      return;
+    }
+
+    setAddingCredits(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${selectedUser._id}/credits`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            credits: creditAction === "add" ? amount : -amount,
+            reason:
+              creditReason ||
+              `Admin ${
+                creditAction === "add" ? "added" : "reduced"
+              } ${amount} credits`,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success(
+          `${creditAction === "add" ? "Added" : "Reduced"} ${amount} credits ${
+            creditAction === "add" ? "to" : "from"
+          } ${selectedUser.username}`
+        );
+        setShowCreditModal(false);
+        fetchUsers();
+      } else {
+        toast.error(data.message || "Failed to manage credits");
+      }
+    } catch (err) {
+      toast.error("Failed to manage credits");
+    } finally {
+      setAddingCredits(false);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="flex justify-between items-center mb-6">
@@ -93,6 +168,7 @@ export default function UserManagement() {
                 <th className="px-6 py-4">User</th>
                 <th className="px-6 py-4">Role</th>
                 <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Credits</th>
                 <th className="px-6 py-4">Bots</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
@@ -140,6 +216,14 @@ export default function UserManagement() {
                     </select>
                   </td>
                   <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <Coins size={16} className="text-yellow-500" />
+                      <span className="font-bold text-yellow-600 dark:text-yellow-400">
+                        {u.credits || 0}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
                     {u.stats?.totalBots || 0} bots
                     <div className="text-xs text-gray-400">
                       {(u.stats?.totalRamUsage || 0) / 1024} GB Used
@@ -147,6 +231,22 @@ export default function UserManagement() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
+                      {/* Add Credits */}
+                      <button
+                        onClick={() => openCreditModal(u, "add")}
+                        className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
+                        title="Add Credits"
+                      >
+                        <Plus size={16} />
+                      </button>
+                      {/* Reduce Credits */}
+                      <button
+                        onClick={() => openCreditModal(u, "reduce")}
+                        className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition-colors"
+                        title="Reduce Credits"
+                      >
+                        <Coins size={16} className="text-orange-600" />
+                      </button>
                       {/* Hard Delete */}
                       <button
                         onClick={() => deleteUser(u._id)}
@@ -163,6 +263,88 @@ export default function UserManagement() {
           </table>
         </div>
       </div>
+
+      {/* Credit Modal */}
+      {showCreditModal && selectedUser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Coins className="text-yellow-500" />
+                Add Credits
+              </h2>
+              <button
+                onClick={() => setShowCreditModal(false)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                Adding credits to:{" "}
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">
+                  {selectedUser.username}
+                </span>
+              </p>
+              <p className="text-xs text-gray-500">
+                Current balance:{" "}
+                <span className="font-bold text-yellow-600">
+                  {selectedUser.credits || 0} credits
+                </span>
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Credit Amount *
+                </label>
+                <input
+                  type="number"
+                  value={creditAmount}
+                  onChange={(e) => setCreditAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  min="1"
+                  step="1"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Reason (Optional)
+                </label>
+                <textarea
+                  value={creditReason}
+                  onChange={(e) => setCreditReason(e.target.value)}
+                  placeholder="e.g., Promotional bonus, Compensation, etc."
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  rows="3"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => setShowCreditModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  disabled={addingCredits}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={addCredits}
+                  disabled={addingCredits || !creditAmount}
+                  className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {addingCredits ? "Adding..." : "Add Credits"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

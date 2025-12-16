@@ -13,6 +13,33 @@ const {
   sendNotification,
 } = require("./interactionsController");
 
+// @desc    Get Server Console Info (Websocket)
+// @route   GET /api/admin/server/:id/console
+const getServerConsole = async (req, res) => {
+  try {
+    const deployment = await Deployment.findById(req.params.id);
+    if (!deployment) return errorResponse(res, "Deployment not found", 404);
+
+    if (!deployment.pterodactylUuid)
+      return errorResponse(res, "No Pterodactyl UUID", 400);
+
+    // Get Websocket Details from Pterodactyl Client API
+    // We need to use the Client API credentials (which user? Admin's client-key?)
+    // pterodactyl.js has a clientApi configured with PTERODACTYL_CLIENT_KEY which should be an Admin Client Key or similar.
+
+    const wsDetails = await pterodactyl.getWebsocketDetails(
+      deployment.pterodactylUuid
+    );
+
+    successResponse(res, {
+      server: deployment,
+      websocket: wsDetails,
+    });
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
 // @desc    Get System Health & Dashboard Stats
 // @route   GET /api/admin/dashboard
 const getSystemStats = async (req, res) => {
@@ -444,4 +471,5 @@ module.exports = {
   getSuggestions,
   updateSuggestion,
   sendNotification,
+  getServerConsole,
 };

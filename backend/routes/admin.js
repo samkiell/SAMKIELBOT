@@ -21,6 +21,7 @@ const {
   getSuggestions,
   updateSuggestion,
   sendNotification,
+  getServerConsole,
 } = require("../controllers/adminController");
 
 // @desc    Dashboard
@@ -39,7 +40,10 @@ router.post("/bots/:id/power", protect, admin, controlBot);
 router.post("/bots/:id/suspend", protect, admin, suspendBot);
 router.delete("/bots/:id", protect, admin, deleteBot);
 
-// @desc    Node & Infrastructure
+// @desc    Server Console
+router.get("/server/:id/console", protect, admin, getServerConsole);
+
+// @desc    Infrastructure
 router.get("/nodes", protect, admin, getNodes);
 router.post("/nodes/sync", protect, admin, syncNodes);
 

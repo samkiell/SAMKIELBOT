@@ -130,9 +130,19 @@ export default function BotsList() {
 
   const fetchBots = async () => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/bots-list`
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      console.log("[DEBUG] Fetching from:", `${apiUrl}/api/bots-list`);
+      console.log(
+        "[DEBUG] NEXT_PUBLIC_API_URL:",
+        process.env.NEXT_PUBLIC_API_URL
       );
+
+      const res = await fetch(`${apiUrl}/api/bots-list`);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+
       const data = await res.json();
 
       // Backend now provides uptimeStart directly

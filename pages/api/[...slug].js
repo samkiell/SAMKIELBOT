@@ -1,4 +1,4 @@
-import dbConnect from "../../lib/dbConnect";
+const dbConnect = require("../../lib/dbConnect");
 const {
   getNotifications,
   markRead,

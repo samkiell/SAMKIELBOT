@@ -1,4 +1,4 @@
-import dbConnect from "../../lib/dbConnect";
+const dbConnect = require("../../lib/dbConnect");
 import paymentController from "@/lib/controllers/paymentController";
 import webhookController from "@/lib/controllers/webhookController";
 const { protect, admin } = require("../../lib/utils/authMiddleware");

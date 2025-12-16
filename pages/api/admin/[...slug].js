@@ -1,4 +1,4 @@
-import dbConnect from "../../lib/dbConnect";
+const dbConnect = require("../../lib/dbConnect");
 const { protect, admin } = require("../../lib/utils/authMiddleware");
 const {
   getSystemStats,

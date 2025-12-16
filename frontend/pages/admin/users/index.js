@@ -12,6 +12,7 @@ import {
   Power,
   Coins,
   Plus,
+  Minus,
   X,
 } from "lucide-react";
 
@@ -245,7 +246,7 @@ export default function UserManagement() {
                         className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition-colors"
                         title="Reduce Credits"
                       >
-                        <Coins size={16} className="text-orange-600" />
+                        <Minus size={16} />
                       </button>
                       {/* Hard Delete */}
                       <button
@@ -269,9 +270,19 @@ export default function UserManagement() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <Coins className="text-yellow-500" />
-                Add Credits
+              <h2
+                className={`text-xl font-bold flex items-center gap-2 ${
+                  creditAction === "add" ? "text-green-600" : "text-orange-600"
+                }`}
+              >
+                <Coins
+                  className={
+                    creditAction === "add"
+                      ? "text-green-500"
+                      : "text-orange-500"
+                  }
+                />
+                {creditAction === "add" ? "Add Credits" : "Reduce Credits"}
               </h2>
               <button
                 onClick={() => setShowCreditModal(false)}
@@ -283,7 +294,8 @@ export default function UserManagement() {
 
             <div className="mb-4">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                Adding credits to:{" "}
+                {creditAction === "add" ? "Adding" : "Reducing"} credits{" "}
+                {creditAction === "add" ? "to" : "from"}:{" "}
                 <span className="font-bold text-indigo-600 dark:text-indigo-400">
                   {selectedUser.username}
                 </span>
@@ -306,10 +318,21 @@ export default function UserManagement() {
                   value={creditAmount}
                   onChange={(e) => setCreditAmount(e.target.value)}
                   placeholder="Enter amount"
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-4 py-2 border ${
+                    creditAction === "add"
+                      ? "border-green-300 dark:border-green-600 focus:ring-green-500"
+                      : "border-orange-300 dark:border-orange-600 focus:ring-orange-500"
+                  } rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:border-transparent`}
                   min="1"
                   step="1"
                 />
+                {creditAction === "reduce" &&
+                  creditAmount &&
+                  parseFloat(creditAmount) > selectedUser.credits && (
+                    <p className="text-xs text-red-500 mt-1">
+                      ⚠️ User only has {selectedUser.credits} credits
+                    </p>
+                  )}
               </div>
 
               <div>
@@ -319,7 +342,11 @@ export default function UserManagement() {
                 <textarea
                   value={creditReason}
                   onChange={(e) => setCreditReason(e.target.value)}
-                  placeholder="e.g., Promotional bonus, Compensation, etc."
+                  placeholder={`e.g., ${
+                    creditAction === "add"
+                      ? "Promotional bonus, Compensation"
+                      : "Policy violation, Refund"
+                  }, etc.`}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   rows="3"
                 />
@@ -334,11 +361,19 @@ export default function UserManagement() {
                   Cancel
                 </button>
                 <button
-                  onClick={addCredits}
+                  onClick={manageCredits}
                   disabled={addingCredits || !creditAmount}
-                  className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`flex-1 px-4 py-2 ${
+                    creditAction === "add"
+                      ? "bg-green-600 hover:bg-green-700"
+                      : "bg-orange-600 hover:bg-orange-700"
+                  } text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  {addingCredits ? "Adding..." : "Add Credits"}
+                  {addingCredits
+                    ? "Processing..."
+                    : creditAction === "add"
+                    ? "Add Credits"
+                    : "Reduce Credits"}
                 </button>
               </div>
             </div>

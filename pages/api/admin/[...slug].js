@@ -1,4 +1,4 @@
-const { protect, admin } = require("../../lib/utils/authMiddleware";
+const { protect, admin } = require("../../lib/utils/authMiddleware"");
 const {
   getSystemStats,
   getAllUsers,
@@ -24,7 +24,7 @@ const {
   forceSyncBotStatuses,
   getFeatureFlags,
   updateFeatureFlag,
-} = require("../../lib/controllers/adminController";
+} = require("../../lib/controllers/adminController"");
 
 export default async function handler(req, res) {
   const { method } = req;

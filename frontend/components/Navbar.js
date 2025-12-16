@@ -193,13 +193,12 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-      </div>
-      
+
       {/* Mobile Slide-over Menu */}
       {/* Overlay */}
-      <div 
+      <div
         className={`md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
-           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMenuOpen(false)}
       />
@@ -214,8 +213,8 @@ export default function Navbar() {
           {/* Header to align X */}
           <div className="flex justify-end mb-8">
             <button
-               className="text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400"
-               onClick={() => setMenuOpen(false)}
+              className="text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+              onClick={() => setMenuOpen(false)}
             >
               <X size={28} />
             </button>

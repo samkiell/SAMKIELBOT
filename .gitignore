@@ -1,9 +1,33 @@
+# Dependencies
 node_modules/
+
+# Environment variables
 .env
 .env.local
+.env.production
+
+# Next.js
+.next/
+out/
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
 TODO.md
 idea.md
 application_summary2.txt
-frontend/.next
-logs/
 .agent
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Old structure (to be removed)
+frontend/
+backend/

@@ -1,26 +1,50 @@
 {
   "name": "samkiel-bot",
   "version": "1.0.0",
-  "description": "𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 Full-Stack Application",
-  "main": "index.js",
+  "description": "𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 Unified Next.js Application",
+  "private": true,
   "scripts": {
-    "install:all": "npm install --prefix backend && npm install --prefix frontend",
-    "dev": "rimraf frontend/.next/dev/lock && concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
-    "build": "npm run install:all && npm run build --prefix frontend",
-    "start": "npm run start --prefix backend"
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js",
+    "lint": "next lint"
   },
   "keywords": [
     "bot",
     "deployment",
     "nextjs",
-    "nodejs"
+    "nodejs",
+    "whatsapp"
   ],
   "author": "SAMKIEL",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^9.0.0"
+    "@octokit/rest": "^20.0.2",
+    "autoprefixer": "^10.4.16",
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "framer-motion": "^12.23.24",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.548.0",
+    "mongoose": "^8.0.3",
+    "next": "^16.0.0",
+    "node-cron": "^4.2.1",
+    "postcss": "^8.4.32",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.6.0",
+    "react-icons": "^5.5.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
+    "tailwindcss": "^3.3.6",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
-    "rimraf": "^6.0.1"
+    "eslint": "^9.0.0",
+    "eslint-config-next": "16.0.0",
+    "nodemon": "^3.0.2"
   }
 }

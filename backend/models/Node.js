@@ -23,6 +23,7 @@ const nodeSchema = new mongoose.Schema({
       id: Number,
       name: String,
       identifier: String,
+      ownerEmail: String,
       memory: Number,
       disk: Number,
       cpu: Number,

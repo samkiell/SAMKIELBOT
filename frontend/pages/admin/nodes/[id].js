@@ -202,6 +202,7 @@ export default function NodeDetails() {
               <tr>
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Identifier</th>
+                <th className="px-6 py-4">Owner</th>
                 <th className="px-6 py-4">Resources</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
@@ -232,6 +233,9 @@ export default function NodeDetails() {
                       <code className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300">
                         {server.identifier}
                       </code>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {server.ownerEmail || "Unknown"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                       <div>RAM: {server.memory} MB</div>

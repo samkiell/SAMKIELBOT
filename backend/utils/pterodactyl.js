@@ -82,7 +82,10 @@ const findNode = async (ip) => {
 
 const getNodes = async () => {
   try {
-    const response = await api.get("/nodes?include=allocations,servers");
+    // Include servers and their users
+    const response = await api.get(
+      "/nodes?include=allocations,servers,servers.user"
+    );
     return response.data.data;
   } catch (error) {
     console.error("Error getting nodes:", error.message);

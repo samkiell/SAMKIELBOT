@@ -350,6 +350,8 @@ const syncNodes = async (req, res) => {
             id: s.attributes.id,
             name: s.attributes.name,
             identifier: s.attributes.identifier,
+            ownerEmail:
+              s.attributes.relationships?.user?.attributes?.email || "Unknown",
             memory: s.attributes.limits.memory,
             disk: s.attributes.limits.disk,
             cpu: s.attributes.limits.cpu,

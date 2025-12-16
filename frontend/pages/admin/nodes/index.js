@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import { useAuth } from "../../../lib/auth";
 import toast from "react-hot-toast";
+import toast from "react-hot-toast";
 import Link from "next/link";
 import { RefreshCw, HardDrive, Server, Cpu, Database } from "lucide-react";
 

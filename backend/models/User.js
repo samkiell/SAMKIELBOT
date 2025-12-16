@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+// Default limits
+const DEFAULT_LIMITS = {
+  maxBots: 1,
+  maxRam: 1024, // MB
+  maxCpu: 100, // %
+};
+
 const userSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
@@ -26,7 +33,22 @@ const userSchema = new mongoose.Schema(
     },
     password: { type: String, required: true, minlength: 6 },
     profileImage: { type: String, default: null }, // Cloudinary image URL
-    role: { type: String, enum: ["user", "admin"], default: "user" },
+    role: {
+      type: String,
+      enum: ["user", "power_user", "admin"],
+      default: "user",
+    },
+    accountStatus: {
+      type: String,
+      enum: ["active", "suspended", "deleted"], // deleted = soft delete
+      default: "active",
+    },
+    lastLogin: { type: Date },
+    limits: {
+      maxBots: { type: Number, default: DEFAULT_LIMITS.maxBots },
+      maxRam: { type: Number, default: DEFAULT_LIMITS.maxRam },
+      maxCpu: { type: Number, default: DEFAULT_LIMITS.maxCpu },
+    },
   },
   { timestamps: true }
 );

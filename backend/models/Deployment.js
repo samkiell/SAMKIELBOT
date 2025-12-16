@@ -52,12 +52,24 @@ const deploymentSchema = new mongoose.Schema({
       "running",
       "stopped",
       "failed",
+      "suspended",
     ],
     default: "pending",
   },
   errorMessage: {
     type: String,
   },
+  resources: {
+    ramLimit: { type: Number, default: 1024 }, // MB
+    cpuLimit: { type: Number, default: 100 }, // %
+    diskLimit: { type: Number, default: 1024 }, // MB
+  },
+  usageStats: {
+    uptimeMinutes: { type: Number, default: 0 },
+    cpuUsedMinutes: { type: Number, default: 0 },
+    ramInfos: { type: [Number], default: [] }, // Sampling history? Or just keep simple
+  },
+  lastActivity: { type: Date, default: Date.now },
   deployedAt: {
     type: Date,
     default: Date.now,

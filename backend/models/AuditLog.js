@@ -5,14 +5,16 @@ const auditLogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  botId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Deployment",
-  },
-  action: {
-    type: String, // 'start', 'stop', 'restart', 'delete', 'suspend', 'unsuspend'
+  targetType: {
+    type: String,
+    enum: ["User", "Deployment", "Node", "System"],
     required: true,
   },
+  targetId: {
+    type: mongoose.Schema.Types.ObjectId,
+    refPath: "targetType",
+  },
+  ipAddress: { type: String },
   details: {
     type: Object, // Extra context if needed
   },

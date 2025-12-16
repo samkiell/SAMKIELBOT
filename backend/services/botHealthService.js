@@ -304,6 +304,7 @@ class BotHealthService extends EventEmitter {
       // Check server power state
       const resources = await pterodactyl.getResources(deployment.identifier);
       const serverState = resources.attributes.current_state;
+      const uptimeMilliseconds = resources.attributes.resources.uptime || 0;
 
       // Prepare update fields
       const updateFields = {
@@ -313,13 +314,12 @@ class BotHealthService extends EventEmitter {
         "resources.usedDisk": resources.attributes.resources.disk_bytes,
       };
 
-      // Update uptime for active bots
-      if (deployment.isActive && deployment.uptimeStart) {
-        const uptimeMs =
-          Date.now() - new Date(deployment.uptimeStart).getTime();
-        const uptimeMinutes = Math.floor(uptimeMs / 60000);
-        updateFields["usageStats.uptimeMinutes"] = uptimeMinutes;
-      }
+      // Store uptime from Pterodactyl (convert milliseconds to minutes for compatibility)
+      const uptimeMinutes = Math.floor(uptimeMilliseconds / 60000);
+      updateFields["usageStats.uptimeMinutes"] = uptimeMinutes;
+
+      // Also store the raw uptime in milliseconds for real-time display
+      updateFields["resources.uptimeMs"] = uptimeMilliseconds;
 
       // Update resource usage
       await Deployment.findByIdAndUpdate(deploymentId, updateFields);
@@ -438,8 +438,145 @@ class BotHealthService extends EventEmitter {
       for (const bot of runningBots) {
         await this.startMonitoring(bot._id);
       }
+
+      // Also check for bots that might be running but have wrong status
+      await this.detectAlreadyRunningBots();
     } catch (error) {
       console.error(`[BotHealth] Init error:`, error.message);
+    }
+  }
+
+  // Detect and update status for bots that are already running in Pterodactyl
+  async detectAlreadyRunningBots() {
+    try {
+      console.log("[BotHealth] Checking for already-running bots...");
+
+      const allBots = await Deployment.find({
+        pterodactylUuid: { $exists: true, $ne: null },
+      });
+
+      for (const bot of allBots) {
+        try {
+          // Check server state
+          const resources = await pterodactyl.getResources(bot.pterodactylUuid);
+          const serverState = resources.attributes.current_state;
+
+          if (serverState === "running") {
+            // Server is running, check if bot thinks it's offline
+            if (
+              bot.status === "offline" ||
+              bot.status === "stopped" ||
+              !bot.isActive
+            ) {
+              console.log(
+                `[BotHealth] Found running bot with wrong status: ${bot.botName} (${bot.identifier})`
+              );
+
+              // Get recent console logs to check if bot is actually connected
+              const wsDetails = await pterodactyl.getWebsocketDetails(
+                bot.pterodactylUuid
+              );
+
+              // Check logs for connection indicators
+              const WebSocket = require("ws");
+              const ws = new WebSocket(wsDetails.socket, {
+                origin:
+                  process.env.PTERODACTYL_DOMAIN || "https://panel.samkiel.dev",
+              });
+
+              ws.on("open", () => {
+                ws.send(
+                  JSON.stringify({ event: "auth", args: [wsDetails.token] })
+                );
+              });
+
+              ws.on("message", async (data) => {
+                try {
+                  const msg = JSON.parse(data.toString());
+
+                  if (msg.event === "auth success") {
+                    ws.send(
+                      JSON.stringify({ event: "send logs", args: [null] })
+                    );
+                  }
+
+                  if (msg.event === "console output") {
+                    const logLine = this.stripAnsi(msg.args[0]);
+
+                    // Check if bot is connected
+                    if (
+                      /connected to|client ready|bot connected|session restored/i.test(
+                        logLine
+                      )
+                    ) {
+                      console.log(
+                        `[BotHealth] Auto-detected active bot: ${bot.botName}`
+                      );
+
+                      // Update bot status
+                      await Deployment.findByIdAndUpdate(bot._id, {
+                        status: "active",
+                        isActive: true,
+                        connectedAt: new Date(),
+                        uptimeStart: new Date(),
+                        lastActiveAt: new Date(),
+                        "resources.state": "running",
+                      });
+
+                      // Start monitoring
+                      await this.startMonitoring(bot._id);
+
+                      ws.close();
+                    }
+                  }
+                } catch (err) {
+                  // Ignore parse errors
+                }
+              });
+
+              // Close after checking logs (5 seconds)
+              setTimeout(() => {
+                if (ws.readyState === 1) {
+                  ws.close();
+                }
+              }, 5000);
+            }
+          } else if (serverState === "offline" || serverState === "stopping") {
+            // Server is offline, make sure bot status reflects this
+            if (bot.status !== "offline" && bot.status !== "stopped") {
+              console.log(
+                `[BotHealth] Updating offline bot: ${bot.botName} (${bot.identifier})`
+              );
+
+              await Deployment.findByIdAndUpdate(bot._id, {
+                status: "offline",
+                isActive: false,
+                lastActiveAt: new Date(),
+                "resources.state": "offline",
+              });
+            }
+          }
+        } catch (err) {
+          // Skip bots that error (might be deleted from Pterodactyl)
+          if (err.response?.status === 404) {
+            console.log(
+              `[BotHealth] Bot ${bot.botName} not found in Pterodactyl, marking as failed`
+            );
+            await Deployment.findByIdAndUpdate(bot._id, {
+              status: "failed",
+              isActive: false,
+              errorMessage: "Server not found in Pterodactyl",
+            });
+          }
+        }
+      }
+
+      console.log("[BotHealth] Already-running bot detection complete");
+    } catch (error) {
+      console.error(
+        `[BotHealth] Error detecting already-running bots:`,
+        error.message
+      );
     }
   }
 }

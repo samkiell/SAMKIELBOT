@@ -93,9 +93,7 @@ export default function BotsList() {
 
   const fetchBots = async () => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/bots-list`
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bots-list`);
       const data = await res.json();
       setBots(data.data || []);
       setFilteredBots(data.data || []);
@@ -106,16 +104,23 @@ export default function BotsList() {
     }
   };
 
-  // Format uptime in real-time: HH:MM:SS or MM:SS
+  // Format uptime in real-time using Pterodactyl's uptime data
   const formatUptime = (bot) => {
-    if (!bot.isActive || !bot.uptimeStart) {
+    if (!bot.isActive) {
       return "Offline";
     }
 
-    const uptimeMs =
-      currentTime - new Date(bot.uptimeStart || bot.lastActive).getTime();
+    // Use Pterodactyl's uptime (updated every 30s) + time elapsed since last update
+    let uptimeMs = bot.uptimeMs || 0;
 
-    if (uptimeMs < 0) return "0s";
+    // If we have uptimeStart, add elapsed time since last fetch for smoother counting
+    if (bot.uptimeStart) {
+      const timeSinceStart = currentTime - new Date(bot.uptimeStart).getTime();
+      // Use the greater of the two (Pterodactyl uptime or calculated)
+      uptimeMs = Math.max(uptimeMs, timeSinceStart);
+    }
+
+    if (uptimeMs <= 0) return "0s";
 
     const hours = Math.floor(uptimeMs / 3600000);
     const minutes = Math.floor((uptimeMs % 3600000) / 60000);

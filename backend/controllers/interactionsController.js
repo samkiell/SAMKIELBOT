@@ -142,6 +142,7 @@ const getBotsList = async (req, res) => {
       isActive: b.isActive || false,
       lastActive: b.lastActiveAt || b.lastActivity || b.createdAt,
       uptime: b.usageStats?.uptimeMinutes || 0,
+      uptimeMs: b.resources?.uptimeMs || 0,
       uptimeStart: b.uptimeStart,
       resourceState: b.resources?.state || "offline",
     }));

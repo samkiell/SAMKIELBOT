@@ -43,4 +43,12 @@ router.post("/nodes/sync", protect, admin, syncNodes);
 // @desc    Audit Logs
 router.get("/audit-logs", protect, admin, getAuditLogs);
 
+// @desc    Settings (Feature Flags)
+const {
+  getFeatureFlags,
+  updateFeatureFlag,
+} = require("../controllers/adminController");
+router.get("/settings/flags", protect, admin, getFeatureFlags);
+router.put("/settings/flags/:key", protect, admin, updateFeatureFlag);
+
 module.exports = router;

@@ -2,6 +2,7 @@ const Deployment = require("../models/Deployment");
 const User = require("../models/User");
 const AuditLog = require("../models/AuditLog");
 const Node = require("../models/Node");
+const FeatureFlag = require("../models/FeatureFlag");
 const pterodactyl = require("../utils/pterodactyl");
 const { successResponse, errorResponse } = require("../utils/response");
 
@@ -373,6 +374,33 @@ const getUserBots = async (req, res) => {
   }
 };
 
+// @desc    Get All Feature Flags
+// @route   GET /api/admin/settings/flags
+const getFeatureFlags = async (req, res) => {
+  try {
+    const flags = await FeatureFlag.find({});
+    successResponse(res, flags);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Update Feature Flag
+// @route   PUT /api/admin/settings/flags/:key
+const updateFeatureFlag = async (req, res) => {
+  try {
+    const { isEnabled, description } = req.body;
+    const flag = await FeatureFlag.findOneAndUpdate(
+      { key: req.params.key },
+      { isEnabled, description, updatedAt: Date.now() },
+      { new: true, upsert: true }
+    );
+    successResponse(res, flag);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
 module.exports = {
   getSystemStats,
   getAllUsers,
@@ -387,4 +415,6 @@ module.exports = {
   getAuditLogs,
   getUserDetails,
   getUserBots,
+  getFeatureFlags,
+  updateFeatureFlag,
 };

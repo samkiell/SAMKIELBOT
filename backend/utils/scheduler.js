@@ -47,6 +47,12 @@ const initScheduler = () => {
         if (details.attributes.suspended) {
           bot.status = "suspended";
           await bot.save();
+        } else if (bot.status === "running") {
+          // Increment uptime stats
+          bot.usageStats = bot.usageStats || {};
+          bot.usageStats.uptimeMinutes =
+            (bot.usageStats.uptimeMinutes || 0) + 10; // Approx 10 min interval
+          await bot.save();
         }
       } catch (e) {
         if (e.response && e.response.status === 404) {

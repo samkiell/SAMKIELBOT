@@ -65,6 +65,18 @@ const initScheduler = () => {
     }
   });
 
+  // Check Subscription Expirations (Daily at midnight)
+  cron.schedule("0 0 * * *", async () => {
+    console.log("[Scheduler] Checking subscription expirations...");
+    try {
+      const billingService = require("../services/billingService");
+      await billingService.checkExpiredSubscriptions();
+      console.log("[Scheduler] Subscription check completed");
+    } catch (e) {
+      console.error("[Scheduler] Subscription Check Error:", e.message);
+    }
+  });
+
   console.log("Scheduler Active.");
 };
 

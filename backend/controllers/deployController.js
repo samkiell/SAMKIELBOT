@@ -113,11 +113,37 @@ const createDeployment = async (req, res) => {
       return errorResponse(res, "Invalid WhatsApp number format", 400);
     }
 
+    // ✅ BILLING ENFORCEMENT: Check if user can create a bot
+    const billingService = require("../services/billingService");
+    const canCreate = await billingService.canCreateBot(req.user.id);
+
+    if (!canCreate.allowed) {
+      return errorResponse(
+        res,
+        `Bot limit reached. You have ${canCreate.currentCount}/${
+          canCreate.maxAllowed
+        } bots. ${
+          canCreate.accountType === "FREE"
+            ? "Upgrade to Premium to create more bots."
+            : "You've reached your plan limit."
+        }`,
+        403
+      );
+    }
+
+    // Get user's resource limits
+    const limits = await billingService.getUserLimits(req.user.id);
+
     const deployment = await Deployment.create({
       user: req.user.id,
       botNumber,
       botName,
       status: "creating",
+      resources: {
+        ramLimit: limits.ramLimit,
+        cpuLimit: limits.cpuLimit,
+        diskLimit: limits.diskLimit,
+      },
     });
 
     // Begin deployment process asynchronously
@@ -315,6 +341,9 @@ const processDeployment = async (deploymentId) => {
       botNumber: deployment.botNumber,
       userId: deployment.user,
       branch: branchName,
+      disk: deployment.resources?.diskLimit || 500,
+      memory: deployment.resources?.ramLimit || 300,
+      cpu: deployment.resources?.cpuLimit || 25,
     });
 
     // ✅ Update DB

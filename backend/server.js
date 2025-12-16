@@ -15,7 +15,7 @@ const deployRoutes = require("./routes/deploy");
 const updateRoutes = require("./routes/update");
 const adminRoutes = require("./routes/admin");
 const interactionRoutes = require("./routes/interactions");
-const billingRoutes = require("./routes/billing");
+const creditsRoutes = require("./routes/credits");
 const initScheduler = require("./utils/scheduler");
 const botHealthService = require("./services/botHealthService");
 
@@ -52,7 +52,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/deploy", deployRoutes);
 app.use("/api/update", updateRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/billing", billingRoutes);
+app.use("/api/credits", creditsRoutes);
 app.use("/api", interactionRoutes);
 
 // ✅ Error handling

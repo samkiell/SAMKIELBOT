@@ -65,15 +65,17 @@ const initScheduler = () => {
     }
   });
 
-  // Check Subscription Expirations (Daily at midnight)
+  // Daily Credit Burn (Daily at midnight)
   cron.schedule("0 0 * * *", async () => {
-    console.log("[Scheduler] Checking subscription expirations...");
+    console.log("[Scheduler] Processing daily credit burn...");
     try {
-      const billingService = require("../services/billingService");
-      await billingService.checkExpiredSubscriptions();
-      console.log("[Scheduler] Subscription check completed");
+      const creditService = require("../services/creditService");
+      const result = await creditService.processDailyBurn();
+      console.log(
+        `[Scheduler] Credit burn complete: ${result.totalBurned} credits burned, ${result.botsSuspended} bots suspended`
+      );
     } catch (e) {
-      console.error("[Scheduler] Subscription Check Error:", e.message);
+      console.error("[Scheduler] Credit Burn Error:", e.message);
     }
   });
 

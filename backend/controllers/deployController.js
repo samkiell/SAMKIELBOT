@@ -107,43 +107,82 @@ const updateDeployment = async (req, res) => {
 // @access  Private
 const createDeployment = async (req, res) => {
   try {
-    const { botNumber, botName } = req.body;
+    const { botNumber, botName, cpu, ram, disk } = req.body;
 
     if (!/^\d{10,15}$/.test(botNumber)) {
       return errorResponse(res, "Invalid WhatsApp number format", 400);
     }
 
-    // ✅ BILLING ENFORCEMENT: Check if user can create a bot
-    const billingService = require("../services/billingService");
-    const canCreate = await billingService.canCreateBot(req.user.id);
+    // ✅ CREDIT ENFORCEMENT: Calculate deployment cost
+    const creditService = require("../services/creditService");
 
-    if (!canCreate.allowed) {
+    // Validate resource selections
+    const validCpu = [25, 30, 40, 50];
+    const validRam = [300, 500, 1024, 2048];
+    const validDisk = [500, 1024, 2048];
+
+    const selectedCpu = validCpu.includes(cpu) ? cpu : 25;
+    const selectedRam = validRam.includes(ram) ? ram : 300;
+    const selectedDisk = validDisk.includes(disk) ? disk : 500;
+
+    const costBreakdown = creditService.calculateDeploymentCost(
+      selectedCpu,
+      selectedRam,
+      selectedDisk
+    );
+    const dailyBurn = creditService.calculateDailyBurn(
+      selectedCpu,
+      selectedRam
+    );
+
+    // Check if user has sufficient credits
+    const hasSufficientCredits = await creditService.hasSufficientCredits(
+      req.user.id,
+      costBreakdown.totalCost
+    );
+
+    if (!hasSufficientCredits) {
+      const user = await require("../models/User").findById(req.user.id);
       return errorResponse(
         res,
-        `Bot limit reached. You have ${canCreate.currentCount}/${
-          canCreate.maxAllowed
-        } bots. ${
-          canCreate.accountType === "FREE"
-            ? "Upgrade to Premium to create more bots."
-            : "You've reached your plan limit."
-        }`,
+        `Insufficient credits. You have ${user.credits} credits but need ${costBreakdown.totalCost} credits to deploy this bot. Buy more credits to continue.`,
         403
       );
     }
 
-    // Get user's resource limits
-    const limits = await billingService.getUserLimits(req.user.id);
-
+    // Create deployment
     const deployment = await Deployment.create({
       user: req.user.id,
       botNumber,
       botName,
       status: "creating",
       resources: {
-        ramLimit: limits.ramLimit,
-        cpuLimit: limits.cpuLimit,
-        diskLimit: limits.diskLimit,
+        ramLimit: selectedRam,
+        cpuLimit: selectedCpu,
+        diskLimit: selectedDisk,
       },
+      creationCost: costBreakdown.creationCost,
+      resourceCost: costBreakdown.resourceCost,
+      totalCost: costBreakdown.totalCost,
+      dailyBurn,
+    });
+
+    // Deduct credits
+    await creditService.deductCredits(
+      req.user.id,
+      costBreakdown.totalCost,
+      "bot_creation",
+      `Created bot: ${botName}`,
+      { deployment: deployment._id }
+    );
+
+    // Send notification
+    const user = await require("../models/User").findById(req.user.id);
+    await require("../models/Notification").create({
+      user: req.user.id,
+      title: "Bot Creation Started 🚀",
+      message: `Your bot "${botName}" is being created. ${costBreakdown.totalCost} credits deducted. Remaining: ${user.credits} credits.`,
+      type: "info",
     });
 
     // Begin deployment process asynchronously

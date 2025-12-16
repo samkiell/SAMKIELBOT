@@ -320,6 +320,7 @@ class BotHealthService extends EventEmitter {
 
       // Also store the raw uptime in milliseconds for real-time display
       updateFields["resources.uptimeMs"] = uptimeMilliseconds;
+      updateFields["resources.lastUptimeUpdate"] = new Date();
 
       // Update resource usage
       await Deployment.findByIdAndUpdate(deploymentId, updateFields);

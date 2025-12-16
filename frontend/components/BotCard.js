@@ -1,19 +1,71 @@
-import { Eye, RotateCcw, Square, Play, Trash2 } from "lucide-react";
+import { Eye, RotateCcw, Square, Play, Trash2, Clock } from "lucide-react";
 import { controlBot, deleteBot } from "../lib/api";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import io from "socket.io-client";
+
+let socket;
 
 export default function BotCard({ deployment, refreshData }) {
   const [loading, setLoading] = useState(false);
+  const [currentTime, setCurrentTime] = useState(Date.now());
+
+  // Real-time uptime counter
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Socket.IO for real-time updates
+  useEffect(() => {
+    const socketUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    socket = io(socketUrl);
+
+    socket.on("bot:status_change", (data) => {
+      if (data.deploymentId === deployment._id) {
+        if (refreshData) refreshData();
+      }
+    });
+
+    socket.on("bot:connected", (data) => {
+      if (data.deploymentId === deployment._id) {
+        if (refreshData) refreshData();
+      }
+    });
+
+    socket.on("bot:active", (data) => {
+      if (data.deploymentId === deployment._id) {
+        if (refreshData) refreshData();
+      }
+    });
+
+    socket.on("bot:offline", (data) => {
+      if (data.deploymentId === deployment._id) {
+        if (refreshData) refreshData();
+      }
+    });
+
+    return () => {
+      if (socket) socket.disconnect();
+    };
+  }, [deployment._id, refreshData]);
 
   const getStatusConfig = (status) => {
     const config = {
       running: { label: "✅ Running", color: "green" },
+      active: { label: "✅ Active", color: "green" },
+      connected: { label: "✅ Connected", color: "green" },
       stopped: { label: "⛔ Stopped", color: "red" },
+      offline: { label: "⚫ Offline", color: "gray" },
       installing: { label: "🛠 Installing", color: "yellow" },
       creating: { label: "🏗 Creating", color: "blue" },
       starting: { label: "🔄 Starting", color: "blue" },
       awaiting_pairing: { label: "📲 Awaiting Pairing", color: "purple" },
+      paired: { label: "🔗 Paired", color: "purple" },
       failed: { label: "❌ Failed", color: "red" },
       pending: { label: "⏳ Pending", color: "gray" },
     };
@@ -34,6 +86,39 @@ export default function BotCard({ deployment, refreshData }) {
       gray: "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400",
     };
     return colors[color] || colors.gray;
+  };
+
+  const formatUptime = () => {
+    if (!deployment.isActive) {
+      return "Offline";
+    }
+
+    let uptimeMs = deployment.resources?.uptimeMs || 0;
+
+    // Add elapsed time since last update for smooth counting
+    if (deployment.resources?.lastUptimeUpdate) {
+      const elapsedSinceUpdate =
+        currentTime - new Date(deployment.resources.lastUptimeUpdate).getTime();
+      uptimeMs += elapsedSinceUpdate;
+    } else if (deployment.uptimeStart) {
+      const timeSinceStart =
+        currentTime - new Date(deployment.uptimeStart).getTime();
+      uptimeMs = Math.max(uptimeMs, timeSinceStart);
+    }
+
+    if (uptimeMs <= 0) return "0s";
+
+    const hours = Math.floor(uptimeMs / 3600000);
+    const minutes = Math.floor((uptimeMs % 3600000) / 60000);
+    const seconds = Math.floor((uptimeMs % 60000) / 1000);
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${seconds}s`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    } else {
+      return `${seconds}s`;
+    }
   };
 
   const handleControl = async (action) => {
@@ -107,6 +192,21 @@ export default function BotCard({ deployment, refreshData }) {
               })}
             </span>
           </p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm flex justify-between items-center">
+            <span className="font-medium flex items-center gap-1">
+              <Clock size={14} />
+              Uptime:
+            </span>
+            <span
+              className={`font-mono ${
+                deployment.isActive
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-gray-500"
+              }`}
+            >
+              {formatUptime()}
+            </span>
+          </p>
         </div>
       </div>
 
@@ -116,11 +216,18 @@ export default function BotCard({ deployment, refreshData }) {
           const isBusy = ["creating", "installing", "pending"].includes(
             deployment.status
           );
-          const isActive = ["running", "starting", "awaiting_pairing"].includes(
+          const isActive = [
+            "running",
+            "starting",
+            "awaiting_pairing",
+            "active",
+            "connected",
+            "paired",
+          ].includes(deployment.status);
+          // Start: Show if stopped or failed
+          const showStart = ["stopped", "failed", "offline"].includes(
             deployment.status
           );
-          // Start: Show if stopped or failed
-          const showStart = ["stopped", "failed"].includes(deployment.status);
           // Stop: Show if active (running, starting, waiting)
           const showStop = isActive;
           // Restart: Show if not busy/creating (can restart even if stopped usually)

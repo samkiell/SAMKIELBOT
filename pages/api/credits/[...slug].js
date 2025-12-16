@@ -1,3 +1,4 @@
+const dbConnect = require("../../lib/dbConnect");
 import creditsController from "@/lib/controllers/creditsController";
 const { protect } = require("../../lib/utils/authMiddleware");
 
@@ -6,6 +7,8 @@ export default async function handler(req, res) {
   const { slug } = req.query;
 
   try {
+    // Ensure database connection
+    await dbConnect();
     // Route: GET /api/credits/packages
     if (slug && slug[0] === "packages" && method === "GET") {
       return await creditsController.getCreditPackages(req, res);

@@ -1,3 +1,4 @@
+const dbConnect = require("../../lib/dbConnect");
 import paymentController from "@/lib/controllers/paymentController";
 import webhookController from "@/lib/controllers/webhookController";
 const { protect, admin } = require("../../lib/utils/authMiddleware");
@@ -7,6 +8,8 @@ export default async function handler(req, res) {
   const { slug } = req.query;
 
   try {
+    // Ensure database connection
+    await dbConnect();
     // Route: GET /api/payments/packages
     if (slug && slug[0] === "packages" && method === "GET") {
       return await paymentController.getCreditPackages(req, res);

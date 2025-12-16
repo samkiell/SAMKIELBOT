@@ -1,3 +1,4 @@
+const dbConnect = require("../../lib/dbConnect");
 const {
   deployBot,
   getDeployments,
@@ -18,6 +19,8 @@ export default async function handler(req, res) {
   const { slug } = req.query;
 
   try {
+    // Ensure database connection
+    await dbConnect();
     // Route: POST /api/deploy
     if (!slug && method === "POST") {
       return await protect(req, res, async () => {

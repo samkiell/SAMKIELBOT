@@ -1,3 +1,4 @@
+const dbConnect = require("../../lib/dbConnect");
 const { protect, admin } = require("../../lib/utils/authMiddleware");
 const {
   getSystemStats,
@@ -31,6 +32,8 @@ export default async function handler(req, res) {
   const { slug } = req.query;
 
   try {
+    // Ensure database connection
+    await dbConnect();
     // Apply admin middleware
     return await protect(req, res, async () => {
       return await admin(req, res, async () => {

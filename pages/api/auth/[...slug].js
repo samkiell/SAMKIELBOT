@@ -1,3 +1,4 @@
+const dbConnect = require("../../lib/dbConnect");
 const {
   register,
   login,
@@ -12,6 +13,8 @@ export default async function handler(req, res) {
   const { slug } = req.query;
 
   try {
+    // Ensure database connection
+    await dbConnect();
     // Route: POST /api/auth/register
     if (slug && slug[0] === "register" && method === "POST") {
       return await register(req, res);

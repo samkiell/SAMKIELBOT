@@ -158,7 +158,11 @@ const createDeployment = async (req, res) => {
       const user = await require("../models/User").findById(req.user.id);
       return errorResponse(
         res,
-        `Insufficient credits! You have ${user.credits} credits but need ${costBreakdown.totalCost} credits to deploy this bot. Please purchase more credits to continue.`,
+        `Insufficient credits! You have ${Math.round(
+          user.credits
+        )} credits but need ${
+          costBreakdown.totalCost
+        } credits to deploy this bot. Please purchase more credits to continue.`,
         403
       );
     }
@@ -194,7 +198,9 @@ const createDeployment = async (req, res) => {
     await require("../models/Notification").create({
       user: req.user.id,
       title: "Bot Creation Started 🚀",
-      message: `Your bot "${botName}" is being created. ${costBreakdown.totalCost} credits deducted. Remaining: ${user.credits} credits.`,
+      message: `Your bot "${botName}" is being created. ${
+        costBreakdown.totalCost
+      } credits deducted. Remaining: ${Math.round(user.credits)} credits.`,
       type: "info",
     });
 

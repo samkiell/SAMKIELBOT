@@ -89,18 +89,21 @@ async function deductCredits(userId, amount, type, description, metadata = {}) {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
 
-  if (user.credits < amount) {
+  // Round to prevent floating-point errors
+  const roundedAmount = Math.round(amount);
+
+  if (user.credits < roundedAmount) {
     throw new Error("Insufficient credits");
   }
 
-  user.credits -= amount;
+  user.credits = Math.round(user.credits - roundedAmount);
   await user.save();
 
   // Record transaction
   await CreditTransaction.create({
     user: userId,
     type,
-    amount: -amount,
+    amount: -roundedAmount,
     balanceAfter: user.credits,
     description,
     ...metadata,
@@ -116,14 +119,17 @@ async function addCredits(userId, amount, type, description, metadata = {}) {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
 
-  user.credits += amount;
+  // Round to prevent floating-point errors
+  const roundedAmount = Math.round(amount);
+
+  user.credits = Math.round(user.credits + roundedAmount);
   await user.save();
 
   // Record transaction
   await CreditTransaction.create({
     user: userId,
     type,
-    amount: amount,
+    amount: roundedAmount,
     balanceAfter: user.credits,
     description,
     ...metadata,
@@ -250,7 +256,9 @@ async function processDailyBurn() {
           await Notification.create({
             user: user._id,
             title: "Low Credits Warning ⚠️",
-            message: `Your credits are running low (${user.credits} remaining). Your bots may be suspended soon.`,
+            message: `Your credits are running low (${Math.round(
+              user.credits
+            )} remaining). Your bots may be suspended soon.`,
             type: "warning",
           });
         }

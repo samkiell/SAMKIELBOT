@@ -123,6 +123,7 @@ const getAllUsers = async (req, res) => {
 
         return {
           ...user.toObject(),
+          credits: Math.round(user.credits),
           stats: {
             totalBots: botCount,
             totalRamUsage: totalRam,
@@ -683,7 +684,7 @@ const addCreditsToUser = async (req, res) => {
         : "Credits deducted successfully",
       credits: absoluteCredits,
       action: isAdding ? "added" : "deducted",
-      newBalance,
+      newBalance: Math.round(newBalance),
       user: {
         id: user._id,
         username: user.username,
@@ -719,7 +720,7 @@ const getUserCredits = async (req, res) => {
         email: user.email,
         fullName: user.fullName,
       },
-      credits: user.credits,
+      credits: Math.round(user.credits),
       referralCode: user.referralCode,
       totalReferrals: user.totalReferrals,
       stats,

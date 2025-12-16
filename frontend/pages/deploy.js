@@ -36,8 +36,17 @@ export default function DeployPage() {
       // IMMEDIATE redirect to the dedicated session page
       router.push(`/deploy/${deploymentData._id}`);
     } catch (error) {
-      setError(error.response?.data?.error || "Deployment failed");
-      toast.error("Deployment failed. Please try again.");
+      console.error("Deployment error:", error);
+
+      // Extract the error message from various possible locations
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Deployment failed. Please try again.";
+
+      setError(errorMessage);
+      toast.error(errorMessage);
       setLoading(false);
     }
   };

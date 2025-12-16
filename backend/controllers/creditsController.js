@@ -24,7 +24,7 @@ exports.getCreditBalance = async (req, res) => {
     res.json({
       success: true,
       data: {
-        credits: user.credits,
+        credits: Math.round(user.credits),
         referralCode: user.referralCode,
         totalReferrals: user.totalReferrals,
         stats,

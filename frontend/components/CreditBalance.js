@@ -59,7 +59,7 @@ export default function CreditBalance({ showBuyButton = true }) {
             isLow ? "text-red-700 dark:text-red-300" : ""
           }`}
         >
-          {credits} Credits
+          {Math.round(credits)} Credits
         </span>
       </div>
       {showBuyButton && (

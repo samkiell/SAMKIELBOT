@@ -106,7 +106,9 @@ export default function UserManagement() {
     // If reducing, check if user has enough credits
     if (creditAction === "reduce" && selectedUser.credits < amount) {
       toast.error(
-        `User only has ${selectedUser.credits} credits. Cannot reduce by ${amount}.`
+        `User only has ${Math.round(
+          selectedUser.credits
+        )} credits. Cannot reduce by ${amount}.`
       );
       return;
     }
@@ -220,7 +222,7 @@ export default function UserManagement() {
                     <div className="flex items-center gap-2">
                       <Coins size={16} className="text-yellow-500" />
                       <span className="font-bold text-yellow-600 dark:text-yellow-400">
-                        {u.credits || 0}
+                        {Math.round(u.credits || 0)}
                       </span>
                     </div>
                   </td>
@@ -303,7 +305,7 @@ export default function UserManagement() {
               <p className="text-xs text-gray-500">
                 Current balance:{" "}
                 <span className="font-bold text-yellow-600">
-                  {selectedUser.credits || 0} credits
+                  {Math.round(selectedUser.credits || 0)} credits
                 </span>
               </p>
             </div>
@@ -330,7 +332,8 @@ export default function UserManagement() {
                   creditAmount &&
                   parseFloat(creditAmount) > selectedUser.credits && (
                     <p className="text-xs text-red-500 mt-1">
-                      ⚠️ User only has {selectedUser.credits} credits
+                      ⚠️ User only has {Math.round(selectedUser.credits)}{" "}
+                      credits
                     </p>
                   )}
               </div>

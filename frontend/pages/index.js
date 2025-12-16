@@ -105,14 +105,21 @@ export default function Home() {
       <Snowfall />
 
       {/* Hero Section */}
-      <section className="relative flex flex-col justify-center items-center text-center px-6 py-12 min-h-screen bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500">
+      <section className="relative flex flex-col justify-center items-center text-center px-6 py-12 min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10">
           <motion.div {...fadeUp}>
-            <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm">
-              <span className="text-cyan-300 font-bold text-sm tracking-wide">
-                🚀 V3.0 NOW LIVE
-              </span>
+            <div className="flex flex-col items-center gap-4 mb-6">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-red-500/20 border border-red-400/30 backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse">
+                <span className="text-red-100 font-bold text-sm tracking-wide flex items-center gap-2">
+                  🎄 HAPPY HOLIDAYS 🎅
+                </span>
+              </div>
+              <div className="inline-block px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm">
+                <span className="text-cyan-300 font-bold text-sm tracking-wide">
+                  🚀 V3.0 NOW LIVE
+                </span>
+              </div>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white tracking-tight drop-shadow-sm">
@@ -143,7 +150,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/bots"
-                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className="bg-black/20 hover:bg-black/40 backdrop-blur-md text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
               >
                 Community Bots
               </Link>

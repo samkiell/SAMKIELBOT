@@ -1,9 +1,5 @@
-```javascript
 import { useState, useEffect } from "react";
-import {
-  getCreditPackages,
-  initializePayment,
-} from "../lib/api";
+import { getCreditPackages, initializePayment } from "../lib/api";
 import { toast } from "react-hot-toast";
 
 export default function BuyCreditsModal({ isOpen, onClose, onSuccess }) {

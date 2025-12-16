@@ -24,6 +24,12 @@ export default function AdminLayout({ children }) {
     { href: "/admin/bots", label: "Bot Control", icon: Server },
     { href: "/admin/nodes", label: "Infrastructure", icon: HardDrive },
     { href: "/admin/audit", label: "Audit Logs", icon: Shield },
+    {
+      href: "/admin/notifications",
+      label: "Notifications",
+      icon: AlertTriangle,
+    },
+    { href: "/admin/suggestions", label: "Suggestions", icon: Menu }, // Reusing Menu icon for list
     { href: "/admin/settings", label: "System Policy", icon: Settings },
   ];
 

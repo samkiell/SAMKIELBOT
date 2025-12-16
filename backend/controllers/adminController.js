@@ -310,18 +310,35 @@ const syncNodes = async (req, res) => {
 
     for (const pNode of pteroNodes) {
       const attrs = pNode.attributes;
+      // Process servers if included in Ptero response (relationships.servers.data)
+      const serversData = pNode.attributes.relationships?.servers?.data || [];
+      const mappedServers = serversData.map((s) => ({
+        id: s.attributes.id,
+        name: s.attributes.name,
+        identifier: s.attributes.identifier,
+        memory: s.attributes.limits.memory,
+        disk: s.attributes.limits.disk,
+        cpu: s.attributes.limits.cpu,
+        status:
+          s.attributes.status ||
+          (s.attributes.suspended ? "suspended" : "active"),
+      }));
+
       await Node.findOneAndUpdate(
         { pterodactylId: attrs.id },
         {
           name: attrs.name,
           fqdn: attrs.fqdn,
-          status: attrs.maintenance_mode ? "maintenance" : "online", // Simplistic status
+          status: attrs.maintenance_mode ? "maintenance" : "online",
           resources: {
             totalRam: attrs.memory,
-            totalCpu: attrs.cpu, // This is meaningless in Ptero usually?
+            totalCpu: attrs.cpu,
             totalDisk: attrs.disk,
+            usedRam: mappedServers.reduce((acc, s) => acc + s.memory, 0), // Calc from limits
+            usedDisk: mappedServers.reduce((acc, s) => acc + s.disk, 0),
           },
-          // We can't easily get 'used' without more calls, leaving for cron job
+          serverCount: mappedServers.length,
+          servers: mappedServers,
         },
         { upsert: true, new: true }
       );

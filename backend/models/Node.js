@@ -18,6 +18,17 @@ const nodeSchema = new mongoose.Schema({
     usedDisk: { type: Number, default: 0 },
   },
   serverCount: { type: Number, default: 0 },
+  servers: [
+    {
+      id: Number,
+      name: String,
+      identifier: String,
+      memory: Number,
+      disk: Number,
+      cpu: Number,
+      status: String,
+    },
+  ],
   lastHeartbeat: { type: Date, default: Date.now },
 });
 

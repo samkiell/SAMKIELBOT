@@ -53,6 +53,22 @@ export default function Navbar() {
             >
               Home
             </Link>
+            {user && (
+              <>
+                <Link
+                  href="/bots"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Community Bots
+                </Link>
+                <Link
+                  href="/suggest"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Suggest
+                </Link>
+              </>
+            )}
             {user ? (
               <>
                 <Link
@@ -177,58 +193,96 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-      {/* Mobile Dropdown */}
+      </div>
+      
+      {/* Mobile Slide-over Menu */}
+      {/* Overlay */}
+      <div 
+        className={`md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
+           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMenuOpen(false)}
+      />
+
+      {/* Drawer */}
       <div
-        className={`md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-6 py-4 space-y-3 transition-all duration-300 ${
-          menuOpen
-            ? "max-h-96 opacity-100"
-            : "max-h-0 opacity-0 overflow-hidden"
+        className={`md:hidden fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <Link
-          href={user ? "/dashboard" : "/"}
-          onClick={() => setMenuOpen(false)}
-          className="block text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-        >
-          Home
-        </Link>
-        {user ? (
-          <>
-            <Link
-              href="/dashboard"
-              onClick={() => setMenuOpen(false)}
-              className="block text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+        <div className="p-6 flex flex-col h-full">
+          {/* Header to align X */}
+          <div className="flex justify-end mb-8">
+            <button
+               className="text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+               onClick={() => setMenuOpen(false)}
             >
-              Dashboard
+              <X size={28} />
+            </button>
+          </div>
+
+          {/* Links */}
+          <div className="space-y-6 text-lg">
+            <Link
+              href={user ? "/dashboard" : "/"}
+              onClick={() => setMenuOpen(false)}
+              className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            >
+              Home
             </Link>
-            {user.role === "admin" && (
-              <Link
-                href="/admin"
-                onClick={() => setMenuOpen(false)}
-                className="block text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-semibold"
-              >
-                Admin Panel
-              </Link>
+            {user ? (
+              <>
+                <Link
+                  href="/bots"
+                  onClick={() => setMenuOpen(false)}
+                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Community Bots
+                </Link>
+                <Link
+                  href="/suggest"
+                  onClick={() => setMenuOpen(false)}
+                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Suggest
+                </Link>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Dashboard
+                </Link>
+                {user.role === "admin" && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMenuOpen(false)}
+                    className="block font-medium text-indigo-600 dark:text-indigo-400 transition-colors"
+                  >
+                    Admin Panel
+                  </Link>
+                )}
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setMenuOpen(false)}
+                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Register
+                </Link>
+              </>
             )}
-          </>
-        ) : (
-          <>
-            <Link
-              href="/login"
-              onClick={() => setMenuOpen(false)}
-              className="block text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setMenuOpen(false)}
-              className="block text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            >
-              Register
-            </Link>
-          </>
-        )}
+          </div>
+        </div>
       </div>
     </nav>
   );

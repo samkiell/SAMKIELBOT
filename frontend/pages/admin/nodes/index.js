@@ -126,9 +126,54 @@ export default function NodeInfrastructure() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-sm text-gray-500">
-                <span>FQDN: {node.fqdn}</span>
-                <span>ID: {node.pterodactylId}</span>
+              <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex justify-between items-center text-sm text-gray-500 mb-2">
+                  <span>FQDN: {node.fqdn}</span>
+                  <span>ID: {node.pterodactylId}</span>
+                </div>
+
+                {/* Server List */}
+                <div className="mt-4">
+                  <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-1">
+                    <Server size={12} /> Infrastructure (Servers) (
+                    {node.servers?.length || 0})
+                  </h4>
+                  <div className="max-h-40 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                    {node.servers && node.servers.length > 0 ? (
+                      node.servers.map((s) => (
+                        <div
+                          key={s.id}
+                          className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700/50 rounded text-xs"
+                        >
+                          <div className="overflow-hidden">
+                            <div className="font-bold truncate w-32">
+                              {s.name}
+                            </div>
+                            <div className="text-gray-400 font-mono">
+                              {s.identifier}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-mono">{s.memory}MB</div>
+                            <span
+                              className={`text-[10px] uppercase font-bold ${
+                                s.status === "suspended"
+                                  ? "text-red-500"
+                                  : "text-green-500"
+                              }`}
+                            >
+                              {s.status || "active"}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-xs text-gray-400 italic">
+                        No servers allocated
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

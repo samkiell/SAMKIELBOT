@@ -21,6 +21,7 @@ router.get(
   protect,
   creditsController.verifyPurchase
 );
+router.get("/referral/stats", protect, creditsController.getReferralStats);
 router.post("/referral/apply", protect, creditsController.applyReferral);
 
 module.exports = router;

@@ -14,7 +14,14 @@ const generateToken = (id, role) => {
 // @access  Public
 const register = async (req, res) => {
   try {
-    const { fullName, username, email, whatsappNumber, password } = req.body;
+    const {
+      fullName,
+      username,
+      email,
+      whatsappNumber,
+      password,
+      referredByUsername,
+    } = req.body;
 
     // Validation for required fields
     if (!fullName || !username || !email || !whatsappNumber || !password) {
@@ -52,6 +59,27 @@ const register = async (req, res) => {
       }
     }
 
+    // Validate referrer if provided
+    let referrer = null;
+    if (referredByUsername) {
+      referrer = await User.findOne({
+        username: referredByUsername.toLowerCase().trim(),
+      });
+
+      // Prevent self-referral
+      if (referrer && referrer.username === username.toLowerCase().trim()) {
+        return errorResponse(res, "You cannot refer yourself", 400);
+      }
+
+      if (!referrer) {
+        console.log(
+          `[Referral] Invalid referrer username: ${referredByUsername}`
+        );
+        // Don't fail registration, just ignore invalid referral
+        referrer = null;
+      }
+    }
+
     // Create user
     const user = await User.create({
       fullName,
@@ -60,7 +88,73 @@ const register = async (req, res) => {
       whatsappNumber,
       password,
       role: email === "samkiel.dev@gmail.com" ? "admin" : "user",
+      referredBy: referrer ? referrer._id : null,
     });
+
+    // Process referral rewards
+    if (referrer && user) {
+      try {
+        const creditService = require("../services/creditService");
+        const Referral = require("../models/Referral");
+        const Notification = require("../models/Notification");
+
+        // Create referral record
+        await Referral.create({
+          referrerId: referrer._id,
+          referredUserId: user._id,
+          creditsAwarded: true,
+        });
+
+        // Award credits to referrer
+        await creditService.addCredits(
+          referrer._id,
+          10,
+          "referral_reward",
+          `Referral reward for inviting ${user.username}`,
+          { referredUser: user._id }
+        );
+
+        // Award credits to new user
+        await creditService.addCredits(
+          user._id,
+          10,
+          "referral_bonus",
+          `Referral bonus from ${referrer.username}`,
+          { referrer: referrer._id }
+        );
+
+        // Update referrer stats
+        referrer.totalReferrals += 1;
+        referrer.referralCount += 1;
+        await referrer.save();
+
+        // Mark referral as claimed
+        user.referralRewardClaimed = true;
+        await user.save();
+
+        // Send notifications
+        await Notification.create({
+          user: referrer._id,
+          title: "Referral Reward! 🎉",
+          message: `You earned 10 credits for referring ${user.username}!`,
+          type: "success",
+        });
+
+        await Notification.create({
+          user: user._id,
+          title: "Welcome Bonus! 🎁",
+          message: `You received 10 bonus credits from ${referrer.username}'s referral!`,
+          type: "success",
+        });
+
+        console.log(
+          `[Referral] Processed: ${referrer.username} → ${user.username}`
+        );
+      } catch (referralError) {
+        console.error("[Referral] Error processing referral:", referralError);
+        // Don't fail registration if referral processing fails
+      }
+    }
 
     // Auto-Welcome Notification
     const Notification = require("../models/Notification");

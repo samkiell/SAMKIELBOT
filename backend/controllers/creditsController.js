@@ -25,8 +25,9 @@ exports.getCreditBalance = async (req, res) => {
       success: true,
       data: {
         credits: Math.round(user.credits),
-        referralCode: user.referralCode,
+        referralCode: user.username, // Username is the referral code
         totalReferrals: user.totalReferrals,
+        referralCount: user.referralCount,
         stats,
       },
     });
@@ -302,6 +303,59 @@ exports.getResourcePricing = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch pricing",
+    });
+  }
+};
+
+/**
+ * Get referral statistics
+ */
+exports.getReferralStats = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    const Referral = require("../models/Referral");
+    const CreditTransaction = require("../models/CreditTransaction");
+
+    // Get all referrals
+    const referrals = await Referral.find({ referrerId: userId })
+      .populate("referredUserId", "username email createdAt")
+      .sort({ createdAt: -1 });
+
+    // Calculate total credits earned from referrals
+    const referralTransactions = await CreditTransaction.find({
+      user: userId,
+      type: "referral_reward",
+    });
+
+    const totalCreditsEarned = referralTransactions.reduce(
+      (sum, tx) => sum + tx.amount,
+      0
+    );
+
+    res.json({
+      success: true,
+      data: {
+        referralCode: user.username,
+        referralLink: `${
+          process.env.FRONTEND_URL || "http://localhost:3000"
+        }/register/ref/${user.username}`,
+        totalReferrals: user.totalReferrals || 0,
+        referralCount: user.referralCount || 0,
+        totalCreditsEarned: Math.round(totalCreditsEarned),
+        referrals: referrals.map((r) => ({
+          username: r.referredUserId?.username,
+          email: r.referredUserId?.email,
+          joinedAt: r.createdAt,
+          creditsAwarded: r.creditsAwarded,
+        })),
+      },
+    });
+  } catch (error) {
+    console.error("[Credits] Get referral stats error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch referral stats",
     });
   }
 };

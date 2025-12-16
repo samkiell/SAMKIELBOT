@@ -50,11 +50,6 @@ const userSchema = new mongoose.Schema(
       default: 25, // Signup bonus
       min: 0,
     },
-    referralCode: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
     referredBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -68,23 +63,13 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    referralCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
-
-// Generate referral code before saving
-userSchema.pre("save", async function (next) {
-  if (!this.referralCode && this.isNew) {
-    this.referralCode = generateReferralCode(this.username);
-  }
-  next();
-});
-
-// Generate unique referral code
-function generateReferralCode(username) {
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `${username.substring(0, 4).toUpperCase()}${random}`;
-}
 
 // Password encryption
 userSchema.pre("save", async function (next) {

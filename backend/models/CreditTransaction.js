@@ -19,6 +19,8 @@ const creditTransactionSchema = new mongoose.Schema(
         "daily_burn",
         "refund",
         "admin_adjustment",
+        "admin_grant",
+        "admin_deduction",
       ],
       required: true,
       index: true,

@@ -44,6 +44,30 @@ const userSchema = new mongoose.Schema(
       default: "active",
     },
     lastLogin: { type: Date },
+    // Billing & Subscription
+    accountType: {
+      type: String,
+      enum: ["FREE", "PREMIUM"],
+      default: "FREE",
+    },
+    currentPlan: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Plan",
+      default: null,
+    },
+    subscriptionStatus: {
+      type: String,
+      enum: ["active", "inactive", "expired"],
+      default: "inactive",
+    },
+    subscriptionExpiresAt: {
+      type: Date,
+      default: null,
+    },
+    paystackCustomerId: {
+      type: String,
+      default: null,
+    },
     limits: {
       maxBots: { type: Number, default: DEFAULT_LIMITS.maxBots },
       maxRam: { type: Number, default: DEFAULT_LIMITS.maxRam },

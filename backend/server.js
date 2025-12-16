@@ -12,6 +12,11 @@ const authRoutes = require("./routes/auth");
 const deployRoutes = require("./routes/deploy");
 const updateRoutes = require("./routes/update");
 const adminRoutes = require("./routes/admin");
+const initScheduler = require("./utils/scheduler");
+
+// Init Scheduler
+initScheduler();
+
 const { errorHandler } = require("./utils/errorHandler");
 
 // ✅ Detect environment properly

@@ -60,7 +60,7 @@ const findNodeJSEgg = async () => {
   }
 };
 
-// Helper to find the Node by IP (or pick first)
+// Header to find the Node by IP (or pick first)
 const findNode = async (ip) => {
   if (process.env.PTERODACTYL_NODE_ID) {
     return parseInt(process.env.PTERODACTYL_NODE_ID);
@@ -70,18 +70,22 @@ const findNode = async (ip) => {
     const nodes = await api.get("/nodes");
     // If IP provided, try to match, else return first
     if (ip) {
-      // This is a naive check; normally you'd check allocations, but Pterodactyl API structure varies.
-      // We'll just look for a node that has this IP in its allocations or maintenance settings?
-      // Actually allocations are separate.
-      // Let's just return the first active node for simplicity as requested.
-      // Or try to find one with the IP.
-      // For now, return the first one.
       if (nodes.data.data.length > 0) return nodes.data.data[0].attributes.id;
     }
     if (nodes.data.data.length > 0) return nodes.data.data[0].attributes.id;
     throw new Error("No nodes found");
   } catch (error) {
     console.error("Error finding Node:", error.message);
+    throw error;
+  }
+};
+
+const getNodes = async () => {
+  try {
+    const response = await api.get("/nodes?include=allocations,servers");
+    return response.data.data;
+  } catch (error) {
+    console.error("Error getting nodes:", error.message);
     throw error;
   }
 };
@@ -431,4 +435,5 @@ module.exports = {
   waitForInstallation,
   monitorDeployment,
   getWebsocketDetails,
+  getNodes,
 };

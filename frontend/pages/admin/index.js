@@ -1,153 +1,167 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useAuth } from "../../lib/auth";
-import Link from "next/link";
-import { ArrowLeft, Shield, Search, ChevronRight } from "lucide-react";
+import AdminLayout from "../../components/AdminLayout";
+import {
+  Activity,
+  Users,
+  Server,
+  AlertOctagon,
+  HardDrive,
+  TrendingDown,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function AdminDashboard() {
-  const { user, loading: authLoading, token } = useAuth();
-  const [users, setUsers] = useState([]);
+  const { user, token } = useAuth();
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const router = useRouter();
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user || user.role !== "admin") {
-      router.push("/dashboard");
-      return;
+    if (user?.role === "admin") {
+      fetchStats();
     }
-    fetchUsers();
-  }, [user, authLoading]);
+  }, [user]);
 
-  const fetchUsers = async () => {
-    setLoading(true);
+  const fetchStats = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users`,
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await res.json();
-      setUsers(data.data || []);
+      if (data.success) {
+        setStats(data.data);
+      }
     } catch (err) {
-      toast.error("Failed to fetch users");
+      console.error(err);
+      toast.error("Failed to load system stats");
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredUsers = users.filter(
-    (u) =>
-      u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.email.includes(searchTerm)
-  );
-
-  if (authLoading) return null;
+  if (loading) return <div className="p-8">Loading control plane...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white pb-20">
+    <AdminLayout>
       <Head>
-        <title>Admin Panel - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <title>Admin Control Plane - SAMKIEL BOT</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center">
-            <Link
-              href="/dashboard"
-              className="mr-4 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">System Overview</h1>
+        <p className="text-gray-500">Real-time platform metrics and health.</p>
+      </div>
+
+      {/* Top Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          title="Total Users"
+          value={stats?.totalUsers || 0}
+          icon={Users}
+          color="indigo"
+        />
+        <StatCard
+          title="Active Bots"
+          value={stats?.runningBots || 0}
+          total={stats?.totalBots}
+          icon={Server}
+          color="green"
+        />
+        <StatCard
+          title="Failed Today"
+          value={stats?.failedDeploymentsToday || 0}
+          icon={AlertOctagon}
+          color="red"
+        />
+        <StatCard
+          title="Error Rate"
+          value={`${stats?.errorRate || 0}%`}
+          icon={TrendingDown}
+          color="yellow"
+        />
+      </div>
+
+      {/* Node Health Section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+          <HardDrive size={20} /> Infrastructure Health
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {stats?.nodeHealth?.map((node, i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
             >
-              <ArrowLeft size={24} />
-            </Link>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Shield className="text-indigo-600" size={32} />
-              Admin Panel
-            </h1>
-          </div>
-          <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-sm font-mono text-sm">
-            Total Users:{" "}
-            <span className="font-bold text-indigo-600">{users.length}</span>
-          </div>
-        </div>
-
-        <div className="mb-6 relative">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
-          <input
-            type="text"
-            placeholder="Search users..."
-            className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-bold">{node.name}</span>
+                <span
+                  className={`px-2 py-1 rounded text-xs uppercase font-bold ${
+                    node.status === "online"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {node.status}
+                </span>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-gray-500">RAM Usage</span>
+                    <span className="font-mono">{node.ramUsage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full ${
+                        node.ramUsage > 80 ? "bg-red-500" : "bg-indigo-500"
+                      }`}
+                      style={{ width: `${node.ramUsage}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-gray-50 dark:bg-gray-700/50">
-                  <tr>
-                    <th className="px-6 py-4">User</th>
-                    <th className="px-6 py-4">Role</th>
-                    <th className="px-6 py-4">Joined</th>
-                    <th className="px-6 py-4"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredUsers.map((u) => (
-                    <tr
-                      key={u._id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/30 cursor-pointer transition-colors"
-                      onClick={() => router.push(`/admin/users/${u._id}`)}
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold mr-3">
-                            {u.username[0].toUpperCase()}
-                          </div>
-                          <div>
-                            <div className="font-medium">{u.username}</div>
-                            <div className="text-sm text-gray-500">
-                              {u.email}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-bold ${
-                            u.role === "admin"
-                              ? "bg-purple-100 text-purple-700"
-                              : "bg-gray-100 text-gray-700"
-                          }`}
-                        >
-                          {u.role.toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm font-mono">
-                        {new Date(u.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <ChevronRight className="text-gray-400" />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          ))}
+          {(!stats?.nodeHealth || stats.nodeHealth.length === 0) && (
+            <div className="col-span-full p-8 text-center text-gray-500 border-2 border-dashed rounded-xl">
+              No nodes detected. Run sync or check connection.
             </div>
           )}
         </div>
+      </div>
+    </AdminLayout>
+  );
+}
+
+function StatCard({ title, value, total, icon: Icon, color }) {
+  const colors = {
+    indigo: "text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30",
+    green: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30",
+    red: "text-red-600 bg-red-50 dark:bg-red-900/30",
+    yellow: "text-amber-600 bg-amber-50 dark:bg-amber-900/30",
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between group hover:scale-[1.02] transition-transform">
+      <div>
+        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          {title}
+        </p>
+        <p className="text-2xl font-bold mt-1">
+          {value}
+          {total !== undefined && (
+            <span className="text-sm text-gray-400 font-normal ml-1">
+              / {total}
+            </span>
+          )}
+        </p>
+      </div>
+      <div className={`p-3 rounded-lg ${colors[color]}`}>
+        <Icon size={24} />
       </div>
     </div>
   );

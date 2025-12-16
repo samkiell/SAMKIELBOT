@@ -1,8 +1,162 @@
 const Deployment = require("../models/Deployment");
 const User = require("../models/User");
 const AuditLog = require("../models/AuditLog");
+const Node = require("../models/Node");
 const pterodactyl = require("../utils/pterodactyl");
 const { successResponse, errorResponse } = require("../utils/response");
+
+// @desc    Get System Health & Dashboard Stats
+// @route   GET /api/admin/dashboard
+const getSystemStats = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments({});
+    const totalBots = await Deployment.countDocuments({});
+    const runningBots = await Deployment.countDocuments({ status: "running" });
+    const stoppedBots = await Deployment.countDocuments({ status: "stopped" });
+    const failedDeploymentsToday = await Deployment.countDocuments({
+      status: "failed",
+      createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+    });
+
+    // Node Health (Aggregated from local DB)
+    const nodes = await Node.find({});
+    const nodeHealth = nodes.map((n) => ({
+      name: n.name,
+      status: n.status,
+      ramUsage: Math.round((n.resources.usedRam / n.resources.totalRam) * 100),
+    }));
+
+    // Error Rates (Aggregated from AuditLog or simple count of failures)
+    // For now, using failed deployments as proxy
+    const errorRate =
+      totalBots > 0
+        ? ((failedDeploymentsToday / totalBots) * 100).toFixed(2)
+        : 0;
+
+    successResponse(res, {
+      totalUsers,
+      totalBots,
+      runningBots,
+      stoppedBots,
+      failedDeploymentsToday,
+      nodeHealth,
+      errorRate,
+    });
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Get all users with stats
+// @route   GET /api/admin/users
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({})
+      .select("-password")
+      .sort({ createdAt: -1 });
+
+    // Attach bot counts (could be optimized with aggregate)
+    const usersWithStats = await Promise.all(
+      users.map(async (user) => {
+        const botCount = await Deployment.countDocuments({ user: user._id });
+        const deployments = await Deployment.find({ user: user._id }).select(
+          "resources"
+        );
+        const totalRam = deployments.reduce(
+          (acc, curr) => acc + (curr.resources?.ramLimit || 0),
+          0
+        );
+
+        return {
+          ...user.toObject(),
+          stats: {
+            totalBots: botCount,
+            totalRamUsage: totalRam,
+          },
+        };
+      })
+    );
+
+    successResponse(res, usersWithStats);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    User Management (Status, Role, Limits)
+// @route   PUT /api/admin/users/:id
+const updateUser = async (req, res) => {
+  try {
+    const { role, accountStatus, limits } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) return errorResponse(res, "User not found", 404);
+
+    if (role) user.role = role;
+    if (accountStatus) user.accountStatus = accountStatus;
+    if (limits) {
+      if (limits.maxBots !== undefined) user.limits.maxBots = limits.maxBots;
+      if (limits.maxRam !== undefined) user.limits.maxRam = limits.maxRam;
+      if (limits.maxCpu !== undefined) user.limits.maxCpu = limits.maxCpu;
+    }
+
+    await user.save();
+
+    await AuditLog.create({
+      adminEmail: req.user.email,
+      targetType: "User",
+      targetId: user._id,
+      action: "update_user",
+      details: req.body,
+    });
+
+    successResponse(res, user);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Hard Delete User (Cascade)
+// @route   DELETE /api/admin/users/:id
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return errorResponse(res, "User not found", 404);
+
+    // Get all bots
+    const bots = await Deployment.find({ user: user._id });
+
+    // Delete all bots from Pterodactyl
+    for (const bot of bots) {
+      if (bot.pterodactylId) {
+        try {
+          await pterodactyl.deleteServer(bot.pterodactylId);
+        } catch (e) {
+          console.error(
+            `Failed to delete Ptero server ${bot.pterodactylId}:`,
+            e
+          );
+        }
+      }
+      await bot.deleteOne();
+    }
+
+    await user.deleteOne();
+
+    await AuditLog.create({
+      adminEmail: req.user.email,
+      targetType: "User",
+      targetId: user._id,
+      action: "delete_user",
+    });
+
+    successResponse(res, {
+      message: `User and ${bots.length} bots deleted successfully`,
+    });
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
 
 // @desc    Get all deployed bots (Admin Only)
 // @route   GET /api/admin/bots
@@ -43,7 +197,8 @@ const controlBot = async (req, res) => {
     // Audit Log
     await AuditLog.create({
       adminEmail: req.user.email,
-      botId: deployment._id,
+      targetType: "Deployment",
+      targetId: deployment._id,
       action: signal,
       details: {
         identifier: deployment.identifier,
@@ -71,7 +226,7 @@ const suspendBot = async (req, res) => {
 
     if (action === "suspend") {
       await pterodactyl.suspendServer(deployment.pterodactylId);
-      deployment.status = "suspended"; // You might want to add 'suspended' to Enum if strict
+      deployment.status = "suspended";
     } else {
       await pterodactyl.unsuspendServer(deployment.pterodactylId);
       deployment.status = "stopped"; // Reset to stopped usually
@@ -82,7 +237,8 @@ const suspendBot = async (req, res) => {
     // Audit Log
     await AuditLog.create({
       adminEmail: req.user.email,
-      botId: deployment._id,
+      targetType: "Deployment",
+      targetId: deployment._id,
       action: action,
     });
 
@@ -103,7 +259,8 @@ const deleteBot = async (req, res) => {
     // Initial Audit Log (Intent)
     await AuditLog.create({
       adminEmail: req.user.email,
-      botId: deployment._id,
+      targetType: "Deployment",
+      targetId: deployment._id,
       action: "delete-attempt",
     });
 
@@ -122,8 +279,8 @@ const deleteBot = async (req, res) => {
     // Final Audit Log
     await AuditLog.create({
       adminEmail: req.user.email,
-      botId: deployment._id, // ID might still be valid for log even if doc deleted from collection?
-      // Actually references will break if strictly checked, but for log it's just an ID.
+      targetType: "Deployment",
+      targetId: deployment._id,
       action: "delete-success",
       details: {
         identifier: deployment.identifier,
@@ -132,6 +289,60 @@ const deleteBot = async (req, res) => {
     });
 
     successResponse(res, { message: "Bot deleted successfully" });
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Sync Nodes from Pterodactyl
+// @route   POST /api/admin/nodes/sync
+const syncNodes = async (req, res) => {
+  try {
+    const pteroNodes = await pterodactyl.getNodes();
+
+    for (const pNode of pteroNodes) {
+      const attrs = pNode.attributes;
+      await Node.findOneAndUpdate(
+        { pterodactylId: attrs.id },
+        {
+          name: attrs.name,
+          fqdn: attrs.fqdn,
+          status: attrs.maintenance_mode ? "maintenance" : "online", // Simplistic status
+          resources: {
+            totalRam: attrs.memory,
+            totalCpu: attrs.cpu, // This is meaningless in Ptero usually?
+            totalDisk: attrs.disk,
+          },
+          // We can't easily get 'used' without more calls, leaving for cron job
+        },
+        { upsert: true, new: true }
+      );
+    }
+
+    const allNodes = await Node.find({});
+    successResponse(res, allNodes);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Get Nodes
+// @route   GET /api/admin/nodes
+const getNodes = async (req, res) => {
+  try {
+    const nodes = await Node.find({});
+    successResponse(res, nodes);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Get Audit Logs
+// @route   GET /api/admin/audit-logs
+const getAuditLogs = async (req, res) => {
+  try {
+    const logs = await AuditLog.find({}).sort({ timestamp: -1 }).limit(100);
+    successResponse(res, logs);
   } catch (error) {
     errorResponse(res, error.message, 500);
   }
@@ -163,10 +374,17 @@ const getUserBots = async (req, res) => {
 };
 
 module.exports = {
+  getSystemStats,
+  getAllUsers,
+  updateUser,
+  deleteUser,
   getAllBots,
   controlBot,
   suspendBot,
   deleteBot,
+  syncNodes,
+  getNodes,
+  getAuditLogs,
   getUserDetails,
   getUserBots,
 };

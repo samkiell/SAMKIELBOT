@@ -5,36 +5,42 @@ const User = require("../models/User");
 const { successResponse, errorResponse } = require("../utils/response");
 
 const {
+  getSystemStats,
+  getAllUsers,
+  updateUser,
+  deleteUser,
   getAllBots,
   controlBot,
   suspendBot,
   deleteBot,
+  syncNodes,
+  getNodes,
+  getAuditLogs,
   getUserDetails,
   getUserBots,
 } = require("../controllers/adminController");
 
-// @desc    Get all users (Admin only)
-// @route   GET /api/admin/users
-// @access  Private/Admin
-router.get("/users", protect, admin, async (req, res) => {
-  try {
-    const users = await User.find({})
-      .select("-password")
-      .sort({ createdAt: -1 });
-    successResponse(res, users);
-  } catch (error) {
-    errorResponse(res, error.message, 500);
-  }
-});
+// @desc    Dashboard
+router.get("/dashboard", protect, admin, getSystemStats);
 
-// @desc    Bot Management Routes
+// @desc    User Management
+router.get("/users", protect, admin, getAllUsers);
+router.get("/users/:id", protect, admin, getUserDetails);
+router.put("/users/:id", protect, admin, updateUser);
+router.delete("/users/:id", protect, admin, deleteUser);
+router.get("/users/:id/bots", protect, admin, getUserBots);
+
+// @desc    Bot Management
 router.get("/bots", protect, admin, getAllBots);
 router.post("/bots/:id/power", protect, admin, controlBot);
 router.post("/bots/:id/suspend", protect, admin, suspendBot);
 router.delete("/bots/:id", protect, admin, deleteBot);
 
-// @desc    User Detail Routes
-router.get("/users/:id", protect, admin, getUserDetails);
-router.get("/users/:id/bots", protect, admin, getUserBots);
+// @desc    Node & Infrastructure
+router.get("/nodes", protect, admin, getNodes);
+router.post("/nodes/sync", protect, admin, syncNodes);
+
+// @desc    Audit Logs
+router.get("/audit-logs", protect, admin, getAuditLogs);
 
 module.exports = router;

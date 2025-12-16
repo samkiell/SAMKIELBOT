@@ -1,4 +1,4 @@
-const dbConnect = require("../../lib/dbConnect");
+import dbConnect from "../../lib/dbConnect";
 import creditsController from "@/lib/controllers/creditsController";
 const { protect } = require("../../lib/utils/authMiddleware");
 

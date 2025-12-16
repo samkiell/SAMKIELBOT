@@ -1,4 +1,4 @@
-const dbConnect = require("../../lib/dbConnect");
+import dbConnect from "../../lib/dbConnect";
 const {
   updateBot,
   getUpdateHistory,

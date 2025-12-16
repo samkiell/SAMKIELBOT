@@ -56,7 +56,7 @@ const sendNotification = async (req, res) => {
     // userId null = broadcast
     const notification = await Notification.create({
       user: userId || null,
-      title,
+      title: title || "New Notification",
       message,
       type: type || "info",
     });

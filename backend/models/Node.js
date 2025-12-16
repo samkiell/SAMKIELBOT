@@ -27,6 +27,7 @@ const nodeSchema = new mongoose.Schema({
       disk: Number,
       cpu: Number,
       status: String,
+      deploymentId: { type: mongoose.Schema.Types.ObjectId, ref: "Deployment" }, // Link to local Deployment
     },
   ],
   lastHeartbeat: { type: Date, default: Date.now },

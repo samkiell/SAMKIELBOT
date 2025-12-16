@@ -72,7 +72,12 @@ export default function NodeInfrastructure() {
             <div className="bg-gray-50 dark:bg-gray-900/50 p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <HardDrive className="text-indigo-500" />
-                <span className="font-bold text-lg">{node.name}</span>
+                <Link
+                  href={`/admin/nodes/${node._id}`}
+                  className="font-bold text-lg hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  {node.name}
+                </Link>
               </div>
               <span
                 className={`px-2 py-1 rounded-full text-xs font-bold ${

@@ -22,6 +22,7 @@ const {
   updateSuggestion,
   sendNotification,
   getServerConsole,
+  getNode,
 } = require("../controllers/adminController");
 
 // @desc    Dashboard
@@ -45,6 +46,7 @@ router.get("/server/:id/console", protect, admin, getServerConsole);
 
 // @desc    Infrastructure
 router.get("/nodes", protect, admin, getNodes);
+router.get("/nodes/:id", protect, admin, getNode);
 router.post("/nodes/sync", protect, admin, syncNodes);
 
 // @desc    Audit Logs

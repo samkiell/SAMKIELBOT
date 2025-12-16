@@ -339,17 +339,27 @@ const syncNodes = async (req, res) => {
       const attrs = pNode.attributes;
       // Process servers if included in Ptero response (relationships.servers.data)
       const serversData = pNode.attributes.relationships?.servers?.data || [];
-      const mappedServers = serversData.map((s) => ({
-        id: s.attributes.id,
-        name: s.attributes.name,
-        identifier: s.attributes.identifier,
-        memory: s.attributes.limits.memory,
-        disk: s.attributes.limits.disk,
-        cpu: s.attributes.limits.cpu,
-        status:
-          s.attributes.status ||
-          (s.attributes.suspended ? "suspended" : "active"),
-      }));
+      const mappedServers = await Promise.all(
+        serversData.map(async (s) => {
+          // Find matching local Deployment by pterodactylId
+          const localDep = await Deployment.findOne({
+            pterodactylId: s.attributes.id,
+          });
+
+          return {
+            id: s.attributes.id,
+            name: s.attributes.name,
+            identifier: s.attributes.identifier,
+            memory: s.attributes.limits.memory,
+            disk: s.attributes.limits.disk,
+            cpu: s.attributes.limits.cpu,
+            status:
+              s.attributes.status ||
+              (s.attributes.suspended ? "suspended" : "active"),
+            deploymentId: localDep ? localDep._id : null,
+          };
+        })
+      );
 
       await Node.findOneAndUpdate(
         { pterodactylId: attrs.id },
@@ -373,6 +383,18 @@ const syncNodes = async (req, res) => {
 
     const allNodes = await Node.find({});
     successResponse(res, allNodes);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
+// @desc    Get Node Details
+// @route   GET /api/admin/nodes/:id
+const getNode = async (req, res) => {
+  try {
+    const node = await Node.findById(req.params.id);
+    if (!node) return errorResponse(res, "Node not found", 404);
+    successResponse(res, node);
   } catch (error) {
     errorResponse(res, error.message, 500);
   }
@@ -472,4 +494,5 @@ module.exports = {
   updateSuggestion,
   sendNotification,
   getServerConsole,
+  getNode,
 };

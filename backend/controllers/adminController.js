@@ -5,6 +5,7 @@ const Node = require("../models/Node");
 const FeatureFlag = require("../models/FeatureFlag");
 const pterodactyl = require("../utils/pterodactyl");
 const { successResponse, errorResponse } = require("../utils/response");
+const botHealthService = require("../services/botHealthService");
 
 // Import interaction logic for re-export or re-implementation if admin spec differs
 const {
@@ -60,7 +61,10 @@ const getSystemStats = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments({});
     const totalBots = await Deployment.countDocuments({});
-    const runningBots = await Deployment.countDocuments({ status: "running" });
+    const activeBots = await Deployment.countDocuments({ isActive: true });
+    const runningBots = await Deployment.countDocuments({
+      status: { $in: ["active", "connected", "running"] },
+    });
     const stoppedBots = await Deployment.countDocuments({ status: "stopped" });
     const failedDeploymentsToday = await Deployment.countDocuments({
       status: "failed",
@@ -85,6 +89,7 @@ const getSystemStats = async (req, res) => {
     successResponse(res, {
       totalUsers,
       totalBots,
+      activeBots,
       runningBots,
       stoppedBots,
       failedDeploymentsToday,
@@ -242,6 +247,13 @@ const controlBot = async (req, res) => {
 
     deployment.status = newStatus;
     await deployment.save();
+
+    // Start health monitoring if starting/restarting
+    if (signal === "start" || signal === "restart") {
+      botHealthService.startMonitoring(deployment._id);
+    } else if (signal === "stop" || signal === "kill") {
+      botHealthService.stopMonitoring(deployment._id);
+    }
 
     // Audit Log
     await AuditLog.create({

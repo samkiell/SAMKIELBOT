@@ -1,6 +1,6 @@
 import paymentController from "@/lib/controllers/paymentController";
 import webhookController from "@/lib/controllers/webhookController";
-import { protect, admin } from "@/lib/utils/authMiddleware";
+const { protect, admin } = require("../../lib/utils/authMiddleware";
 
 export default async function handler(req, res) {
   const { method } = req;

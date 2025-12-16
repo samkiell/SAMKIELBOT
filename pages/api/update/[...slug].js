@@ -1,8 +1,8 @@
-import {
+const {
   updateBot,
   getUpdateHistory,
-} from "@/lib/controllers/updateController";
-import { protect } from "@/lib/utils/authMiddleware";
+} = require("../../lib/controllers/updateController";
+const { protect } = require("../../lib/utils/authMiddleware";
 
 export default async function handler(req, res) {
   const { method } = req;

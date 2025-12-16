@@ -1,5 +1,5 @@
-import { protect, admin } from "@/lib/utils/authMiddleware";
-import {
+const { protect, admin } = require("../../lib/utils/authMiddleware";
+const {
   getSystemStats,
   getAllUsers,
   updateUser,
@@ -24,7 +24,7 @@ import {
   forceSyncBotStatuses,
   getFeatureFlags,
   updateFeatureFlag,
-} from "@/lib/controllers/adminController";
+} = require("../../lib/controllers/adminController";
 
 export default async function handler(req, res) {
   const { method } = req;

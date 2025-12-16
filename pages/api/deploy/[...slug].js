@@ -1,17 +1,17 @@
-import {
+const {
   deployBot,
   getDeployments,
   updateDeployment,
   createDeployment,
   deleteDeployment,
   controlServer,
-} from "@/lib/controllers/deployController";
-import {
+} = require("../../lib/controllers/deployController";
+const {
   getDeploymentStatus,
   getActiveBots,
-} from "@/lib/controllers/deploymentStatusController";
-import { protect } from "@/lib/utils/authMiddleware";
-import Deployment from "@/models/Deployment";
+} = require("../../lib/controllers/deploymentStatusController";
+const { protect } = require("../../lib/utils/authMiddleware";
+const Deployment = require("../../models/Deployment";
 
 export default async function handler(req, res) {
   const { method } = req;

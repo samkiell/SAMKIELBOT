@@ -1,10 +1,10 @@
-import {
+const {
   getNotifications,
   markRead,
   createSuggestion,
   getBotsList,
-} from "@/lib/controllers/interactionsController";
-import { protect } from "@/lib/utils/authMiddleware";
+} = require("../../lib/controllers/interactionsController");
+const { protect } = require("../../lib/utils/authMiddleware");
 
 export default async function handler(req, res) {
   const { method } = req;

@@ -82,7 +82,7 @@ exports.initializePayment = async (req, res) => {
     }
 
     // Generate unique reference
-    const reference = `SUB_${Date.now()}_${uuidv4().slice(0, 8)}`;
+    const reference = `SUB_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`;
 
     // Initialize payment with Paystack
     const paymentResult = await paystackService.initializePayment({

@@ -83,7 +83,7 @@ export default function DeploymentSessionPage() {
       const response = await fetch(
         `${
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/deploy/${id}/status`,
+        }/deploy/${id}/status`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -115,7 +115,7 @@ export default function DeploymentSessionPage() {
       const response = await fetch(
         `${
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/deploy/${id}/power`,
+        }/deploy/${id}/power`,
         {
           method: "POST",
           headers: {
@@ -156,7 +156,7 @@ export default function DeploymentSessionPage() {
       const response = await fetch(
         `${
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        }/api/deploy/${id}`,
+        }/deploy/${id}`,
         {
           method: "DELETE",
           headers: {

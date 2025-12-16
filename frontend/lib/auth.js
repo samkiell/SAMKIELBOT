@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     console.warn("🔴 Logging out triggered:", reason);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    document.cookie = "token=; path=/; max-age=0";
     setUser(null);
     setToken(null);
 
@@ -72,6 +73,8 @@ export const AuthProvider = ({ children }) => {
         console.log("✅ Token received:");
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
+        // Set cookie for middleware
+        document.cookie = `token=${token}; path=/; max-age=2592000; SameSite=Lax`; // 30 days
         setToken(token);
         setUser(user);
 
@@ -140,6 +143,8 @@ export const AuthProvider = ({ children }) => {
         console.log("✅ Token received:");
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
+        // Set cookie for middleware
+        document.cookie = `token=${token}; path=/; max-age=2592000; SameSite=Lax`;
         setToken(token);
         setUser(user);
 

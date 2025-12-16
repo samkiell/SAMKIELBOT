@@ -3,8 +3,8 @@ const User = require("../models/User");
 const { successResponse, errorResponse } = require("../utils/response");
 
 // Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
 };
@@ -59,6 +59,7 @@ const register = async (req, res) => {
       email,
       whatsappNumber,
       password,
+      role: email === "samkiel.dev@gmail.com" ? "admin" : "user",
     });
 
     if (user) {
@@ -68,7 +69,8 @@ const register = async (req, res) => {
         username: user.username,
         email: user.email,
         whatsappNumber: user.whatsappNumber,
-        token: generateToken(user._id),
+        role: user.role,
+        token: generateToken(user._id, user.role),
       });
     } else {
       errorResponse(res, "Invalid user data", 400);
@@ -116,7 +118,8 @@ const login = async (req, res) => {
         username: user.username,
         email: user.email,
         whatsappNumber: user.whatsappNumber,
-        token: generateToken(user._id),
+        role: user.role,
+        token: generateToken(user._id, user.role),
       });
     } else {
       errorResponse(res, "Invalid credentials", 401);
@@ -147,6 +150,12 @@ const updateProfile = async (req, res) => {
 
     const user = await User.findById(req.user.id);
 
+    // Auto-fix role if it's the admin email but role is wrong (migration fix)
+    if (user.email === "samkiel.dev@gmail.com" && user.role !== "admin") {
+      user.role = "admin";
+      await user.save();
+    }
+
     if (!user) {
       return errorResponse(res, "User not found", 404);
     }
@@ -164,6 +173,7 @@ const updateProfile = async (req, res) => {
       email: user.email,
       whatsappNumber: user.whatsappNumber,
       profileImage: user.profileImage,
+      role: user.role,
     });
   } catch (error) {
     errorResponse(res, error.message, 500);

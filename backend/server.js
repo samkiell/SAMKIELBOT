@@ -11,6 +11,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth");
 const deployRoutes = require("./routes/deploy");
 const updateRoutes = require("./routes/update");
+const adminRoutes = require("./routes/admin");
 const { errorHandler } = require("./utils/errorHandler");
 
 // ✅ Detect environment properly
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/deploy", deployRoutes);
 app.use("/api/update", updateRoutes);
+app.use("/api/admin", adminRoutes); // New
 
 // ✅ Error handling
 app.use(errorHandler);

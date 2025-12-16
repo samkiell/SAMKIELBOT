@@ -61,6 +61,14 @@ export default function Navbar() {
                 >
                   Dashboard
                 </Link>
+                {user.role === "admin" && (
+                  <Link
+                    href="/admin"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-semibold"
+                  >
+                    Admin
+                  </Link>
+                )}
               </>
             ) : (
               <>
@@ -81,7 +89,6 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Notifications */}
             {user && <NotificationDropdown />}
 
             {/* Theme Toggle Button */}
@@ -194,6 +201,15 @@ export default function Navbar() {
             >
               Dashboard
             </Link>
+            {user.role === "admin" && (
+              <Link
+                href="/admin"
+                onClick={() => setMenuOpen(false)}
+                className="block text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-semibold"
+              >
+                Admin Panel
+              </Link>
+            )}
           </>
         ) : (
           <>

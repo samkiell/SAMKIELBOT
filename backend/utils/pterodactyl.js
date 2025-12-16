@@ -356,6 +356,24 @@ const getResources = async (uuid) => {
   }
 };
 
+const suspendServer = async (serverId) => {
+  try {
+    await api.post(`/servers/${serverId}/suspend`);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const unsuspendServer = async (serverId) => {
+  try {
+    await api.post(`/servers/${serverId}/unsuspend`);
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const deleteServer = async (serverId) => {
   try {
     await api.delete(`/servers/${serverId}`);
@@ -407,6 +425,8 @@ module.exports = {
   getServerDetails,
   requestPowerAction,
   deleteServer,
+  suspendServer,
+  unsuspendServer,
   getResources,
   waitForInstallation,
   monitorDeployment,

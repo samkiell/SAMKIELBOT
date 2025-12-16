@@ -161,9 +161,10 @@ const register = async (req, res) => {
     await Notification.create({
       user: user._id,
       title: "🎉 Welcome to SAMKIEL BOT!",
-      message:
-        "Join our WhatsApp channel for updates: https://whatsapp.com/channel/0029VbAhWo3C6Zvf2t4Rne0h",
+      message: "Join our WhatsApp channel for updates and announcements!",
       type: "welcome",
+      link: "https://whatsapp.com/channel/0029VbAhWo3C6Zvf2t4Rne0h",
+      linkText: "Join WhatsApp Channel",
     });
 
     if (user) {

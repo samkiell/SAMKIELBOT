@@ -126,6 +126,17 @@ export default function NotificationDropdown() {
                   <p className="text-sm text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap">
                     {notification.message}
                   </p>
+                  {notification.link && notification.linkText && (
+                    <a
+                      href={notification.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block mt-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {notification.linkText} →
+                    </a>
+                  )}
                   <p className="text-xs text-gray-400 mt-2">
                     {new Date(notification.createdAt).toLocaleString()}
                   </p>

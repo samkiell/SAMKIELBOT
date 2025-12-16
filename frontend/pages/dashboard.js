@@ -5,6 +5,7 @@ import Link from "next/link";
 import Footer from "../components/Footer";
 import BotCard from "../components/BotCard";
 import StatsOverview from "../components/StatsOverview";
+import ReferralCard from "../components/ReferralCard";
 import { getDeployments } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { Plus } from "lucide-react";
@@ -140,6 +141,11 @@ export default function Dashboard() {
             )}
           </div>
         )}
+
+        {/* Referral Card - Bottom Section */}
+        <div className="mt-8">
+          <ReferralCard />
+        </div>
       </main>
 
       <Footer />

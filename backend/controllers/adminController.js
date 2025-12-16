@@ -6,6 +6,13 @@ const FeatureFlag = require("../models/FeatureFlag");
 const pterodactyl = require("../utils/pterodactyl");
 const { successResponse, errorResponse } = require("../utils/response");
 
+// Import interaction logic for re-export or re-implementation if admin spec differs
+const {
+  getSuggestions,
+  updateSuggestion,
+  sendNotification,
+} = require("./interactionsController");
+
 // @desc    Get System Health & Dashboard Stats
 // @route   GET /api/admin/dashboard
 const getSystemStats = async (req, res) => {
@@ -417,4 +424,7 @@ module.exports = {
   getUserBots,
   getFeatureFlags,
   updateFeatureFlag,
+  getSuggestions,
+  updateSuggestion,
+  sendNotification,
 };

@@ -200,6 +200,15 @@ const monitorDeploymentFlow = async (deploymentId, identifier) => {
           status: "running",
           pairingCode: null, // Optional: clear code
         });
+
+        // Notify Success
+        const Notification = require("../models/Notification");
+        await Notification.create({
+          user: (await Deployment.findById(deploymentId)).user,
+          title: "Bot Deployed 🚀",
+          message: `Your bot ${identifier} was deployed successfully.`,
+          type: "success",
+        });
       },
     });
   } catch (error) {

@@ -62,6 +62,16 @@ const register = async (req, res) => {
       role: email === "samkiel.dev@gmail.com" ? "admin" : "user",
     });
 
+    // Auto-Welcome Notification
+    const Notification = require("../models/Notification");
+    await Notification.create({
+      user: user._id,
+      title: "🎉 Welcome to SAMKIEL BOT!",
+      message:
+        "Join our WhatsApp channel for updates: https://whatsapp.com/channel/0029VbAhWo3C6Zvf2t4Rne0h",
+      type: "welcome",
+    });
+
     if (user) {
       successResponse(res, {
         _id: user._id,

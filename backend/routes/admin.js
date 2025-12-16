@@ -18,6 +18,9 @@ const {
   getAuditLogs,
   getUserDetails,
   getUserBots,
+  getSuggestions,
+  updateSuggestion,
+  sendNotification,
 } = require("../controllers/adminController");
 
 // @desc    Dashboard
@@ -42,6 +45,13 @@ router.post("/nodes/sync", protect, admin, syncNodes);
 
 // @desc    Audit Logs
 router.get("/audit-logs", protect, admin, getAuditLogs);
+
+// @desc    Suggestions
+router.get("/suggestions", protect, admin, getSuggestions);
+router.put("/suggestions/:id", protect, admin, updateSuggestion);
+
+// @desc    Notifications
+router.post("/notifications", protect, admin, sendNotification);
 
 // @desc    Settings (Feature Flags)
 const {

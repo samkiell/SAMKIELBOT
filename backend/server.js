@@ -12,6 +12,7 @@ const authRoutes = require("./routes/auth");
 const deployRoutes = require("./routes/deploy");
 const updateRoutes = require("./routes/update");
 const adminRoutes = require("./routes/admin");
+const interactionRoutes = require("./routes/interactions");
 const initScheduler = require("./utils/scheduler");
 
 // Init Scheduler
@@ -34,7 +35,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/deploy", deployRoutes);
 app.use("/api/update", updateRoutes);
-app.use("/api/admin", adminRoutes); // New
+app.use("/api/admin", adminRoutes);
+app.use("/api", interactionRoutes); // /api/notifications, /api/suggestions
 
 // ✅ Error handling
 app.use(errorHandler);

@@ -10,14 +10,12 @@ export default function BotsList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) fetchBots();
-  }, [user]);
+    fetchBots();
+  }, []);
 
   const fetchBots = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bots-list`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bots-list`);
       const data = await res.json();
       setBots(data.data || []);
     } catch (err) {

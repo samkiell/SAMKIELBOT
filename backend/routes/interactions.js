@@ -16,6 +16,6 @@ router.put("/notifications/read", protect, markRead);
 router.post("/suggestions", protect, createSuggestion);
 
 // Public Bots List (Authenticated Users only? Yes, usually platform users)
-router.get("/bots-list", protect, getBotsList);
+router.get("/bots-list", getBotsList);
 
 module.exports = router;

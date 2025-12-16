@@ -18,6 +18,7 @@ import {
   FaTwitter,
   FaInstagram,
 } from "react-icons/fa";
+import Snowfall from "../components/Snowfall";
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
@@ -100,6 +101,8 @@ export default function Home() {
         />
         <link rel="icon" href="/SAMKIELBOT-LOGO.png" />
       </Head>
+
+      <Snowfall />
 
       {/* Hero Section */}
       <section className="relative flex flex-col justify-center items-center text-center px-6 py-12 min-h-screen bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500">

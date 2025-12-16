@@ -9,6 +9,7 @@ import { getDeployments } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
+import SubscriptionCard from "../components/SubscriptionCard";
 
 export default function Dashboard() {
   const [deployments, setDeployments] = useState([]);
@@ -73,6 +74,11 @@ export default function Dashboard() {
 
         {/* Stats Overview */}
         <StatsOverview deployments={deployments} />
+
+        {/* Subscription Card */}
+        <div className="mt-8">
+          <SubscriptionCard />
+        </div>
 
         {/* Deploy Button */}
         <div className="mt-4 md:mt-8 flex justify-center md:justify-end">

@@ -276,6 +276,76 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing Preview Section */}
+      <section className="px-6 py-12 bg-white dark:bg-gray-800">
+        <div className="max-w-6xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+              Simple Pricing
+            </h2>
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300">
+              Start free forever. Upgrade when you need more power.
+            </p>
+          </motion.div>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <motion.div
+              {...slideIn}
+              className="bg-gray-50 dark:bg-gray-900 p-8 rounded-xl shadow-md hover:shadow-lg transition"
+            >
+              <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+                Free Forever
+              </h3>
+              <div className="text-4xl font-bold mb-6 text-indigo-600">₦0</div>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500">✓</span> 1 bot
+                </li>
+                <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500">✓</span> 300 MB RAM
+                </li>
+                <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                  <span className="text-green-500">✓</span> Basic features
+                </li>
+              </ul>
+              <Link
+                href="/register"
+                className="block w-full py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition text-center"
+              >
+                Get Started Free
+              </Link>
+            </motion.div>
+            <motion.div
+              {...slideIn}
+              className="bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-xl shadow-xl hover:shadow-2xl transition transform hover:scale-105"
+            >
+              <h3 className="text-2xl font-bold mb-4 text-white">
+                Premium Plans
+              </h3>
+              <div className="text-4xl font-bold mb-6 text-white">
+                From ₦1,500<span className="text-lg">/mo</span>
+              </div>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center gap-2 text-white">
+                  <span className="text-yellow-300">✓</span> Up to 3 bots
+                </li>
+                <li className="flex items-center gap-2 text-white">
+                  <span className="text-yellow-300">✓</span> Up to 2 GB RAM
+                </li>
+                <li className="flex items-center gap-2 text-white">
+                  <span className="text-yellow-300">✓</span> Priority support
+                </li>
+              </ul>
+              <Link
+                href="/pricing"
+                className="block w-full py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-gray-100 transition text-center"
+              >
+                View All Plans
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Join the Community Section */}
       <section className="px-6 py-12 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
         <div className="max-w-4xl mx-auto text-center">

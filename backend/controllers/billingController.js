@@ -3,9 +3,7 @@ const Subscription = require("../models/Subscription");
 const User = require("../models/User");
 const paystackService = require("../services/paystackService");
 const billingService = require("../services/billingService");
-const { v4: uuidv4 } = require("crypto").randomUUID
-  ? require("crypto")
-  : require("uuid");
+const crypto = require("crypto");
 
 /**
  * Get all available plans

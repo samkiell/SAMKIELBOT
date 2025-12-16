@@ -23,6 +23,7 @@ const {
   sendNotification,
   getServerConsole,
   getNode,
+  syncServerStats,
 } = require("../controllers/adminController");
 
 // @desc    Dashboard
@@ -37,6 +38,7 @@ router.get("/users/:id/bots", protect, admin, getUserBots);
 
 // @desc    Bot Management
 router.get("/bots", protect, admin, getAllBots);
+router.post("/bots/sync-stats", protect, admin, syncServerStats); // Live Sync
 router.post("/bots/:id/power", protect, admin, controlBot);
 router.post("/bots/:id/suspend", protect, admin, suspendBot);
 router.delete("/bots/:id", protect, admin, deleteBot);

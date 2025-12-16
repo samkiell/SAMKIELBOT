@@ -28,7 +28,13 @@ export default function AdminOneServer() {
     // Silent loading for background updates
     if (servers.length === 0) setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/bots`, {
+      // Use sync-stats to get live data if loading for first time or refreshing
+      // Regular polling might use getAllBots to avoid hammering Ptero too hard,
+      // but user asked for REAL TIME. sync-stats does the heavy lifting.
+      const endpoint = "/admin/bots/sync-stats";
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+        method: "POST", // It's a POST now to trigger sync
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -95,6 +101,7 @@ export default function AdminOneServer() {
                     <Cpu size={14} /> CPU
                   </div>
                   <div className="font-mono font-bold mt-1">
+                    {server.resources?.usedCpu || 0}% /{" "}
                     {server.resources?.cpuLimit || 0}%
                   </div>
                 </div>
@@ -103,6 +110,7 @@ export default function AdminOneServer() {
                     <Activity size={14} /> RAM
                   </div>
                   <div className="font-mono font-bold mt-1">
+                    {server.resources?.usedRam || 0}MB /{" "}
                     {server.resources?.ramLimit || 0}MB
                   </div>
                 </div>
@@ -111,6 +119,7 @@ export default function AdminOneServer() {
                     <HardDrive size={14} /> Disk
                   </div>
                   <div className="font-mono font-bold mt-1">
+                    {server.resources?.usedDisk || 0}MB /{" "}
                     {server.resources?.diskLimit || 0}MB
                   </div>
                 </div>

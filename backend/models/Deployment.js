@@ -63,6 +63,10 @@ const deploymentSchema = new mongoose.Schema({
     ramLimit: { type: Number, default: 1024 }, // MB
     cpuLimit: { type: Number, default: 100 }, // %
     diskLimit: { type: Number, default: 1024 }, // MB
+    usedRam: { type: Number, default: 0 },
+    usedCpu: { type: Number, default: 0 },
+    usedDisk: { type: Number, default: 0 },
+    state: { type: String, default: "offline" },
   },
   usageStats: {
     uptimeMinutes: { type: Number, default: 0 },

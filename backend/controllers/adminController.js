@@ -476,6 +476,56 @@ const updateFeatureFlag = async (req, res) => {
   }
 };
 
+// @desc    Sync Server Stats (Live Resources)
+// @route   POST /api/admin/bots/sync-stats
+const syncServerStats = async (req, res) => {
+  try {
+    const bots = await Deployment.find({ pterodactylUuid: { $exists: true } });
+    const statsUpdates = [];
+
+    // Parallel processing with limit? For now map all
+    await Promise.all(
+      bots.map(async (bot) => {
+        try {
+          if (!bot.pterodactylUuid) return;
+          const stats = await pterodactyl.getResources(bot.pterodactylUuid);
+          // stats = { current_state, is_suspended, resources: { memory_bytes, cpu_absolute, disk_bytes, ... } }
+
+          const usedRam = Math.round(
+            stats.resources.memory_bytes / 1024 / 1024
+          );
+          const usedDisk = Math.round(stats.resources.disk_bytes / 1024 / 1024);
+          const usedCpu = Math.round(stats.resources.cpu_absolute * 100) / 100;
+
+          // Update DB
+          bot.resources.usedRam = usedRam;
+          bot.resources.usedDisk = usedDisk;
+          bot.resources.usedCpu = usedCpu;
+          bot.resources.state = stats.current_state;
+
+          // Map Ptero state to local status if needed or just use state field
+          if (stats.current_state === "running") bot.status = "running";
+          else if (stats.current_state === "offline") bot.status = "stopped";
+
+          await bot.save();
+          statsUpdates.push({ id: bot._id, success: true });
+        } catch (e) {
+          // console.error(`Failed to sync stats for ${bot.botName}:`, e.message);
+          statsUpdates.push({ id: bot._id, success: false });
+        }
+      })
+    );
+
+    const updatedBots = await Deployment.find({})
+      .populate("user", "email fullName")
+      .sort({ createdAt: -1 });
+
+    successResponse(res, updatedBots);
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
 module.exports = {
   getSystemStats,
   getAllUsers,
@@ -497,4 +547,5 @@ module.exports = {
   sendNotification,
   getServerConsole,
   getNode,
+  syncServerStats,
 };

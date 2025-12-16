@@ -1,5 +1,5 @@
 import creditsController from "@/lib/controllers/creditsController";
-const { protect } = require("../../lib/utils/authMiddleware"");
+const { protect } = require("../../lib/utils/authMiddleware");
 
 export default async function handler(req, res) {
   const { method } = req;

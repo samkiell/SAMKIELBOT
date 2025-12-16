@@ -5,13 +5,13 @@ const {
   createDeployment,
   deleteDeployment,
   controlServer,
-} = require("../../lib/controllers/deployController"");
+} = require("../../lib/controllers/deployController");
 const {
   getDeploymentStatus,
   getActiveBots,
-} = require("../../lib/controllers/deploymentStatusController"");
-const { protect } = require("../../lib/utils/authMiddleware"");
-const Deployment = require("../../models/Deployment"");
+} = require("../../lib/controllers/deploymentStatusController");
+const { protect } = require("../../lib/utils/authMiddleware");
+const Deployment = require("../../models/Deployment");
 
 export default async function handler(req, res) {
   const { method } = req;

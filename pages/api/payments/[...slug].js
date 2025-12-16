@@ -60,6 +60,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: `Method ${method} Not Allowed` });
   } catch (error) {
     console.error("Payments API Error:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+      message: error.message,
+      ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+    });
   }
 }

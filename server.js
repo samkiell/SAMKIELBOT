@@ -17,13 +17,13 @@ const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
 // Database connection
-const connectDB = require("./lib/db");
+const dbConnect = require("./lib/dbConnect");
 
 // Services
 const initScheduler = require("./lib/utils/scheduler");
 const botHealthService = require("./lib/services/botHealthService");
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
   const server = express();
   const httpServer = http.createServer(server);
 
@@ -39,7 +39,7 @@ app.prepare().then(() => {
   server.set("io", io);
 
   // Connect to MongoDB
-  connectDB();
+  await dbConnect();
 
   // Initialize Scheduler
   initScheduler();

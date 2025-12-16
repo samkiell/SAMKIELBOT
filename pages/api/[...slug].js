@@ -1,3 +1,4 @@
+const dbConnect = require("../../lib/dbConnect");
 const {
   getNotifications,
   markRead,
@@ -11,6 +12,8 @@ export default async function handler(req, res) {
   const { slug } = req.query;
 
   try {
+    // Ensure database connection
+    await dbConnect();
     // Route: GET /api/notifications
     if (slug && slug[0] === "notifications" && !slug[1] && method === "GET") {
       return await protect(req, res, async () => {
@@ -47,6 +50,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: `Method ${method} Not Allowed` });
   } catch (error) {
     console.error("Interactions API Error:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+      message: error.message,
+      ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+    });
   }
 }

@@ -22,7 +22,7 @@ export default function AdminLayout({ children }) {
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/users", label: "User Governance", icon: Users },
     { href: "/admin/bots", label: "Bot Control", icon: Server },
-    { href: "/admin/nodes", label: "Infrastructure", icon: HardDrive },
+    { href: "/admin/server", label: "Servers", icon: HardDrive },
     { href: "/admin/audit", label: "Audit Logs", icon: Shield },
     {
       href: "/admin/notifications",

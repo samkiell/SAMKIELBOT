@@ -105,67 +105,68 @@ export default function Home() {
       <Snowfall />
 
       {/* Hero Section */}
-      <section className="relative flex flex-col justify-center items-center text-center px-6 py-12 min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-        <div className="absolute inset-0 bg-black/10"></div>
+      {/* Hero Section */}
+      <section className="relative flex flex-col justify-center items-center text-center px-6 py-12 min-h-screen bg-gray-50 dark:bg-black">
+        <div className="absolute inset-0 bg-grid-slate-200 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]"></div>
         <div className="relative z-10">
           <motion.div {...fadeUp}>
             <div className="flex flex-col items-center gap-4 mb-6">
-              <div className="inline-block px-4 py-1.5 rounded-full bg-red-500/20 border border-red-400/30 backdrop-blur-sm shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse">
-                <span className="text-red-100 font-bold text-sm tracking-wide flex items-center gap-2">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-red-100 dark:bg-red-900/40 border border-red-200 dark:border-red-500/30 shadow-sm animate-pulse">
+                <span className="text-red-600 dark:text-red-200 font-bold text-sm tracking-wide flex items-center gap-2">
                   🎄 HAPPY HOLIDAYS 🎅
                 </span>
               </div>
-              <div className="inline-block px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm">
-                <span className="text-cyan-300 font-bold text-sm tracking-wide">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm">
+                <span className="text-cyan-600 dark:text-cyan-300 font-bold text-sm tracking-wide">
                   🚀 V3.0 NOW LIVE
                 </span>
               </div>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white tracking-tight drop-shadow-sm">
+            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight drop-shadow-sm">
               𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋
             </h1>
-            <p className="text-xl md:text-2xl text-gray-100 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
               Automate your WhatsApp experience with power, simplicity, and full
               control.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-gray-200 mb-10">
-              <span className="flex items-center bg-white/5 px-3 py-1 rounded-lg">
+            <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-gray-500 dark:text-gray-400 mb-10">
+              <span className="flex items-center bg-gray-200 dark:bg-white/5 px-3 py-1 rounded-lg">
                 ✨ 99.9% Uptime
               </span>
-              <span className="flex items-center bg-white/5 px-3 py-1 rounded-lg">
+              <span className="flex items-center bg-gray-200 dark:bg-white/5 px-3 py-1 rounded-lg">
                 ⚡ Instant Setup
               </span>
-              <span className="flex items-center bg-white/5 px-3 py-1 rounded-lg">
+              <span className="flex items-center bg-gray-200 dark:bg-white/5 px-3 py-1 rounded-lg">
                 🔒 E2E Encrypted
               </span>
             </div>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <Link
                 href="/register"
-                className="bg-white hover:bg-gray-100 text-indigo-600 px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg border border-transparent"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg shadow-indigo-500/20"
               >
                 Deploy your bot now!
               </Link>
               <Link
                 href="/bots"
-                className="bg-black/20 hover:bg-black/40 backdrop-blur-md text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className="bg-white dark:bg-white/5 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
               >
                 Community Bots
               </Link>
               <Link
                 href="/login"
-                className="bg-black/20 hover:bg-black/40 backdrop-blur-md text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200"
               >
                 Login
               </Link>
             </div>
           </motion.div>
         </div>
-        {/* Animated shapes */}
-        <div className="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-xl animate-bounce"></div>
-        <div className="absolute bottom-20 left-20 w-24 h-24 bg-white/10 rounded-full blur-xl animate-bounce delay-1000"></div>
+        {/* Animated shapes - darkened for light mode visibility if needed, or keeping subtle */}
+        <div className="absolute top-20 right-20 w-32 h-32 bg-indigo-500/10 rounded-full blur-xl animate-bounce"></div>
+        <div className="absolute bottom-20 left-20 w-24 h-24 bg-purple-500/10 rounded-full blur-xl animate-bounce delay-1000"></div>
       </section>
 
       {/* About Section */}

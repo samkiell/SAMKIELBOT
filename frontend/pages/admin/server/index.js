@@ -20,21 +20,21 @@ export default function AdminOneServer() {
 
   useEffect(() => {
     fetchServers();
+    const interval = setInterval(fetchServers, 10000); // Poll every 10s for "real-time" status
+    return () => clearInterval(interval);
   }, []);
 
   const fetchServers = async () => {
-    setLoading(true);
+    // Silent loading for background updates
+    if (servers.length === 0) setLoading(true);
     try {
-      // We'll reuse the bots API for now, or create a specific one if we want Pterodactyl-only data
-      // Actually, let's create a new endpoint that gets ALL servers from Ptero, mapped to DB if possible
-      // For now, let's use the DB deployments which map to servers
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/bots`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       setServers(data.data || []);
     } catch (err) {
-      toast.error("Failed to fetch servers");
+      console.error("Failed to fetch servers");
     } finally {
       setLoading(false);
     }

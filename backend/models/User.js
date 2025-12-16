@@ -44,38 +44,47 @@ const userSchema = new mongoose.Schema(
       default: "active",
     },
     lastLogin: { type: Date },
-    // Billing & Subscription
-    accountType: {
-      type: String,
-      enum: ["FREE", "PREMIUM"],
-      default: "FREE",
+    // Credit-Based Billing
+    credits: {
+      type: Number,
+      default: 25, // Signup bonus
+      min: 0,
     },
-    currentPlan: {
+    referralCode: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    referredBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Plan",
+      ref: "User",
       default: null,
     },
-    subscriptionStatus: {
-      type: String,
-      enum: ["active", "inactive", "expired"],
-      default: "inactive",
+    referralRewardClaimed: {
+      type: Boolean,
+      default: false,
     },
-    subscriptionExpiresAt: {
-      type: Date,
-      default: null,
-    },
-    paystackCustomerId: {
-      type: String,
-      default: null,
-    },
-    limits: {
-      maxBots: { type: Number, default: DEFAULT_LIMITS.maxBots },
-      maxRam: { type: Number, default: DEFAULT_LIMITS.maxRam },
-      maxCpu: { type: Number, default: DEFAULT_LIMITS.maxCpu },
+    totalReferrals: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }
 );
+
+// Generate referral code before saving
+userSchema.pre("save", async function (next) {
+  if (!this.referralCode && this.isNew) {
+    this.referralCode = generateReferralCode(this.username);
+  }
+  next();
+});
+
+// Generate unique referral code
+function generateReferralCode(username) {
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `${username.substring(0, 4).toUpperCase()}${random}`;
+}
 
 // Password encryption
 userSchema.pre("save", async function (next) {

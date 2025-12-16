@@ -255,15 +255,35 @@ class BotHealthService extends EventEmitter {
         `[BotHealth] State transition: ${oldStatus} → ${newStatus} (${deployment.identifier})`
       );
 
-      await Deployment.findByIdAndUpdate(
-        deploymentId,
-        {
-          status: newStatus,
-          updatedAt: new Date(),
-          ...additionalFields,
-        },
-        { new: true }
-      );
+      // Prepare update fields
+      const updateFields = {
+        status: newStatus,
+        updatedAt: new Date(),
+        ...additionalFields,
+      };
+
+      // Update resources.state based on status
+      if (["connected", "active", "paired"].includes(newStatus)) {
+        updateFields["resources.state"] = "running";
+      } else if (newStatus === "starting") {
+        updateFields["resources.state"] = "starting";
+      } else if (["stopped", "offline", "failed"].includes(newStatus)) {
+        updateFields["resources.state"] = "offline";
+      }
+
+      // Calculate uptime if bot is active
+      if (newStatus === "active" || newStatus === "connected") {
+        if (deployment.uptimeStart) {
+          const uptimeMs =
+            Date.now() - new Date(deployment.uptimeStart).getTime();
+          const uptimeMinutes = Math.floor(uptimeMs / 60000);
+          updateFields["usageStats.uptimeMinutes"] = uptimeMinutes;
+        }
+      }
+
+      await Deployment.findByIdAndUpdate(deploymentId, updateFields, {
+        new: true,
+      });
 
       this.emit("bot.status_change", {
         deploymentId,
@@ -285,13 +305,24 @@ class BotHealthService extends EventEmitter {
       const resources = await pterodactyl.getResources(deployment.identifier);
       const serverState = resources.attributes.current_state;
 
-      // Update resource usage
-      await Deployment.findByIdAndUpdate(deploymentId, {
+      // Prepare update fields
+      const updateFields = {
         "resources.state": serverState,
         "resources.usedRam": resources.attributes.resources.memory_bytes,
         "resources.usedCpu": resources.attributes.resources.cpu_absolute,
         "resources.usedDisk": resources.attributes.resources.disk_bytes,
-      });
+      };
+
+      // Update uptime for active bots
+      if (deployment.isActive && deployment.uptimeStart) {
+        const uptimeMs =
+          Date.now() - new Date(deployment.uptimeStart).getTime();
+        const uptimeMinutes = Math.floor(uptimeMs / 60000);
+        updateFields["usageStats.uptimeMinutes"] = uptimeMinutes;
+      }
+
+      // Update resource usage
+      await Deployment.findByIdAndUpdate(deploymentId, updateFields);
 
       // Check if server is offline
       if (serverState === "offline" || serverState === "stopping") {

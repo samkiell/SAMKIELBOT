@@ -126,7 +126,9 @@ const getBotsList = async (req, res) => {
     // Aggregation might be better, but let's do simple query for now
     const bots = await Deployment.find({}) // Only "active" users? Requirement says "at least one bot".
       .populate("user", "username")
-      .select("botName status lastActivity usageStats user createdAt");
+      .select(
+        "botName status isActive lastActiveAt lastActivity usageStats resources user createdAt"
+      );
 
     // Filter out if user is null (deleted user)
     const validBots = bots.filter((b) => b.user);
@@ -137,9 +139,10 @@ const getBotsList = async (req, res) => {
       username: b.user.username,
       botName: b.botName,
       status: b.status,
-      isActive: b.status === "running",
-      lastActive: b.lastActivity || b.createdAt,
+      isActive: b.isActive || false,
+      lastActive: b.lastActiveAt || b.lastActivity || b.createdAt,
       uptime: b.usageStats?.uptimeMinutes || 0,
+      resourceState: b.resources?.state || "offline",
     }));
 
     successResponse(res, formatted);

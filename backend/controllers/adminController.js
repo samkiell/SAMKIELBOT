@@ -494,19 +494,33 @@ const updateFeatureFlag = async (req, res) => {
 // @route   POST /api/admin/bots/sync-stats
 const syncServerStats = async (req, res) => {
   try {
-    const bots = await Deployment.find({
-      $or: [
-        { pterodactylUuid: { $exists: true } },
-        { pterodactylId: { $exists: true } },
-      ],
-    });
+    const bots = await Deployment.find({});
     const statsUpdates = [];
 
-    // Parallel processing with limit? For now map all
+    // Parallel processing
     await Promise.all(
       bots.map(async (bot) => {
         try {
-          // Backfill UUID if missing but ID exists
+          // If no Pterodactyl ID, it might be a zombie record or pending?
+          // If it has an ID, check if it exists in Ptero
+          if (bot.pterodactylId) {
+            try {
+              // Check if server exists
+              await pterodactyl.getServerDetails(bot.pterodactylId);
+            } catch (err) {
+              // If 404, delete local
+              if (err.response?.status === 404) {
+                console.log(
+                  `Server ${bot.botName} not found in Pterodactyl. Deleting local record.`
+                );
+                await bot.deleteOne();
+                return;
+              }
+              // Other errors, skip
+            }
+          }
+
+          // Backfill UUID if missing but ID exists (re-check existence first above)
           if (!bot.pterodactylUuid && bot.pterodactylId) {
             try {
               const details = await pterodactyl.getServerDetails(
@@ -515,14 +529,13 @@ const syncServerStats = async (req, res) => {
               bot.pterodactylUuid = details.attributes.uuid;
               await bot.save();
             } catch (err) {
-              console.error(
-                `Failed to fetch UUID for bot ${bot.botName}: ${err.message}`
-              );
-              return; // Skip if we can't get UUID
+              // If failed here, it might have been deleted already or issues
+              return;
             }
           }
 
           if (!bot.pterodactylUuid) return;
+
           const stats = await pterodactyl.getResources(bot.pterodactylUuid);
           // stats maps to: resources: { memory_bytes, cpu_absolute, disk_bytes, ... }
 
@@ -546,9 +559,12 @@ const syncServerStats = async (req, res) => {
           await bot.save();
           statsUpdates.push({ id: bot._id, success: true });
         } catch (e) {
-          // If server is suspended or 404, we might get error
-          // console.error(`Failed to sync stats for ${bot.botName}:`, e.message);
-          statsUpdates.push({ id: bot._id, success: false });
+          // If 404 on resources (meaning server deleted while getting resources?), delete local
+          if (e.response?.status === 404) {
+            await bot.deleteOne();
+          } else {
+            statsUpdates.push({ id: bot._id, success: false });
+          }
         }
       })
     );

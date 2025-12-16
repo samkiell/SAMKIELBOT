@@ -100,8 +100,8 @@ const createServer = async (deploymentData) => {
       botName,
       botNumber,
       userId,
-      disk = 1024,
-      memory = 500,
+      disk = 500,
+      memory = 300,
       cpu = 25,
       branch = "main",
     } = deploymentData;
@@ -162,7 +162,7 @@ const createServer = async (deploymentData) => {
       egg: eggId,
       docker_image: "ghcr.io/parkervcp/yolks:nodejs_22", // Default common image
       startup:
-        "if [ ! -f /home/container/package.json ]; then echo 'SAMKIEL AI couldnt find any files on the panel, cloning...'; git clone -b $BRANCH $REPO_URL .; fi; npm install; echo \"Checking settings.js from repo...\"; cat settings.js; node index.js",
+        "if [ ! -f /home/container/package.json ]; then echo 'SAMKIEL AI couldnt find any files on the panel, cloning...'; git clone -b $BRANCH $REPO_URL .; fi; npm install; echo \"Checking settings.js from repo...\"; node index.js",
       environment: {
         BOT_NUMBER: botNumber,
         REPO_URL: "https://github.com/samkiell/SAMKIEL-AI",
@@ -173,7 +173,7 @@ const createServer = async (deploymentData) => {
         memory: memory,
         swap: 0,
         disk: disk,
-        io: 500,
+        io: 300,
         cpu: cpu,
       },
       feature_limits: {

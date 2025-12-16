@@ -127,40 +127,24 @@ const getBotsList = async (req, res) => {
     const bots = await Deployment.find({}) // Only "active" users? Requirement says "at least one bot".
       .populate("user", "username")
       .select(
-        "botName status isActive lastActiveAt lastActivity usageStats resources user createdAt uptimeStart"
+        "botName status isActive lastActiveAt lastActivity uptimeStart usageStats resources user createdAt"
       );
 
     // Filter out if user is null (deleted user)
     const validBots = bots.filter((b) => b.user);
 
     // Format for UI
-    const formatted = validBots.map((b) => {
-      const lastActive = b.lastActiveAt || b.lastActivity || b.createdAt;
-      const uptimeMinutes = b.usageStats?.uptimeMinutes || 0;
-
-      // Calculate uptimeStart for real-time counter
-      let uptimeStart = null;
-      if (b.isActive && b.uptimeStart) {
-        uptimeStart = b.uptimeStart;
-      } else if (b.isActive && uptimeMinutes > 0) {
-        // Fallback: calculate from lastActive and uptime
-        uptimeStart = new Date(
-          new Date(lastActive).getTime() - uptimeMinutes * 60000
-        );
-      }
-
-      return {
-        _id: b._id,
-        username: b.user.username,
-        botName: b.botName,
-        status: b.status,
-        isActive: b.isActive || false,
-        lastActive: lastActive,
-        uptime: uptimeMinutes,
-        uptimeStart: uptimeStart,
-        resourceState: b.resources?.state || "offline",
-      };
-    });
+    const formatted = validBots.map((b) => ({
+      _id: b._id,
+      username: b.user.username,
+      botName: b.botName,
+      status: b.status,
+      isActive: b.isActive || false,
+      lastActive: b.lastActiveAt || b.lastActivity || b.createdAt,
+      uptime: b.usageStats?.uptimeMinutes || 0,
+      uptimeStart: b.uptimeStart,
+      resourceState: b.resources?.state || "offline",
+    }));
 
     successResponse(res, formatted);
   } catch (error) {

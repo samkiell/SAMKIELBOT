@@ -18,55 +18,6 @@ import io from "socket.io-client";
 
 let socket;
 
-// Real-time uptime counter component
-const UptimeCounter = ({ bot }) => {
-  const [uptime, setUptime] = useState("");
-
-  useEffect(() => {
-    const calculateUptime = () => {
-      if (!bot.isActive || !bot.uptimeStart) {
-        return "Offline";
-      }
-
-      const now = Date.now();
-      const start = new Date(bot.uptimeStart).getTime();
-      const diff = now - start;
-
-      const hours = Math.floor(diff / 3600000);
-      const minutes = Math.floor((diff % 3600000) / 60000);
-      const seconds = Math.floor((diff % 60000) / 1000);
-
-      if (hours > 0) {
-        return `${hours}h ${minutes}m ${seconds}s`;
-      } else if (minutes > 0) {
-        return `${minutes}m ${seconds}s`;
-      } else {
-        return `${seconds}s`;
-      }
-    };
-
-    // Initial calculation
-    setUptime(calculateUptime());
-
-    // Update every second
-    const interval = setInterval(() => {
-      setUptime(calculateUptime());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [bot.isActive, bot.uptimeStart]);
-
-  return (
-    <div
-      className={`font-mono font-semibold ${
-        bot.isActive ? "text-gray-700 dark:text-gray-200" : "text-gray-500"
-      }`}
-    >
-      {uptime}
-    </div>
-  );
-};
-
 export default function BotsList() {
   const { user } = useAuth();
   const [bots, setBots] = useState([]);
@@ -74,17 +25,25 @@ export default function BotsList() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all"); // all, online, offline
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
+  // Update current time every second for real-time uptime
   useEffect(() => {
-    fetchBots();
+    const timer = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
 
-    // Initialize Socket.IO for real-time updates
+    return () => clearInterval(timer);
+  }, []);
+
+  // Socket.IO for real-time updates
+  useEffect(() => {
     const socketUrl =
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     socket = io(socketUrl);
 
     socket.on("connect", () => {
-      console.log("[Bots Page] Socket.IO connected");
+      console.log("[BotsList] Connected to Socket.IO");
     });
 
     socket.on("bot:status_change", () => {
@@ -109,6 +68,10 @@ export default function BotsList() {
   }, []);
 
   useEffect(() => {
+    fetchBots();
+  }, []);
+
+  useEffect(() => {
     let result = bots;
 
     if (searchTerm) {
@@ -130,29 +93,40 @@ export default function BotsList() {
 
   const fetchBots = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      console.log("[DEBUG] Fetching from:", `${apiUrl}/api/bots-list`);
-      console.log(
-        "[DEBUG] NEXT_PUBLIC_API_URL:",
-        process.env.NEXT_PUBLIC_API_URL
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/bots-list`
       );
-
-      const res = await fetch(`${apiUrl}/api/bots-list`);
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-
       const data = await res.json();
-
-      // Backend now provides uptimeStart directly
       setBots(data.data || []);
       setFilteredBots(data.data || []);
     } catch (err) {
-      console.error("Failed to fetch bots:", err);
       toast.error("Failed to fetch bots");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Format uptime in real-time: HH:MM:SS or MM:SS
+  const formatUptime = (bot) => {
+    if (!bot.isActive || !bot.uptimeStart) {
+      return "Offline";
+    }
+
+    const uptimeMs =
+      currentTime - new Date(bot.uptimeStart || bot.lastActive).getTime();
+
+    if (uptimeMs < 0) return "0s";
+
+    const hours = Math.floor(uptimeMs / 3600000);
+    const minutes = Math.floor((uptimeMs % 3600000) / 60000);
+    const seconds = Math.floor((uptimeMs % 60000) / 1000);
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${seconds}s`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    } else {
+      return `${seconds}s`;
     }
   };
 
@@ -325,7 +299,15 @@ export default function BotsList() {
                       <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-1">
                         <Clock size={14} /> Uptime
                       </div>
-                      <UptimeCounter bot={bot} />
+                      <div
+                        className={`font-mono font-semibold ${
+                          bot.isActive
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-gray-500 dark:text-gray-500"
+                        }`}
+                      >
+                        {formatUptime(bot)}
+                      </div>
                     </div>
                     <div className="bg-gray-50 dark:bg-slate-900/50 p-3 rounded-xl border border-gray-100 dark:border-slate-700/50">
                       <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-1">

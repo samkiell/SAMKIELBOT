@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import AdminLayout from "../../components/AdminLayout";
-import { useAuth } from "../../lib/auth";
+import AdminLayout from "../../../components/AdminLayout";
+import { useAuth } from "../../../lib/auth";
 import toast from "react-hot-toast";
 
 export default function AuditLogs() {

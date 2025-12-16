@@ -284,9 +284,34 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// @desc    Validate referrer username
+// @route   GET /api/auth/validate-referrer/:username
+// @access  Public
+const validateReferrer = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const user = await User.findOne({
+      username: username.toLowerCase().trim(),
+    });
+
+    if (!user) {
+      return errorResponse(res, "Referrer not found", 404);
+    }
+
+    successResponse(res, {
+      username: user.username,
+      exists: true,
+    });
+  } catch (error) {
+    errorResponse(res, error.message, 500);
+  }
+};
+
 module.exports = {
   register,
   login,
   verifyToken,
   updateProfile,
+  validateReferrer,
 };

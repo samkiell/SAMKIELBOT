@@ -67,6 +67,12 @@ export default function Navbar() {
                 >
                   Suggest
                 </Link>
+                <Link
+                  href="/referrals"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Referrals
+                </Link>
               </>
             )}
             {user ? (
@@ -244,6 +250,13 @@ export default function Navbar() {
                   className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
                   Suggest
+                </Link>
+                <Link
+                  href="/referrals"
+                  onClick={() => setMenuOpen(false)}
+                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Referrals
                 </Link>
                 <Link
                   href="/dashboard"

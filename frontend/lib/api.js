@@ -120,3 +120,24 @@ export const getUpdateHistory = async (deploymentId) => {
   const response = await api.get(`/update/${deploymentId}`);
   return response.data.data;
 };
+
+// Payment API
+export const getCreditPackages = async () => {
+  const response = await api.get("/payments/packages");
+  return response.data.data;
+};
+
+export const initializePayment = async (packageId) => {
+  const response = await api.post("/payments/init", { packageId });
+  return response.data.data;
+};
+
+export const verifyPayment = async (reference) => {
+  const response = await api.get(`/payments/verify?reference=${reference}`);
+  return response.data;
+};
+
+export const getPaymentHistory = async (limit = 50) => {
+  const response = await api.get(`/payments/history?limit=${limit}`);
+  return response.data.data;
+};

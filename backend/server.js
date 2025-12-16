@@ -54,6 +54,7 @@ app.use("/api/deploy", deployRoutes);
 app.use("/api/update", updateRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/credits", creditsRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use("/api", interactionRoutes);
 
 // ✅ Error handling

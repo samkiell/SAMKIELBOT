@@ -11,16 +11,21 @@ router.get("/pricing", creditsController.getResourcePricing);
 router.get("/balance", protect, creditsController.getCreditBalance);
 router.get("/history", protect, creditsController.getCreditHistory);
 router.post("/calculate", protect, creditsController.calculateCost);
+
+// DEPRECATED: Use /api/payments/init instead
 router.post(
   "/purchase/initialize",
   protect,
   creditsController.initializePurchase
 );
+
+// DEPRECATED: Use /api/payments/verify instead
 router.get(
   "/purchase/verify/:reference",
   protect,
   creditsController.verifyPurchase
 );
+
 router.get("/referral/stats", protect, creditsController.getReferralStats);
 router.post("/referral/apply", protect, creditsController.applyReferral);
 

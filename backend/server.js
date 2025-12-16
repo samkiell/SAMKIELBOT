@@ -16,6 +16,7 @@ const updateRoutes = require("./routes/update");
 const adminRoutes = require("./routes/admin");
 const interactionRoutes = require("./routes/interactions");
 const creditsRoutes = require("./routes/credits");
+const paymentRoutes = require("./routes/payments");
 const initScheduler = require("./utils/scheduler");
 const botHealthService = require("./services/botHealthService");
 

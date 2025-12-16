@@ -205,7 +205,7 @@ export default function Navbar() {
 
       {/* Drawer */}
       <div
-        className={`md:hidden fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed top-0 right-0 h-full w-72 bg-white/90 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl z-50 transform transition-transform duration-300 ease-in-out border-l border-gray-200 dark:border-gray-700/50 ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

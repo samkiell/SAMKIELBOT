@@ -17,7 +17,7 @@ const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
 // Database connection
-const dbConnect = require("./lib/dbConnect");
+const connectDB = require("./lib/db");
 
 // Services
 const initScheduler = require("./lib/utils/scheduler");
@@ -39,7 +39,7 @@ app.prepare().then(async () => {
   server.set("io", io);
 
   // Connect to MongoDB
-  await dbConnect();
+  await connectDB();
 
   // Initialize Scheduler
   initScheduler();

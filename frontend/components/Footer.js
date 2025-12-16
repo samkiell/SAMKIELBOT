@@ -20,6 +20,12 @@ export default function Footer() {
               >
                 Home
               </Link>
+              <Link
+                href="/bots"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                Community Bots
+              </Link>
               {!user && (
                 <>
                   <Link

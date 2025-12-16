@@ -102,27 +102,51 @@ export default function Home() {
       </Head>
 
       {/* Hero Section */}
-      <section className="relative flex flex-col justify-center items-center text-center px-6 py-12 min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600">
+      <section className="relative flex flex-col justify-center items-center text-center px-6 py-12 min-h-screen bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10">
           <motion.div {...fadeUp}>
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-white">
+            <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm">
+              <span className="text-cyan-300 font-bold text-sm tracking-wide">
+                🚀 V3.0 NOW LIVE
+              </span>
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-white tracking-tight drop-shadow-sm">
               𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋
             </h1>
-            <p className="text-lg md:text-xl text-gray-100 mb-8 max-w-3xl">
+            <p className="text-xl md:text-2xl text-gray-100 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
               Automate your WhatsApp experience with power, simplicity, and full
               control.
             </p>
+
+            <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-gray-200 mb-10">
+              <span className="flex items-center bg-white/5 px-3 py-1 rounded-lg">
+                ✨ 99.9% Uptime
+              </span>
+              <span className="flex items-center bg-white/5 px-3 py-1 rounded-lg">
+                ⚡ Instant Setup
+              </span>
+              <span className="flex items-center bg-white/5 px-3 py-1 rounded-lg">
+                🔒 E2E Encrypted
+              </span>
+            </div>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <Link
                 href="/register"
-                className="bg-white hover:bg-gray-100 text-indigo-600 px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className="bg-white hover:bg-gray-100 text-indigo-600 px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg border border-transparent"
               >
                 Deploy your bot now!
               </Link>
               <Link
+                href="/bots"
+                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+              >
+                Community Bots
+              </Link>
+              <Link
                 href="/login"
-                className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className="bg-black/20 hover:bg-black/40 backdrop-blur-md text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
               >
                 Login
               </Link>

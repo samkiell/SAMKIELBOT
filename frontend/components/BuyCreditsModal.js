@@ -1,34 +1,21 @@
+```javascript
 import { useState, useEffect } from "react";
 import {
   getCreditPackages,
   initializePayment,
-  verifyPayment,
 } from "../lib/api";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
 
 export default function BuyCreditsModal({ isOpen, onClose, onSuccess }) {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
-  const router = useRouter();
 
   useEffect(() => {
     if (isOpen) {
       loadPackages();
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    // Check for payment verification on mount
-    const urlParams = new URLSearchParams(window.location.search);
-    const reference = urlParams.get("reference");
-    const paymentStatus = urlParams.get("payment");
-
-    if (reference && paymentStatus === "success") {
-      handlePaymentVerification(reference);
-    }
-  }, []);
 
   const loadPackages = async () => {
     try {
@@ -40,24 +27,6 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }) {
     }
   };
 
-  const handlePaymentVerification = async (reference) => {
-    try {
-      const result = await verifyPayment(reference);
-      if (result.success) {
-        toast.success(result.message || "Payment successful!");
-        if (onSuccess) onSuccess();
-
-        // Clean up URL
-        router.replace(router.pathname, undefined, { shallow: true });
-      } else {
-        toast.error(result.message || "Payment verification failed");
-      }
-    } catch (error) {
-      console.error("Payment verification error:", error);
-      toast.error("Failed to verify payment");
-    }
-  };
-
   const handlePurchase = async (pkg) => {
     setLoading(true);
     setSelectedPackage(pkg.id);
@@ -66,6 +35,7 @@ export default function BuyCreditsModal({ isOpen, onClose, onSuccess }) {
       const result = await initializePayment(pkg.id);
 
       // Redirect to Paystack checkout
+      // User will be redirected back to dashboard with payment reference
       window.location.href = result.authorization_url;
     } catch (error) {
       console.error("Payment initialization error:", error);

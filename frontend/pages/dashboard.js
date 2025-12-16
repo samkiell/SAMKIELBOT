@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import BotCard from "../components/BotCard";
 import StatsOverview from "../components/StatsOverview";
 import ReferralCard from "../components/ReferralCard";
-import { getDeployments } from "../lib/api";
+import { getDeployments, verifyPayment } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
@@ -15,8 +15,57 @@ import CreditBalance from "../components/CreditBalance";
 export default function Dashboard() {
   const [deployments, setDeployments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user, loading: authLoading } = useAuth();
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const { user, loading: authLoading, refreshUser } = useAuth();
   const router = useRouter();
+
+  // Handle payment verification on return from Paystack
+  useEffect(() => {
+    const handlePaymentVerification = async () => {
+      const { payment, reference } = router.query;
+
+      if (payment === "success" && reference && !verifyingPayment) {
+        setVerifyingPayment(true);
+
+        const verificationToast = toast.loading("Verifying payment...");
+
+        try {
+          const result = await verifyPayment(reference);
+
+          if (result.success) {
+            toast.success(
+              `Payment successful! ${result.data.credits} credits added to your account.`,
+              { id: verificationToast, duration: 5000 }
+            );
+
+            // Refresh user data to update credit balance
+            if (refreshUser) {
+              await refreshUser();
+            }
+          } else {
+            toast.error(result.message || "Payment verification failed", {
+              id: verificationToast,
+            });
+          }
+        } catch (error) {
+          console.error("Payment verification error:", error);
+          toast.error(
+            error.response?.data?.message || "Failed to verify payment",
+            { id: verificationToast }
+          );
+        } finally {
+          setVerifyingPayment(false);
+
+          // Clean up URL by removing query parameters
+          router.replace("/dashboard", undefined, { shallow: true });
+        }
+      }
+    };
+
+    if (router.isReady && user) {
+      handlePaymentVerification();
+    }
+  }, [router.isReady, router.query, user, verifyingPayment, refreshUser]);
 
   useEffect(() => {
     if (!authLoading && !user) {

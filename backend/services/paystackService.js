@@ -33,7 +33,7 @@ async function initializePayment({ email, amount, reference, metadata = {} }) {
       amount: amount * 100, // Convert to kobo
       reference,
       metadata,
-      callback_url: `${process.env.FRONTEND_URL}/dashboard?payment=success`,
+      callback_url: `${process.env.FRONTEND_URL}/dashboard?payment=success&reference=${reference}`,
     });
 
     return {

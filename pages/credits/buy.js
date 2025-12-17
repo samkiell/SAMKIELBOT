@@ -25,7 +25,7 @@ export default function BuyCredits() {
   const fetchPackages = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/credits/packages`
+        `${process.env.NEXT_PUBLIC_API_URL}/payments/packages`
       );
       const data = await res.json();
       if (data.success) {
@@ -38,25 +38,25 @@ export default function BuyCredits() {
     }
   };
 
-  const handlePurchase = async (index) => {
-    setProcessing(index);
+  const handlePurchase = async (pkg) => {
+    setProcessing(pkg.id);
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/credits/purchase/initialize`,
+        `${process.env.NEXT_PUBLIC_API_URL}/payments/init`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ packageIndex: index }),
+          body: JSON.stringify({ packageId: pkg.id }),
         }
       );
 
       const data = await res.json();
       if (data.success) {
-        window.location.href = data.data.authorizationUrl;
+        window.location.href = data.data.authorization_url;
       } else {
         alert(data.message || "Failed to initialize payment");
       }
@@ -140,15 +140,15 @@ export default function BuyCredits() {
                     </div>
                   </div>
                   <button
-                    onClick={() => handlePurchase(index)}
-                    disabled={processing === index}
+                    onClick={() => handlePurchase(pkg)}
+                    disabled={processing === pkg.id}
                     className={`w-full py-3 rounded-lg font-semibold transition-all duration-200 ${
                       pkg.popular
                         ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
                         : "bg-indigo-600 hover:bg-indigo-700 text-white"
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
-                    {processing === index ? (
+                    {processing === pkg.id ? (
                       <div className="flex items-center justify-center">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                         Processing...

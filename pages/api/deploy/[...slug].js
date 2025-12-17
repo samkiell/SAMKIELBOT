@@ -1,18 +1,18 @@
-const dbConnect = require("@/lib/dbConnect");
-const {
+import dbConnect from "@/lib/dbConnect";
+import {
   deployBot,
   getDeployments,
   updateDeployment,
   createDeployment,
   deleteDeployment,
   controlServer,
-} = require("@/lib/controllers/deployController");
-const {
+} from "@/lib/controllers/deployController";
+import {
   getDeploymentStatus,
   getActiveBots,
-} = require("@/lib/controllers/deploymentStatusController");
-const { protect } = require("@/lib/utils/authMiddleware");
-const Deployment = require("@/models/Deployment");
+} from "@/lib/controllers/deploymentStatusController";
+import { protect } from "@/lib/utils/authMiddleware";
+import Deployment from "@/models/Deployment";
 
 export default async function handler(req, res) {
   const { method } = req;

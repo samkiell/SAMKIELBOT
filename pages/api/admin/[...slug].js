@@ -1,6 +1,6 @@
-const dbConnect = require("@/lib/dbConnect");
-const { protect, admin } = require("@/lib/utils/authMiddleware");
-const {
+import dbConnect from "@/lib/dbConnect";
+import { protect, admin } from "@/lib/utils/authMiddleware";
+import {
   getSystemStats,
   getAllUsers,
   updateUser,
@@ -25,7 +25,7 @@ const {
   forceSyncBotStatuses,
   getFeatureFlags,
   updateFeatureFlag,
-} = require("@/lib/controllers/adminController");
+} from "@/lib/controllers/adminController";
 
 export default async function handler(req, res) {
   const { method } = req;

@@ -1,7 +1,7 @@
-const dbConnect = require("@/lib/dbConnect");
+import dbConnect from "@/lib/dbConnect";
 import paymentController from "@/lib/controllers/paymentController";
 import webhookController from "@/lib/controllers/webhookController";
-const { protect, admin } = require("@/lib/utils/authMiddleware");
+import { protect, admin } from "@/lib/utils/authMiddleware";
 
 export default async function handler(req, res) {
   const { method } = req;

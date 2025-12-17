@@ -1,11 +1,11 @@
-const dbConnect = require("@/lib/dbConnect");
-const {
+import dbConnect from "@/lib/dbConnect";
+import {
   getNotifications,
   markRead,
   createSuggestion,
   getBotsList,
-} = require("@/lib/controllers/interactionsController");
-const { protect } = require("@/lib/utils/authMiddleware");
+} from "@/lib/controllers/interactionsController";
+import { protect } from "@/lib/utils/authMiddleware";
 
 export default async function handler(req, res) {
   const { method } = req;

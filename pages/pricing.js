@@ -1,360 +1,298 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { useAuth } from "../lib/auth";
-import { useRouter } from "next/router";
+import Navbar from "../components/Navbar";
+import Snowfall from "../components/Snowfall";
 import {
-  FaCheck,
-  FaRocket,
-  FaStar,
-  FaCrown,
-  FaArrowRight,
-} from "react-icons/fa";
+  Check,
+  Zap,
+  Server,
+  Shield,
+  CreditCard,
+  HelpCircle,
+} from "lucide-react";
 
 export default function Pricing() {
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
-  const [plans, setPlans] = useState([]);
+  const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [processingPlan, setProcessingPlan] = useState(null);
 
   useEffect(() => {
-    fetchPlans();
+    fetchPackages();
   }, []);
 
-  const fetchPlans = async () => {
+  const fetchPackages = async () => {
     try {
+      // Try fetching from credits API first
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/billing/plans`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/credits/packages`
       );
-      const data = await res.json();
-      if (data.success) {
-        setPlans(data.data);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setPackages(data.data);
+          return;
+        }
       }
+
+      // Fallback manual packages if API fails or is empty (for dev/presentation)
+      setPackages([
+        { credits: 50, price: 500, popular: false },
+        { credits: 120, price: 1000, popular: true },
+        { credits: 260, price: 2000, popular: false },
+        { credits: 700, price: 5000, popular: false },
+      ]);
     } catch (error) {
-      console.error("Failed to fetch plans:", error);
+      console.error("Failed to fetch packages:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpgrade = async (planId) => {
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-
-    setProcessingPlan(planId);
-
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/billing/subscription/initialize`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ planId }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (data.success) {
-        // Redirect to Paystack payment page
-        window.location.href = data.data.authorizationUrl;
-      } else {
-        alert(data.message || "Failed to initialize payment");
-      }
-    } catch (error) {
-      console.error("Payment initialization error:", error);
-      alert("Failed to initialize payment");
-    } finally {
-      setProcessingPlan(null);
+  const handleAction = () => {
+    if (user) {
+      router.push("/credits/buy");
+    } else {
+      router.push("/register");
     }
   };
 
-  const fadeUp = {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 },
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
   };
 
-  const getPlanIcon = (planName) => {
-    switch (planName) {
-      case "Starter":
-        return <FaRocket className="text-4xl text-blue-500" />;
-      case "Pro":
-        return <FaStar className="text-4xl text-purple-500" />;
-      case "Max":
-        return <FaCrown className="text-4xl text-yellow-500" />;
-      default:
-        return <FaRocket className="text-4xl text-blue-500" />;
-    }
+  const item = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0 },
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white transition-colors duration-300">
       <Head>
-        <title>Pricing - SAMKIEL BOT</title>
+        <title>Pricing & Credits - SAMKIEL BOT</title>
         <meta
           name="description"
-          content="Choose the perfect plan for your WhatsApp bot needs. Free forever or upgrade to premium."
+          content="Flexible credit-based pricing for your WhatsApp bots. Pay only for what you use."
         />
       </Head>
 
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-indigo-600">
-            𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋
-          </Link>
-          <div className="flex gap-4">
-            {user ? (
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-              >
-                Dashboard
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-indigo-600 transition"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/register"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
+      <Navbar />
+      <Snowfall />
+
+      {/* Background Ambience */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px]" />
       </div>
 
-      {/* Hero Section */}
-      <section className="px-6 py-16 text-center">
-        <motion.div {...fadeUp}>
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Simple, Transparent Pricing
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-4">
-            Start free forever. Upgrade anytime to unlock premium features and
-            higher limits.
-          </p>
-          <div className="inline-block px-4 py-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-            <span className="text-green-700 dark:text-green-300 font-semibold">
-              ✨ No credit card required for free plan
-            </span>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Free Plan */}
-      <section className="px-6 pb-12 max-w-7xl mx-auto">
-        <motion.div
-          {...fadeUp}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border-2 border-gray-200 dark:border-gray-700"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Free Plan
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Perfect for trying out SAMKIEL BOT
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-4xl font-bold text-gray-900 dark:text-white">
-                ₦0
-              </div>
-              <div className="text-sm text-gray-500">Forever free</div>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 gap-4 mb-6">
-            <div className="flex items-start gap-3">
-              <FaCheck className="text-green-500 mt-1 flex-shrink-0" />
-              <span className="text-gray-700 dark:text-gray-300">
-                1 bot maximum
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <FaCheck className="text-green-500 mt-1 flex-shrink-0" />
-              <span className="text-gray-700 dark:text-gray-300">
-                300 MB RAM
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <FaCheck className="text-green-500 mt-1 flex-shrink-0" />
-              <span className="text-gray-700 dark:text-gray-300">
-                25% CPU allocation
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <FaCheck className="text-green-500 mt-1 flex-shrink-0" />
-              <span className="text-gray-700 dark:text-gray-300">
-                500 MB disk space
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <FaCheck className="text-green-500 mt-1 flex-shrink-0" />
-              <span className="text-gray-700 dark:text-gray-300">
-                Community support
-              </span>
-            </div>
-            <div className="flex items-start gap-3">
-              <FaCheck className="text-green-500 mt-1 flex-shrink-0" />
-              <span className="text-gray-700 dark:text-gray-300">
-                Basic features
-              </span>
-            </div>
-          </div>
-          <Link
-            href="/register"
-            className="block w-full py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition text-center"
+      <main className="relative z-10 pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <div className="text-center max-w-4xl mx-auto mb-16">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-6xl font-extrabold mb-6"
           >
-            Get Started Free
-          </Link>
-        </motion.div>
-      </section>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+              Pay As You Go
+            </span>{" "}
+            Power
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-gray-600 dark:text-gray-400 mb-8"
+          >
+            No monthly subscriptions. Purchase credits and only burn what your
+            bots use. Simple, transparent, and flexible.
+          </motion.p>
+        </div>
 
-      {/* Premium Plans */}
-      <section className="px-6 pb-16 max-w-7xl mx-auto">
-        <motion.div {...fadeUp} className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Premium Plans
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            Unlock more bots and higher resource limits
-          </p>
-        </motion.div>
+        {/* Pricing Cards */}
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-20"
+        >
+          {loading
+            ? [1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="h-96 bg-gray-200 dark:bg-slate-800/50 rounded-2xl animate-pulse"
+                />
+              ))
+            : packages.map((pkg, idx) => (
+                <motion.div
+                  key={idx}
+                  variants={item}
+                  className={`relative group p-8 rounded-2xl backdrop-blur-md border transition-all duration-300 hover:-translate-y-2 ${
+                    pkg.popular
+                      ? "bg-gradient-to-b from-indigo-500/10 to-purple-500/10 border-indigo-500/50 shadow-xl shadow-indigo-500/10"
+                      : "bg-white/50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-700 hover:shadow-lg"
+                  }`}
+                >
+                  {pkg.popular && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold rounded-full shadow-lg">
+                      MOST POPULAR
+                    </div>
+                  )}
 
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-8">
-            {plans.map((plan) => (
-              <motion.div
-                key={plan._id}
-                {...fadeUp}
-                className={`bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 relative ${
-                  plan.isRecommended
-                    ? "border-4 border-indigo-500 transform scale-105"
-                    : "border-2 border-gray-200 dark:border-gray-700"
-                }`}
-              >
-                {plan.isRecommended && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
-                      RECOMMENDED
-                    </span>
+                  <div className="text-center mb-8">
+                    <div className="text-5xl font-bold mb-2">{pkg.credits}</div>
+                    <div className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Credits
+                    </div>
                   </div>
-                )}
 
-                <div className="flex justify-center mb-4">
-                  {getPlanIcon(plan.name)}
-                </div>
-
-                <h3 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2">
-                  {plan.displayName}
-                </h3>
-                <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-                  {plan.description}
-                </p>
-
-                <div className="text-center mb-6">
-                  <div className="text-5xl font-bold text-gray-900 dark:text-white">
-                    ₦{plan.price.toLocaleString()}
-                  </div>
-                  <div className="text-sm text-gray-500">per month</div>
-                </div>
-
-                <div className="space-y-3 mb-8">
-                  {plan.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-start gap-3">
-                      <FaCheck className="text-green-500 mt-1 flex-shrink-0" />
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {feature}
+                  <div className="text-center mb-8">
+                    <div className="flex items-center justify-center gap-1">
+                      <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                        ₦{pkg.price.toLocaleString()}
                       </span>
                     </div>
-                  ))}
-                </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      ₦{(pkg.price / pkg.credits).toFixed(2)} per credit
+                    </div>
+                  </div>
 
-                <button
-                  onClick={() => handleUpgrade(plan._id)}
-                  disabled={processingPlan === plan._id}
-                  className={`w-full py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${
-                    plan.isRecommended
-                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg"
-                      : "bg-indigo-600 text-white hover:bg-indigo-700"
-                  } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  {processingPlan === plan._id ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  ) : (
-                    <>
-                      Upgrade to {plan.name}
-                      <FaArrowRight />
-                    </>
-                  )}
-                </button>
-              </motion.div>
-            ))}
+                  <ul className="space-y-4 mb-8 text-sm text-gray-600 dark:text-gray-300">
+                    <li className="flex items-start gap-3">
+                      <Check className="text-green-500 shrink-0" size={18} />
+                      <span>Create and run bots</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="text-green-500 shrink-0" size={18} />
+                      <span>Upgrade resources (RAM/CPU)</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Check className="text-green-500 shrink-0" size={18} />
+                      <span>Credits never expire</span>
+                    </li>
+                  </ul>
+
+                  <button
+                    onClick={handleAction}
+                    className={`w-full py-3 rounded-xl font-bold transition-all duration-200 ${
+                      pkg.popular
+                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25"
+                        : "bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100"
+                    }`}
+                  >
+                    Buy Credits
+                  </button>
+                </motion.div>
+              ))}
+        </motion.div>
+
+        {/* How It Works Section */}
+        <div className="max-w-7xl mx-auto mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              How Credit Billing Works
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Understand where your credits go
+            </p>
           </div>
-        )}
-      </section>
 
-      {/* FAQ Section */}
-      <section className="px-6 pb-16 max-w-4xl mx-auto">
-        <motion.div {...fadeUp}>
-          <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6">
+                <Zap size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">One-Time Creation Fee</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Deploying a new bot costs a standard fee of{" "}
+                <span className="font-bold text-gray-900 dark:text-white">
+                  50 credits
+                </span>
+                . This covers the initial server setup and configuration.
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center text-green-600 dark:text-green-400 mb-6">
+                <CreditCard size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Daily Usage Burn</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Active bots consume about{" "}
+                <span className="font-bold text-gray-900 dark:text-white">
+                  2-5 credits/day
+                </span>{" "}
+                depending on their resource usage (RAM/CPU). Offline bots don't
+                consume credits.
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400 mb-6">
+                <Server size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-3">Resource Upgrades</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Need more power? Upgrading RAM or CPU consumes additional
+                credits daily. You specificy exactly what your bot needs.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-10">
             Frequently Asked Questions
           </h2>
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                Can I upgrade or downgrade anytime?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Yes! You can upgrade to any premium plan at any time. If your
-                subscription expires, you'll be automatically downgraded to the
-                free plan.
-              </p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                What happens to my bots if I downgrade?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                If you downgrade to free and have more than 1 bot, your oldest
-                bots will be suspended. You can reactivate them by upgrading
-                again.
-              </p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                How do I pay?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                We use Paystack for secure payments. You can pay with cards,
-                bank transfers, and other payment methods supported in Nigeria.
-              </p>
-            </div>
+          <div className="space-y-4">
+            {[
+              {
+                q: "Do my credits expire?",
+                a: "No, your purchased credits never expire. They stay in your account until you use them.",
+              },
+              {
+                q: "Can I get a refund?",
+                a: "Since credits are digital goods, we generally do not offer refunds once they are used for deployment. However, if you haven't used them, contact support.",
+              },
+              {
+                q: "What happens if I run out of credits?",
+                a: "We'll send you a warning when you're low. If you reach 0 credits, your active bots will be suspended until you top up.",
+              },
+              {
+                q: "Do I pay for stopped bots?",
+                a: "No! If you stop your bot from the dashboard, it stops consuming daily credits.",
+              },
+            ].map((faq, i) => (
+              <div
+                key={i}
+                className="bg-white dark:bg-slate-800 p-6 rounded-xl border border-gray-100 dark:border-slate-700"
+              >
+                <div className="flex gap-4">
+                  <HelpCircle
+                    className="text-indigo-500 shrink-0 mt-1"
+                    size={20}
+                  />
+                  <div>
+                    <h3 className="font-bold text-lg mb-2">{faq.q}</h3>
+                    <p className="text-gray-600 dark:text-gray-400">{faq.a}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </main>
     </div>
   );
 }

@@ -127,4 +127,5 @@ const deploymentSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Deployment", deploymentSchema);
+module.exports =
+  mongoose.models.Deployment || mongoose.model("Deployment", deploymentSchema);

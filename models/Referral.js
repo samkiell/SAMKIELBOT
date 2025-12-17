@@ -24,4 +24,5 @@ const referralSchema = new mongoose.Schema(
 // Compound index to prevent duplicate referrals
 referralSchema.index({ referrerId: 1, referredUserId: 1 }, { unique: true });
 
-module.exports = mongoose.model("Referral", referralSchema);
+module.exports =
+  mongoose.models.Referral || mongoose.model("Referral", referralSchema);

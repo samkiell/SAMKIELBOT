@@ -4,11 +4,10 @@ const notificationSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    default: null, // Null means broadcast to all
+    default: null,
   },
   title: {
     type: String,
-    required: false,
     default: "Notification",
   },
   message: {
@@ -38,4 +37,7 @@ const notificationSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Notification", notificationSchema);
+// ✅ THIS IS THE CRITICAL FIX
+module.exports =
+  mongoose.models.Notification ||
+  mongoose.model("Notification", notificationSchema);

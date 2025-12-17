@@ -14,4 +14,6 @@ const featureFlagSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("FeatureFlag", featureFlagSchema);
+module.exports =
+  mongoose.models.FeatureFlag ||
+  mongoose.model("FeatureFlag", featureFlagSchema);

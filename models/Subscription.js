@@ -95,4 +95,6 @@ subscriptionSchema.methods.isExpiringSoon = function () {
   return daysUntilExpiry <= 7 && daysUntilExpiry > 0;
 };
 
-module.exports = mongoose.model("Subscription", subscriptionSchema);
+module.exports =
+  mongoose.models.Subscription ||
+  mongoose.model("Subscription", subscriptionSchema);

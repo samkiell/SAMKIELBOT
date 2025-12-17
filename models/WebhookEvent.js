@@ -47,4 +47,6 @@ webhookEventSchema.index({ provider: 1, event: 1, createdAt: -1 });
 webhookEventSchema.index({ reference: 1, createdAt: -1 });
 webhookEventSchema.index({ processed: 1, createdAt: -1 });
 
-module.exports = mongoose.model("WebhookEvent", webhookEventSchema);
+module.exports =
+  mongoose.models.WebhookEvent ||
+  mongoose.model("WebhookEvent", webhookEventSchema);

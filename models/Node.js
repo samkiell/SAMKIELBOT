@@ -34,4 +34,4 @@ const nodeSchema = new mongoose.Schema({
   lastHeartbeat: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Node", nodeSchema);
+module.exports = mongoose.models.Node || mongoose.model("Node", nodeSchema);

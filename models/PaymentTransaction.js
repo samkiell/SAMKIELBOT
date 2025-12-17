@@ -60,4 +60,6 @@ paymentTransactionSchema.index({ user: 1, createdAt: -1 });
 paymentTransactionSchema.index({ status: 1, createdAt: -1 });
 paymentTransactionSchema.index({ reference: 1 }, { unique: true });
 
-module.exports = mongoose.model("PaymentTransaction", paymentTransactionSchema);
+module.exports =
+  mongoose.models.PaymentTransaction ||
+  mongoose.model("PaymentTransaction", paymentTransactionSchema);

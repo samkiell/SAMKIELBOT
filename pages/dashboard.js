@@ -11,11 +11,13 @@ import { useAuth } from "../lib/auth";
 import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import CreditBalance from "../components/CreditBalance";
+import DailyClaimButton from "../components/DailyClaimButton";
 
 export default function Dashboard() {
   const [deployments, setDeployments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { user, loading: authLoading, refreshUser } = useAuth();
   const router = useRouter();
 
@@ -42,6 +44,7 @@ export default function Dashboard() {
             if (refreshUser) {
               await refreshUser();
             }
+            setRefreshKey((prev) => prev + 1);
           } else {
             toast.error(result.message || "Payment verification failed", {
               id: verificationToast,
@@ -74,8 +77,6 @@ export default function Dashboard() {
     }
 
     if (user) {
-      if (user) {
-      }
       fetchDeployments();
     }
   }, [user, authLoading, router]);
@@ -91,7 +92,10 @@ export default function Dashboard() {
     }
   };
 
-  // Remove old modal handlers since we now navigate to /deploy
+  const onClaimSuccess = async () => {
+    if (refreshUser) await refreshUser();
+    setRefreshKey((prev) => prev + 1);
+  };
 
   if (authLoading) {
     return (
@@ -124,7 +128,8 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <CreditBalance />
+              <DailyClaimButton onClaimSuccess={onClaimSuccess} />
+              <CreditBalance key={refreshKey} />
               <Link
                 href="/deploy"
                 className="inline-flex items-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 text-white shadow-lg"

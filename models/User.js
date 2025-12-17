@@ -59,6 +59,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Daily Credit Claim
+    lastDailyClaim: {
+      type: Date,
+      default: null,
+    },
     totalReferrals: {
       type: Number,
       default: 0,

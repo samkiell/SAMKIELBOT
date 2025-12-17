@@ -78,6 +78,13 @@ export default async function handler(req, res) {
       });
     }
 
+    // Route: POST /api/credits/daily-claim
+    if (slug && slug[0] === "daily-claim" && method === "POST") {
+      return await protect(req, res, async () => {
+        return await creditsController.claimDailyCredits(req, res);
+      });
+    }
+
     // Route: POST /api/credits/referral/apply
     if (
       slug &&

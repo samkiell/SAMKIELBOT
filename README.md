@@ -1,249 +1,186 @@
-# 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 - Unified Next.js Application
+# Samkiel Bot Deployment Platform
 
-> **WhatsApp Bot Deployment Platform** - Deploy, manage, and monetize WhatsApp bots with ease.
+## Project Overview
 
-## 🌟 Overview
+This project is a centralized web platform designed for the deployment, management, and orchestration of WhatsApp bot instances. It serves as a management layer that sits between the end-user and the underlying infrastructure (Pterodactyl).
 
-SAMKIEL BOT is a comprehensive platform for deploying and managing WhatsApp bots. Built with Next.js, it provides a unified frontend and backend experience with real-time updates, credit-based billing, and powerful admin controls.
+**Purpose**: To allow users to provision, configure, and manage WhatsApp bots without needing to interact directly with command-line tools, raw servers, or complex git workflows.
 
-### Key Features
+**Target Audience**: 
+- Users seeking to run their own WhatsApp automated assistants.
+- Administrators managing a fleet of bot instances.
 
-- 🤖 **Bot Deployment** - Deploy WhatsApp bots to Pterodactyl panel
-- 💳 **Credit System** - Pay-as-you-go billing with Paystack integration
-- 🔄 **Real-time Updates** - Live bot status via Socket.IO
-- 👥 **Referral System** - Earn credits by referring users
-- 🛡️ **Admin Panel** - Comprehensive management dashboard
-- 📊 **Analytics** - Track bot performance and usage
-- 🔐 **Secure** - JWT authentication and role-based access
-
-## 🏗️ Architecture
-
-This is a **unified Next.js application** that combines frontend and backend in a single deployable unit:
-
-```
-┌─────────────────────────────────────┐
-│      Next.js Application            │
-│  ┌───────────────────────────────┐  │
-│  │   Frontend (React Pages)      │  │
-│  └───────────────────────────────┘  │
-│  ┌───────────────────────────────┐  │
-│  │   API Routes (Backend)        │  │
-│  └───────────────────────────────┘  │
-│  ┌───────────────────────────────┐  │
-│  │   Socket.IO (Real-time)       │  │
-│  └───────────────────────────────┘  │
-└─────────────────────────────────────┘
-           │
-           ├─── MongoDB (Database)
-           ├─── Pterodactyl (Bot Hosting)
-           └─── Paystack (Payments)
-```
-
-## 🚀 Quick Start
-
-```bash
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your credentials
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-```
-
-See [QUICK_START.md](./QUICK_START.md) for detailed instructions.
-
-## 📁 Project Structure
-
-```
-samkiel-bot-deployment/
-├── pages/              # Next.js pages & API routes
-│   ├── api/            # Backend API endpoints
-│   ├── admin/          # Admin panel pages
-│   └── ...             # Public pages
-├── lib/                # Business logic
-│   ├── controllers/    # API controllers
-│   ├── services/       # Business services
-│   └── utils/          # Utilities
-├── models/             # Database schemas
-├── components/         # React components
-├── public/             # Static assets
-├── server.js           # Custom Next.js server
-└── package.json        # Dependencies
-```
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Next.js 16** - React framework
-- **React 18** - UI library
-- **Tailwind CSS** - Styling
-- **Framer Motion** - Animations
-- **Socket.IO Client** - Real-time updates
-
-### Backend
-- **Next.js API Routes** - REST API
-- **Socket.IO** - WebSocket server
-- **MongoDB** - Database
-- **Mongoose** - ODM
-- **JWT** - Authentication
-- **Bcrypt** - Password hashing
-
-### Integrations
-- **Pterodactyl** - Bot hosting panel
-- **Paystack** - Payment processing
-- **GitHub** - Bot updates
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Required variables (see `.env.example`):
-
-```env
-# Database
-MONGO_URI=mongodb+srv://...
-
-# Authentication
-JWT_SECRET=your_secret_key
-
-# Pterodactyl Panel
-PTERODACTYL_URL=https://panel.example.com
-PTERODACTYL_API_KEY=ptlc_...
-
-# Paystack
-PAYSTACK_SECRET_KEY=sk_...
-PAYSTACK_PUBLIC_KEY=pk_...
-
-# Server
-PORT=3000
-NODE_ENV=production
-```
-
-## 📚 Documentation
-
-- [Quick Start Guide](./QUICK_START.md) - Get up and running
-- [Refactoring Complete](./REFACTOR_COMPLETE.md) - Migration details
-- [Billing Architecture](./BILLING_ARCHITECTURE.md) - Credit system
-- [Paystack Integration](./PAYSTACK_IMPLEMENTATION.md) - Payment setup
-
-## 🚢 Deployment
-
-### Vercel (Recommended)
-```bash
-vercel deploy
-```
-
-### VPS/Docker
-```bash
-npm run build
-pm2 start npm --name "samkiel-bot" -- start
-```
-
-### Railway/Render
-- Build: `npm run build`
-- Start: `npm start`
-
-## 🔐 Security
-
-- JWT-based authentication
-- Role-based access control (User/Admin)
-- Secure password hashing with bcrypt
-- Environment variable protection
-- Paystack webhook signature validation
-- Rate limiting on sensitive endpoints
-
-## 🎯 Features
-
-### User Features
-- ✅ Register/Login with JWT
-- ✅ Deploy WhatsApp bots
-- ✅ Manage bot power (start/stop/restart)
-- ✅ Purchase credits via Paystack
-- ✅ Referral system with rewards
-- ✅ Real-time bot status updates
-- ✅ Credit balance tracking
-- ✅ Payment history
-
-### Admin Features
-- ✅ User management
-- ✅ Bot management (all users)
-- ✅ Credit management (add/remove)
-- ✅ System statistics
-- ✅ Audit logs
-- ✅ Node management
-- ✅ Feature flags
-- ✅ Webhook logs
-
-## 🧪 Testing
-
-```bash
-# Run linter
-npm run lint
-
-# Test API endpoints
-curl http://localhost:3000/api/auth/verify
-
-# Test Socket.IO
-# Open browser console and check for Socket.IO connection
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Port already in use**
-```bash
-npx kill-port 3000
-```
-
-**MongoDB connection failed**
-- Check MONGO_URI in .env
-- Verify network access in MongoDB Atlas
-
-**Socket.IO not connecting**
-- Ensure custom server is running
-- Check browser console for errors
-
-See [QUICK_START.md](./QUICK_START.md) for more troubleshooting tips.
-
-## 📈 Performance
-
-- **Single server** - Reduced latency
-- **No CORS** - Same-origin requests
-- **Next.js optimization** - Automatic code splitting
-- **Socket.IO** - Efficient real-time updates
-- **MongoDB indexes** - Fast queries
-
-## 🤝 Contributing
-
-This is a private project. For issues or suggestions, contact the maintainer.
-
-## 📄 License
-
-ISC License - See LICENSE file for details
-
-## 👤 Author
-
-**SAMKIEL**
-
-## 🙏 Acknowledgments
-
-- Next.js team for the amazing framework
-- Pterodactyl for the hosting panel
-- Paystack for payment processing
-- MongoDB for the database
+**Problem Solved**: Abstracts the complexity of server provisioning, git configuration, and application lifecycle management into a user-friendly web dashboard.
 
 ---
 
-**Version**: 2.0.0 (Unified Architecture)  
-**Status**: ✅ Production Ready  
-**Last Updated**: December 16, 2025
+## What This Repository Is / Is Not
+
+**This Repository IS:**
+- A Next.js web application (Frontend & API).
+- An orchestration engine that controls Pterodactyl servers.
+- A user account and credit management system.
+
+**This Repository is NOT:**
+- The WhatsApp bot logic itself.
+- A collection of WhatsApp plugins or commands.
+
+**Separation of Concerns:**
+- **This Platform**: Handles "Meta-operations" (Deploy, Start, Stop, Delete, Billing).
+- **Bot Repository** (`samkiell/SAMKIEL-AI`): Contains the actual application logic that runs inside the containers spawned by this platform.
+
+---
+
+## High-Level Architecture
+
+The system follows a typical 3-tier architecture with an additional infrastructure integration layer.
+
+### 1. Frontend (Next.js)
+- Built with React 18 and Tailwind CSS.
+- Provides the User Interface for authentication, dashboard, deployment wizard, and billing.
+- Uses `socket.io-client` for real-time updates (console logs, pairing codes, status changes).
+
+### 2. Backend (Next.js API + Custom Server)
+- **API Routes**: Handle standard CRUD operations (Users, Deployments, Credits).
+- **Custom Express Server**: Hosts the Socket.io instance for real-time communication.
+- **Orchestration Service**: Interacts with external APIs to provision resources.
+
+### 3. Infrastructure Layer
+- **Pterodactyl Panel**: Acts as the container orchestration engine.
+- **GitHub**: Stores user-specific configurations in isolated branches.
+
+---
+
+## Core Features
+
+### Authentication & User Management
+- Secure JWT-based authentication.
+- Role-based access control (User vs Admin).
+- Credit-based resource usage system.
+
+### Bot Deployment Flow
+- Automated provisioning of Docker containers.
+- Dynamic generation of configuration files (`settings.js`).
+- Git branch management for user isolation.
+
+### Pairing Workflow
+- Real-time interception of the WhatsApp Pairing Code from the server console.
+- WebSocket push of the code to the frontend UI.
+- Elimination of the need for users to view raw server logs.
+
+### Management Dashboard
+- Real-time status monitoring (Online, Offline, Starting).
+- Power controls (Start, Stop, Restart, Kill).
+- Resource usage monitoring (CPU, RAM, Disk).
+
+---
+
+## Deployment Flow (Step by Step)
+
+When a user deploys a bot, the following sequence occurs:
+
+1.  **User Action**: User submits the "Deploy" form with a Bot Name and WhatsApp Number.
+2.  **Validation**: Backend validates user credits and input formats.
+3.  **Configuration (GitHub)**:
+    -   System fetches the template `settings.js` from the Bot Repository.
+    -   System injects the specific `botNumber` and owner configuration.
+    -   System creates a dedicated git branch (e.g., `bot-1234567890`) and commits the config.
+4.  **Infrastructure Provisioning (Pterodactyl)**:
+    -   System requests a new server allocation via Pterodactyl API.
+    -   Server is configured to clone the specific git branch created in Step 3.
+    -   Environment variables (RAM, CPU limits) are applied based on the user's plan.
+5.  **Startup & Monitoring**:
+    -   Server starts and runs `npm install`.
+    -   Backend connects to the server's WebSocket console.
+    -   System scans logs for the regex pattern `Your Pairing Code : XXXX-XXXX`.
+6.  **Result**: The code is delivered to the user's browser via Socket.io. The user enters this code on their phone to link the bot.
+
+---
+
+## Tech Stack
+
+### Frontend
+- **Framework**: Next.js 16 (React 18)
+- **Styling**: Tailwind CSS
+- **State/Effects**: React Context, SWR (implied), Socket.io Client
+
+### Backend
+- **Runtime**: Node.js
+- **Server**: Express (Custom Next.js server entry point)
+- **Database**: MongoDB (Mongoose ODM)
+- **Job Scheduling**: node-cron (Resource usage calculation, maintenance)
+
+### Infrastructure Integration
+- **Container Platform**: Pterodactyl (Panel & Wings)
+- **Version Control API**: Octokit (GitHub REST API)
+- **WebSocket**: `ws` (For Pterodactyl console streams)
+
+---
+
+## Environment Variables
+
+The application relies on the following environment variables. Do NOT commit values to version control.
+
+### Application Config
+- `PORT`: Port for the application (default to 3000).
+- `NODE_ENV`: `production` or `development`.
+- `NEXT_PUBLIC_API_URL`: Public URL for frontend API calls.
+
+### Database
+- `MONGO_URI`: Connection string for MongoDB.
+
+### Authentication
+- `JWT_SECRET`: Secret key for signing JSON Web Tokens.
+
+### GitHub Integration
+- `GITHUB_TOKEN`: Personal Access Token for managing the Bot Repository (Reading/Writing contents and branches).
+
+### Pterodactyl Integration
+- `PTERODACTYL_DOMAIN`: Base URL of the Pterodactyl Panel.
+- `PTERODACTYL_APP_KEY`: Application API Key (Admin) for server creation.
+- `PTERODACTYL_CLIENT_KEY`: Client API Key for user-level interactions.
+- `PTERODACTYL_NEST_ID`: ID of the Nest to deploy into.
+- `PTERODACTYL_EGG_ID`: ID of the Egg (Node.js environment).
+- `PTERODACTYL_NODE_ID`: Technical ID of the node to deploy servers on.
+
+### Payments
+- `PAYSTACK_SECRET_KEY`: Secret key for Paystack payment verification.
+
+---
+
+## Security & Isolation Model
+
+### Git Isolation
+Every bot deployment utilizes a unique git branch. This ensures that one user's configuration (custom logic, owner numbers) does not accidentally leak into another user's deployment if they were to pull updates.
+
+### Container Isolation
+Bots run in isolated Docker containers managed by Pterodactyl. Users cannot access the file system or processes of other users.
+
+### Credential Safety
+End-users never see raw API keys or database credentials. The platform acts as a proxy for all sensitive infrastructure operations.
+
+---
+
+## Current State vs Future Roadmap
+
+### Implemented
+- [x] User Authentication & Registration.
+- [x] Basic Pterodactyl Server Deployment.
+- [x] Real-time Pairing Code extraction.
+- [x] Power Actions (Start/Stop/Restart).
+- [x] Credit-based billing system foundation.
+
+### Planned / In Progress
+- [ ] Automated recurring subscription billing (vs currently implemented credit top-ups).
+- [ ] Advanced file manager for users to upload custom plugins.
+- [ ] Multi-node load balancing (currently single node targeted).
+- [ ] Automated backup & snapshots.
+
+---
+
+## Glossary
+
+- **Deployment**: A single instance of the bot software running in a container.
+- **Pairing**: The process of linking a WhatsApp account to the bot instance using the official MD (Multi-Device) pairing code method.
+- **Egg**: Pterodactyl terminology for a specific software environment configuration (e.g., Node.js 22).
+- **Nest**: A category grouping for Eggs (e.g., "Whatsapp Bots").

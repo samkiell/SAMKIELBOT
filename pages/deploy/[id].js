@@ -12,6 +12,7 @@ import {
   Square,
   RotateCw,
   Trash2,
+  Copy,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
@@ -137,6 +138,14 @@ export default function DeploymentSessionPage() {
       toast.error(`Failed to ${signal} bot`);
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  // Copy pairing code
+  const handleCopyCode = () => {
+    if (deployment?.pairingCode) {
+      navigator.clipboard.writeText(deployment.pairingCode);
+      toast.success("Pairing code copied to clipboard! 📋");
     }
   };
 
@@ -344,8 +353,18 @@ export default function DeploymentSessionPage() {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                   Your Pairing Code:
                 </p>
-                <div className="text-4xl font-mono font-bold text-yellow-700 dark:text-yellow-300 tracking-wider">
-                  {deployment.pairingCode}
+
+                <div className="flex items-center justify-center gap-3 my-4">
+                  <div className="text-4xl font-mono font-bold text-yellow-700 dark:text-yellow-300 tracking-wider">
+                    {deployment.pairingCode}
+                  </div>
+                  <button
+                    onClick={handleCopyCode}
+                    className="p-2 bg-yellow-100 dark:bg-yellow-800 hover:bg-yellow-200 dark:hover:bg-yellow-700 rounded-lg transition-colors text-yellow-700 dark:text-yellow-300"
+                    title="Copy Pairing Code"
+                  >
+                    <Copy size={24} />
+                  </button>
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
                   Open WhatsApp → Settings → Linked Devices → Link a Device →

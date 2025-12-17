@@ -9,6 +9,7 @@ export default function DailyClaimButton({ onClaimSuccess }) {
     canClaim: false,
     nextClaimTime: null,
   });
+  const [targetTime, setTargetTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
@@ -16,13 +17,19 @@ export default function DailyClaimButton({ onClaimSuccess }) {
   }, []);
 
   useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => Math.max(0, prev - 1000));
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [timeLeft]);
+    if (!targetTime) return;
+
+    const updateTimer = () => {
+      const now = Date.now();
+      const remaining = Math.max(0, targetTime - now);
+      setTimeLeft(remaining);
+      if (remaining === 0) fetchStatus();
+    };
+
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
+    return () => clearInterval(timer);
+  }, [targetTime]);
 
   const fetchStatus = async () => {
     try {
@@ -47,8 +54,9 @@ export default function DailyClaimButton({ onClaimSuccess }) {
           const nextTime = new Date(
             data.data.dailyClaim.nextClaimTime
           ).getTime();
-          const now = new Date().getTime();
-          setTimeLeft(Math.max(0, nextTime - now));
+          setTargetTime(nextTime);
+        } else {
+          setTargetTime(null);
         }
       }
     } catch (error) {
@@ -84,7 +92,7 @@ export default function DailyClaimButton({ onClaimSuccess }) {
 
         // Start countdown
         const nextTime = new Date(data.data.nextClaimTime).getTime();
-        setTimeLeft(Math.max(0, nextTime - Date.now()));
+        setTargetTime(nextTime);
 
         if (onClaimSuccess) onClaimSuccess();
       } else {

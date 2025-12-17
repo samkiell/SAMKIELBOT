@@ -19,6 +19,18 @@ export default function ClaimCredits() {
     nextClaimTime: null,
     lastClaim: null,
   });
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+      return;
+    }
+    if (user) {
+      fetchStatus();
+    }
+  }, [user, authLoading]);
+
+  const [targetTime, setTargetTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
@@ -31,15 +43,27 @@ export default function ClaimCredits() {
     }
   }, [user, authLoading]);
 
-  // Timer logic
+  // Robust Timer Logic
   useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => Math.max(0, prev - 1000));
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [timeLeft]);
+    if (!targetTime) return;
+
+    const updateTimer = () => {
+      const now = Date.now();
+      const remaining = Math.max(0, targetTime - now);
+      setTimeLeft(remaining);
+
+      // If timer finishes, refresh status to enable claim button
+      if (remaining === 0) {
+        fetchStatus();
+      }
+    };
+
+    // Initial update
+    updateTimer();
+
+    const timer = setInterval(updateTimer, 1000);
+    return () => clearInterval(timer);
+  }, [targetTime]);
 
   const fetchStatus = async () => {
     try {
@@ -62,8 +86,12 @@ export default function ClaimCredits() {
           const nextTime = new Date(
             data.data.dailyClaim.nextClaimTime
           ).getTime();
-          const now = new Date().getTime();
-          setTimeLeft(Math.max(0, nextTime - now));
+          console.log("Next Claim Time (Timestamp):", nextTime);
+          console.log("Current Time (Timestamp):", Date.now());
+          setTargetTime(nextTime);
+        } else {
+          setTargetTime(null);
+          setTimeLeft(0);
         }
       }
     } catch (error) {

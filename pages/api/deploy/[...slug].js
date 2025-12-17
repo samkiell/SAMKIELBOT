@@ -21,15 +21,16 @@ export default async function handler(req, res) {
   try {
     // Ensure database connection
     await dbConnect();
+
     // Route: POST /api/deploy
-    if (!slug && method === "POST") {
+    if ((!slug || slug.length === 0) && method === "POST") {
       return await protect(req, res, async () => {
         return await deployBot(req, res);
       });
     }
 
     // Route: GET /api/deploy
-    if (!slug && method === "GET") {
+    if ((!slug || slug.length === 0) && method === "GET") {
       return await protect(req, res, async () => {
         return await getDeployments(req, res);
       });

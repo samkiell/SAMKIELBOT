@@ -12,8 +12,9 @@ export default async function handler(req, res) {
   try {
     // Ensure database connection
     await dbConnect();
+
     // Route: POST /api/update
-    if (!slug && method === "POST") {
+    if ((!slug || slug.length === 0) && method === "POST") {
       return await protect(req, res, async () => {
         return await updateBot(req, res);
       });

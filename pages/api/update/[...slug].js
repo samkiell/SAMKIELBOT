@@ -1,9 +1,9 @@
-const dbConnect = require("../../lib/dbConnect");
+const dbConnect = require("@/lib/dbConnect");
 const {
   updateBot,
   getUpdateHistory,
-} = require("../../lib/controllers/updateController");
-const { protect } = require("../../lib/utils/authMiddleware");
+} = require("@/lib/controllers/updateController");
+const { protect } = require("@/lib/utils/authMiddleware");
 
 export default async function handler(req, res) {
   const { method } = req;

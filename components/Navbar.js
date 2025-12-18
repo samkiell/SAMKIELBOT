@@ -94,12 +94,6 @@ export default function Navbar() {
         {/* Desktop Links */}
         <div className="hidden md:flex items-center justify-between px-4 py-2">
           <div className="flex gap-8 items-center text-gray-800 dark:text-gray-100">
-            <Link
-              href={user ? "/dashboard" : "/"}
-              className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            >
-              Home
-            </Link>
             {user && (
               <>
                 <Link
@@ -245,6 +239,14 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Backdrop for closing menu on click-outside */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-[90] md:hidden bg-black/5 dark:bg-black/20"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
       {/* Mobile Menu Popover (Anchored to right, half-width) */}
       <div
         className={`md:hidden absolute top-[calc(100%-8px)] right-4 w-[280px] max-w-[calc(100vw-32px)] overflow-hidden transition-all duration-300 ease-out bg-white dark:bg-slate-900 shadow-2xl rounded-3xl border border-gray-100 dark:border-slate-800 z-[100] ${
@@ -271,14 +273,6 @@ export default function Navbar() {
               </div>
             </div>
           )}
-
-          <MobileNavLink
-            href={user ? "/dashboard" : "/"}
-            icon={Monitor}
-            label="Home"
-            onClick={() => setMenuOpen(false)}
-            active={router.pathname === "/dashboard" || router.pathname === "/"}
-          />
 
           {user ? (
             <>

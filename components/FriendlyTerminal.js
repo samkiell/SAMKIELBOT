@@ -193,7 +193,7 @@ const FriendlyTerminal = ({ logs = [], status }) => {
             <div className="ml-4 flex items-center gap-2 px-3 py-1 bg-black/20 rounded-lg">
               <Terminal size={12} className="text-blue-400/80" />
               <span className="text-[11px] font-mono text-white/40 tracking-wider">
-                SECURE_DEPLOYMENT_CHANNEL
+                SAMKIEL-AI_DEPLOYMENT
               </span>
             </div>
           </div>

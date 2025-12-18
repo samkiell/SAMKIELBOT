@@ -3,11 +3,56 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../lib/auth";
 import { useTheme } from "../context/ThemeContext";
-import { Menu, X, Sun, Moon, Monitor, Bell } from "lucide-react";
+import {
+  Menu,
+  X,
+  Sun,
+  Moon,
+  Monitor,
+  Bell,
+  LayoutDashboard,
+  Users,
+  Server,
+  Gift,
+  TrendingUp,
+  Shield,
+  Menu as MenuIcon,
+} from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import UserAvatarDropdown from "./UserAvatarDropdown";
+import { useRouter } from "next/router";
+
+const MobileNavLink = ({
+  href,
+  icon: Icon,
+  label,
+  onClick,
+  active,
+  variant = "default",
+}) => (
+  <Link
+    href={href}
+    onClick={onClick}
+    className={`flex items-center gap-4 px-6 py-5 rounded-3xl transition-all duration-300 group ${
+      active
+        ? "bg-indigo-600 text-white shadow-xl shadow-indigo-500/30 font-bold"
+        : variant === "admin"
+        ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
+        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white"
+    }`}
+  >
+    <Icon
+      size={20}
+      className={
+        active ? "text-white" : "group-hover:scale-110 transition-transform"
+      }
+    />
+    <span className="font-bold text-sm tracking-tight">{label}</span>
+  </Link>
+);
 
 export default function Navbar() {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -66,6 +111,18 @@ export default function Navbar() {
                   className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
                   Suggest
+                </Link>
+                <Link
+                  href="/credits/claim"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Rewards
+                </Link>
+                <Link
+                  href="/credits/buy"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Buy Credits
                 </Link>
                 <Link
                   href="/referrals"
@@ -200,10 +257,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Slide-over Menu */}
+      {/* Premium Mobile Slide-over Menu */}
       {/* Overlay */}
       <div
-        className={`md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
+        className={`md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] transition-all duration-500 ease-in-out ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMenuOpen(false)}
@@ -211,88 +268,154 @@ export default function Navbar() {
 
       {/* Drawer */}
       <div
-        className={`md:hidden fixed top-0 right-0 h-full w-72 bg-white dark:bg-gray-900 backdrop-blur-xl shadow-2xl z-50 transform transition-transform duration-300 ease-in-out border-l border-gray-200 dark:border-gray-700 ${
+        className={`md:hidden fixed top-0 right-0 h-full w-[85%] max-w-[400px] bg-white dark:bg-slate-900 shadow-[0_0_50px_rgba(0,0,0,0.3)] z-[110] transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) border-l border-gray-200 dark:border-slate-800 ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="p-6 flex flex-col h-full">
-          {/* Header to align X */}
-          <div className="flex justify-end mb-8">
+        <div className="flex flex-col h-full bg-white dark:bg-slate-900">
+          {/* Drawer Header */}
+          <div className="p-8 flex items-center justify-between border-b border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-900/50">
+            <div className="flex items-center gap-3">
+              <Image
+                src="/SAMKIELBOT-LOGO.png"
+                alt="Logo"
+                width={32}
+                height={32}
+              />
+              <span className="font-bold tracking-tight text-gray-900 dark:text-gray-100">
+                NAVIGATION
+              </span>
+            </div>
             <button
-              className="text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400"
+              className="p-2 text-gray-500 hover:text-indigo-600 transition-colors bg-gray-100 dark:bg-slate-800 rounded-lg"
               onClick={() => setMenuOpen(false)}
             >
-              <X size={28} />
+              <X size={20} />
             </button>
           </div>
 
-          {/* Links */}
-          <div className="space-y-6 text-lg">
-            <Link
+          {/* Nav Links */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            <MobileNavLink
               href={user ? "/dashboard" : "/"}
+              icon={Monitor}
+              label="Home"
               onClick={() => setMenuOpen(false)}
-              className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            >
-              Home
-            </Link>
+              active={
+                router.pathname === "/dashboard" || router.pathname === "/"
+              }
+            />
+
             {user ? (
               <>
-                <Link
-                  href="/bots"
-                  onClick={() => setMenuOpen(false)}
-                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Community Bots
-                </Link>
-                <Link
-                  href="/suggest"
-                  onClick={() => setMenuOpen(false)}
-                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Suggest
-                </Link>
-                <Link
-                  href="/referrals"
-                  onClick={() => setMenuOpen(false)}
-                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Referrals
-                </Link>
-                <Link
-                  href="/dashboard"
-                  onClick={() => setMenuOpen(false)}
-                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Dashboard
-                </Link>
-                {user.role === "admin" && (
-                  <Link
-                    href="/admin"
+                <div className="pt-4 pb-2">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 mb-2">
+                    My Workspace
+                  </p>
+                  <MobileNavLink
+                    href="/dashboard"
+                    icon={LayoutDashboard}
+                    label="Dashboard"
                     onClick={() => setMenuOpen(false)}
-                    className="block font-medium text-indigo-600 dark:text-indigo-400 transition-colors"
-                  >
-                    Admin Panel
-                  </Link>
+                    active={router.pathname === "/dashboard"}
+                  />
+                  <MobileNavLink
+                    href="/bots"
+                    icon={Server}
+                    label="Community Bots"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/bots"}
+                  />
+                </div>
+
+                <div className="pt-4 pb-2">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 mb-2">
+                    Credits & Rewards
+                  </p>
+                  <MobileNavLink
+                    href="/credits/claim"
+                    icon={Gift}
+                    label="Daily Rewards"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/credits/claim"}
+                  />
+                  <MobileNavLink
+                    href="/credits/buy"
+                    icon={TrendingUp}
+                    label="Buy Credits"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/credits/buy"}
+                  />
+                  <MobileNavLink
+                    href="/referrals"
+                    icon={Users}
+                    label="Refer Friends"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/referrals"}
+                  />
+                </div>
+
+                <div className="pt-4 pb-2">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-4 mb-2">
+                    Support
+                  </p>
+                  <MobileNavLink
+                    href="/suggest"
+                    icon={MenuIcon}
+                    label="Submit Suggestion"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/suggest"}
+                  />
+                </div>
+
+                {user.role === "admin" && (
+                  <div className="mt-8 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <MobileNavLink
+                      href="/admin"
+                      icon={Shield}
+                      label="Admin Control Panel"
+                      onClick={() => setMenuOpen(false)}
+                      active={false}
+                      variant="admin"
+                    />
+                  </div>
                 )}
               </>
             ) : (
-              <>
+              <div className="pt-8 space-y-4">
                 <Link
                   href="/login"
                   onClick={() => setMenuOpen(false)}
-                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="block w-full text-center py-4 rounded-2xl bg-gray-100 dark:bg-gray-800 font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setMenuOpen(false)}
-                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="block w-full text-center py-4 rounded-2xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/30"
                 >
-                  Register
+                  Get Started
                 </Link>
-              </>
+              </div>
             )}
+          </div>
+
+          {/* Footer Info */}
+          <div className="p-8 border-t border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-900">
+            <div className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-gray-100 dark:border-slate-700">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-black text-xl shadow-inner shrink-0">
+                {user?.username?.[0]?.toUpperCase() || "S"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-black text-base tracking-tight truncate text-gray-900 dark:text-gray-100 uppercase">
+                  {user?.username || "Guest"}
+                </p>
+                <p className="text-xs font-medium text-gray-500 truncate lowercase">
+                  {user?.email || "samkiel.dev"}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

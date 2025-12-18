@@ -37,7 +37,7 @@ export default function StatsOverview({ deployments }) {
         return (
           <div
             key={index}
-            className="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg md:rounded-xl shadow-md dark:shadow-gray-700/40 hover:shadow-lg transition-shadow duration-300"
+            className="bg-white dark:bg-gray-800 p-6 rounded-lg md:rounded-xl shadow-md dark:shadow-gray-700/40 hover:shadow-lg transition-shadow duration-300"
           >
             <div className="flex items-center justify-between">
               <div>

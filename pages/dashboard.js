@@ -115,28 +115,26 @@ export default function Dashboard() {
         <title>Dashboard - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
       </Head>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 pt-24 md:pt-32 min-h-screen">
         {/* Header Section with Credits */}
-        <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-            <div>
-              <h1 className="text-2xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">
-                Welcome back, {user.username} 👋
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base">
-                Manage and monitor your bot deployments easily.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <CreditBalance key={refreshKey} />
-              <Link
-                href="/deploy"
-                className="inline-flex items-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 text-white shadow-lg"
-              >
-                <Plus size={20} className="mr-2" />
-                Deploy Bot
-              </Link>
-            </div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+          <div>
+            <h1 className="text-2xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">
+              Welcome back, {user.username} 👋
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base">
+              Manage and monitor your bot deployments easily.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <CreditBalance key={refreshKey} />
+            <Link
+              href="/deploy"
+              className="inline-flex items-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 text-white shadow-lg"
+            >
+              <Plus size={20} className="mr-2" />
+              Deploy Bot
+            </Link>
           </div>
         </div>
 

@@ -41,6 +41,7 @@ export default function DeploymentSessionPage() {
 
     socket.on("connect", () => {
       console.log("[Socket.IO] Connected to", socketUrl);
+      socket.emit("join", id);
     });
 
     socket.on("bot:status_change", (data) => {

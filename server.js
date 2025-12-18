@@ -51,6 +51,11 @@ app.prepare().then(async () => {
   io.on("connection", (socket) => {
     console.log(`[Socket.IO] Client connected: ${socket.id}`);
 
+    socket.on("join", (room) => {
+      console.log(`[Socket.IO] Client ${socket.id} joining room: ${room}`);
+      socket.join(room);
+    });
+
     socket.on("disconnect", () => {
       console.log(`[Socket.IO] Client disconnected: ${socket.id}`);
     });
@@ -58,31 +63,37 @@ app.prepare().then(async () => {
 
   // Bot Health Service Event Forwarding
   botHealthService.on("bot.status_change", (data) => {
-    io.emit("bot:status_change", data);
+    io.to(data.deploymentId.toString()).emit("bot:status_change", data);
+    io.emit("bot:status_change", data); // Keep global for dashboard?
   });
 
   botHealthService.on("bot.pairing_code", (data) => {
-    io.emit("bot:pairing_code", data);
+    io.to(data.deploymentId.toString()).emit("bot:pairing_code", data);
   });
 
   botHealthService.on("bot.paired", (data) => {
-    io.emit("bot:paired", data);
+    io.to(data.deploymentId.toString()).emit("bot:paired", data);
   });
 
   botHealthService.on("bot.connected", (data) => {
-    io.emit("bot:connected", data);
+    io.to(data.deploymentId.toString()).emit("bot:connected", data);
   });
 
   botHealthService.on("bot.active", (data) => {
-    io.emit("bot:active", data);
+    io.to(data.deploymentId.toString()).emit("bot:active", data);
   });
 
   botHealthService.on("bot.offline", (data) => {
-    io.emit("bot:offline", data);
+    io.to(data.deploymentId.toString()).emit("bot:offline", data);
   });
 
   botHealthService.on("bot.log", (data) => {
-    io.emit("bot:log", data);
+    console.log(
+      `[Socket.IO] Bot log received for ${
+        data.deploymentId
+      }: ${data.log.substring(0, 50)}...`
+    );
+    io.to(data.deploymentId).emit("bot:log", data);
   });
 
   // Initialize Bot Health Monitoring

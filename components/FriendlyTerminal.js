@@ -1,304 +1,312 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   Terminal,
-  ChevronDown,
-  ChevronUp,
   CheckCircle,
   Info,
   Zap,
   Coffee,
-  Loader2,
+  Globe,
+  Shield,
+  Clock,
+  Layout,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * Friendly Terminal Component
+ * Friendly Terminal Component - Apple/Premium Inspired
  *
  * Props:
  * - logs: Array of raw log strings
  * - status: Current deployment status
  */
 const FriendlyTerminal = ({ logs = [], status }) => {
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const terminalEndRef = useRef(null);
-  const advancedEndRef = useRef(null);
+  const [displayedFriendlyLogs, setDisplayedFriendlyLogs] = useState([]);
+
+  // Simulated stage management for when real logs haven't hit yet
+  const [simulatedStage, setSimulatedStage] = useState(0);
+
+  const stages = [
+    {
+      friendly: "Initializing bot deployment engine...",
+      icon: <Zap className="w-4 h-4 text-blue-400" />,
+      type: "friendly",
+      delay: 0,
+    },
+    {
+      friendly: "Configuring secure workspace...",
+      icon: <Shield className="w-4 h-4 text-indigo-400" />,
+      type: "friendly",
+      delay: 8000,
+    },
+    {
+      friendly: "Allocating dedicated CPU & RAM...",
+      icon: <Layout className="w-4 h-4 text-cyan-400" />,
+      type: "friendly",
+      delay: 18000,
+    },
+    {
+      friendly: "Establishing connection to secure vault...",
+      icon: <Globe className="w-4 h-4 text-emerald-400" />,
+      type: "friendly",
+      delay: 35000,
+    },
+    {
+      friendly: "Fetching bot modules from GitHub repository...",
+      icon: <Shield className="w-4 h-4 text-purple-400" />,
+      type: "friendly",
+      delay: 55000,
+    },
+    {
+      friendly: "Teaching bot its core functions (Node.js)...",
+      icon: <Coffee className="w-4 h-4 text-amber-400" />,
+      type: "friendly",
+      delay: 80000,
+    },
+    {
+      friendly: "Connecting to global node network...",
+      icon: <Zap className="w-4 h-4 text-yellow-400" />,
+      type: "friendly",
+      delay: 100000,
+    },
+    {
+      friendly: "Finalizing system handshake with WhatsApp...",
+      icon: <CheckCircle className="w-4 h-4 text-green-400" />,
+      type: "friendly",
+      delay: 115000,
+    },
+  ];
 
   // Auto-scroll to bottom
   useEffect(() => {
     terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [displayedFriendlyLogs]);
+
+  // Handle Simulated Stages
+  useEffect(() => {
+    if (
+      logs.length === 0 &&
+      (status === "creating" ||
+        status === "installing" ||
+        status === "starting")
+    ) {
+      const timers = stages.map((stage, index) => {
+        return setTimeout(() => {
+          setDisplayedFriendlyLogs((prev) => {
+            if (prev.some((l) => l.friendly === stage.friendly)) return prev;
+            return [
+              ...prev,
+              { ...stage, timestamp: new Date().toLocaleTimeString() },
+            ];
+          });
+        }, stage.delay);
+      });
+      return () => timers.forEach((t) => clearTimeout(t));
+    }
+  }, [logs.length, status]);
+
+  // Handle Real Logs Integration
+  useEffect(() => {
+    if (logs.length > 0) {
+      const transformLog = (log) => {
+        if (!log) return null;
+        const raw = log.toString();
+
+        const mappings = [
+          {
+            pattern:
+              /installing dependencies|npm install|yarn install|building/i,
+            friendly: "Teaching your bot its core functions... 📚",
+            icon: <Coffee className="w-4 h-4 text-amber-400" />,
+            type: "friendly",
+          },
+          {
+            pattern:
+              /connecting to whatsapp|connecting\.\.\.|initializing connection|wa connection/i,
+            friendly: "Scanning the horizon for WhatsApp... 📡",
+            icon: <Zap className="w-4 h-4 text-yellow-400" />,
+            type: "friendly",
+          },
+          {
+            pattern:
+              /bot connected successfully|successfully logged in|client is ready|connected to whatsapp/i,
+            friendly: "System Online. Your bot is now live! 🚀",
+            icon: <CheckCircle className="w-4 h-4 text-green-400" />,
+            type: "success",
+          },
+          {
+            pattern: /git clone|cloning|fetching repository|pulling/i,
+            friendly: "Syncing latest modules from secure vault... 📦",
+            icon: <Shield className="w-4 h-4 text-purple-400" />,
+            type: "friendly",
+          },
+          {
+            pattern: /success|ready|finished|done|complete|finalizing/i,
+            friendly: "Finalizing system handshake... ✨",
+            icon: <CheckCircle className="w-4 h-4 text-green-400" />,
+            type: "friendly",
+          },
+        ];
+
+        for (const mapping of mappings) {
+          if (mapping.pattern.test(raw)) return mapping;
+        }
+        return null;
+      };
+
+      const newFriendlyItems = logs
+        .map((log) => {
+          const transformed = transformLog(log);
+          return transformed
+            ? { ...transformed, timestamp: new Date().toLocaleTimeString() }
+            : null;
+        })
+        .filter((item) => item !== null);
+
+      setDisplayedFriendlyLogs((prev) => {
+        const unique = [...prev];
+        newFriendlyItems.forEach((newItem) => {
+          if (!unique.some((u) => u.friendly === newItem.friendly)) {
+            unique.push(newItem);
+          }
+        });
+        return unique;
+      });
+    }
   }, [logs]);
 
-  useEffect(() => {
-    if (showAdvanced) {
-      advancedEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [logs, showAdvanced]);
-
-  // Transform raw logs into friendly messages
-  const transformLog = (log) => {
-    if (!log) return null;
-    const raw = log.toString();
-
-    // Mapping rules - IMPROVED PATTERNS
-    const mappings = [
-      {
-        pattern: /installing dependencies|npm install|yarn install|building/i,
-        friendly: "Feeding your bot some Node.js vitamins 🍪",
-        icon: <Coffee className="w-4 h-4 text-amber-400" />,
-        type: "friendly",
-      },
-      {
-        pattern:
-          /connecting to whatsapp|connecting\.\.\.|initializing connection|wa connection/i,
-        friendly: "Your bot is saying hi to WhatsApp servers 👋",
-        icon: <Zap className="w-4 h-4 text-yellow-400" />,
-        type: "friendly",
-      },
-      {
-        pattern:
-          /bot connected successfully|successfully logged in|client is ready|connected to whatsapp/i,
-        friendly: "🎉 Your bot is awake and ready!",
-        icon: <CheckCircle className="w-4 h-4 text-green-400" />,
-        type: "success",
-      },
-      {
-        pattern: /creating server|initializing server|pterodactyl|egg|nest/i,
-        friendly: "Building a cozy home for your bot 🏠",
-        icon: <Info className="w-4 h-4 text-blue-400" />,
-        type: "friendly",
-      },
-      {
-        pattern: /starting bot|npm start|node server|node \.|starting/i,
-        friendly: "Waking up your bot... ☕",
-        icon: <Zap className="w-4 h-4 text-indigo-400" />,
-        type: "friendly",
-      },
-      {
-        pattern: /git clone|cloning|fetching repository|pulling/i,
-        friendly: "Grabbing your bot's clothes from GitHub 👗",
-        icon: <Info className="w-4 h-4 text-purple-400" />,
-        type: "friendly",
-      },
-      {
-        pattern: /npm|yarn|dependency|package|installing/i,
-        friendly: "Teaching your bot new tricks (Installing plugins) 📚",
-        icon: <Coffee className="w-4 h-4 text-amber-400" />,
-        type: "friendly",
-      },
-      {
-        pattern: /success|ready|finished|done|complete|finalizing/i,
-        friendly: "Almost there... finalizing the setup! ✨",
-        icon: <CheckCircle className="w-4 h-4 text-green-400" />,
-        type: "friendly",
-      },
-    ];
-
-    for (const mapping of mappings) {
-      if (mapping.pattern.test(raw)) {
-        return mapping;
-      }
-    }
-
-    // Generic progress catch-all for anything that looks like a task
-    if (
-      raw.length > 5 &&
-      raw.length < 100 &&
-      !raw.includes("error") &&
-      !raw.includes("failed")
-    ) {
-      return {
-        friendly: "Processing your bot's request... ⚙️",
-        icon: <Info className="w-4 h-4 text-slate-400" />,
-        type: "friendly",
-      };
-    }
-
-    return null; // Not a friendly-mappable log
-  };
-
-  // Get only the unique friendly logs in order
-  const friendlyLogs = logs
-    .map((log) => {
-      const transformed = transformLog(log);
-      return transformed
-        ? {
-            ...transformed,
-            raw: log,
-            timestamp: new Date().toLocaleTimeString(),
-          }
-        : null;
-    })
-    .filter((log) => log && log.friendly);
-
-  // Filter to only show unique friendly messages to keep it clean
-  const uniqueFriendlyLogs = [];
-  const seenFriendly = new Set();
-
-  for (const log of friendlyLogs) {
-    if (!seenFriendly.has(log.friendly)) {
-      uniqueFriendlyLogs.push(log);
-      seenFriendly.add(log.friendly);
-    }
-  }
-
   return (
-    <div className="w-full max-w-2xl mx-auto mt-6 overflow-hidden bg-slate-900 rounded-xl border border-slate-800 shadow-2xl">
-      {/* Terminal Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
-        <div className="flex items-center gap-2">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500/80" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-            <div className="w-3 h-3 rounded-full bg-green-500/80" />
-          </div>
-          <span className="ml-2 text-xs font-mono text-slate-400 flex items-center gap-1.5">
-            <Terminal size={14} /> deployment_process.log
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span
-            className={`text-[10px] px-2 py-0.5 rounded-full font-mono uppercase tracking-wider ${
-              status === "active" || status === "connected"
-                ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-            }`}
-          >
-            {status || "initializing"}
-          </span>
-        </div>
-      </div>
+    <div className="w-full max-w-2xl mx-auto mt-10 relative">
+      {/* Background Glow */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
 
-      {/* Main Friendly View */}
-      <div className="p-6 min-h-[200px] max-h-[300px] overflow-y-auto custom-scrollbar bg-[radial-gradient(circle_at_50%_50%,rgba(30,41,59,0.5),rgba(15,23,42,1))]">
-        <AnimatePresence initial={false}>
-          {uniqueFriendlyLogs.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center h-full text-slate-500 py-10"
-            >
-              <div className="relative">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-500/40" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                </div>
-              </div>
-              <p className="mt-4 font-mono text-sm tracking-tight text-slate-400 italic">
-                Capturing signals from Pterodactyl...
-              </p>
-            </motion.div>
-          ) : (
-            <ul className="space-y-4">
-              {uniqueFriendlyLogs.map((log, index) => (
+      {/* Main Terminal Body */}
+      <div className="relative bg-slate-950/80 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        {/* Apple Style Header */}
+        <div className="flex items-center justify-between px-5 py-3 bg-white/5 border-b border-white/5 backdrop-blur-md">
+          <div className="flex items-center gap-2">
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+              <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+              <div className="w-3 h-3 rounded-full bg-[#28C840]" />
+            </div>
+            <div className="ml-4 flex items-center gap-2 px-3 py-1 bg-black/20 rounded-lg">
+              <Terminal size={12} className="text-blue-400/80" />
+              <span className="text-[11px] font-mono text-white/40 tracking-wider">
+                SECURE_DEPLOYMENT_CHANNEL
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md">
+              <Clock size={10} className="text-blue-400" />
+              <span className="text-[9px] font-mono text-blue-400/80 uppercase tracking-tighter">
+                Live Session
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-8 min-h-[300px] max-h-[450px] overflow-y-auto custom-scrollbar">
+          <AnimatePresence initial={false}>
+            <ul className="space-y-6">
+              {displayedFriendlyLogs.map((log, index) => (
                 <motion.li
                   key={index}
-                  initial={{ opacity: 0, x: -10, y: 5 }}
-                  animate={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex items-start gap-3"
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                    delay: 0.1,
+                  }}
+                  className="group flex items-start gap-5"
                 >
                   <div
-                    className={`mt-1 p-1.5 rounded-lg shrink-0 ${
+                    className={`mt-0.5 p-3 rounded-xl transition-all duration-500 ${
                       log.type === "success"
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-blue-500/20 text-blue-400"
+                        ? "bg-green-500/20 text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.15)] scale-110"
+                        : "bg-white/5 text-blue-400 border border-white/5 group-hover:bg-blue-500/10 transition-colors"
                     }`}
                   >
                     {log.icon}
                   </div>
-                  <div className="flex flex-col">
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-500 text-[10px] font-mono">
+
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-3">
+                      <span className="text-white/20 text-[10px] font-mono tracking-widest">
                         {log.timestamp}
                       </span>
-                      {index === uniqueFriendlyLogs.length - 1 && (
-                        <span className="flex h-2 w-2 relative">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                        </span>
+                      {index === displayedFriendlyLogs.length - 1 && (
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+                          <span className="text-[10px] font-semibold text-blue-400 uppercase tracking-widest animate-pulse">
+                            Running
+                          </span>
+                        </div>
                       )}
                     </div>
+
                     <span
-                      className={`text-sm font-medium tracking-tight ${
-                        log.type === "success"
-                          ? "text-green-50"
-                          : "text-slate-200"
+                      className={`text-[16px] font-medium tracking-tight ${
+                        log.type === "success" ? "text-white" : "text-white/80"
                       }`}
                     >
                       {log.friendly}
-                      {index === uniqueFriendlyLogs.length - 1 && (
-                        <span className="inline-block w-2 h-4 ml-1 bg-blue-500/80 animate-pulse align-middle" />
-                      )}
                     </span>
+
+                    {index === displayedFriendlyLogs.length - 1 && (
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 3 }}
+                        className="h-0.5 mt-2 bg-gradient-to-r from-blue-500/50 to-transparent rounded-full"
+                      />
+                    )}
                   </div>
                 </motion.li>
               ))}
+
+              {/* Waiting cursor */}
+              {displayedFriendlyLogs.length > 0 &&
+                status !== "active" &&
+                status !== "connected" && (
+                  <motion.li
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-4 pl-14 pt-2"
+                  >
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/30 animate-ping" />
+                    <span className="text-[11px] font-mono text-white/10 uppercase tracking-[0.3em]">
+                      Awaiting next sequence
+                    </span>
+                  </motion.li>
+                )}
+
               <div ref={terminalEndRef} />
             </ul>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
+
+        {/* Glossy Footer Overlay */}
+        <div className="h-12 absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none" />
       </div>
-
-      {/* Advanced Logs Toggle */}
-      <button
-        onClick={() => setShowAdvanced(!showAdvanced)}
-        className="w-full flex items-center justify-between px-4 py-2 bg-slate-800/50 hover:bg-slate-800 transition-colors border-t border-slate-700/50 text-slate-400 text-xs font-mono"
-      >
-        <span className="flex items-center gap-2">
-          {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          {showAdvanced ? "Hide technical feed" : "Show technical feed"}
-        </span>
-        <span className="opacity-50 tracking-tighter">SIGNAL_RAW_DATA</span>
-      </button>
-
-      {/* Raw Console Logs (Collapsible) */}
-      <AnimatePresence>
-        {showAdvanced && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: "auto" }}
-            exit={{ height: 0 }}
-            className="overflow-hidden bg-black/40 border-t border-slate-800"
-          >
-            <div className="p-4 h-48 overflow-y-auto font-mono text-[11px] leading-relaxed text-slate-500 custom-scrollbar whitespace-pre-wrap lowercase selection:bg-blue-500/30">
-              {logs.length === 0 ? (
-                <span className="italic opacity-30">
-                  # scanning for raw technical logs...
-                </span>
-              ) : (
-                logs.map((log, i) => (
-                  <div key={i} className="mb-1 flex gap-2">
-                    <span className="text-slate-700 shrink-0">
-                      [
-                      {new Date().toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                      })}
-                      ]
-                    </span>
-                    <span className="text-slate-400/70 hover:text-slate-300 transition-colors">
-                      {log}
-                    </span>
-                  </div>
-                ))
-              )}
-              <div ref={advancedEndRef} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 5px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
+          background: rgba(255, 255, 255, 0.02);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #334155;
-          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 20px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.2);
         }
       `}</style>
     </div>

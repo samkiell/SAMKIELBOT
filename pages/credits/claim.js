@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -7,7 +7,6 @@ import { useAuth } from "../../lib/auth";
 import toast from "react-hot-toast";
 import Navbar from "../../components/Navbar";
 import Snowfall from "../../components/Snowfall";
-import CreditBalance from "../../components/CreditBalance";
 
 export default function ClaimCredits() {
   const { user, loading: authLoading, refreshUser } = useAuth();
@@ -19,80 +18,35 @@ export default function ClaimCredits() {
     nextClaimTime: null,
     lastClaim: null,
   });
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-      return;
-    }
-    if (user) {
-      fetchStatus();
-    }
-  }, [user, authLoading]);
-
-  const [targetTime, setTargetTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-      return;
-    }
-    if (user) {
-      fetchStatus();
-    }
-  }, [user, authLoading]);
-
-  // Robust Timer Logic
-  useEffect(() => {
-    if (!targetTime) return;
-
-    const updateTimer = () => {
-      const now = Date.now();
-      const remaining = Math.max(0, targetTime - now);
-      setTimeLeft(remaining);
-
-      // If timer finishes, refresh status to enable claim button
-      if (remaining === 0) {
-        fetchStatus();
-      }
-    };
-
-    // Initial update
-    updateTimer();
-
-    const timer = setInterval(updateTimer, 1000);
-    return () => clearInterval(timer);
-  }, [targetTime]);
-
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async (retry = 0) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL
-        }/api/credits/balance?t=${Date.now()}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      if (!token) return;
+
+      const res = await fetch(`/api/credits/balance?t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
 
       if (data.success && data.data.dailyClaim) {
-        setClaimStatus(data.data.dailyClaim);
+        const status = data.data.dailyClaim;
+        setClaimStatus(status);
 
-        if (
-          !data.data.dailyClaim.canClaim &&
-          data.data.dailyClaim.nextClaimTime
-        ) {
-          const nextTime = new Date(
-            data.data.dailyClaim.nextClaimTime
-          ).getTime();
-          console.log("Next Claim Time (Timestamp):", nextTime);
-          console.log("Current Time (Timestamp):", Date.now());
-          setTargetTime(nextTime);
+        if (!status.canClaim && status.nextClaimTime) {
+          const next = new Date(status.nextClaimTime).getTime();
+          const now = Date.now();
+          const diff = next - now;
+
+          // If server says we can't claim but timer is zero or very close,
+          // might be a slight clock desync. Retry once after 2 seconds.
+          if (diff <= 1000 && retry < 2) {
+            setTimeout(() => fetchStatus(retry + 1), 2000);
+          }
+
+          setTimeLeft(Math.max(0, diff));
         } else {
-          setTargetTime(null);
           setTimeLeft(0);
         }
       }
@@ -101,42 +55,68 @@ export default function ClaimCredits() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+      return;
+    }
+    if (user) {
+      fetchStatus();
+    }
+  }, [user, authLoading, router, fetchStatus]);
+
+  // Timer Effect
+  useEffect(() => {
+    if (claimStatus.canClaim || !claimStatus.nextClaimTime) {
+      setTimeLeft(0);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      const next = new Date(claimStatus.nextClaimTime).getTime();
+      const now = Date.now();
+      const diff = next - now;
+
+      if (diff <= 0) {
+        setTimeLeft(0);
+        clearInterval(timer);
+        fetchStatus(); // Refresh to enable button
+      } else {
+        setTimeLeft(diff);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [claimStatus.canClaim, claimStatus.nextClaimTime, fetchStatus]);
 
   const handleClaim = async () => {
+    if (claiming) return;
     setClaiming(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/credits/daily-claim`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch("/api/credits/daily-claim", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await res.json();
 
       if (data.success) {
-        toast.success(data.message);
-        // Update local state
+        toast.success(data.message, { icon: "🎁" });
         setClaimStatus({
           canClaim: false,
           nextClaimTime: data.data.nextClaimTime,
           lastClaim: new Date().toISOString(),
         });
-
-        // Start countdown
-        const nextTime = new Date(data.data.nextClaimTime).getTime();
-        setTimeLeft(Math.max(0, nextTime - Date.now()));
-
         if (refreshUser) refreshUser();
       } else {
         toast.error(data.message);
-        fetchStatus(); // Refresh to be safe
+        fetchStatus();
       }
     } catch (error) {
       console.error(error);
@@ -147,6 +127,7 @@ export default function ClaimCredits() {
   };
 
   const formatTime = (ms) => {
+    if (ms <= 0) return "0h 0m 0s";
     const hours = Math.floor(ms / (1000 * 60 * 60));
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((ms % (1000 * 60)) / 1000);
@@ -155,7 +136,7 @@ export default function ClaimCredits() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#0f172a] flex items-center justify-center">
         <Loader2 className="animate-spin w-10 h-10 text-indigo-500" />
       </div>
     );
@@ -243,13 +224,21 @@ export default function ClaimCredits() {
                 )}
               </button>
             ) : (
-              <div className="bg-gray-100 dark:bg-slate-900/50 rounded-xl p-4 max-w-sm mx-auto border border-gray-200 dark:border-slate-700">
-                <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">
-                  Next Reward In
-                </p>
-                <p className="text-3xl font-mono font-bold text-indigo-600 dark:text-indigo-400">
-                  {formatTime(timeLeft)}
-                </p>
+              <div className="flex flex-col gap-4 items-center">
+                <div className="bg-gray-100 dark:bg-slate-900/50 rounded-xl p-4 w-full max-w-sm border border-gray-200 dark:border-slate-700">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">
+                    Next Reward In
+                  </p>
+                  <p className="text-3xl font-mono font-bold text-indigo-600 dark:text-indigo-400 tabular-nums">
+                    {formatTime(timeLeft)}
+                  </p>
+                </div>
+                {claimStatus.lastClaim && (
+                  <p className="text-xs text-gray-400 font-mono italic">
+                    Last rewarded:{" "}
+                    {new Date(claimStatus.lastClaim).toLocaleString()}
+                  </p>
+                )}
               </div>
             )}
           </div>

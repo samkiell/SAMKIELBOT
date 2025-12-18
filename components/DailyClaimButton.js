@@ -19,6 +19,9 @@ export default function DailyClaimButton({ onClaimSuccess }) {
       const res = await fetch(`/api/credits/balance?t=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      if (!res.ok) throw new Error("Status failed");
+
       const data = await res.json();
 
       if (data.success && data.data.dailyClaim) {
@@ -37,6 +40,7 @@ export default function DailyClaimButton({ onClaimSuccess }) {
       }
     } catch (error) {
       console.error("Error fetching claim status:", error);
+      // If it fails, we keep the loading state for a bit then show a fallback or retry
     } finally {
       setLoading(false);
     }

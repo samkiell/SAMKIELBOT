@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Gift, Clock, Loader2 } from "lucide-react";
+import { Gift, Clock, Loader2, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function DailyClaimButton({ onClaimSuccess }) {
@@ -11,17 +11,17 @@ export default function DailyClaimButton({ onClaimSuccess }) {
   });
   const [timeLeft, setTimeLeft] = useState(0);
 
-  const fetchStatus = useCallback(async () => {
+  const fetchStatus = useCallback(async (retry = 0) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const res = await fetch(`/api/credits/balance?t=${Date.now()}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`/api/credits/balance?t=${Date.now()}&mode=btn`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+        },
       });
-
-      if (!res.ok) throw new Error("Status failed");
-
       const data = await res.json();
 
       if (data.success && data.data.dailyClaim) {
@@ -33,14 +33,19 @@ export default function DailyClaimButton({ onClaimSuccess }) {
         ) {
           const next = new Date(data.data.dailyClaim.nextClaimTime).getTime();
           const now = Date.now();
-          setTimeLeft(Math.max(0, next - now));
+          const diff = next - now;
+
+          if (diff <= 1000 && retry < 2) {
+            setTimeout(() => fetchStatus(retry + 1), 2000);
+          }
+
+          setTimeLeft(Math.max(0, diff));
         } else {
           setTimeLeft(0);
         }
       }
     } catch (error) {
       console.error("Error fetching claim status:", error);
-      // If it fails, we keep the loading state for a bit then show a fallback or retry
     } finally {
       setLoading(false);
     }
@@ -79,7 +84,7 @@ export default function DailyClaimButton({ onClaimSuccess }) {
     setClaiming(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`/api/credits/daily-claim`, {
+      const res = await fetch("/api/credits/daily-claim", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,7 +103,7 @@ export default function DailyClaimButton({ onClaimSuccess }) {
         if (onClaimSuccess) onClaimSuccess();
       } else {
         toast.error(data.message);
-        fetchStatus(); // Refresh to sync
+        fetchStatus();
       }
     } catch (error) {
       console.error("Claim error:", error);
@@ -161,7 +166,7 @@ export default function DailyClaimButton({ onClaimSuccess }) {
   }
 
   return (
-    <div className="flex items-center gap-3 bg-white/5 dark:bg-gray-900/50 backdrop-blur-sm px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 shadow-inner group transition-all duration-300">
+    <div className="flex items-center gap-3 bg-white/5 dark:bg-gray-900/50 backdrop-blur-sm px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 shadow-inner group transition-all duration-300 relative">
       <Clock className="w-4 h-4 text-gray-400 group-hover:text-indigo-400 transition-colors" />
       <div className="flex flex-col">
         <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold leading-none mb-1">
@@ -171,6 +176,12 @@ export default function DailyClaimButton({ onClaimSuccess }) {
           {formatTime(timeLeft)}
         </span>
       </div>
+      <button
+        onClick={() => fetchStatus()}
+        className="ml-2 p-1 text-gray-600 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+      >
+        <RefreshCcw className="w-3 h-3" />
+      </button>
     </div>
   );
 }

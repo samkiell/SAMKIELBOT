@@ -2,7 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { ArrowLeft, Gift, Clock, Loader2, Award, Calendar } from "lucide-react";
+import {
+  ArrowLeft,
+  Gift,
+  Clock,
+  Loader2,
+  Award,
+  Calendar,
+  RefreshCcw,
+  AlertCircle,
+} from "lucide-react";
 import { useAuth } from "../../lib/auth";
 import toast from "react-hot-toast";
 import Navbar from "../../components/Navbar";
@@ -13,6 +22,7 @@ export default function ClaimCredits() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState(false);
+  const [error, setError] = useState(null);
   const [claimStatus, setClaimStatus] = useState({
     canClaim: false,
     nextClaimTime: null,
@@ -22,13 +32,25 @@ export default function ClaimCredits() {
 
   const fetchStatus = useCallback(async (retry = 0) => {
     try {
+      setError(null);
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const res = await fetch(`/api/credits/balance?t=${Date.now()}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // Force cache busting with multiple params
+      const res = await fetch(
+        `/api/credits/balance?t=${Date.now()}&v=${Math.random()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+
       const data = await res.json();
+      console.log("[Claim] API Response:", data);
 
       if (data.success && data.data.dailyClaim) {
         const status = data.data.dailyClaim;
@@ -39,8 +61,6 @@ export default function ClaimCredits() {
           const now = Date.now();
           const diff = next - now;
 
-          // If server says we can't claim but timer is zero or very close,
-          // might be a slight clock desync. Retry once after 2 seconds.
           if (diff <= 1000 && retry < 2) {
             setTimeout(() => fetchStatus(retry + 1), 2000);
           }
@@ -49,9 +69,12 @@ export default function ClaimCredits() {
         } else {
           setTimeLeft(0);
         }
+      } else {
+        throw new Error(data.message || "Failed to fetch status");
       }
     } catch (error) {
       console.error("Error fetching status:", error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -82,7 +105,7 @@ export default function ClaimCredits() {
       if (diff <= 0) {
         setTimeLeft(0);
         clearInterval(timer);
-        fetchStatus(); // Refresh to enable button
+        fetchStatus();
       } else {
         setTimeLeft(diff);
       }
@@ -108,12 +131,10 @@ export default function ClaimCredits() {
 
       if (data.success) {
         toast.success(data.message, { icon: "🎁" });
-        setClaimStatus({
-          canClaim: false,
-          nextClaimTime: data.data.nextClaimTime,
-          lastClaim: new Date().toISOString(),
-        });
-        if (refreshUser) refreshUser();
+        if (refreshUser) await refreshUser();
+        // The balance update will trigger a re-fetch of status if we were lucky,
+        // but let's manually re-fetch status too
+        await fetchStatus();
       } else {
         toast.error(data.message);
         fetchStatus();
@@ -134,7 +155,7 @@ export default function ClaimCredits() {
     return `${hours}h ${minutes}m ${seconds}s`;
   };
 
-  if (authLoading || loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-white dark:bg-[#0f172a] flex items-center justify-center">
         <Loader2 className="animate-spin w-10 h-10 text-indigo-500" />
@@ -151,33 +172,52 @@ export default function ClaimCredits() {
       <Snowfall />
 
       <main className="relative z-10 container mx-auto px-4 py-8 pt-24">
-        {/* Back Button */}
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 mb-8 transition-colors"
-        >
-          <ArrowLeft className="mr-2" size={20} />
-          Back to Dashboard
-        </Link>
+        <div className="flex items-center justify-between mb-8 max-w-2xl mx-auto">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+          >
+            <ArrowLeft className="mr-2" size={20} />
+            Back to Dashboard
+          </Link>
 
-        {/* Content */}
+          <button
+            onClick={() => fetchStatus()}
+            disabled={loading}
+            className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/5"
+            title="Force Sync"
+          >
+            <RefreshCcw
+              className={`w-5 h-5 ${loading ? "animate-spin" : ""}`}
+            />
+          </button>
+        </div>
+
         <div className="max-w-2xl mx-auto">
-          {/* Header */}
           <div className="text-center mb-10">
             <h1 className="text-4xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
               Daily Rewards
+              {loading && (
+                <Loader2 className="inline-block ml-3 w-6 h-6 animate-spin text-white" />
+              )}
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
               Come back every day to claim free credits for your bots.
             </p>
           </div>
 
-          {/* Claim Card */}
           <div className="bg-white dark:bg-slate-800/50 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-slate-700 p-8 md:p-12 text-center relative">
-            {/* Background Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Icon */}
+            {error && (
+              <div className="mb-6 bg-red-500/10 border border-red-500/20 text-red-500 px-4 py-2 rounded-xl flex items-center justify-center gap-2">
+                <AlertCircle size={18} />
+                <span>
+                  Failed to sync status. Try clicking the refresh icon.
+                </span>
+              </div>
+            )}
+
             <div className="mb-8 flex justify-center">
               <div
                 className={`w-24 h-24 rounded-full flex items-center justify-center shadow-lg transition-all duration-500 ${
@@ -208,7 +248,7 @@ export default function ClaimCredits() {
             {claimStatus.canClaim ? (
               <button
                 onClick={handleClaim}
-                disabled={claiming}
+                disabled={claiming || loading}
                 className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-500/25 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto"
               >
                 {claiming ? (
@@ -234,16 +274,21 @@ export default function ClaimCredits() {
                   </p>
                 </div>
                 {claimStatus.lastClaim && (
-                  <p className="text-xs text-gray-400 font-mono italic">
-                    Last rewarded:{" "}
-                    {new Date(claimStatus.lastClaim).toLocaleString()}
-                  </p>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs text-gray-400 font-mono italic">
+                      Last claim:{" "}
+                      {new Date(claimStatus.lastClaim).toLocaleString()}
+                    </p>
+                    <p className="text-[10px] text-gray-500/50 font-mono">
+                      Sync ID: {user?._id?.slice(-6)} |{" "}
+                      {new Date().toLocaleTimeString()}
+                    </p>
+                  </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* Stats / Info Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
             <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 flex items-center gap-4">
               <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center">

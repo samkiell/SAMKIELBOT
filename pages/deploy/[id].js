@@ -35,12 +35,12 @@ export default function DeploymentSessionPage() {
   useEffect(() => {
     if (!id) return;
 
-    const socketUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    // In a unified app, we connect to the current origin
+    const socketUrl = process.env.NEXT_PUBLIC_API_URL || window.location.origin;
     socket = io(socketUrl);
 
     socket.on("connect", () => {
-      console.log("[Socket.IO] Connected");
+      console.log("[Socket.IO] Connected to", socketUrl);
     });
 
     socket.on("bot:status_change", (data) => {
@@ -397,7 +397,9 @@ export default function DeploymentSessionPage() {
             </p>
 
             {/* Friendly Terminal */}
-            <FriendlyTerminal logs={logs} status={deployment?.status} />
+            {!statusDisplay?.showPairingCode && (
+              <FriendlyTerminal logs={logs} status={deployment?.status} />
+            )}
 
             {/* Pairing Code Display */}
             {statusDisplay?.showPairingCode && deployment?.pairingCode && (

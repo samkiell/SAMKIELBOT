@@ -7,6 +7,7 @@ import {
   Info,
   Zap,
   Coffee,
+  Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -35,40 +36,59 @@ const FriendlyTerminal = ({ logs = [], status }) => {
 
   // Transform raw logs into friendly messages
   const transformLog = (log) => {
+    if (!log) return null;
     const raw = log.toString();
 
-    // Mapping rules
+    // Mapping rules - IMPROVED PATTERNS
     const mappings = [
       {
-        pattern: /installing dependencies|npm install|yarn install/i,
+        pattern: /installing dependencies|npm install|yarn install|building/i,
         friendly: "Feeding your bot some Node.js vitamins 🍪",
         icon: <Coffee className="w-4 h-4 text-amber-400" />,
         type: "friendly",
       },
       {
         pattern:
-          /connecting to whatsapp|connecting\.\.\.|initializing connection/i,
+          /connecting to whatsapp|connecting\.\.\.|initializing connection|wa connection/i,
         friendly: "Your bot is saying hi to WhatsApp servers 👋",
         icon: <Zap className="w-4 h-4 text-yellow-400" />,
         type: "friendly",
       },
       {
         pattern:
-          /bot connected successfully|successfully logged in|client is ready/i,
+          /bot connected successfully|successfully logged in|client is ready|connected to whatsapp/i,
         friendly: "🎉 Your bot is awake and ready!",
         icon: <CheckCircle className="w-4 h-4 text-green-400" />,
         type: "success",
       },
       {
-        pattern: /creating server|initializing server|pterodactyl/i,
+        pattern: /creating server|initializing server|pterodactyl|egg|nest/i,
         friendly: "Building a cozy home for your bot 🏠",
         icon: <Info className="w-4 h-4 text-blue-400" />,
         type: "friendly",
       },
       {
-        pattern: /starting bot|npm start|node server/i,
+        pattern: /starting bot|npm start|node server|node \.|starting/i,
         friendly: "Waking up your bot... ☕",
         icon: <Zap className="w-4 h-4 text-indigo-400" />,
+        type: "friendly",
+      },
+      {
+        pattern: /git clone|cloning|fetching repository|pulling/i,
+        friendly: "Grabbing your bot's clothes from GitHub 👗",
+        icon: <Info className="w-4 h-4 text-purple-400" />,
+        type: "friendly",
+      },
+      {
+        pattern: /npm|yarn|dependency|package|installing/i,
+        friendly: "Teaching your bot new tricks (Installing plugins) 📚",
+        icon: <Coffee className="w-4 h-4 text-amber-400" />,
+        type: "friendly",
+      },
+      {
+        pattern: /success|ready|finished|done|complete|finalizing/i,
+        friendly: "Almost there... finalizing the setup! ✨",
+        icon: <CheckCircle className="w-4 h-4 text-green-400" />,
         type: "friendly",
       },
     ];
@@ -79,17 +99,36 @@ const FriendlyTerminal = ({ logs = [], status }) => {
       }
     }
 
+    // Generic progress catch-all for anything that looks like a task
+    if (
+      raw.length > 5 &&
+      raw.length < 100 &&
+      !raw.includes("error") &&
+      !raw.includes("failed")
+    ) {
+      return {
+        friendly: "Processing your bot's request... ⚙️",
+        icon: <Info className="w-4 h-4 text-slate-400" />,
+        type: "friendly",
+      };
+    }
+
     return null; // Not a friendly-mappable log
   };
 
   // Get only the unique friendly logs in order
   const friendlyLogs = logs
-    .map((log) => ({
-      ...transformLog(log),
-      raw: log,
-      timestamp: new Date().toLocaleTimeString(),
-    }))
-    .filter((log) => log.friendly);
+    .map((log) => {
+      const transformed = transformLog(log);
+      return transformed
+        ? {
+            ...transformed,
+            raw: log,
+            timestamp: new Date().toLocaleTimeString(),
+          }
+        : null;
+    })
+    .filter((log) => log && log.friendly);
 
   // Filter to only show unique friendly messages to keep it clean
   const uniqueFriendlyLogs = [];
@@ -130,7 +169,7 @@ const FriendlyTerminal = ({ logs = [], status }) => {
       </div>
 
       {/* Main Friendly View */}
-      <div className="p-6 min-h-[200px] max-h-[300px] overflow-y-auto custom-scrollbar">
+      <div className="p-6 min-h-[200px] max-h-[300px] overflow-y-auto custom-scrollbar bg-[radial-gradient(circle_at_50%_50%,rgba(30,41,59,0.5),rgba(15,23,42,1))]">
         <AnimatePresence initial={false}>
           {uniqueFriendlyLogs.length === 0 ? (
             <motion.div
@@ -139,13 +178,13 @@ const FriendlyTerminal = ({ logs = [], status }) => {
               className="flex flex-col items-center justify-center h-full text-slate-500 py-10"
             >
               <div className="relative">
-                <Loader className="w-8 h-8 animate-spin-slow opacity-20" />
+                <Loader2 className="w-8 h-8 animate-spin text-blue-500/40" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                 </div>
               </div>
-              <p className="mt-4 font-mono text-sm">
-                Listening for bot signals...
+              <p className="mt-4 font-mono text-sm tracking-tight text-slate-400 italic">
+                Capturing signals from Pterodactyl...
               </p>
             </motion.div>
           ) : (
@@ -161,8 +200,8 @@ const FriendlyTerminal = ({ logs = [], status }) => {
                   <div
                     className={`mt-1 p-1.5 rounded-lg shrink-0 ${
                       log.type === "success"
-                        ? "bg-green-500/10 text-green-400"
-                        : "bg-blue-500/10 text-blue-400"
+                        ? "bg-green-500/20 text-green-400"
+                        : "bg-blue-500/20 text-blue-400"
                     }`}
                   >
                     {log.icon}
@@ -207,9 +246,9 @@ const FriendlyTerminal = ({ logs = [], status }) => {
       >
         <span className="flex items-center gap-2">
           {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          {showAdvanced ? "Hide internal logs" : "Show advanced logs"}
+          {showAdvanced ? "Hide technical feed" : "Show technical feed"}
         </span>
-        <span className="opacity-50 tracking-tighter">RAW_STREAMS</span>
+        <span className="opacity-50 tracking-tighter">SIGNAL_RAW_DATA</span>
       </button>
 
       {/* Raw Console Logs (Collapsible) */}
@@ -221,18 +260,24 @@ const FriendlyTerminal = ({ logs = [], status }) => {
             exit={{ height: 0 }}
             className="overflow-hidden bg-black/40 border-t border-slate-800"
           >
-            <div className="p-4 h-48 overflow-y-auto font-mono text-[11px] leading-relaxed text-slate-500 custom-scrollbar whitespace-pre-wrap lowercase">
+            <div className="p-4 h-48 overflow-y-auto font-mono text-[11px] leading-relaxed text-slate-500 custom-scrollbar whitespace-pre-wrap lowercase selection:bg-blue-500/30">
               {logs.length === 0 ? (
                 <span className="italic opacity-30">
-                  # waiting for raw data packets...
+                  # scanning for raw technical logs...
                 </span>
               ) : (
                 logs.map((log, i) => (
-                  <div key={i} className="mb-1">
-                    <span className="text-slate-700 mr-2 selection:bg-indigo-500/30">
-                      [{new Date().toLocaleTimeString()}]
+                  <div key={i} className="mb-1 flex gap-2">
+                    <span className="text-slate-700 shrink-0">
+                      [
+                      {new Date().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}
+                      ]
                     </span>
-                    <span className="text-slate-400/80 hover:text-slate-300 transition-colors">
+                    <span className="text-slate-400/70 hover:text-slate-300 transition-colors">
                       {log}
                     </span>
                   </div>
@@ -255,37 +300,9 @@ const FriendlyTerminal = ({ logs = [], status }) => {
           background: #334155;
           border-radius: 10px;
         }
-        .animate-spin-slow {
-          animation: spin 3s linear infinite;
-        }
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
       `}</style>
     </div>
   );
 };
-
-const Loader = ({ className, size = 24 }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M12 2v4m0 14v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m14 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
-  </svg>
-);
 
 export default FriendlyTerminal;

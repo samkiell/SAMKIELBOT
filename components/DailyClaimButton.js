@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Gift, Clock, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -9,41 +9,16 @@ export default function DailyClaimButton({ onClaimSuccess }) {
     canClaim: false,
     nextClaimTime: null,
   });
-  const [targetTime, setTargetTime] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
 
-  useEffect(() => {
-    fetchStatus();
-  }, []);
-
-  useEffect(() => {
-    if (!targetTime) return;
-
-    const updateTimer = () => {
-      const now = Date.now();
-      const remaining = Math.max(0, targetTime - now);
-      setTimeLeft(remaining);
-      if (remaining === 0) fetchStatus();
-    };
-
-    updateTimer();
-    const timer = setInterval(updateTimer, 1000);
-    return () => clearInterval(timer);
-  }, [targetTime]);
-
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const res = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL
-        }/api/credits/balance?t=${Date.now()}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await fetch(`/api/credits/balance?t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
 
       if (data.success && data.data.dailyClaim) {
@@ -53,12 +28,11 @@ export default function DailyClaimButton({ onClaimSuccess }) {
           !data.data.dailyClaim.canClaim &&
           data.data.dailyClaim.nextClaimTime
         ) {
-          const nextTime = new Date(
-            data.data.dailyClaim.nextClaimTime
-          ).getTime();
-          setTargetTime(nextTime);
+          const next = new Date(data.data.dailyClaim.nextClaimTime).getTime();
+          const now = Date.now();
+          setTimeLeft(Math.max(0, next - now));
         } else {
-          setTargetTime(null);
+          setTimeLeft(0);
         }
       }
     } catch (error) {
@@ -66,41 +40,61 @@ export default function DailyClaimButton({ onClaimSuccess }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchStatus();
+  }, [fetchStatus]);
+
+  // Timer Effect
+  useEffect(() => {
+    if (claimStatus.canClaim || !claimStatus.nextClaimTime) {
+      setTimeLeft(0);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      const next = new Date(claimStatus.nextClaimTime).getTime();
+      const now = Date.now();
+      const diff = next - now;
+
+      if (diff <= 0) {
+        setTimeLeft(0);
+        clearInterval(timer);
+        fetchStatus();
+      } else {
+        setTimeLeft(diff);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [claimStatus.canClaim, claimStatus.nextClaimTime, fetchStatus]);
 
   const handleClaim = async () => {
+    if (claiming) return;
     setClaiming(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/credits/daily-claim`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch(`/api/credits/daily-claim`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       const data = await res.json();
 
       if (data.success) {
-        toast.success(data.message);
+        toast.success(data.message, { icon: "🎁" });
         setClaimStatus({
           canClaim: false,
           nextClaimTime: data.data.nextClaimTime,
         });
-
-        // Start countdown
-        const nextTime = new Date(data.data.nextClaimTime).getTime();
-        setTargetTime(nextTime);
-
         if (onClaimSuccess) onClaimSuccess();
       } else {
         toast.error(data.message);
-        // Refresh status in case of desync
-        fetchStatus();
+        fetchStatus(); // Refresh to sync
       }
     } catch (error) {
       console.error("Claim error:", error);
@@ -111,15 +105,21 @@ export default function DailyClaimButton({ onClaimSuccess }) {
   };
 
   const formatTime = (ms) => {
+    if (ms <= 0) return "00:00:00";
     const hours = Math.floor(ms / (1000 * 60 * 60));
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-    return `${hours}h ${minutes}m ${seconds}s`;
+
+    return [
+      hours.toString().padStart(2, "0"),
+      minutes.toString().padStart(2, "0"),
+      seconds.toString().padStart(2, "0"),
+    ].join(":");
   };
 
   if (loading) {
     return (
-      <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-10 w-32 rounded-lg"></div>
+      <div className="h-11 w-40 bg-gray-200 dark:bg-gray-800 animate-pulse rounded-xl"></div>
     );
   }
 
@@ -128,25 +128,45 @@ export default function DailyClaimButton({ onClaimSuccess }) {
       <button
         onClick={handleClaim}
         disabled={claiming}
-        className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-4 py-2 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+        className="relative group overflow-hidden flex items-center gap-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50"
       >
+        <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-[-20deg]"></div>
         {claiming ? (
           <Loader2 className="animate-spin w-5 h-5" />
         ) : (
-          <Gift className="w-5 h-5" />
+          <Gift className="w-5 h-5 animate-bounce-slight" />
         )}
-        <span>Claim 5 Credits</span>
+        <span className="whitespace-nowrap">Claim Day Benefit</span>
+
+        <style jsx>{`
+          @keyframes bounce-slight {
+            0%,
+            100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-2px);
+            }
+          }
+          .animate-bounce-slight {
+            animation: bounce-slight 2s infinite;
+          }
+        `}</style>
       </button>
     );
   }
 
   return (
-    <button
-      disabled
-      className="flex items-center gap-2 bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-4 py-2 rounded-lg font-medium border border-gray-300 dark:border-gray-700 cursor-not-allowed"
-    >
-      <Clock className="w-5 h-5" />
-      <span>Next in {formatTime(timeLeft)}</span>
-    </button>
+    <div className="flex items-center gap-3 bg-white/5 dark:bg-gray-900/50 backdrop-blur-sm px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 shadow-inner group transition-all duration-300">
+      <Clock className="w-4 h-4 text-gray-400 group-hover:text-indigo-400 transition-colors" />
+      <div className="flex flex-col">
+        <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold leading-none mb-1">
+          Next Reward
+        </span>
+        <span className="font-mono text-sm text-gray-600 dark:text-gray-300 font-medium tabular-nums">
+          {formatTime(timeLeft)}
+        </span>
+      </div>
+    </div>
   );
 }

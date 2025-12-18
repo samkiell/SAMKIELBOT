@@ -81,6 +81,10 @@ app.prepare().then(async () => {
     io.emit("bot:offline", data);
   });
 
+  botHealthService.on("bot.log", (data) => {
+    io.emit("bot:log", data);
+  });
+
   // Initialize Bot Health Monitoring
   botHealthService.initializeAllMonitors().then(() => {
     console.log("[BotHealth] All monitors initialized");

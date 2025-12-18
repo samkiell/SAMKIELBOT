@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useAuth } from "../../lib/auth";
+import FriendlyTerminal from "../../components/FriendlyTerminal";
 import {
   ArrowLeft,
   CheckCircle,
@@ -28,6 +29,7 @@ export default function DeploymentSessionPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
+  const [logs, setLogs] = useState([]);
 
   // Initialize Socket.IO
   useEffect(() => {
@@ -48,6 +50,12 @@ export default function DeploymentSessionPage() {
       }
     });
 
+    socket.on("bot:log", (data) => {
+      if (data.deploymentId === id) {
+        setLogs((prev) => [...prev, data.log].slice(-100)); // Keep last 100 logs
+      }
+    });
+
     socket.on("bot:pairing_code", (data) => {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Pairing code:", data.code);
@@ -60,6 +68,8 @@ export default function DeploymentSessionPage() {
         console.log("[Socket.IO] Bot connected!");
         fetchDeploymentStatus();
         toast.success("Bot connected successfully! 🚀");
+        // Trigger celebration
+        triggerConfetti();
       }
     });
 
@@ -67,6 +77,8 @@ export default function DeploymentSessionPage() {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Bot is now active!");
         fetchDeploymentStatus();
+        // Also trigger if it skips connected status
+        triggerConfetti();
       }
     });
 
@@ -104,6 +116,13 @@ export default function DeploymentSessionPage() {
       setError(err.message);
       setLoading(false);
     }
+  };
+
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  const triggerConfetti = () => {
+    setShowCelebration(true);
+    setTimeout(() => setShowCelebration(false), 5000); // Hide after 5 seconds
   };
 
   // Handle power actions
@@ -319,6 +338,36 @@ export default function DeploymentSessionPage() {
         <title>Deployment Status - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
       </Head>
 
+      {/* Celebration Overlay */}
+      {showCelebration && (
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+          {[...Array(40)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-fall"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `-10%`,
+                width: `${Math.random() * 10 + 5}px`,
+                height: `${Math.random() * 10 + 5}px`,
+                backgroundColor: [
+                  "#6366f1",
+                  "#a855f7",
+                  "#ec4899",
+                  "#3b82f6",
+                  "#10b981",
+                  "#f59e0b",
+                ][Math.floor(Math.random() * 6)],
+                borderRadius: Math.random() > 0.5 ? "50%" : "2px",
+                opacity: 0.8,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${Math.random() * 3 + 2}s`,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl">
         {/* Back Button */}
         <div className="mb-6 pt-8">
@@ -346,6 +395,9 @@ export default function DeploymentSessionPage() {
             <p className="text-gray-600 dark:text-gray-400 text-lg mb-6">
               {statusDisplay?.message}
             </p>
+
+            {/* Friendly Terminal */}
+            <FriendlyTerminal logs={logs} status={deployment?.status} />
 
             {/* Pairing Code Display */}
             {statusDisplay?.showPairingCode && deployment?.pairingCode && (
@@ -473,6 +525,24 @@ export default function DeploymentSessionPage() {
           </div>
         </div>
       </main>
+
+      <style jsx>{`
+        @keyframes fall {
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(100vh) rotate(360deg);
+            opacity: 0;
+          }
+        }
+        .animate-fall {
+          animation-name: fall;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+      `}</style>
     </div>
   );
 }

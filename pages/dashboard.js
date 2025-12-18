@@ -128,7 +128,6 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <DailyClaimButton onClaimSuccess={onClaimSuccess} />
               <CreditBalance key={refreshKey} />
               <Link
                 href="/deploy"
@@ -196,9 +195,35 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Referral Card - Bottom Section */}
-        <div className="mt-8">
+        {/* Marketing & Rewards Section */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
           <ReferralCard />
+
+          <div className="relative group overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-100 dark:border-gray-700 shadow-sm transition-all hover:shadow-md">
+            <div className="absolute top-0 right-0 p-4 opacity-5 dark:opacity-10">
+              <Gift size={120} className="rotate-12" />
+            </div>
+
+            <div className="relative z-10">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Daily Bonus
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 max-w-[240px]">
+                Loyalty pays off. Claim your daily free credits and keep your
+                instances alive without spending a dime.
+              </p>
+
+              <div className="flex items-center gap-4">
+                <DailyClaimButton onClaimSuccess={onClaimSuccess} />
+                <Link
+                  href="/credits/claim"
+                  className="text-xs text-indigo-500 hover:text-indigo-400 underline font-medium"
+                >
+                  View claim history
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 

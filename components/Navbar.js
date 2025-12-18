@@ -62,12 +62,6 @@ export default function Navbar() {
                   Community Bots
                 </Link>
                 <Link
-                  href="/credits/claim"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Rewards
-                </Link>
-                <Link
                   href="/suggest"
                   className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
@@ -249,13 +243,6 @@ export default function Navbar() {
                   className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
                   Community Bots
-                </Link>
-                <Link
-                  href="/credits/claim"
-                  onClick={() => setMenuOpen(false)}
-                  className="block font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Rewards
                 </Link>
                 <Link
                   href="/suggest"

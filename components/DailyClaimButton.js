@@ -37,7 +37,9 @@ export default function DailyClaimButton({ onClaimSuccess }) {
       if (!token) return;
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/credits/balance`,
+        `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/api/credits/balance?t=${Date.now()}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

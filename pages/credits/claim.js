@@ -69,7 +69,9 @@ export default function ClaimCredits() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/credits/balance`,
+        `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/api/credits/balance?t=${Date.now()}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

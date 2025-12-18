@@ -15,7 +15,7 @@ export default function CreditBalance({ showBuyButton = true }) {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/credits/balance`,
+        `${process.env.NEXT_PUBLIC_API_URL}/credits/balance?t=${Date.now()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

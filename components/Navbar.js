@@ -60,6 +60,8 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  const isVerified = user && (user.isEmailVerified || user.isPhoneVerified);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -76,7 +78,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link
-          href={user ? "/dashboard" : "/"}
+          href={isVerified ? "/dashboard" : "/"}
           className="flex items-center space-x-3"
         >
           <Image
@@ -94,7 +96,7 @@ export default function Navbar() {
         {/* Desktop Links */}
         <div className="hidden md:flex items-center justify-between px-4 py-2">
           <div className="flex gap-8 items-center text-gray-800 dark:text-gray-100">
-            {user && (
+            {isVerified && (
               <>
                 <Link
                   href="/bots"
@@ -130,13 +132,15 @@ export default function Navbar() {
             )}
             {user ? (
               <>
-                <Link
-                  href="/dashboard"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Dashboard
-                </Link>
-                {user.role === "admin" && (
+                {isVerified && (
+                  <Link
+                    href="/dashboard"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                )}
+                {isVerified && user.role === "admin" && (
                   <Link
                     href="/admin"
                     className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-semibold"
@@ -164,7 +168,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            {user && <NotificationDropdown />}
+            {isVerified && <NotificationDropdown />}
 
             {/* Theme Toggle Button */}
             <button
@@ -199,14 +203,14 @@ export default function Navbar() {
             </button>
 
             {/* User Avatar */}
-            {user && <UserAvatarDropdown user={user} />}
+            {isVerified && <UserAvatarDropdown user={user} />}
           </div>
         </div>
 
         {/* Mobile Header: Notification + Theme Toggle + Profile + Menu Button */}
         <div className="md:hidden flex items-center gap-2">
           {/* Mobile Notifications */}
-          {user && <NotificationDropdown />}
+          {isVerified && <NotificationDropdown />}
 
           {/* Mobile Theme Toggle Button */}
           <button
@@ -256,7 +260,7 @@ export default function Navbar() {
         } origin-top-right`}
       >
         <div className="p-4 space-y-1">
-          {user && (
+          {isVerified && (
             <div className="pb-3 mb-3 border-b border-gray-100 dark:border-slate-800">
               <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-800/40 rounded-2xl">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold shrink-0">
@@ -276,56 +280,60 @@ export default function Navbar() {
 
           {user ? (
             <>
-              <MobileNavLink
-                href="/dashboard"
-                icon={LayoutDashboard}
-                label="Dashboard"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/dashboard"}
-              />
-              <MobileNavLink
-                href="/profile"
-                icon={User}
-                label="My Profile"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/profile"}
-              />
-              <MobileNavLink
-                href="/bots"
-                icon={Server}
-                label="Community Bots"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/bots"}
-              />
-              <MobileNavLink
-                href="/credits/claim"
-                icon={Gift}
-                label="Daily Rewards"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/credits/claim"}
-              />
-              <MobileNavLink
-                href="/credits/buy"
-                icon={TrendingUp}
-                label="Buy Credits"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/credits/buy"}
-              />
-              <MobileNavLink
-                href="/referrals"
-                icon={Users}
-                label="Refer Friends"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/referrals"}
-              />
-              <MobileNavLink
-                href="/suggest"
-                icon={MenuIcon}
-                label="Submit Suggestion"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/suggest"}
-              />
-              {user.role === "admin" && (
+              {isVerified && (
+                <>
+                  <MobileNavLink
+                    href="/dashboard"
+                    icon={LayoutDashboard}
+                    label="Dashboard"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/dashboard"}
+                  />
+                  <MobileNavLink
+                    href="/profile"
+                    icon={User}
+                    label="My Profile"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/profile"}
+                  />
+                  <MobileNavLink
+                    href="/bots"
+                    icon={Server}
+                    label="Community Bots"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/bots"}
+                  />
+                  <MobileNavLink
+                    href="/credits/claim"
+                    icon={Gift}
+                    label="Daily Rewards"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/credits/claim"}
+                  />
+                  <MobileNavLink
+                    href="/credits/buy"
+                    icon={TrendingUp}
+                    label="Buy Credits"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/credits/buy"}
+                  />
+                  <MobileNavLink
+                    href="/referrals"
+                    icon={Users}
+                    label="Refer Friends"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/referrals"}
+                  />
+                  <MobileNavLink
+                    href="/suggest"
+                    icon={MenuIcon}
+                    label="Submit Suggestion"
+                    onClick={() => setMenuOpen(false)}
+                    active={router.pathname === "/suggest"}
+                  />
+                </>
+              )}
+              {isVerified && user.role === "admin" && (
                 <MobileNavLink
                   href="/admin"
                   icon={Shield}

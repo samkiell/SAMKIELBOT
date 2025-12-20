@@ -9,10 +9,13 @@ import {
   Settings,
   HardDrive,
   AlertTriangle,
+  LogOut,
+  Home,
   Menu,
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "../lib/auth";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();

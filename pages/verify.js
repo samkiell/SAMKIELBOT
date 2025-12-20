@@ -8,19 +8,31 @@ export default function Verify() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
-  const { user, token, refreshUser } = useAuth();
+  const { user, token, refreshUser, loading: authLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // If user is already verified, redirect to dashboard
-    if (user && (user.isEmailVerified || user.isPhoneVerified)) {
-      router.push("/dashboard");
-    }
+    if (authLoading) return;
+
     // If not logged in, redirect to login
-    if (!token && !loading) {
-      router.push("/login");
+    if (!token) {
+      router.replace("/login");
+      return;
     }
-  }, [user, token, router]);
+
+    // If user is already verified, prohibit access to /verify
+    if (user && (user.isEmailVerified || user.isPhoneVerified)) {
+      router.replace("/dashboard");
+    }
+  }, [user, token, authLoading, router]);
+
+  if (authLoading || (user && (user.isEmailVerified || user.isPhoneVerified))) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
   const handleVerify = async (e) => {
     e.preventDefault();

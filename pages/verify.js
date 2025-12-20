@@ -56,6 +56,7 @@ export default function Verify() {
       if (response.ok) {
         toast.success("Verification successful!");
         const updatedUser = await refreshUser();
+        console.log("FRESH USER RECEIVED ON FRONTEND:", updatedUser);
 
         // If refreshUser returns the updated user, we can immediately check it
         if (
@@ -64,8 +65,9 @@ export default function Verify() {
         ) {
           router.replace("/dashboard");
         } else {
-          // Fallback if refreshUser didn't return or state hasn't updated yet
-          // router.push is already called in the success block, but let's be safe
+          console.warn(
+            "User still unverified in state, but redirecting to dashboard anyway."
+          );
           router.replace("/dashboard");
         }
       } else {

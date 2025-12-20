@@ -76,7 +76,14 @@ export default function Dashboard() {
       return;
     }
 
+    console.log("[Dashboard] Checking verification status:", {
+      user: user?.username,
+      isEmailVerified: user?.isEmailVerified,
+      isPhoneVerified: user?.isPhoneVerified,
+    });
+
     if (user && !user.isEmailVerified && !user.isPhoneVerified) {
+      console.warn("[Dashboard] User not verified, redirecting to /verify");
       router.push("/verify");
       return;
     }

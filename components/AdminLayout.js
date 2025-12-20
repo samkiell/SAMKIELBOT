@@ -19,6 +19,7 @@ import { useAuth } from "../lib/auth";
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
+  const { logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const links = [
@@ -32,7 +33,7 @@ export default function AdminLayout({ children }) {
       label: "Notifications",
       icon: AlertTriangle,
     },
-    { href: "/admin/suggestions", label: "Suggestions", icon: Menu }, // Reusing Menu icon for list
+    { href: "/admin/suggestions", label: "Suggestions", icon: Menu },
     { href: "/admin/settings", label: "System Policy", icon: Settings },
   ];
 
@@ -67,7 +68,7 @@ export default function AdminLayout({ children }) {
         }`}
       >
         <div className="flex flex-col h-full overflow-y-auto">
-          {/* Sidebar Header (Hidden on Mobile Top Bar takes over) */}
+          {/* Sidebar Header */}
           <div className="hidden md:flex p-6 border-b border-gray-100 dark:border-gray-800 items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">
@@ -106,6 +107,23 @@ export default function AdminLayout({ children }) {
                 </Link>
               );
             })}
+
+            <div className="pt-4 mt-6 border-t border-gray-100 dark:border-gray-800 space-y-1">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white rounded-xl transition-all"
+              >
+                <Home size={18} />
+                <span className="font-medium text-sm">Return to Site</span>
+              </Link>
+              <button
+                onClick={() => logout()}
+                className="flex items-center gap-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
+              >
+                <LogOut size={18} />
+                <span className="font-medium text-sm">Logout</span>
+              </button>
+            </div>
           </nav>
 
           {/* Sidebar Footer */}

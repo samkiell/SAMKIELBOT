@@ -76,6 +76,11 @@ export default function Dashboard() {
       return;
     }
 
+    if (user && !user.isEmailVerified && !user.isPhoneVerified) {
+      router.push("/verify");
+      return;
+    }
+
     if (user) {
       fetchDeployments();
     }

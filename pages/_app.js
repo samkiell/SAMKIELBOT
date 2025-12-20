@@ -16,6 +16,15 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       <Head>
+        <title>SAMKIEL Bot | WhatsApp Bot Deployment Platform</title>
+        <meta
+          name="description"
+          content="Deploy, manage, and monitor WhatsApp bots easily with SAMKIEL Bot Platform."
+        />
+        <meta
+          name="keywords"
+          content="WhatsApp bot, bot deployment, SAMKIEL, automation, view once recovery"
+        />
         <link rel="icon" href="/SAMKIELBOT-LOGO.png" />
       </Head>
       <ThemeProvider>

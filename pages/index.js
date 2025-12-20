@@ -95,10 +95,16 @@ export default function Home() {
     <div className="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
       <Snowfall />
       <Head>
-        <title>𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 - Automate Your WhatsApp Experience</title>
+        <title>
+          SAMKIEL Bot | Deploy & Manage WhatsApp Bots Online for Free
+        </title>
         <meta
           name="description"
-          content="Deploy and manage your personal WhatsApp bot with ease. Automate tasks, save View Once media, and control everything from your dashboard."
+          content="Deploy WhatsApp bot for free online with SAMKIEL. Easy WhatsApp automation, view once message recovery, and bot management. No technical knowledge required!"
+        />
+        <meta
+          name="keywords"
+          content="deploy WhatsApp bot for free, WhatsApp bot online, view once WhatsApp message, WhatsApp automation, SAMKIEL Bot, WhatsApp bot hosting, automate WhatsApp, WhatsApp bot manager, free WhatsApp bot deployment, WhatsApp bot platform, WhatsApp bot creator, WhatsApp bot dashboard, WhatsApp message recovery, WhatsApp bot script"
         />
         <link rel="icon" href="/SAMKIELBOT-LOGO.png" />
       </Head>

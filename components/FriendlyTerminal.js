@@ -183,24 +183,24 @@ const FriendlyTerminal = ({ logs = [], status }) => {
   }, [logs]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-10 relative">
+    <div className="w-full max-w-2xl mx-auto mt-6 md:mt-10 relative px-0 sm:px-4">
       {/* Background Glow */}
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
 
       {/* Main Terminal Body */}
       <div className="relative bg-slate-950/80 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
         {/* Apple Style Header */}
-        <div className="flex items-center justify-between px-5 py-3 bg-white/5 border-b border-white/5 backdrop-blur-md">
+        <div className="flex items-center justify-between px-4 py-2 md:px-5 md:py-3 bg-white/5 border-b border-white/5 backdrop-blur-md">
           <div className="flex items-center gap-2">
             <div className="flex gap-2">
               <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
               <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
               <div className="w-3 h-3 rounded-full bg-[#28C840]" />
             </div>
-            <div className="ml-4 flex items-center gap-2 px-3 py-1 bg-black/20 rounded-lg">
-              <Terminal size={12} className="text-blue-400/80" />
-              <span className="text-[11px] font-mono text-white/40 tracking-wider">
-                SAMKIEL-AI_DEPLOYMENT
+            <div className="ml-2 md:ml-4 flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 bg-black/20 rounded-lg">
+              <Terminal size={10} className="text-blue-400/80" />
+              <span className="text-[9px] md:text-[11px] font-mono text-white/40 tracking-wider">
+                SAMKIEL-AI
               </span>
             </div>
           </div>
@@ -215,9 +215,9 @@ const FriendlyTerminal = ({ logs = [], status }) => {
         </div>
 
         {/* Content Area */}
-        <div className="p-8 min-h-[300px] max-h-[450px] overflow-y-auto custom-scrollbar">
+        <div className="p-4 md:p-8 min-h-[250px] md:min-h-[300px] max-h-[350px] md:max-h-[450px] overflow-y-auto custom-scrollbar">
           <AnimatePresence initial={false}>
-            <ul className="space-y-6">
+            <ul className="space-y-4 md:space-y-6">
               {displayedFriendlyLogs.map((log, index) => (
                 <motion.li
                   key={index}
@@ -229,16 +229,18 @@ const FriendlyTerminal = ({ logs = [], status }) => {
                     damping: 20,
                     delay: 0.1,
                   }}
-                  className="group flex items-start gap-5"
+                  className="group flex items-start gap-3 md:gap-5"
                 >
                   <div
-                    className={`mt-0.5 p-3 rounded-xl transition-all duration-500 ${
+                    className={`mt-0.5 p-2 md:p-3 rounded-xl transition-all duration-500 ${
                       log.type === "success"
                         ? "bg-green-500/20 text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.15)] scale-110"
                         : "bg-white/5 text-blue-400 border border-white/5 group-hover:bg-blue-500/10 transition-colors"
                     }`}
                   >
-                    {log.icon}
+                    {React.cloneElement(log.icon, {
+                      className: "w-3.5 h-3.5 md:w-4 md:h-4",
+                    })}
                   </div>
 
                   <div className="flex flex-col gap-1">
@@ -257,7 +259,7 @@ const FriendlyTerminal = ({ logs = [], status }) => {
                     </div>
 
                     <span
-                      className={`text-[16px] font-medium tracking-tight ${
+                      className={`text-[13px] md:text-[16px] font-medium tracking-tight ${
                         log.type === "success" ? "text-white" : "text-white/80"
                       }`}
                     >
@@ -286,7 +288,7 @@ const FriendlyTerminal = ({ logs = [], status }) => {
                     className="flex items-center gap-4 pl-14 pt-2"
                   >
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500/30 animate-ping" />
-                    <span className="text-[11px] font-mono text-white/10 uppercase tracking-[0.3em]">
+                    <span className="text-[9px] md:text-[11px] font-mono text-white/10 uppercase tracking-[0.2em] md:tracking-[0.3em]">
                       Awaiting next sequence
                     </span>
                   </motion.li>

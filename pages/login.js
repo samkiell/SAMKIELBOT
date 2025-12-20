@@ -62,14 +62,19 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const read = localStorage.getItem("samkiel_read_terms") === "true"; // user actually visited terms
+    const read = localStorage.getItem("samkiel_read_terms") === "true";
 
-    // if (!read) {
-    //   toast.error(
-    //     "Abeg go read the Terms & Conditions and Privacy Policy first."
-    //   );
-    //   return;
-    // }
+    if (!read) {
+      toast.error(
+        "Abeg go read the Terms & Conditions and Privacy Policy first."
+      );
+      return;
+    }
+
+    if (!agreeToTerms) {
+      toast.error("You must agree to the Terms & Conditions to proceed.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -235,9 +240,9 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={loading || !agreeToTerms}
+              disabled={loading}
               className={`w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
-                loading || !agreeToTerms ? "opacity-50 cursor-not-allowed" : ""
+                loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {loading ? "Signing In..." : "Sign In"}

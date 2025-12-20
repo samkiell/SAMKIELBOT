@@ -130,17 +130,15 @@ export default function Navbar() {
                 </Link>
               </>
             )}
-            {user ? (
+            {isVerified ? (
               <>
-                {isVerified && (
-                  <Link
-                    href="/dashboard"
-                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                  >
-                    Dashboard
-                  </Link>
-                )}
-                {isVerified && user.role === "admin" && (
+                <Link
+                  href="/dashboard"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Dashboard
+                </Link>
+                {user?.role === "admin" && (
                   <Link
                     href="/admin"
                     className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-semibold"
@@ -278,62 +276,58 @@ export default function Navbar() {
             </div>
           )}
 
-          {user ? (
+          {isVerified ? (
             <>
-              {isVerified && (
-                <>
-                  <MobileNavLink
-                    href="/dashboard"
-                    icon={LayoutDashboard}
-                    label="Dashboard"
-                    onClick={() => setMenuOpen(false)}
-                    active={router.pathname === "/dashboard"}
-                  />
-                  <MobileNavLink
-                    href="/profile"
-                    icon={User}
-                    label="My Profile"
-                    onClick={() => setMenuOpen(false)}
-                    active={router.pathname === "/profile"}
-                  />
-                  <MobileNavLink
-                    href="/bots"
-                    icon={Server}
-                    label="Community Bots"
-                    onClick={() => setMenuOpen(false)}
-                    active={router.pathname === "/bots"}
-                  />
-                  <MobileNavLink
-                    href="/credits/claim"
-                    icon={Gift}
-                    label="Daily Rewards"
-                    onClick={() => setMenuOpen(false)}
-                    active={router.pathname === "/credits/claim"}
-                  />
-                  <MobileNavLink
-                    href="/credits/buy"
-                    icon={TrendingUp}
-                    label="Buy Credits"
-                    onClick={() => setMenuOpen(false)}
-                    active={router.pathname === "/credits/buy"}
-                  />
-                  <MobileNavLink
-                    href="/referrals"
-                    icon={Users}
-                    label="Refer Friends"
-                    onClick={() => setMenuOpen(false)}
-                    active={router.pathname === "/referrals"}
-                  />
-                  <MobileNavLink
-                    href="/suggest"
-                    icon={MenuIcon}
-                    label="Submit Suggestion"
-                    onClick={() => setMenuOpen(false)}
-                    active={router.pathname === "/suggest"}
-                  />
-                </>
-              )}
-              {isVerified && user.role === "admin" && (
+              <MobileNavLink
+                href="/dashboard"
+                icon={LayoutDashboard}
+                label="Dashboard"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/dashboard"}
+              />
+              <MobileNavLink
+                href="/profile"
+                icon={User}
+                label="My Profile"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/profile"}
+              />
+              <MobileNavLink
+                href="/bots"
+                icon={Server}
+                label="Community Bots"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/bots"}
+              />
+              <MobileNavLink
+                href="/credits/claim"
+                icon={Gift}
+                label="Daily Rewards"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/credits/claim"}
+              />
+              <MobileNavLink
+                href="/credits/buy"
+                icon={TrendingUp}
+                label="Buy Credits"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/credits/buy"}
+              />
+              <MobileNavLink
+                href="/referrals"
+                icon={Users}
+                label="Refer Friends"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/referrals"}
+              />
+              <MobileNavLink
+                href="/suggest"
+                icon={MenuIcon}
+                label="Submit Suggestion"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/suggest"}
+              />
+              {user?.role === "admin" && (
                 <MobileNavLink
                   href="/admin"
                   icon={Shield}

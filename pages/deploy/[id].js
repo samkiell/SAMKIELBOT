@@ -59,8 +59,14 @@ export default function DeploymentSessionPage() {
 
     socket.on("bot:pairing_code", (data) => {
       if (data.deploymentId === id) {
-        console.log("[Socket.IO] Pairing code:", data.code);
-        fetchDeploymentStatus();
+        console.log("[Socket.IO] Pairing code received:", data.code);
+        setDeployment((prev) => ({
+          ...prev,
+          status: "awaiting_pairing",
+          pairingCode: data.code,
+        }));
+        setLoading(false);
+        toast.success("Pairing code found! 📱");
       }
     });
 

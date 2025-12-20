@@ -141,6 +141,13 @@ const FriendlyTerminal = ({ logs = [], status }) => {
             type: "friendly",
           },
           {
+            pattern:
+              /(?:Your pairing code|Pairing code|Code)\s*[:\s-]*\s*([A-Z0-9]{4}-[A-Z0-9]{4})/i,
+            friendly: "Pairing code found! Check above to link WhatsApp. ✨",
+            icon: <CheckCircle className="w-4 h-4 text-green-400" />,
+            type: "success",
+          },
+          {
             pattern: /success|ready|finished|done|complete|finalizing/i,
             friendly: "Finalizing system handshake... ✨",
             icon: <CheckCircle className="w-4 h-4 text-green-400" />,

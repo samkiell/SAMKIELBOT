@@ -95,7 +95,9 @@ export default function Register() {
     try {
       const result = await register(formData);
       if (result) {
-        toast.success(`🎉 Registration successful! Welcome ${result.username}`);
+        toast.success(
+          "🎉 Registration successful! An OTP has been sent to your email."
+        );
         // Clear all flags after successful registration
         localStorage.removeItem("samkiel_agreed");
         localStorage.removeItem("samkiel_clicked_terms");

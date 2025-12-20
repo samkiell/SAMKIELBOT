@@ -54,9 +54,8 @@ export default function Verify() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Verification successful!");
+        toast.success(`Welcome ${user?.username || "to SAMKIEL BOT"}!`);
         const updatedUser = await refreshUser();
-        console.log("FRESH USER RECEIVED ON FRONTEND:", updatedUser);
 
         // If refreshUser returns the updated user, we can immediately check it
         if (
@@ -65,9 +64,6 @@ export default function Verify() {
         ) {
           router.replace("/dashboard");
         } else {
-          console.warn(
-            "User still unverified in state, but redirecting to dashboard anyway."
-          );
           router.replace("/dashboard");
         }
       } else {

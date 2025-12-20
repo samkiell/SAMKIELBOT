@@ -43,8 +43,19 @@ export default function Verify() {
 
       if (response.ok) {
         toast.success("Verification successful!");
-        await refreshUser();
-        router.push("/dashboard");
+        const updatedUser = await refreshUser();
+
+        // If refreshUser returns the updated user, we can immediately check it
+        if (
+          updatedUser &&
+          (updatedUser.isEmailVerified || updatedUser.isPhoneVerified)
+        ) {
+          router.replace("/dashboard");
+        } else {
+          // Fallback if refreshUser didn't return or state hasn't updated yet
+          // router.push is already called in the success block, but let's be safe
+          router.replace("/dashboard");
+        }
       } else {
         toast.error(data.message || "Verification failed");
       }

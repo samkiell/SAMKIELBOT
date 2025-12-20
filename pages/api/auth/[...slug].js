@@ -6,6 +6,7 @@ import {
   updateProfile,
   validateReferrer,
 } from "@/lib/controllers/authController";
+import { sendOTP, verifyOTPCode } from "@/lib/controllers/otpController";
 import { protect } from "@/lib/utils/authMiddleware";
 
 export default async function handler(req, res) {
@@ -48,6 +49,25 @@ export default async function handler(req, res) {
     ) {
       req.params = { username: slug[1] };
       return await validateReferrer(req, res);
+    }
+
+    // Route: POST /api/auth/otp/send
+    if (slug && slug[0] === "otp" && slug[1] === "send" && method === "POST") {
+      return await protect(req, res, async () => {
+        return await sendOTP(req, res);
+      });
+    }
+
+    // Route: POST /api/auth/otp/verify
+    if (
+      slug &&
+      slug[0] === "otp" &&
+      slug[1] === "verify" &&
+      method === "POST"
+    ) {
+      return await protect(req, res, async () => {
+        return await verifyOTPCode(req, res);
+      });
     }
 
     // Method not allowed

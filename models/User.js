@@ -72,6 +72,21 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // OTP Verification
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      code: { type: String }, // Hashed OTP
+      expiresAt: { type: Date },
+      type: { type: String, enum: ["email", "phone"] },
+      attempts: { type: Number, default: 0 },
+    },
   },
   { timestamps: true }
 );

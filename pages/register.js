@@ -33,8 +33,11 @@ export default function Register() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      // Check for return route or unrelated
-      router.push("/dashboard");
+      if (user.isEmailVerified || user.isPhoneVerified) {
+        router.push("/dashboard");
+      } else {
+        router.push("/verify");
+      }
     }
   }, [user, authLoading, router]);
 

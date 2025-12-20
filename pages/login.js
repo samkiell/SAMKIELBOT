@@ -29,11 +29,15 @@ export default function Login() {
   useEffect(() => {
     if (!authLoading && user) {
       const returnRoute = sessionStorage.getItem("return_route");
-      if (returnRoute) {
-        sessionStorage.removeItem("return_route");
-        router.push(returnRoute);
+      if (user.isEmailVerified || user.isPhoneVerified) {
+        if (returnRoute) {
+          sessionStorage.removeItem("return_route");
+          router.push(returnRoute);
+        } else {
+          router.push("/dashboard");
+        }
       } else {
-        router.push("/dashboard");
+        router.push("/verify");
       }
     }
   }, [user, authLoading, router]);

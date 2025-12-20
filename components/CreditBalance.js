@@ -44,28 +44,24 @@ export default function CreditBalance({ showBuyButton = true }) {
   return (
     <div className="flex items-center gap-3">
       <div
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-lg border border-white/10 ${
           isLow
-            ? "bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700"
-            : "bg-gradient-to-r from-yellow-400 to-orange-500 text-white"
+            ? "bg-gradient-to-r from-red-600 to-rose-700 text-white"
+            : "bg-gradient-to-r from-yellow-500 to-orange-600 text-white"
         }`}
       >
-        <FaCoins className={isLow ? "text-red-600 dark:text-red-400" : ""} />
-        <span
-          className={`font-bold ${
-            isLow ? "text-red-700 dark:text-red-300" : ""
-          }`}
-        >
+        <FaCoins className="text-white" />
+        <span className="font-bold text-white">
           {Math.round(credits)} Credits
         </span>
       </div>
       {showBuyButton && (
         <button
           onClick={() => router.push("/credits/buy")}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 border border-white/10"
         >
-          <FaShoppingCart />
-          <span className="hidden sm:inline">Buy Credits</span>
+          <FaShoppingCart className="text-white" />
+          <span className="hidden sm:inline text-white">Buy Credits</span>
         </button>
       )}
     </div>

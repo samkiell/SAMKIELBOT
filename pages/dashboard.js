@@ -135,10 +135,10 @@ export default function Dashboard() {
             <CreditBalance key={refreshKey} />
             <Link
               href="/deploy"
-              className="inline-flex items-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 text-white shadow-lg"
+              className="inline-flex items-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-6 py-3 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg border border-white/10"
             >
-              <Plus size={20} className="mr-2" />
-              Deploy Bot
+              <Plus size={20} className="mr-2 text-white" />
+              <span className="text-white">Deploy Bot</span>
             </Link>
           </div>
         </div>

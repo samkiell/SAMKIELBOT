@@ -58,6 +58,7 @@ export default function ClaimCredits() {
 
       if (data.success && data.data.dailyClaim) {
         const status = data.data.dailyClaim;
+        status.canClaim = true; // TEMPORARY OVERRIDE FOR TESTING
         setClaimStatus(status);
 
         if (!status.canClaim && status.nextClaimTime) {
@@ -297,18 +298,19 @@ export default function ClaimCredits() {
                   disabled={claiming || loading || !turnstileToken}
                   className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-500/25 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-70 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto"
                 >
-                {claiming ? (
-                  <>
-                    <Loader2 className="animate-spin w-6 h-6" />
-                    Claiming...
-                  </>
-                ) : (
-                  <>
-                    <Gift className="w-6 h-6" />
-                    Claim 5 Credits
-                  </>
-                )}
-              </button>
+                  {claiming ? (
+                    <>
+                      <Loader2 className="animate-spin w-6 h-6" />
+                      Claiming...
+                    </>
+                  ) : (
+                    <>
+                      <Gift className="w-6 h-6" />
+                      Claim 5 Credits
+                    </>
+                  )}
+                </button>
+              </div>
             ) : (
               <div className="flex flex-col gap-4 items-center">
                 <div className="bg-gray-100 dark:bg-slate-900/50 rounded-xl p-4 w-full max-w-sm border border-gray-200 dark:border-slate-700">

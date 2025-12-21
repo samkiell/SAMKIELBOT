@@ -149,19 +149,21 @@ export default function ProfilePage() {
           {/* Avatar Section */}
           <div className="flex flex-col items-center mb-8">
             <div className="relative mb-4">
-              {user?.profileImage ? (
-                <Image
-                  src={user.profileImage}
-                  alt="Profile"
-                  width={120}
-                  height={120}
-                  className="rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg"
-                />
-              ) : (
-                <div className="w-32 h-32 bg-indigo-500 rounded-full flex items-center justify-center border-4 border-white dark:border-gray-700 shadow-lg">
-                  <User size={48} className="text-white" />
-                </div>
-              )}
+              <div className="w-32 h-32 relative rounded-full overflow-hidden border-4 border-white dark:border-gray-700 shadow-lg bg-gray-100 dark:bg-gray-700">
+                {user?.profileImage ? (
+                  <Image
+                    src={user.profileImage}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <User size={48} className="text-gray-400" />
+                  </div>
+                )}
+              </div>
 
               <button
                 onClick={handleAvatarClick}

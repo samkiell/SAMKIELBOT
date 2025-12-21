@@ -27,13 +27,14 @@ export default function UserAvatarDropdown() {
         aria-label="User menu"
       >
         {user?.profileImage ? (
-          <Image
-            src={user.profileImage}
-            alt="Profile"
-            width={32}
-            height={32}
-            className="rounded-full object-cover"
-          />
+          <div className="w-8 h-8 relative rounded-full overflow-hidden">
+            <Image
+              src={user.profileImage}
+              alt="Profile"
+              fill
+              className="object-cover"
+            />
+          </div>
         ) : (
           <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
             <span className="text-white text-sm font-semibold">

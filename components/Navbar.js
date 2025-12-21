@@ -261,8 +261,17 @@ export default function Navbar() {
           {isVerified && (
             <div className="pb-3 mb-3 border-b border-gray-100 dark:border-slate-800">
               <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-800/40 rounded-2xl">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold shrink-0">
-                  {user?.username?.[0]?.toUpperCase() || "S"}
+                <div className="w-10 h-10 relative rounded-full overflow-hidden bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold shrink-0">
+                  {user?.profileImage ? (
+                    <Image
+                      src={user.profileImage}
+                      alt="Profile"
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    user?.username?.[0]?.toUpperCase() || "S"
+                  )}
                 </div>
                 <div className="flex-1 min-w-0 text-left text-sm">
                   <p className="font-bold truncate text-gray-900 dark:text-gray-100">

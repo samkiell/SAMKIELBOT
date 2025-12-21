@@ -58,15 +58,17 @@ export default function ProfilePage() {
 
     try {
       // Upload to Cloudinary
+      const cloudName =
+        process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dgyspf1tt";
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
-      formDataUpload.append(
-        "upload_preset",
-        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
-      );
+      formDataUpload.append("upload_preset", uploadPreset);
+      formDataUpload.append("folder", "samkielbot");
 
       const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         {
           method: "POST",
           body: formDataUpload,

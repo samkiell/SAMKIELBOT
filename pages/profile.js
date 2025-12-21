@@ -8,9 +8,15 @@ import { updateProfile } from "../lib/api";
 import { ArrowLeft, Upload, User, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
+import Skeleton from "../components/Skeleton";
+
 export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const { user, setUser, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     fullName: "",
   });
@@ -20,9 +26,6 @@ export default function ProfilePage() {
     confirmPassword: "",
   });
   const [passwordLoading, setPasswordLoading] = useState(false);
-  const { user, setUser } = useAuth();
-  const router = useRouter();
-  const fileInputRef = useRef(null);
 
   // Initialize form data when user loads
   useEffect(() => {
@@ -159,6 +162,38 @@ export default function ProfilePage() {
       setPasswordLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+        <Head>
+          <title>Profile - SAMKIEL BOT</title>
+        </Head>
+        <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl pt-24">
+          <Skeleton className="h-8 w-40 mb-12" />
+          <div className="text-center mb-8">
+            <Skeleton className="h-10 w-64 mx-auto mb-4" />
+            <Skeleton className="h-6 w-96 mx-auto" />
+          </div>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
+            <div className="flex flex-col items-center mb-8">
+              <Skeleton className="h-32 w-32 rounded-full mb-4" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+            <div className="space-y-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i}>
+                  <Skeleton className="h-4 w-24 mb-2" />
+                  <Skeleton className="h-12 w-full rounded-lg" />
+                </div>
+              ))}
+              <Skeleton className="h-12 w-full rounded-lg mt-8" />
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (!user) {
     router.push("/login");

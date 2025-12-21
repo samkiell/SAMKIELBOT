@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Snowfall from "../../components/Snowfall";
 import io from "socket.io-client";
+import { CommunityBotSkeleton } from "../../components/Skeleton";
 
 let socket;
 
@@ -249,13 +250,13 @@ export default function BotsList() {
 
         {/* Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="h-64 bg-gray-200 dark:bg-slate-800/50 rounded-2xl animate-pulse"
-              ></div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <CommunityBotSkeleton />
+            <CommunityBotSkeleton />
+            <CommunityBotSkeleton />
+            <CommunityBotSkeleton />
+            <CommunityBotSkeleton />
+            <CommunityBotSkeleton />
           </div>
         ) : filteredBots.length === 0 ? (
           <div className="text-center py-20 bg-white/30 dark:bg-slate-800/30 rounded-3xl border border-dashed border-gray-300 dark:border-slate-700">

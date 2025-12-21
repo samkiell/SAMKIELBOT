@@ -5,6 +5,11 @@ import { useAuth } from "../lib/auth";
 import { Copy, Users, Gift, TrendingUp, Calendar } from "lucide-react";
 import toast from "react-hot-toast";
 
+import Skeleton, {
+  StatCardSkeleton,
+  TableSkeleton,
+} from "../components/Skeleton";
+
 export default function ReferralsPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -56,8 +61,23 @@ export default function ReferralsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] transition-colors duration-300">
+        <Head>
+          <title>Referrals - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        </Head>
+        <main className="container mx-auto px-4 py-8 max-w-6xl pt-24">
+          <div className="mb-8">
+            <Skeleton className="h-10 w-64 mb-2" />
+            <Skeleton className="h-6 w-96" />
+          </div>
+          <Skeleton className="h-48 w-full rounded-xl mb-8" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+          </div>
+          <TableSkeleton rows={3} cols={4} />
+        </main>
       </div>
     );
   }

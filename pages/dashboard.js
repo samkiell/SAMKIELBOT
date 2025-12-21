@@ -12,6 +12,7 @@ import { Plus, Gift } from "lucide-react";
 import toast from "react-hot-toast";
 import CreditBalance from "../components/CreditBalance";
 import DailyClaimButton from "../components/DailyClaimButton";
+import { BotCardSkeleton } from "../components/Skeleton";
 
 export default function Dashboard() {
   const [deployments, setDeployments] = useState([]);
@@ -157,11 +158,10 @@ export default function Dashboard() {
         <StatsOverview deployments={deployments} />
 
         {loading ? (
-          <div className="text-center py-16">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">
-              Loading deployments...
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <BotCardSkeleton />
+            <BotCardSkeleton />
+            <BotCardSkeleton />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

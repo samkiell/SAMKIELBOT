@@ -5,6 +5,8 @@ import { useAuth } from "../../lib/auth";
 import { FaCoins, FaCheckCircle, FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
 
+import Skeleton from "../../components/Skeleton";
+
 export default function BuyCredits() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -68,12 +70,39 @@ export default function BuyCredits() {
     }
   };
 
-  if (authLoading || !user) {
+  if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <Head>
+          <title>Buy Credits - SAMKIEL BOT</title>
+        </Head>
+        <div className="max-w-6xl mx-auto p-4 md:p-6 pt-24">
+          <div className="mb-8">
+            <Skeleton className="h-4 w-32 mb-4" />
+            <Skeleton className="h-10 w-64 mb-2" />
+            <Skeleton className="h-6 w-96" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700"
+              >
+                <Skeleton className="h-16 w-16 rounded-full mx-auto mb-6" />
+                <Skeleton className="h-12 w-24 mx-auto mb-2" />
+                <Skeleton className="h-4 w-16 mx-auto mb-8" />
+                <Skeleton className="h-8 w-32 mx-auto mb-6" />
+                <Skeleton className="h-12 w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (

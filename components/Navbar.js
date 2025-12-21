@@ -79,18 +79,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-2.5 md:py-4 flex items-center justify-between">
         <Link
           href={isVerified ? "/dashboard" : "/"}
-          className="flex items-center space-x-3"
+          className="flex items-center"
         >
           <Image
             src="/SAMKIELBOT-LOGO.png"
             alt="SAMKIEL BOT Logo"
-            width={40}
-            height={40}
-            className="-mt-1"
+            width={45}
+            height={45}
+            className="hover:scale-110 transition-transform duration-300"
           />
-          <span className="text-gray-800 dark:text-gray-100 text-xl font-bold">
-            𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋
-          </span>
         </Link>
 
         {/* Desktop Links */}

@@ -12,6 +12,11 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
+import Skeleton, {
+  StatCardSkeleton,
+  NodeHealthSkeleton,
+} from "../../components/Skeleton";
+
 export default function AdminDashboard() {
   const { user, token } = useAuth();
   const [stats, setStats] = useState(null);
@@ -45,9 +50,29 @@ export default function AdminDashboard() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <AdminLayout>
+        <Head>
+          <title>Admin Control Plane - SAMKIEL BOT</title>
+        </Head>
+        <div className="mb-8">
+          <Skeleton className="h-10 w-64 mb-2" />
+          <Skeleton className="h-6 w-96" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+        </div>
+        <div className="mb-8">
+          <Skeleton className="h-8 w-48 mb-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <NodeHealthSkeleton />
+            <NodeHealthSkeleton />
+            <NodeHealthSkeleton />
+          </div>
+        </div>
+      </AdminLayout>
     );
 
   return (

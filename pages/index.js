@@ -122,7 +122,7 @@ export default function Home() {
       </Head>
 
       {/* Hero Section */}
-      <section className="relative flex flex-col justify-center items-center text-center px-6 py-12 min-h-screen bg-gray-50 dark:bg-[#0f172a]">
+      <section className="relative flex flex-col justify-center items-center text-center px-6 pt-32 pb-12 min-h-screen bg-gray-50 dark:bg-[#0f172a]">
         <div className="absolute inset-0 bg-grid-slate-200 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]"></div>
         <div className="relative z-10">
           <motion.div {...fadeUp}>
@@ -392,13 +392,13 @@ export default function Home() {
               <div className="text-4xl font-bold mb-6 text-indigo-600">₦0</div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500">✓</span> 1 bot
+                  <span className="text-green-500">✓</span> Free signup credits
                 </li>
                 <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500">✓</span> 300 MB RAM
+                  <span className="text-green-500">✓</span> Basic bot hosting
                 </li>
                 <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500">✓</span> Basic features
+                  <span className="text-green-500">✓</span> Community support
                 </li>
               </ul>
               <Link
@@ -413,27 +413,29 @@ export default function Home() {
               className="bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-xl shadow-xl hover:shadow-2xl transition transform hover:scale-105"
             >
               <h3 className="text-2xl font-bold mb-4 text-white">
-                Premium Plans
+                Top-up Credits
               </h3>
               <div className="text-4xl font-bold mb-6 text-white">
-                From ₦1,500<span className="text-lg">/mo</span>
+                From ₦500
               </div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center gap-2 text-white">
-                  <span className="text-yellow-300">✓</span> Up to 3 bots
+                  <span className="text-yellow-300">✓</span> Instant credit
+                  delivery
                 </li>
                 <li className="flex items-center gap-2 text-white">
-                  <span className="text-yellow-300">✓</span> Up to 2 GB RAM
+                  <span className="text-yellow-300">✓</span> Pay as you deploy
                 </li>
                 <li className="flex items-center gap-2 text-white">
-                  <span className="text-yellow-300">✓</span> Priority support
+                  <span className="text-yellow-300">✓</span> Priority bot
+                  hosting
                 </li>
               </ul>
               <Link
-                href="/pricing"
+                href="/dashboard"
                 className="block w-full py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-gray-100 transition text-center"
               >
-                View All Plans
+                Buy Credits Now
               </Link>
             </motion.div>
           </div>

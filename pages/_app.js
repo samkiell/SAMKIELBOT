@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import Layout from "../components/Layout";
 import Head from "next/head";
 import { ThemeProvider } from "../context/ThemeContext";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const AuthProvider = dynamic(
   () => import("../lib/auth").then((mod) => mod.AuthProvider),
@@ -42,6 +44,8 @@ export default function App({ Component, pageProps }) {
               },
             }}
           />
+          <SpeedInsights />
+          <Analytics />
         </AuthProvider>
       </ThemeProvider>
     </>

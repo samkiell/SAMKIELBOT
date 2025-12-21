@@ -76,10 +76,6 @@ export default function CommandsPage({ commands, lastUpdated }) {
         <div className="container mx-auto px-4 relative z-10 max-w-7xl">
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-6">
-              <Terminal size={14} />
-              <span>Synced with GitHub</span>
-            </div>
             <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
               Command <span className="text-indigo-600">Reference.</span>
             </h1>
@@ -176,15 +172,6 @@ export default function CommandsPage({ commands, lastUpdated }) {
                 <Zap className="mr-2" size={20} />
                 Suggest Command
               </Link>
-              <a
-                href="https://github.com/Samkiel/SAMKIELBOT"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 px-6 py-3 rounded-xl font-bold transition-all"
-              >
-                <Github className="mr-2" size={20} />
-                Contribute Code
-              </a>
             </div>
           </div>
         </div>
@@ -356,19 +343,7 @@ function CommandDetailModal({ command, onClose }) {
             </div>
           </div>
 
-          {/* Source Link */}
-          <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-gray-800">
-            <a
-              href={command.githubUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            >
-              <Code size={16} />
-              View Source on GitHub
-              <ExternalLink size={14} />
-            </a>
-          </div>
+          {/* Source Link Removed (Private Repo) */}
         </div>
       </motion.div>
     </div>

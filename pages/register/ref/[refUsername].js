@@ -387,7 +387,10 @@ export default function ReferralRegister() {
                 <a
                   href="/terms"
                   onClick={() => {
-                    sessionStorage.setItem("return_route", "register");
+                    sessionStorage.setItem(
+                      "return_route",
+                      `/register/ref/${refUsername}`
+                    );
                     localStorage.setItem("samkiel_clicked_terms", "true");
                   }}
                   className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
@@ -398,7 +401,10 @@ export default function ReferralRegister() {
                 <Link
                   href="/privacy"
                   onClick={() => {
-                    sessionStorage.setItem("return_route", "register");
+                    sessionStorage.setItem(
+                      "return_route",
+                      `/register/ref/${refUsername}`
+                    );
                     localStorage.setItem("samkiel_clicked_terms", "true");
                   }}
                   className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"

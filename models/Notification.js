@@ -14,9 +14,18 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  type: {
-    type: String,
-    enum: ["info", "success", "error", "warning", "welcome"],
+    enum: [
+      "info",
+      "success",
+      "error",
+      "warning",
+      "welcome",
+      "update",
+      "maintenance",
+      "alert",
+      "announcement",
+      "offer",
+    ],
     default: "info",
   },
   link: {

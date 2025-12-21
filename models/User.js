@@ -84,7 +84,7 @@ const userSchema = new mongoose.Schema(
     otp: {
       code: { type: String }, // Hashed OTP
       expiresAt: { type: Date },
-      type: { type: String, enum: ["email", "phone"] },
+      type: { type: String, enum: ["email", "phone", "password_reset"] },
       attempts: { type: Number, default: 0 },
     },
   },

@@ -5,6 +5,9 @@ import {
   verifyToken,
   updateProfile,
   validateReferrer,
+  forgotPassword,
+  resetPassword,
+  changePassword,
 } from "@/lib/controllers/authController";
 import { sendOTP, verifyOTPCode } from "@/lib/controllers/otpController";
 import { protect } from "@/lib/utils/authMiddleware";
@@ -37,6 +40,23 @@ export default async function handler(req, res) {
     if (slug && slug[0] === "profile" && method === "PUT") {
       return await protect(req, res, async () => {
         return await updateProfile(req, res);
+      });
+    }
+
+    // Route: POST /api/auth/forgot-password
+    if (slug && slug[0] === "forgot-password" && method === "POST") {
+      return await forgotPassword(req, res);
+    }
+
+    // Route: POST /api/auth/reset-password
+    if (slug && slug[0] === "reset-password" && method === "POST") {
+      return await resetPassword(req, res);
+    }
+
+    // Route: PUT /api/auth/change-password
+    if (slug && slug[0] === "change-password" && method === "PUT") {
+      return await protect(req, res, async () => {
+        return await changePassword(req, res);
       });
     }
 

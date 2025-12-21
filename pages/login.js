@@ -189,6 +189,15 @@ export default function Login() {
                   {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
                 </button>
               </div>
+
+              <div className="flex justify-end">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
             </div>
 
             {/* Terms and Privacy Checkbox */}

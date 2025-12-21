@@ -16,14 +16,7 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  useEffect(() => {
-    // Restore agreement state if user has agreed or read terms
-    const agreed = localStorage.getItem("samkiel_agreed") === "true";
-    const read = localStorage.getItem("samkiel_read_terms") === "true";
-    if (agreed || read) setAgreeToTerms(true);
-  }, []);
   const { login, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -67,30 +60,13 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const read = localStorage.getItem("samkiel_read_terms") === "true";
-
-    if (!read) {
-      toast.error(
-        "Abeg go read the Terms & Conditions and Privacy Policy first."
-      );
-      return;
-    }
-
-    if (!agreeToTerms) {
-      toast.error("You must agree to the Terms & Conditions to proceed.");
-      return;
-    }
-
     setLoading(true);
+
     try {
       const user = await login(formData.identifier, formData.password);
       if (user) {
         // Success handled in useAuth
       }
-      // Clear all flags after successful login
-      localStorage.removeItem("samkiel_agreed");
-      localStorage.removeItem("samkiel_clicked_terms");
-      localStorage.removeItem("samkiel_read_terms");
       sessionStorage.removeItem("return_route");
     } catch (error) {
       const err = JSON.parse(error.message);
@@ -202,57 +178,6 @@ export default function Login() {
                   Forgot your password?
                 </Link>
               </div>
-            </div>
-
-            {/* Terms and Privacy Checkbox */}
-            <div className="flex items-start space-x-3">
-              <input
-                id="agreeToTerms"
-                name="agreeToTerms"
-                type="checkbox"
-                checked={agreeToTerms}
-                onChange={(e) => {
-                  const newValue = e.target.checked;
-                  setAgreeToTerms(newValue);
-                  if (newValue) {
-                    localStorage.setItem("samkiel_agreed", "true");
-                  } else {
-                    localStorage.removeItem("samkiel_agreed");
-                  }
-                }}
-                className="mt-1 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="agreeToTerms"
-                className="text-sm text-gray-700 dark:text-gray-300"
-              >
-                I agree to the{" "}
-                <a
-                  href="/terms"
-                  onClick={(e) => {
-                    // record intent and route, then navigate
-                    sessionStorage.setItem("return_route", "login");
-                    localStorage.setItem("samkiel_clicked_terms", "true");
-                    // let the normal link proceed (no preventDefault)
-                  }}
-                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
-                >
-                  Terms & Conditions
-                </a>{" "}
-                and{" "}
-                <Link
-                  href="/privacy"
-                  onClick={(e) => {
-                    // record intent and route, then navigate
-                    sessionStorage.setItem("return_route", "login");
-                    localStorage.setItem("samkiel_clicked_terms", "true");
-                    // let the normal link proceed (no preventDefault)
-                  }}
-                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
-                >
-                  Privacy Policy
-                </Link>
-              </label>
             </div>
 
             <button

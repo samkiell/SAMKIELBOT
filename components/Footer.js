@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaGithub, FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import { useAuth } from "../lib/auth";
 
 export default function Footer() {
@@ -19,6 +19,12 @@ export default function Footer() {
                 className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
               >
                 Home
+              </Link>
+              <Link
+                href="/support"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                Support Center
               </Link>
               <Link
                 href="/bots"
@@ -122,7 +128,7 @@ export default function Footer() {
                 <FaGithub size={24} />
               </a>
               <a
-                href="#"
+                href="https://linkedin.com/in/samkiell"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hover:scale-110"
@@ -130,21 +136,16 @@ export default function Footer() {
                 <FaLinkedin size={24} />
               </a>
               <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="mailto:samkielbot@gmail.com"
                 className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hover:scale-110"
               >
-                <FaTwitter size={24} />
+                <FaEnvelope size={24} />
               </a>
-              <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hover:scale-110"
-              >
-                <FaInstagram size={24} />
-              </a>
+            </div>
+            <div className="mt-4">
+              <p className="text-gray-500 dark:text-gray-400 text-xs">
+                samkielbot@gmail.com
+              </p>
             </div>
           </div>
         </div>

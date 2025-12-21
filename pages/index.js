@@ -15,8 +15,7 @@ import {
   FaCloud,
   FaGithub,
   FaLinkedin,
-  FaTwitter,
-  FaInstagram,
+  FaEnvelope,
 } from "react-icons/fa";
 import Snowfall from "../components/Snowfall";
 
@@ -481,7 +480,7 @@ export default function Home() {
                 <FaGithub size={30} />
               </a>
               <a
-                href="#"
+                href="https://linkedin.com/in/samkiell"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition hover:scale-110"
@@ -489,22 +488,15 @@ export default function Home() {
                 <FaLinkedin size={30} />
               </a>
               <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="mailto:samkielbot@gmail.com"
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition hover:scale-110"
               >
-                <FaTwitter size={30} />
-              </a>
-              <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition hover:scale-110"
-              >
-                <FaInstagram size={30} />
+                <FaEnvelope size={30} />
               </a>
             </div>
+            <p className="mt-8 text-gray-500 dark:text-gray-400 font-medium">
+              samkielbot@gmail.com
+            </p>
           </motion.div>
         </div>
       </section>

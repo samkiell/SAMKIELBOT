@@ -16,6 +16,7 @@ import {
   Gift,
   TrendingUp,
   Shield,
+  HelpCircle,
   Menu as MenuIcon,
   User,
   LogOut,
@@ -124,6 +125,12 @@ export default function Navbar() {
                   className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
                   Referrals
+                </Link>
+                <Link
+                  href="/support"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Support
                 </Link>
               </>
             )}
@@ -332,6 +339,13 @@ export default function Navbar() {
                 label="Submit Suggestion"
                 onClick={() => setMenuOpen(false)}
                 active={router.pathname === "/suggest"}
+              />
+              <MobileNavLink
+                href="/support"
+                icon={HelpCircle}
+                label="Help & Support"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/support"}
               />
               {user?.role === "admin" && (
                 <MobileNavLink

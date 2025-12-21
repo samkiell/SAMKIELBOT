@@ -117,7 +117,7 @@ export default function Home() {
         <meta property="og:image" content="/og-image.png" />
         <meta property="og:url" content="https://bot.samkiel.dev" />
         <meta property="og:type" content="website" />
-        <link rel="icon" href="/SAMKIELBOT-LOGO.png" />
+        <link rel="icon" href="/logo.png" />
       </Head>
 
       {/* Hero Section */}

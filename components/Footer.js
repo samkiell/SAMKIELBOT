@@ -116,7 +116,7 @@ export default function Footer() {
           {/* Column 4: Connect With Us */}
           <div className="text-center md:text-right">
             <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-4 text-xs tracking-widest uppercase">
-              Connect
+              Contact
             </h3>
             <div className="flex justify-center md:justify-end space-x-4">
               <a

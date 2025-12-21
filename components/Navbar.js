@@ -84,7 +84,7 @@ export default function Navbar() {
         >
           <div className="relative">
             <Image
-              src="/SAMKIELBOT-LOGO.png"
+              src="/logo.png"
               alt="SAMKIEL BOT Logo"
               width={42}
               height={42}

@@ -10,7 +10,6 @@ import {
 import {
   getDeploymentStatus,
   getActiveBots,
-  botHeartbeat,
 } from "@/lib/controllers/deploymentStatusController";
 import { protect } from "@/lib/utils/authMiddleware";
 import Deployment from "@/models/Deployment";
@@ -49,11 +48,6 @@ export default async function handler(req, res) {
       return await protect(req, res, async () => {
         return await getActiveBots(req, res);
       });
-    }
-
-    // Route: POST /api/deploy/heartbeat
-    if (slug && slug[0] === "heartbeat" && method === "POST") {
-      return await botHeartbeat(req, res);
     }
 
     // Route: GET /api/deploy/:id/status

@@ -58,7 +58,6 @@ export default function ClaimCredits() {
 
       if (data.success && data.data.dailyClaim) {
         const status = data.data.dailyClaim;
-        status.canClaim = true; // TEMPORARY OVERRIDE FOR TESTING
         setClaimStatus(status);
 
         if (!status.canClaim && status.nextClaimTime) {

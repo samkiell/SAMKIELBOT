@@ -31,7 +31,7 @@ export default function StatsOverview({ deployments }) {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8">
+    <div className="grid grid-cols-3 gap-2 md:gap-4 mb-4 md:mb-8">
       {stats.map((stat, index) => {
         const Icon = stat.icon;
         return (

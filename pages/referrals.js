@@ -118,7 +118,7 @@ export default function ReferralsPage() {
               type="text"
               value={referralData?.referralLink || ""}
               readOnly
-              className="flex-1 px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white placeholder-white/70"
+              className="flex-1 px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white placeholder-white/70 min-w-0"
             />
             <button
               onClick={copyReferralLink}

@@ -175,7 +175,7 @@ export default function Dashboard() {
                 />
               ))}
               {deployments.length === 0 && (
-                <div className="col-span-full text-center py-16">
+                <div className="col-span-full text-center py-8 md:py-16">
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-700/40 p-8 max-w-md mx-auto">
                     <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                       <svg

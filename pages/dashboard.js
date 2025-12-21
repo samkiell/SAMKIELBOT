@@ -107,10 +107,7 @@ export default function Dashboard() {
     return "Good night";
   };
 
-  const onClaimSuccess = async () => {
-    if (refreshUser) await refreshUser();
-    setRefreshKey((prev) => prev + 1);
-  };
+  //
 
   if (authLoading) {
     return (

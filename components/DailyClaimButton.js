@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
-import { Gift, Clock, Loader2, RefreshCcw } from "lucide-react";
-import toast from "react-hot-toast";
+import { Gift, Clock, RefreshCcw } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-export default function DailyClaimButton({ onClaimSuccess }) {
+export default function DailyClaimButton() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [claiming, setClaiming] = useState(false);
   const [claimStatus, setClaimStatus] = useState({
     canClaim: false,
     nextClaimTime: null,
@@ -79,40 +80,6 @@ export default function DailyClaimButton({ onClaimSuccess }) {
     return () => clearInterval(timer);
   }, [claimStatus.canClaim, claimStatus.nextClaimTime, fetchStatus]);
 
-  const handleClaim = async () => {
-    if (claiming) return;
-    setClaiming(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/credits/daily-claim", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success(data.message, { icon: "🎁" });
-        setClaimStatus({
-          canClaim: false,
-          nextClaimTime: data.data.nextClaimTime,
-        });
-        if (onClaimSuccess) onClaimSuccess();
-      } else {
-        toast.error(data.message);
-        fetchStatus();
-      }
-    } catch (error) {
-      console.error("Claim error:", error);
-      toast.error("Failed to claim credits. Try again.");
-    } finally {
-      setClaiming(false);
-    }
-  };
-
   const formatTime = (ms) => {
     if (ms <= 0) return "00:00:00";
     const hours = Math.floor(ms / (1000 * 60 * 60));
@@ -134,17 +101,12 @@ export default function DailyClaimButton({ onClaimSuccess }) {
 
   if (claimStatus.canClaim) {
     return (
-      <button
-        onClick={handleClaim}
-        disabled={claiming}
-        className="relative group overflow-hidden flex items-center gap-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50"
+      <Link
+        href="/credits/claim"
+        className="relative group overflow-hidden flex items-center gap-3 bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all duration-300 transform hover:scale-105 active:scale-95"
       >
         <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-[-20deg]"></div>
-        {claiming ? (
-          <Loader2 className="animate-spin w-5 h-5" />
-        ) : (
-          <Gift className="w-5 h-5 animate-bounce-slight" />
-        )}
+        <Gift className="w-5 h-5 animate-bounce-slight" />
         <span className="whitespace-nowrap">Claim Day Benefit</span>
 
         <style jsx>{`
@@ -161,7 +123,7 @@ export default function DailyClaimButton({ onClaimSuccess }) {
             animation: bounce-slight 2s infinite;
           }
         `}</style>
-      </button>
+      </Link>
     );
   }
 

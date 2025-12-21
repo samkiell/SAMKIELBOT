@@ -23,10 +23,10 @@ export default function Home() {
   const { user, loading: authLoading } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [stats, setStats] = useState({
-    activeUsers: 400,
-    botsDeployed: 30,
-    uptimeStreak: 99.9,
-    countriesSupported: 5,
+    activeUsers: 0,
+    botsDeployed: 0,
+    uptimeStreak: 98.3,
+    countriesSupported: 7,
   });
 
   useEffect(() => {
@@ -406,13 +406,13 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
               <div className="text-4xl md:text-5xl font-black text-white mb-2">
-                {stats.activeUsers}+
+                {stats.activeUsers}
               </div>
               <div className="text-indigo-100 font-medium">Active Users</div>
             </div>
             <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
               <div className="text-4xl md:text-5xl font-black text-white mb-2">
-                {stats.botsDeployed}+
+                {stats.botsDeployed}
               </div>
               <div className="text-indigo-100 font-medium">Bots Deployed</div>
             </div>

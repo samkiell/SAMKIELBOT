@@ -9,8 +9,8 @@ let cache = {
   data: {
     activeUsers: 0,
     botsDeployed: 0,
-    uptimeStreak: 99.9,
-    countriesSupported: 5,
+    uptimeStreak: 98.3,
+    countriesSupported: 7,
   },
   lastUpdated: 0,
 };
@@ -48,21 +48,15 @@ export default async function handler(req, res) {
     // 3. Calculate Uptime Streak (Mock logic for now, or based on successful pings if you have logs)
     // For now, let's keep it static or slowly increasing towards 99.99
     // In a real scenario, this would come from a monitoring service like UptimeRobot API
-    const uptimeStreak = 99.9;
+    const uptimeStreak = 98.3;
 
     // 4. Countries Supported (Keep static as requested)
-    const countriesSupported = 5;
+    const countriesSupported = 7;
 
     // Update Cache
     cache.data = {
-      activeUsers:
-        activeUsersCount > 400
-          ? activeUsersCount
-          : 400 + Math.floor(Math.random() * 50), // Fallback/Fake growth for visual testing if DB is empty
-      botsDeployed:
-        botsDeployedCount > 30
-          ? botsDeployedCount
-          : 30 + Math.floor(Math.random() * 10), // Fallback/Fake
+      activeUsers: activeUsersCount,
+      botsDeployed: botsDeployedCount,
       uptimeStreak,
       countriesSupported,
     };

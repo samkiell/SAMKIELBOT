@@ -185,7 +185,7 @@ export default function BotCard({ deployment, refreshData }) {
             <span className="font-medium">Deployed:</span>
             <span>
               {new Date(
-                deployment.deployedAt || deployment.createdAt
+                deployment.deployedAt || deployment.createdAt || Date.now()
               ).toLocaleDateString(undefined, {
                 year: "numeric",
                 month: "short",

@@ -7,11 +7,11 @@ export default function Footer() {
   return (
     <footer className="bg-gray-100 dark:bg-gray-800 px-6 py-10 mt-16 border-t border-gray-200 dark:border-gray-700">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Column 1: Quick Links */}
           <div className="text-center md:text-left">
-            <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-4">
-              Quick Links
+            <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-4 text-xs tracking-widest uppercase">
+              Platform
             </h3>
             <div className="flex flex-col space-y-2">
               <Link
@@ -53,9 +53,42 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Legal */}
-          <div className="text-center">
-            <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-4">
+          {/* Column 2: Resources */}
+          <div className="text-center md:text-left">
+            <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-4 text-xs tracking-widest uppercase">
+              Resources
+            </h3>
+            <div className="flex flex-col space-y-2">
+              <Link
+                href="/whatsapp-bot"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                What is a WhatsApp Bot?
+              </Link>
+              <Link
+                href="/deploy-whatsapp-bot"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                Deployment Guide
+              </Link>
+              <Link
+                href="/free-whatsapp-bot"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                Free Bot Hosting
+              </Link>
+              <Link
+                href="/view-once-whatsapp"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                View Once Recovery
+              </Link>
+            </div>
+          </div>
+
+          {/* Column 3: Legal */}
+          <div className="text-center md:text-left">
+            <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-4 text-xs tracking-widest uppercase">
               Legal
             </h3>
             <div className="flex flex-col space-y-2">
@@ -74,10 +107,10 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 3: Connect With Us */}
+          {/* Column 4: Connect With Us */}
           <div className="text-center md:text-right">
-            <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-4">
-              Connect With Us
+            <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-4 text-xs tracking-widest uppercase">
+              Connect
             </h3>
             <div className="flex justify-center md:justify-end space-x-4">
               <a

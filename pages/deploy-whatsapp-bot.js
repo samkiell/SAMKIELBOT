@@ -87,8 +87,9 @@ export default function DeployWhatsAppBotPage() {
             <p>
               This is the most critical step. Click on "Deploy" and our system
               will generate a Pairing Code or a QR code. Open WhatsApp on your
-              phone, go to <strong>Linked Devices > Link a Device</strong>, and
-              scan the code. Your bot is now authenticated and ready to work!
+              phone, go to <strong>Linked Devices &gt; Link a Device</strong>,
+              and scan the code. Your bot is now authenticated and ready to
+              work!
             </p>
 
             <h2 className="text-2xl font-bold mt-10 mb-4 text-gray-900 dark:text-gray-100">

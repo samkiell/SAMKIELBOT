@@ -8,11 +8,18 @@ import {
   Shield,
   Users,
   CreditCard,
+  Terminal,
 } from "lucide-react";
 
 export default function AdminRoutes() {
   const routes = [
     { name: "Landing Page", path: "/", icon: Layout, category: "Public" },
+    {
+      name: "Commands Explorer",
+      path: "/commands",
+      icon: Terminal,
+      category: "Public",
+    },
     { name: "Login", path: "/login", icon: Shield, category: "Auth" },
     { name: "Register", path: "/register", icon: Shield, category: "Auth" },
     {

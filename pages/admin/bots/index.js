@@ -152,7 +152,10 @@ export default function BotControl() {
               <div className="text-sm text-gray-500">
                 Owner:{" "}
                 <span className="text-indigo-500">{bot.user?.email}</span> •{" "}
-                Created: {new Date(bot.createdAt).toLocaleString()}
+                Created:{" "}
+                {new Date(
+                  bot.deployedAt || bot.createdAt || Date.now()
+                ).toLocaleString()}
               </div>
             </div>
 

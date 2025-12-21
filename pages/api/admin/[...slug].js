@@ -25,6 +25,8 @@ import {
   forceSyncBotStatuses,
   getFeatureFlags,
   updateFeatureFlag,
+  getAllNotifications,
+  deleteNotification,
 } from "@/lib/controllers/adminController";
 
 export default async function handler(req, res) {
@@ -261,6 +263,28 @@ export default async function handler(req, res) {
         ) {
           req.params = { key: slug[2] };
           return await updateFeatureFlag(req, res);
+        }
+
+        // Route: GET /api/admin/notifications (List all)
+        if (
+          slug &&
+          slug[0] === "notifications" &&
+          !slug[1] &&
+          method === "GET"
+        ) {
+          return await getAllNotifications(req, res);
+        }
+
+        // Route: DELETE /api/admin/notifications/:id
+        if (
+          slug &&
+          slug[0] === "notifications" &&
+          slug[1] &&
+          !slug[2] &&
+          method === "DELETE"
+        ) {
+          req.params = { id: slug[1] };
+          return await deleteNotification(req, res);
         }
 
         // Method not allowed

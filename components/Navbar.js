@@ -132,6 +132,20 @@ export default function Navbar() {
         <div className="hidden md:flex items-center flex-1 ml-4 text-center">
           <div className="flex-1 flex justify-center">
             <div className="flex gap-6 items-center text-gray-800 dark:text-gray-100">
+              {/* Public Links */}
+              <Link
+                href="/commands"
+                className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+              >
+                Commands
+              </Link>
+              <Link
+                href="/bots"
+                className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+              >
+                Community Bots
+              </Link>
+
               {isVerified && (
                 <>
                   <Link
@@ -139,12 +153,6 @@ export default function Navbar() {
                     className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
                   >
                     Dashboard
-                  </Link>
-                  <Link
-                    href="/bots"
-                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
-                  >
-                    Community Bots
                   </Link>
                   <Link
                     href="/credits/buy"
@@ -158,21 +166,39 @@ export default function Navbar() {
                   >
                     Rewards
                   </Link>
+                </>
+              )}
 
-                  {/* More Dropdown */}
-                  <div className="relative group z-50">
-                    <button className="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium py-2">
-                      More
-                      <ChevronDown size={16} />
-                    </button>
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-1 text-left">
-                        <Link
-                          href="/commands"
-                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                        >
-                          Commands
-                        </Link>
+              {/* More Dropdown */}
+              <div className="relative group z-50">
+                <button className="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium py-2">
+                  More
+                  <ChevronDown size={16} />
+                </button>
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-1 text-left">
+                    <Link
+                      href="/status"
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                    >
+                      Status
+                    </Link>
+                    <Link
+                      href="/docs"
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                    >
+                      Docs
+                    </Link>
+                    <Link
+                      href="/support"
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                    >
+                      Support
+                    </Link>
+
+                    {isVerified && (
+                      <>
+                        <div className="h-px bg-gray-100 dark:bg-gray-700 my-1" />
                         <Link
                           href="/suggest"
                           className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
@@ -185,53 +211,23 @@ export default function Navbar() {
                         >
                           Referrals
                         </Link>
-                        <div className="h-px bg-gray-100 dark:bg-gray-700 my-1" />
-                        <Link
-                          href="/support"
-                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                        >
-                          Support
-                        </Link>
-                        <Link
-                          href="/docs"
-                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                        >
-                          Docs
-                        </Link>
-                        <Link
-                          href="/status"
-                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                        >
-                          Status
-                        </Link>
-                      </div>
-                    </div>
+                      </>
+                    )}
                   </div>
-                </>
-              )}
+                </div>
+              </div>
 
-              {isVerified ? (
-                <>
-                  {user?.role === "admin" && (
-                    <Link
-                      href="/admin"
-                      className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-semibold"
-                    >
-                      Admin
-                    </Link>
-                  )}
-                </>
-              ) : (
+              {!isVerified && (
                 <>
                   <Link
                     href="/login"
-                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    className="ml-4 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
                   >
                     Login
                   </Link>
                   <Link
                     href="/register"
-                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl transition-all font-bold shadow-lg shadow-indigo-500/20"
                   >
                     Register
                   </Link>
@@ -354,7 +350,23 @@ export default function Navbar() {
             </div>
           )}
 
-          {isVerified ? (
+          {/* Public Mobile Links */}
+          <MobileNavLink
+            href="/commands"
+            icon={Terminal}
+            label="Bot Commands"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/commands"}
+          />
+          <MobileNavLink
+            href="/bots"
+            icon={Server}
+            label="Community Bots"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/bots"}
+          />
+
+          {isVerified && (
             <>
               <MobileNavLink
                 href="/dashboard"
@@ -369,20 +381,6 @@ export default function Navbar() {
                 label="My Profile"
                 onClick={() => setMenuOpen(false)}
                 active={router.pathname === "/profile"}
-              />
-              <MobileNavLink
-                href="/bots"
-                icon={Server}
-                label="Community Bots"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/bots"}
-              />
-              <MobileNavLink
-                href="/commands"
-                icon={Terminal}
-                label="Bot Commands"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/commands"}
               />
               <MobileNavLink
                 href="/credits/claim"
@@ -412,53 +410,46 @@ export default function Navbar() {
                 onClick={() => setMenuOpen(false)}
                 active={router.pathname === "/suggest"}
               />
-              <MobileNavLink
-                href="/support"
-                icon={HelpCircle}
-                label="Help & Support"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/support"}
-              />
-              <MobileNavLink
-                href="/docs"
-                icon={BookOpen}
-                label="Documentation"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/docs"}
-              />
-              <MobileNavLink
-                href="/status"
-                icon={Activity}
-                label="System Status"
-                onClick={() => setMenuOpen(false)}
-                active={router.pathname === "/status"}
-              />
-              {user?.role === "admin" && (
-                <MobileNavLink
-                  href="/admin"
-                  icon={Shield}
-                  label="Admin Control Panel"
-                  onClick={() => setMenuOpen(false)}
-                  active={false}
-                  variant="admin"
-                />
-              )}
-
-              <div className="pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    logout();
-                  }}
-                  className="flex items-center gap-3 w-full px-4 py-3.5 rounded-2xl text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all font-bold text-sm"
-                >
-                  <LogOut size={20} />
-                  Logout
-                </button>
-              </div>
             </>
-          ) : (
-            <div className="pt-4 grid grid-cols-2 gap-3">
+          )}
+
+          {/* More Public Mobile Links */}
+          <MobileNavLink
+            href="/status"
+            icon={Activity}
+            label="System Status"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/status"}
+          />
+          <MobileNavLink
+            href="/docs"
+            icon={BookOpen}
+            label="Documentation"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/docs"}
+          />
+          <MobileNavLink
+            href="/support"
+            icon={HelpCircle}
+            label="Help & Support"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/support"}
+          />
+
+          {/* Admin Link */}
+          {user?.role === "admin" && (
+            <MobileNavLink
+              href="/admin"
+              icon={Shield}
+              label="Admin Control Panel"
+              onClick={() => setMenuOpen(false)}
+              active={false}
+              variant="admin"
+            />
+          )}
+
+          {!isVerified ? (
+            <div className="pt-4 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-slate-800 mt-2">
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
@@ -473,6 +464,19 @@ export default function Navbar() {
               >
                 Sign Up
               </Link>
+            </div>
+          ) : (
+            <div className="pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  logout();
+                }}
+                className="flex items-center gap-3 w-full px-4 py-3.5 rounded-2xl text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all font-bold text-sm"
+              >
+                <LogOut size={20} />
+                Logout
+              </button>
             </div>
           )}
         </div>

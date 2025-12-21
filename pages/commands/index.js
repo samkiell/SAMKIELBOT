@@ -16,6 +16,8 @@ import {
   Code,
   X,
   MessageSquare,
+  Copy,
+  Check,
 } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -127,7 +129,7 @@ export default function CommandsPage({ commands, lastUpdated }) {
           <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400 mb-8 px-2">
             <span>{filteredCommands.length} commands found</span>
             <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
-            <span>Updated {new Date(lastUpdated).toLocaleDateString()}</span>
+            <span>Updated {new Date(lastUpdated).toLocaleString()}</span>
           </div>
 
           {/* Grid */}
@@ -253,6 +255,14 @@ function CommandCard({ command, onClick }) {
 }
 
 function CommandDetailModal({ command, onClose }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(command.name);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <motion.div
@@ -317,9 +327,22 @@ function CommandDetailModal({ command, onClose }) {
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">
                 Usage Syntax
               </h3>
-              <div className="bg-gray-900 text-gray-100 p-4 rounded-xl font-mono text-sm shadow-inner flex items-center gap-2">
-                <ChevronRight size={14} className="text-green-500 shrink-0" />
-                {command.usage}
+              <div className="bg-gray-900 text-gray-100 p-2 pl-4 pr-2 rounded-xl font-mono text-sm shadow-inner flex items-center justify-between group border border-gray-700">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <ChevronRight size={14} className="text-green-500 shrink-0" />
+                  <span className="truncate select-all">{command.name}</span>
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className="p-2 rounded-lg bg-gray-800 hover:bg-indigo-600 text-gray-400 hover:text-white transition-all active:scale-95"
+                  title="Copy command"
+                >
+                  {copied ? (
+                    <Check size={16} className="text-green-400" />
+                  ) : (
+                    <Copy size={16} />
+                  )}
+                </button>
               </div>
             </div>
 

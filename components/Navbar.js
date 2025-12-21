@@ -104,79 +104,81 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center justify-between px-4 py-2 flex-1 min-w-0 ml-4">
-          <div className="flex gap-6 items-center text-gray-800 dark:text-gray-100">
-            {isVerified && (
-              <>
-                <Link
-                  href="/dashboard"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  href="/bots"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
-                >
-                  Community Bots
-                </Link>
-                <Link
-                  href="/credits/buy"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
-                >
-                  Buy Credits
-                </Link>
+        {/* Desktop Links */}
+        <div className="hidden md:flex items-center flex-1 ml-4 text-center">
+          <div className="flex-1 flex justify-center">
+            <div className="flex gap-6 items-center text-gray-800 dark:text-gray-100">
+              {isVerified && (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/bots"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+                  >
+                    Community Bots
+                  </Link>
+                  <Link
+                    href="/credits/buy"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+                  >
+                    Buy Credits
+                  </Link>
+                  <Link
+                    href="/credits/claim"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+                  >
+                    Rewards
+                  </Link>
 
-                {/* More Dropdown */}
-                <div className="relative group z-50">
-                  <button className="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium py-2">
-                    More
-                    <ChevronDown size={16} />
-                  </button>
-                  <div className="absolute top-full left-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left">
-                    <div className="p-1">
-                      <Link
-                        href="/suggest"
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                      >
-                        Suggest
-                      </Link>
-                      <Link
-                        href="/credits/claim"
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                      >
-                        Rewards
-                      </Link>
-                      <Link
-                        href="/referrals"
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                      >
-                        Referrals
-                      </Link>
-                      <div className="h-px bg-gray-100 dark:bg-gray-700 my-1" />
-                      <Link
-                        href="/support"
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                      >
-                        Support
-                      </Link>
-                      <Link
-                        href="/docs"
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                      >
-                        Docs
-                      </Link>
-                      <Link
-                        href="/status"
-                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
-                      >
-                        Status
-                      </Link>
+                  {/* More Dropdown */}
+                  <div className="relative group z-50">
+                    <button className="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium py-2">
+                      More
+                      <ChevronDown size={16} />
+                    </button>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-1 text-left">
+                        <Link
+                          href="/suggest"
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                        >
+                          Suggest
+                        </Link>
+                        <Link
+                          href="/referrals"
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                        >
+                          Referrals
+                        </Link>
+                        <div className="h-px bg-gray-100 dark:bg-gray-700 my-1" />
+                        <Link
+                          href="/support"
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                        >
+                          Support
+                        </Link>
+                        <Link
+                          href="/docs"
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                        >
+                          Docs
+                        </Link>
+                        <Link
+                          href="/status"
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                        >
+                          Status
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
 
             {isVerified ? (
               <>
@@ -293,7 +295,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Popover (Anchored to right, half-width) */}
       <div
-        className={`md:hidden absolute top-[calc(100%-8px)] right-4 w-[280px] max-w-[calc(100vw-32px)] overflow-hidden transition-all duration-300 ease-out bg-white dark:bg-slate-900 shadow-2xl rounded-3xl border border-gray-100 dark:border-slate-800 z-[100] ${
+        className={`md:hidden absolute top-[calc(100%-8px)] right-4 w-[280px] max-w-[calc(100vw-32px)] max-h-[85vh] overflow-y-auto no-scrollbar transition-all duration-300 ease-out bg-white dark:bg-slate-900 shadow-2xl rounded-3xl border border-gray-100 dark:border-slate-800 z-[100] ${
           menuOpen
             ? "scale-100 opacity-100 translate-y-0"
             : "scale-95 opacity-0 -translate-y-2 pointer-events-none"

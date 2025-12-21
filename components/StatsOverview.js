@@ -3,7 +3,16 @@ import { Activity, CheckCircle, XCircle } from "lucide-react";
 export default function StatsOverview({ deployments }) {
   // Calculate stats from deployments
   const totalDeployments = deployments.length;
-  const runningBots = deployments.filter((d) => d.status === "running").length;
+  const runningBots = deployments.filter((d) =>
+    [
+      "running",
+      "active",
+      "connected",
+      "paired",
+      "starting",
+      "awaiting_pairing",
+    ].includes(d.status)
+  ).length;
   const failedBots = deployments.filter((d) => d.status === "failed").length;
 
   const stats = [

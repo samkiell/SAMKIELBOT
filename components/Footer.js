@@ -120,7 +120,7 @@ export default function Footer() {
             </h3>
             <div className="flex justify-center md:justify-end space-x-4">
               <a
-                href="https://github.com/samkiel488"
+                href="https://github.com/samkiell"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hover:scale-110"

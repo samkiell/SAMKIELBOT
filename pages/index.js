@@ -472,7 +472,7 @@ export default function Home() {
             </h2>
             <div className="flex justify-center space-x-6">
               <a
-                href="https://github.com/samkiel488"
+                href="https://github.com/samkiell"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition hover:scale-110"

@@ -42,26 +42,27 @@ export default function CreditBalance({ showBuyButton = true }) {
   const isLow = credits < 50;
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-1.5 md:gap-3">
       <div
-        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-lg border border-white/10 ${
+        className={`flex items-center gap-1.5 md:gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-xl transition-all duration-200 shadow-lg border border-white/10 ${
           isLow
             ? "bg-gradient-to-r from-red-600 to-rose-700 text-white"
             : "bg-gradient-to-r from-yellow-500 to-orange-600 text-white"
         }`}
       >
-        <FaCoins className="text-white" />
-        <span className="font-bold text-white">
-          {Math.round(credits)} Credits
+        <FaCoins className="text-white text-xs md:text-base" />
+        <span className="font-bold text-white text-[12px] md:text-base">
+          {Math.round(credits)}{" "}
+          <span className="hidden xs:inline">Credits</span>
         </span>
       </div>
       {showBuyButton && (
         <button
           onClick={() => router.push("/credits/buy")}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 border border-white/10"
+          className="flex items-center gap-1.5 md:gap-2 px-3 py-2 md:px-4 md:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105 active:scale-95 border border-white/10 text-[12px] md:text-base"
         >
-          <FaShoppingCart className="text-white" />
-          <span className="hidden sm:inline text-white">Buy Credits</span>
+          <FaShoppingCart className="text-white text-xs md:text-base" />
+          <span className="hidden sm:inline text-white">Buy</span>
         </button>
       )}
     </div>

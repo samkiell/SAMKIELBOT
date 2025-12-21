@@ -120,25 +120,27 @@ export default function Dashboard() {
         <title>Dashboard - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
       </Head>
 
-      <main className="container mx-auto px-4 py-8 pt-24 md:pt-32 min-h-screen">
+      <main className="container mx-auto px-4 py-4 md:py-8 pt-20 md:pt-32 min-h-screen">
         {/* Header Section with Credits */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 mb-6 md:mb-12">
           <div>
-            <h1 className="text-2xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">
-              Welcome back, {user.username} 👋
+            <h1 className="text-xl md:text-4xl font-bold mb-1 md:mb-2 text-gray-900 dark:text-white">
+              Welcome, {user.username} 👋
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base">
-              Manage and monitor your bot deployments easily.
+            <p className="text-xs md:text-base text-gray-500 dark:text-gray-400">
+              Manage your bots efficiently.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <CreditBalance key={refreshKey} />
+          <div className="flex flex-row md:flex-row items-center gap-2 md:gap-3 w-full md:w-auto">
+            <div className="flex-1 md:flex-none">
+              <CreditBalance key={refreshKey} />
+            </div>
             <Link
               href="/deploy"
-              className="inline-flex items-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-6 py-3 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg border border-white/10"
+              className="flex-1 md:flex-none inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-bold transition-all duration-200 shadow-lg border border-white/10 text-sm md:text-base"
             >
-              <Plus size={20} className="mr-2 text-white" />
-              <span className="text-white">Deploy Bot</span>
+              <Plus size={18} className="mr-1.5 text-white" />
+              <span className="text-white">Deploy</span>
             </Link>
           </div>
         </div>

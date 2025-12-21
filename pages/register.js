@@ -15,6 +15,7 @@ export default function Register() {
     whatsappNumber: "",
     password: "",
     confirmPassword: "",
+    referredByUsername: "",
   });
   const [username, setUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -267,6 +268,24 @@ export default function Register() {
                     }
                     handleChange(e);
                   }}
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="referredByUsername"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  Referred By (Optional)
+                </label>
+                <input
+                  id="referredByUsername"
+                  name="referredByUsername"
+                  type="text"
+                  className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter referrer's username"
+                  value={formData.referredByUsername}
+                  onChange={handleChange}
                 />
               </div>
 

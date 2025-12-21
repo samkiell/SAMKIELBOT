@@ -204,8 +204,8 @@ export default function ClaimCredits() {
       <Navbar />
       <Snowfall />
 
-      <main className="relative z-10 container mx-auto px-4 py-8 pt-24">
-        <div className="flex items-center justify-between mb-8 max-w-2xl mx-auto">
+      <main className="relative z-10 container mx-auto px-4 pb-8 pt-2 md:pt-2">
+        <div className="flex items-center justify-between mb-8 mt-0 max-w-2xl mx-auto">
           <Link
             href="/dashboard"
             className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"

@@ -2,9 +2,6 @@ import { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Use this if using app dir, but this is pages dir.
-// In pages dir, use router. However, this is a component.
-// We will just fetch.
 
 export default function NotificationDropdown() {
   const { user, token } = useAuth();

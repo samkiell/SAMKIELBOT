@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../lib/auth";
 import { updateProfile } from "../lib/api";
-import { ArrowLeft, Upload, User } from "lucide-react";
+import { ArrowLeft, Upload, User, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function ProfilePage() {
@@ -168,7 +168,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
       <Head>
-        <title>Profile - ��������������������� ���������</title>
+        <title>Profile - </title>
       </Head>
 
       <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl">

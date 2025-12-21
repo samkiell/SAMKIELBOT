@@ -4,7 +4,7 @@
   "description": "𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 Unified Next.js Application",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
+    "dev": "nodemon server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint"

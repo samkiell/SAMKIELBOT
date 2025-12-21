@@ -201,10 +201,10 @@ export default function ClaimCredits() {
       <Head>
         <title>Daily Rewards - SAMKIEL BOT</title>
       </Head>
-      <Navbar />
+
       <Snowfall />
 
-      <main className="relative z-10 container mx-auto px-4 pb-8 pt-7 md:pt-2">
+      <main className="relative z-10 container mx-auto px-4 pb-8 pt-4">
         <div className="flex items-center justify-between mb-8 mt-0 max-w-2xl mx-auto">
           <Link
             href="/dashboard"

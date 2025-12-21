@@ -65,7 +65,7 @@ export default function ReferralsPage() {
         <Head>
           <title>Referrals - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         </Head>
-        <main className="container mx-auto px-4 py-8 max-w-6xl pt-24">
+        <main className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="mb-8">
             <Skeleton className="h-10 w-64 mb-2" />
             <Skeleton className="h-6 w-96" />

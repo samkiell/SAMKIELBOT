@@ -88,7 +88,6 @@ export default function Pricing() {
         />
       </Head>
 
-      <Navbar />
       <Snowfall />
 
       {/* Background Ambience */}
@@ -97,7 +96,7 @@ export default function Pricing() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px]" />
       </div>
 
-      <main className="relative z-10 pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+      <main className="relative z-10 pt-4 md:pt-8 pb-20 px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="text-center max-w-4xl mx-auto mb-16">
           <motion.h1

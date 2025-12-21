@@ -184,7 +184,7 @@ export default function UserDetails() {
         <Head>
           <title>User Details - Admin Panel</title>
         </Head>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-10">
           <div className="flex items-center gap-4 mb-8">
             <Skeleton className="h-10 w-10 rounded-full" />
             <div className="flex-1">

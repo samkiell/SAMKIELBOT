@@ -169,7 +169,7 @@ export default function ProfilePage() {
         <Head>
           <title>Profile - SAMKIEL BOT</title>
         </Head>
-        <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl pt-24">
+        <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl">
           <Skeleton className="h-8 w-40 mb-12" />
           <div className="text-center mb-8">
             <Skeleton className="h-10 w-64 mx-auto mb-4" />

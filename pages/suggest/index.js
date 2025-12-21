@@ -50,9 +50,8 @@ export default function SuggestFeature() {
       <Head>
         <title>Suggest Feature - SAMKIEL BOT</title>
       </Head>
-      <Navbar />
 
-      <main className="max-w-2xl mx-auto px-4 py-24">
+      <main className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Suggest a Feature</h1>
         <p className="text-gray-500 mb-8">
           Help us improve SAMKIEL BOT. We read every suggestion!

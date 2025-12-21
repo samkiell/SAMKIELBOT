@@ -106,9 +106,6 @@ export default function Dashboard() {
     if (hour >= 17 && hour < 21) return "Good evening";
     return "Good night";
   };
-
-  //
-
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -200,7 +197,7 @@ export default function Dashboard() {
               </p>
 
               <div className="flex items-center gap-4">
-                <DailyClaimButton onClaimSuccess={onClaimSuccess} />
+                <DailyClaimButton />
                 <Link
                   href="/credits/claim"
                   className="text-xs text-indigo-500 hover:text-indigo-400 underline font-medium"

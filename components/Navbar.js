@@ -180,33 +180,34 @@ export default function Navbar() {
                 </>
               )}
 
-            {isVerified ? (
-              <>
-                {user?.role === "admin" && (
+              {isVerified ? (
+                <>
+                  {user?.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-semibold"
+                    >
+                      Admin
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <>
                   <Link
-                    href="/admin"
-                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-semibold"
+                    href="/login"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                   >
-                    Admin
+                    Login
                   </Link>
-                )}
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/register"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Register
-                </Link>
-              </>
-            )}
+                  <Link
+                    href="/register"
+                    className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-4 ml-4 flex-shrink-0">

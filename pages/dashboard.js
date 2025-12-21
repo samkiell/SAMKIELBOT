@@ -97,6 +97,14 @@ export default function Dashboard() {
     }
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return "Good morning";
+    if (hour >= 12 && hour < 17) return "Good afternoon";
+    if (hour >= 17 && hour < 21) return "Good evening";
+    return "Good night";
+  };
+
   const onClaimSuccess = async () => {
     if (refreshUser) await refreshUser();
     setRefreshKey((prev) => prev + 1);
@@ -120,26 +128,26 @@ export default function Dashboard() {
         <title>Dashboard - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
       </Head>
 
-      <main className="container mx-auto px-4 py-3 md:py-8 pt-14 md:pt-32 min-h-screen">
+      <main className="max-w-7xl mx-auto px-2 md:px-6 py-2 md:py-8 pt-11 md:pt-32 min-h-screen">
         {/* Header Section with Credits */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 mb-6 md:mb-12">
-          <div>
-            <h1 className="text-xl md:text-4xl font-bold mb-1 md:mb-2 text-gray-900 dark:text-white">
-              Welcome, {user.username} 👋
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-6 mb-4 md:mb-12">
+          <div className="px-1">
+            <h1 className="text-xl md:text-4xl font-bold mb-0.5 md:mb-2 text-gray-900 dark:text-white capitalize">
+              {getGreeting()}, {user.username} 👋
             </h1>
-            <p className="text-xs md:text-base text-gray-500 dark:text-gray-400">
+            <p className="text-[11px] md:text-base text-gray-500 dark:text-gray-400">
               Manage your bots efficiently.
             </p>
           </div>
-          <div className="flex flex-row md:flex-row items-center gap-2 md:gap-3 w-full md:w-auto">
-            <div className="flex-1 md:flex-none">
+          <div className="flex flex-row items-center gap-1.5 md:gap-3 w-full md:w-auto px-1">
+            <div className="flex-none">
               <CreditBalance key={refreshKey} />
             </div>
             <Link
               href="/deploy"
-              className="flex-1 md:flex-none inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-bold transition-all duration-200 shadow-lg border border-white/10 text-sm md:text-base"
+              className="flex-none inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-4 py-2 md:px-6 md:py-3 rounded-xl font-bold transition-all duration-200 shadow-lg border border-white/10 text-xs md:text-base"
             >
-              <Plus size={18} className="mr-1.5 text-white" />
+              <Plus size={16} className="mr-1 text-white" />
               <span className="text-white">Deploy</span>
             </Link>
           </div>

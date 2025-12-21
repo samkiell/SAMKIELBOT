@@ -140,7 +140,7 @@ export default function DeployPage() {
                   value={formData.botNumber}
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                  placeholder="e.g. 15551234567"
+                  placeholder="e.g. 2348087357157"
                   pattern="^\d{10,15}$"
                   title="Enter a valid international WhatsApp number (10-15 digits)"
                   required

@@ -12,6 +12,7 @@ import {
   RefreshCcw,
   AlertCircle,
 } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { useAuth } from "../../lib/auth";
 import toast from "react-hot-toast";
 import Navbar from "../../components/Navbar";
@@ -31,6 +32,7 @@ export default function ClaimCredits() {
     lastClaim: null,
   });
   const [timeLeft, setTimeLeft] = useState(0);
+  const [turnstileToken, setTurnstileToken] = useState(null);
 
   const fetchStatus = useCallback(async (retry = 0) => {
     try {
@@ -127,6 +129,7 @@ export default function ClaimCredits() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ turnstileToken }),
       });
 
       const data = await res.json();
@@ -279,11 +282,21 @@ export default function ClaimCredits() {
             </p>
 
             {claimStatus.canClaim ? (
-              <button
-                onClick={handleClaim}
-                disabled={claiming || loading}
-                className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-500/25 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto"
-              >
+              <div className="flex flex-col gap-6 items-center">
+                <div className="flex justify-center">
+                  <Turnstile
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onExpire={() => setTurnstileToken(null)}
+                    onError={() => setTurnstileToken(null)}
+                  />
+                </div>
+
+                <button
+                  onClick={handleClaim}
+                  disabled={claiming || loading || !turnstileToken}
+                  className="w-full md:w-auto px-12 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-500/25 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-70 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto"
+                >
                 {claiming ? (
                   <>
                     <Loader2 className="animate-spin w-6 h-6" />

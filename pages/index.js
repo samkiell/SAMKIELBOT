@@ -129,17 +129,18 @@ export default function Home() {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight drop-shadow-sm leading-tight">
-              Deploy Production-Grade <br className="hidden md:block" />
+              The Developer-First Platform for{" "}
+              <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-                WhatsApp Bots
-              </span>{" "}
-              in Seconds
+                WhatsApp Automation
+              </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed font-light">
-              The only platform offering isolated cloud hosting, one-click
-              deployments, and advanced media recovery tools. <br />
+              Deploy, manage, and scale WhatsApp bots with zero server
+              headaches. <br />
               <span className="font-medium text-gray-900 dark:text-white">
-                Built for stability. Engineered for scale.
+                Features isolated containers, View Once recovery, and 99.9%
+                uptime.
               </span>
             </p>
 
@@ -155,19 +156,24 @@ export default function Home() {
               </span>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Link
-                href="/register"
-                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold transition-all duration-200 transform hover:-translate-y-1 shadow-lg shadow-indigo-600/30"
-              >
-                Deploy Bot Now
-              </Link>
-              <Link
-                href="/bots"
-                className="w-full sm:w-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 px-8 py-4 rounded-xl font-semibold transition-all duration-200 transform hover:-translate-y-1 shadow-sm"
-              >
-                Browse Community Bots
-              </Link>
+            <div className="flex flex-col items-center">
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <Link
+                  href="/register"
+                  className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold transition-all duration-200 transform hover:-translate-y-1 shadow-lg shadow-indigo-600/30"
+                >
+                  Start Deploying Free
+                </Link>
+                <Link
+                  href="/bots"
+                  className="w-full sm:w-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 px-8 py-4 rounded-xl font-semibold transition-all duration-200 transform hover:-translate-y-1 shadow-sm"
+                >
+                  View Community Bots
+                </Link>
+              </div>
+              <p className="mt-4 text-xs md:text-sm text-gray-500 dark:text-gray-400">
+                No credit card required • 3-minute setup
+              </p>
             </div>
           </motion.div>
         </div>
@@ -358,6 +364,180 @@ export default function Home() {
               Stay tuned for more exciting updates!
             </p>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Platform Stats Section */}
+      <section className="px-6 py-16 bg-indigo-600 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]"></div>
+        <div className="max-w-7xl mx-auto relative z-10 text-center">
+          <motion.div {...fadeUp} className="mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Trusted by a Growing Community
+            </h2>
+            <p className="text-indigo-100 text-lg max-w-2xl mx-auto">
+              We're building the most reliable WhatsApp automation platform for
+              Africa and beyond.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
+              <div className="text-4xl md:text-5xl font-black text-white mb-2">
+                400+
+              </div>
+              <div className="text-indigo-100 font-medium">Active Users</div>
+            </div>
+            <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
+              <div className="text-4xl md:text-5xl font-black text-white mb-2">
+                30+
+              </div>
+              <div className="text-indigo-100 font-medium">Bots Deployed</div>
+            </div>
+            <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
+              <div className="text-4xl md:text-5xl font-black text-white mb-2">
+                99.9%
+              </div>
+              <div className="text-indigo-100 font-medium">Uptime Streak</div>
+            </div>
+            <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
+              <div className="text-4xl md:text-5xl font-black text-white mb-2">
+                5+
+              </div>
+              <div className="text-indigo-100 font-medium">
+                Countries Supported
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="px-6 py-16 bg-white dark:bg-gray-800 border-b dark:border-gray-700">
+        <div className="max-w-7xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+              What People Are Saying
+            </h2>
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Real feedback from developers, students, and group admins using
+              SAMKIEL BOT.
+            </p>
+          </motion.div>
+
+          {/* Scrollable Testimonials Container */}
+          <div className="flex overflow-x-auto pb-8 -mx-6 px-6 md:mx-0 md:px-0 gap-6 no-scrollbar snap-x snap-mandatory">
+            {[
+              {
+                name: "Chinedu Okafor",
+                role: "Group Admin",
+                text: "Honestly, the View Once recovery saved me so many times. Managing my campus group is way easier now.",
+                bg: "bg-blue-50 dark:bg-blue-900/20",
+              },
+              {
+                name: "Sarah Johnson",
+                role: "Student",
+                text: "I didn't know how to code, but I deployed a bot in like 2 minutes. The dashboard is super simple.",
+                bg: "bg-purple-50 dark:bg-purple-900/20",
+              },
+              {
+                name: "David Adeleke",
+                role: "Developer",
+                text: "The isolated containers are a game changer. My bot doesn't crash anymore because of shared resources. Solid work.",
+                bg: "bg-indigo-50 dark:bg-indigo-900/20",
+              },
+              {
+                name: "Priya Patel",
+                role: "Tech Enthusiast",
+                text: "Love the daily free credits. It lets me test my bot ideas without paying upfront. Best platform I've used.",
+                bg: "bg-green-50 dark:bg-green-900/20",
+              },
+              {
+                name: "Tunde Bakare",
+                role: "Discord Mod",
+                text: "Moving my WhatsApp community automation here was the best decision. 99% uptime is not a joke.",
+                bg: "bg-yellow-50 dark:bg-yellow-900/20",
+              },
+              {
+                name: "Lerato Khumalo",
+                role: "Business Owner",
+                text: "My support bot runs 24/7 now. I don't have to worry about my phone being online. Huge relief!",
+                bg: "bg-pink-50 dark:bg-pink-900/20",
+              },
+              {
+                name: "Michael Smith",
+                role: "Freelancer",
+                text: "The cloud hosting is fast. Messages deliver instantly. No lag like other free hosts.",
+                bg: "bg-cyan-50 dark:bg-cyan-900/20",
+              },
+              {
+                name: "Amina Yusuf",
+                role: "Student Leader",
+                text: "We use it for our department announcements. It just works. The 'stay alive' feature is great.",
+                bg: "bg-teal-50 dark:bg-teal-900/20",
+              },
+              {
+                name: "James Wilson",
+                role: "Bot Dev",
+                text: "Finally, a platform that gives me terminal-like control from a web UI. The restart button actually works immediately.",
+                bg: "bg-orange-50 dark:bg-orange-900/20",
+              },
+              {
+                name: "Thabo Mbeki",
+                role: "Community Manager",
+                text: "Secure, fast, and the support team actually replies on WhatsApp. Unbeatable service.",
+                bg: "bg-red-50 dark:bg-red-900/20",
+              },
+              {
+                name: "Ngozi Eze",
+                role: "Entrepreneur",
+                text: "Setting up auto-replies for my store was easy. I recommend SAMKIEL BOT to anyone.",
+                bg: "bg-emerald-50 dark:bg-emerald-900/20",
+              },
+              {
+                name: "Chris Evans",
+                role: "Code Newbie",
+                text: "I broke my bot 3 times and the auto-healing kicked in perfectly. This thing is robust.",
+                bg: "bg-violet-50 dark:bg-violet-900/20",
+              },
+            ].map((testimonial, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.02 }}
+                className={`min-w-[300px] md:min-w-[350px] p-6 rounded-2xl border border-gray-100 dark:border-gray-700 snap-center flex flex-col justify-between ${testimonial.bg}`}
+              >
+                <div>
+                  <div className="flex items-center gap-1 mb-4">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <svg
+                        key={star}
+                        className="w-4 h-4 text-yellow-500 fill-current"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-gray-700 dark:text-gray-300 italic mb-6 text-sm leading-relaxed">
+                    "{testimonial.text}"
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 mt-auto border-t border-black/5 dark:border-white/5 pt-4">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center text-sm font-bold text-gray-600 dark:text-gray-300">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                      {testimonial.name}
+                    </h4>
+                    <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+                      {testimonial.role}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 

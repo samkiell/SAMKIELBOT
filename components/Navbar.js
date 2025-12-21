@@ -20,6 +20,8 @@ import {
   Menu as MenuIcon,
   User,
   LogOut,
+  BookOpen,
+  Activity,
 } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import UserAvatarDropdown from "./UserAvatarDropdown";
@@ -139,6 +141,12 @@ export default function Navbar() {
                   className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                 >
                   Support
+                </Link>
+                <Link
+                  href="/docs"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Docs
                 </Link>
                 <Link
                   href="/status"
@@ -360,6 +368,13 @@ export default function Navbar() {
                 label="Help & Support"
                 onClick={() => setMenuOpen(false)}
                 active={router.pathname === "/support"}
+              />
+              <MobileNavLink
+                href="/docs"
+                icon={BookOpen}
+                label="Documentation"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/docs"}
               />
               <MobileNavLink
                 href="/status"

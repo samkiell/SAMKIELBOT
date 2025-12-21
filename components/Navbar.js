@@ -23,6 +23,7 @@ import {
   BookOpen,
   Activity,
   ChevronDown,
+  Terminal,
 } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import UserAvatarDropdown from "./UserAvatarDropdown";
@@ -166,6 +167,12 @@ export default function Navbar() {
                     </button>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-1 text-left">
+                        <Link
+                          href="/commands"
+                          className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                        >
+                          Commands
+                        </Link>
                         <Link
                           href="/suggest"
                           className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
@@ -369,6 +376,13 @@ export default function Navbar() {
                 label="Community Bots"
                 onClick={() => setMenuOpen(false)}
                 active={router.pathname === "/bots"}
+              />
+              <MobileNavLink
+                href="/commands"
+                icon={Terminal}
+                label="Bot Commands"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/commands"}
               />
               <MobileNavLink
                 href="/credits/claim"

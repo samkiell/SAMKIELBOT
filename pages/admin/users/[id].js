@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
+import Skeleton, { TableSkeleton } from "../../../components/Skeleton";
+
 export default function UserDetails() {
   const { user, loading: authLoading, token } = useAuth();
   const router = useRouter();
@@ -178,8 +180,24 @@ export default function UserDetails() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <Head>
+          <title>User Details - Admin Panel</title>
+        </Head>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+          <div className="flex items-center gap-4 mb-8">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex-1">
+              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+            <Skeleton className="h-8 w-24 rounded-full" />
+          </div>
+          <div className="mb-4">
+            <Skeleton className="h-8 w-48" />
+          </div>
+          <TableSkeleton rows={3} cols={3} />
+        </div>
       </div>
     );
   }

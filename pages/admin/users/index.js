@@ -16,10 +16,14 @@ import {
   X,
 } from "lucide-react";
 
+import { TableSkeleton } from "../../../components/Skeleton";
+
 export default function UserManagement() {
   const { token } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // ... rest of state
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [creditAmount, setCreditAmount] = useState("");
@@ -164,12 +168,7 @@ export default function UserManagement() {
       </div>
 
       {loading ? (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12">
-          <div className="flex flex-col items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mb-4"></div>
-            <p className="text-gray-500 dark:text-gray-400">Loading users...</p>
-          </div>
-        </div>
+        <TableSkeleton rows={8} cols={6} />
       ) : (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="overflow-x-auto">

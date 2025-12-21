@@ -29,15 +29,20 @@ export const BotCardSkeleton = () => (
   </div>
 );
 
-export const StatsSkeleton = () => (
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    {[1, 2, 3, 4].map((i) => (
+export const StatsSkeleton = ({ count = 3 }) => (
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+    {[...Array(count)].map((_, i) => (
       <div
         key={i}
         className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
       >
-        <Skeleton className="h-4 w-1/2 mb-2" />
-        <Skeleton className="h-8 w-3/4" />
+        <div className="flex justify-between items-center">
+          <div className="flex-1">
+            <Skeleton className="h-4 w-1/2 mb-2" />
+            <Skeleton className="h-8 w-1/4" />
+          </div>
+          <Skeleton className="h-10 w-10 rounded-xl" />
+        </div>
       </div>
     ))}
   </div>

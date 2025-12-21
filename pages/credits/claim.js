@@ -17,6 +17,8 @@ import toast from "react-hot-toast";
 import Navbar from "../../components/Navbar";
 import Snowfall from "../../components/Snowfall";
 
+import Skeleton from "../../components/Skeleton";
+
 export default function ClaimCredits() {
   const { user, loading: authLoading, refreshUser } = useAuth();
   const router = useRouter();
@@ -157,8 +159,39 @@ export default function ClaimCredits() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0f172a] flex items-center justify-center">
-        <Loader2 className="animate-spin w-10 h-10 text-indigo-500" />
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] transition-colors duration-300">
+        <Head>
+          <title>Daily Rewards - SAMKIEL BOT</title>
+        </Head>
+        <main className="container mx-auto px-4 py-8 max-w-2xl pt-24">
+          <div className="mb-8">
+            <Skeleton className="h-6 w-32 mb-8" />
+            <Skeleton className="h-10 w-64 mx-auto mb-4" />
+            <Skeleton className="h-6 w-96 mx-auto" />
+          </div>
+          <div className="bg-white dark:bg-slate-800/50 rounded-3xl p-8 md:p-12 border border-gray-100 dark:border-slate-700">
+            <Skeleton className="h-24 w-24 rounded-full mx-auto mb-8" />
+            <Skeleton className="h-8 w-64 mx-auto mb-4" />
+            <Skeleton className="h-4 w-96 mx-auto mb-8" />
+            <Skeleton className="h-14 w-full md:w-64 rounded-xl mx-auto" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 flex gap-4">
+              <Skeleton className="h-12 w-12 rounded-xl" />
+              <div className="flex-1">
+                <Skeleton className="h-4 w-20 mb-2" />
+                <Skeleton className="h-6 w-24" />
+              </div>
+            </div>
+            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-100 dark:border-slate-700 flex gap-4">
+              <Skeleton className="h-12 w-12 rounded-xl" />
+              <div className="flex-1">
+                <Skeleton className="h-4 w-20 mb-2" />
+                <Skeleton className="h-6 w-24" />
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }

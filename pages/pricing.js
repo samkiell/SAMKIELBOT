@@ -15,6 +15,8 @@ import {
   HelpCircle,
 } from "lucide-react";
 
+import Skeleton from "../components/Skeleton";
+
 export default function Pricing() {
   const { user } = useAuth();
   const router = useRouter();
@@ -130,8 +132,19 @@ export default function Pricing() {
             ? [1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="h-96 bg-gray-200 dark:bg-slate-800/50 rounded-2xl animate-pulse"
-                />
+                  className="bg-white/50 dark:bg-slate-800/50 p-8 rounded-2xl border border-gray-100 dark:border-slate-700"
+                >
+                  <Skeleton className="h-12 w-24 mx-auto mb-2" />
+                  <Skeleton className="h-4 w-16 mx-auto mb-12" />
+                  <Skeleton className="h-10 w-32 mx-auto mb-2" />
+                  <Skeleton className="h-4 w-24 mx-auto mb-12" />
+                  <div className="space-y-4 mb-12">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+                  <Skeleton className="h-12 w-full rounded-xl" />
+                </div>
               ))
             : packages.map((pkg, idx) => (
                 <motion.div

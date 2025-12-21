@@ -350,22 +350,6 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Public Mobile Links */}
-          <MobileNavLink
-            href="/commands"
-            icon={Terminal}
-            label="Bot Commands"
-            onClick={() => setMenuOpen(false)}
-            active={router.pathname === "/commands"}
-          />
-          <MobileNavLink
-            href="/bots"
-            icon={Server}
-            label="Community Bots"
-            onClick={() => setMenuOpen(false)}
-            active={router.pathname === "/bots"}
-          />
-
           {isVerified && (
             <>
               <MobileNavLink
@@ -412,6 +396,22 @@ export default function Navbar() {
               />
             </>
           )}
+
+          {/* Public Mobile Links moved below profile */}
+          <MobileNavLink
+            href="/commands"
+            icon={Terminal}
+            label="Bot Commands"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/commands"}
+          />
+          <MobileNavLink
+            href="/bots"
+            icon={Server}
+            label="Community Bots"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/bots"}
+          />
 
           {/* More Public Mobile Links */}
           <MobileNavLink

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../lib/auth";
@@ -64,6 +64,10 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // Refs for click-outside detection
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
+
   const isVerified = user && (user.isEmailVerified || user.isPhoneVerified);
 
   useEffect(() => {
@@ -71,6 +75,25 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Handle click outside to close mobile menu
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        menuOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   return (
     <nav
@@ -278,6 +301,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            ref={buttonRef}
             className="text-gray-800 dark:text-gray-100 p-2"
             onClick={() => setMenuOpen(!menuOpen)}
           >
@@ -286,16 +310,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Backdrop for closing menu on click-outside */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 z-[90] md:hidden bg-black/5 dark:bg-black/20"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-
       {/* Mobile Menu Popover (Anchored to right, half-width) */}
       <div
+        ref={menuRef}
         className={`md:hidden absolute top-[calc(100%-8px)] right-4 w-[280px] max-w-[calc(100vw-32px)] max-h-[85vh] overflow-y-auto no-scrollbar transition-all duration-300 ease-out bg-white dark:bg-slate-900 shadow-2xl rounded-3xl border border-gray-100 dark:border-slate-800 z-[100] ${
           menuOpen
             ? "scale-100 opacity-100 translate-y-0"

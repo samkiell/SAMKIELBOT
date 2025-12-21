@@ -54,39 +54,34 @@ export default function Home() {
 
   const features = [
     {
-      icon: <FaUsers className="text-blue-400 text-3xl" />,
-      title: "Works in Groups & Private Chats",
-      desc: "Manage groups or chat one-on-one — full control, same smooth experience.",
+      icon: <FaUsers className="text-indigo-500 text-3xl" />,
+      title: "Universal Compatibility",
+      desc: "Seamlessly manages group permissions and private DMs without lag or downtime.",
     },
     {
-      icon: <FaEye className="text-blue-400 text-3xl" />,
-      title: "View Once Saver",
-      desc: "Automatically fetch and store View Once media for later viewing.",
+      icon: <FaEye className="text-indigo-500 text-3xl" />,
+      title: "Media Recovery Engine",
+      desc: "Automatically capture and store View Once media securely. Never miss a moment.",
     },
     {
-      icon: <FaRocket className="text-blue-400 text-3xl" />,
-      title: "Easy Deployment",
-      desc: "Deploy your personal WhatsApp bot in minutes, directly from your browser.",
+      icon: <FaRocket className="text-indigo-500 text-3xl" />,
+      title: "One-Click Cloud Deploy",
+      desc: "No terminal needed. Launch from your browser directly to our high-speed servers.",
     },
     {
-      icon: <FaSync className="text-blue-400 text-3xl" />,
-      title: "Self-Update System",
-      desc: "Stay up-to-date with one command — the bot updates itself instantly.",
+      icon: <FaSync className="text-indigo-500 text-3xl" />,
+      title: "Auto-Updating Core",
+      desc: "Your bot stays patched and secure automatically. No manual maintenance required.",
     },
     {
-      icon: <FaTachometerAlt className="text-blue-400 text-3xl" />,
-      title: "Dashboard Control",
-      desc: "Pause, resume, or delete your bot anytime from your web dashboard.",
+      icon: <FaTachometerAlt className="text-indigo-500 text-3xl" />,
+      title: "Real-Time Mission Control",
+      desc: "Start, stop, restart, and monitor your bots from a centralized dashboard.",
     },
     {
-      icon: <FaPen className="text-blue-400 text-3xl" />,
-      title: "Custom Prefix",
-      desc: "Change your bot prefix to make it truly yours.",
-    },
-    {
-      icon: <FaCloud className="text-blue-400 text-3xl" />,
-      title: "Cloud-Based Hosting",
-      desc: "Each bot runs independently with 99% uptime — powered by Render.",
+      icon: <FaCloud className="text-indigo-500 text-3xl" />,
+      title: "Isolated Environments",
+      desc: "Every bot runs in its own container. No shared resource throttling or interference.",
     },
   ];
 
@@ -126,69 +121,59 @@ export default function Home() {
         <div className="relative z-10">
           <motion.div {...fadeUp}>
             <div className="flex flex-col items-center gap-4 mb-6">
-              <div className="inline-block px-4 py-1.5 rounded-full bg-red-100 dark:bg-red-900/40 border border-red-200 dark:border-red-500/30 shadow-sm animate-pulse">
-                <span className="text-red-600 dark:text-red-200 font-bold text-sm tracking-wide flex items-center gap-2">
-                  🎄 HAPPY HOLIDAYS 🎅
-                </span>
-              </div>
-              <div className="inline-block px-4 py-1.5 rounded-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm">
-                <span className="text-cyan-600 dark:text-cyan-300 font-bold text-sm tracking-wide">
-                  🚀 V3.0 NOW LIVE
+              <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-500/30 shadow-sm">
+                <span className="text-indigo-600 dark:text-indigo-300 font-bold text-xs md:text-sm tracking-wide uppercase">
+                  🚀 V3 Stable Release Now Live
                 </span>
               </div>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight drop-shadow-sm">
-              Deploy WhatsApp Bot with One Click
+            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight drop-shadow-sm leading-tight">
+              Deploy Production-Grade <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+                WhatsApp Bots
+              </span>{" "}
+              in Seconds
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
-              Automate your WhatsApp experience with power, simplicity, and full
-              control.
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed font-light">
+              The only platform offering isolated cloud hosting, one-click
+              deployments, and advanced media recovery tools. <br />
+              <span className="font-medium text-gray-900 dark:text-white">
+                Built for stability. Engineered for scale.
+              </span>
             </p>
 
-            <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-gray-500 dark:text-gray-400 mb-6">
-              <span className="flex items-center bg-gray-200 dark:bg-white/5 px-3 py-1 rounded-lg">
-                ✨ 99.9% Uptime
+            <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-gray-500 dark:text-gray-400 mb-8">
+              <span className="flex items-center gap-2 bg-gray-100 dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10">
+                <FaCloud className="text-indigo-500" /> Isolated Instances
               </span>
-              <span className="flex items-center bg-gray-200 dark:bg-white/5 px-3 py-1 rounded-lg">
-                ⚡ Instant Setup
+              <span className="flex items-center gap-2 bg-gray-100 dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10">
+                <FaRocket className="text-indigo-500" /> Instant Setup
               </span>
-              <span className="flex items-center bg-gray-200 dark:bg-white/5 px-3 py-1 rounded-lg">
-                🔒 E2E Encrypted
+              <span className="flex items-center gap-2 bg-gray-100 dark:bg-white/5 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10">
+                <FaSync className="text-indigo-500" /> Auto-Healing
               </span>
             </div>
 
-            <p className="max-w-3xl mx-auto text-gray-600 dark:text-gray-400 mb-10 leading-relaxed italic">
-              SAMKIEL BOT is the premier WhatsApp bot deployment and hosting
-              platform for developers and group admins. Get your
-              high-performance WhatsApp bot online instantly with our reliable
-              hosting infrastructure.
-            </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Link
                 href="/register"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg shadow-indigo-500/20"
+                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold transition-all duration-200 transform hover:-translate-y-1 shadow-lg shadow-indigo-600/30"
               >
-                Deploy your bot now!
+                Deploy Bot Now
               </Link>
               <Link
                 href="/bots"
-                className="bg-white dark:bg-white/5 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 px-8 py-4 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+                className="w-full sm:w-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 px-8 py-4 rounded-xl font-semibold transition-all duration-200 transform hover:-translate-y-1 shadow-sm"
               >
-                Community Bots
-              </Link>
-              <Link
-                href="/login"
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-8 py-4 rounded-lg font-semibold transition-all duration-200"
-              >
-                Login
+                Browse Community Bots
               </Link>
             </div>
           </motion.div>
         </div>
-        {/* Animated shapes - darkened for light mode visibility if needed, or keeping subtle */}
-        <div className="absolute top-20 right-20 w-32 h-32 bg-indigo-500/10 rounded-full blur-xl animate-bounce"></div>
-        <div className="absolute bottom-20 left-20 w-24 h-24 bg-purple-500/10 rounded-full blur-xl animate-bounce delay-1000"></div>
+        {/* Animated shapes */}
+        <div className="absolute top-20 right-20 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </section>
 
       {/* How It Works Section */}
@@ -196,39 +181,43 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-              How It Works
+              Launch in 3 Steps
             </h2>
             <p className="text-base md:text-lg text-gray-600 dark:text-gray-300">
-              Get your WhatsApp bot running in 3 simple steps.
+              Go from zero to active bot in under 60 seconds.
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6 bg-gray-50 dark:bg-gray-900 rounded-xl">
-              <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+            <div className="text-center p-8 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800">
+              <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-indigo-600/20">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-2">Register Account</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Create your SAMKIEL BOT account to access the deployment
+              <h3 className="text-xl font-bold mb-3">
+                Create Developer Account
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                Sign up for free to access your personal mission control
                 dashboard.
               </p>
             </div>
-            <div className="text-center p-6 bg-gray-50 dark:bg-gray-900 rounded-xl">
-              <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+            <div className="text-center p-8 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800">
+              <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-indigo-600/20">
                 2
               </div>
-              <h3 className="text-xl font-semibold mb-2">Configure Bot</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Choose your bot settings and features like View Once recovery.
+              <h3 className="text-xl font-bold mb-3">Select Your Bot</h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                Choose from pre-built templates or configure your custom
+                instance with one click.
               </p>
             </div>
-            <div className="text-center p-6 bg-gray-50 dark:bg-gray-900 rounded-xl">
-              <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+            <div className="text-center p-8 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800">
+              <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-indigo-600/20">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-2">Deploy & Connect</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Click deploy and link your WhatsApp via QR or pairing code.
+              <h3 className="text-xl font-bold mb-3">Scan & Launch</h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                Link your WhatsApp via QR code. Your bot goes live instantly on
+                our cloud.
               </p>
             </div>
           </div>
@@ -240,37 +229,40 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp}>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-              Why Choose SAMKIEL BOT?
+              Why Developers Choose SAMKIEL BOT
             </h2>
-            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-              SAMKIEL BOT provides the most stable WhatsApp bot hosting
-              environment. Manage group moderation, media recovery, and custom
-              automations with zero technical setup.
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6 font-light">
+              Stop fighting with downtime and complex setups. We provide{" "}
+              <span className="font-semibold text-indigo-600 dark:text-indigo-400">
+                enterprise-grade infrastructure
+              </span>{" "}
+              that keeps your bots running 24/7, so you can focus on building
+              communities, not fixing servers.
             </p>
             <div className="flex flex-wrap justify-center gap-4 mt-8">
               <Link
                 href="/whatsapp-bot"
-                className="text-indigo-600 hover:underline"
+                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 hover:underline font-medium"
               >
                 WhatsApp Bot Guide
               </Link>
               <Link
                 href="/deploy-whatsapp-bot"
-                className="text-indigo-600 hover:underline"
+                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 hover:underline font-medium"
               >
-                Deployment Tips
+                Deployment Architecture
               </Link>
               <Link
                 href="/free-whatsapp-bot"
-                className="text-indigo-600 hover:underline"
+                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 hover:underline font-medium"
               >
-                Free Hosting
+                Free Tier Limits
               </Link>
               <Link
                 href="/view-once-whatsapp"
-                className="text-indigo-600 hover:underline"
+                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 hover:underline font-medium"
               >
-                View Once Recovery
+                View Once Technology
               </Link>
             </div>
           </motion.div>
@@ -374,30 +366,32 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-              Simple Pricing
+              Transparent, Developer-Friendly Pricing
             </h2>
             <p className="text-base md:text-lg text-gray-600 dark:text-gray-300">
-              Start free forever. Upgrade when you need more power.
+              No hidden fees. Pay only for the resources you use.
             </p>
           </motion.div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <motion.div
               {...slideIn}
-              className="bg-gray-50 dark:bg-gray-900 p-8 rounded-xl shadow-md hover:shadow-lg transition"
+              className="bg-gray-50 dark:bg-gray-900 p-8 rounded-xl shadow-md hover:shadow-lg transition border border-gray-100 dark:border-gray-800"
             >
               <h3 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-                Free Forever
+                Developer Tier
               </h3>
               <div className="text-4xl font-bold mb-6 text-indigo-600">₦0</div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500">✓</span> Free signup credits
+                  <span className="text-green-500">✓</span> Daily Free Credits
                 </li>
                 <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500">✓</span> Basic bot hosting
+                  <span className="text-green-500">✓</span> Full Cloud Hosting
+                  Management
                 </li>
                 <li className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <span className="text-green-500">✓</span> Community support
+                  <span className="text-green-500">✓</span> Community Support
+                  Access
                 </li>
               </ul>
               <Link
@@ -412,22 +406,22 @@ export default function Home() {
               className="bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-xl shadow-xl hover:shadow-2xl transition transform hover:scale-105"
             >
               <h3 className="text-2xl font-bold mb-4 text-white">
-                Top-up Credits
+                Power User Top-up
               </h3>
               <div className="text-4xl font-bold mb-6 text-white">
                 From ₦500
               </div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center gap-2 text-white">
-                  <span className="text-yellow-300">✓</span> Instant credit
-                  delivery
+                  <span className="text-yellow-300">✓</span> Instant Balance
+                  Top-up
                 </li>
                 <li className="flex items-center gap-2 text-white">
-                  <span className="text-yellow-300">✓</span> Pay as you deploy
+                  <span className="text-yellow-300">✓</span> Pay Only For Uptime
                 </li>
                 <li className="flex items-center gap-2 text-white">
-                  <span className="text-yellow-300">✓</span> Priority bot
-                  hosting
+                  <span className="text-yellow-300">✓</span> Priority Instance
+                  Allocation
                 </li>
               </ul>
               <Link
@@ -445,11 +439,11 @@ export default function Home() {
       <section className="px-6 py-12 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Join the Community
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
+              Ready to Automate your WhatsApp?
             </h2>
-            <p className="text-base md:text-lg text-gray-300 mb-8">
-              Join our growing community to stay updated.
+            <p className="text-base md:text-lg text-gray-200 mb-8 opacity-90">
+              Join 500+ Developers building the future of chat automation.
             </p>
             <a
               href="https://whatsapp.com/channel/0029VbAhWo3C6Zvf2t4Rne0h"
@@ -457,7 +451,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-semibold transition transform hover:scale-105 inline-block shadow-lg"
             >
-              Join Channel
+              Join Developer Channel
             </a>
           </motion.div>
         </div>

@@ -83,7 +83,10 @@ export default function Login() {
 
     setLoading(true);
     try {
-      await login(formData.identifier, formData.password);
+      const user = await login(formData.identifier, formData.password);
+      if (user) {
+        toast.success(`Welcome back, ${user.username}! 👋`);
+      }
       // Clear all flags after successful login
       localStorage.removeItem("samkiel_agreed");
       localStorage.removeItem("samkiel_clicked_terms");

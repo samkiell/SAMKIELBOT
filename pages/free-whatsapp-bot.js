@@ -20,6 +20,20 @@ export default function FreeWhatsAppBotPage() {
           name="description"
           content="Looking for a free WhatsApp bot? SAMKIEL BOT offers free hosting for your WhatsApp automations. No credit card required. Start your journey for $0."
         />
+        <meta
+          property="og:title"
+          content="Free WhatsApp Bot Hosting & Deployment | SAMKIEL BOT"
+        />
+        <meta
+          property="og:description"
+          content="SAMKIEL BOT offers free hosting for your WhatsApp automations. No credit card required."
+        />
+        <meta property="og:image" content="/og-image.png" />
+        <meta
+          property="og:url"
+          content="https://bot.samkiel.dev/free-whatsapp-bot"
+        />
+        <meta property="og:type" content="article" />
       </Head>
 
       <main className="max-w-4xl mx-auto px-6 py-12">

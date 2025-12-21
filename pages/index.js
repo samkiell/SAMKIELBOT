@@ -115,7 +115,7 @@ export default function Home() {
           property="og:description"
           content="Professional WhatsApp bot deployment and hosting platform. Automate your chats and groups easily."
         />
-        <meta property="og:image" content="/og-image.jpg" />
+        <meta property="og:image" content="/og-image.png" />
         <meta property="og:url" content="https://bot.samkiel.dev" />
         <meta property="og:type" content="website" />
         <link rel="icon" href="/SAMKIELBOT-LOGO.png" />

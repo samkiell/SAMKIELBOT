@@ -20,6 +20,20 @@ export default function DeployWhatsAppBotPage() {
           name="description"
           content="Step-by-step guide on how to deploy a WhatsApp bot online. No coding required. Learn how to host your bot on SAMKIEL BOT with high uptime."
         />
+        <meta
+          property="og:title"
+          content="How to Deploy WhatsApp Bot in 5 Minutes | SAMKIEL BOT"
+        />
+        <meta
+          property="og:description"
+          content="Step-by-step guide on how to deploy a WhatsApp bot online. No coding required."
+        />
+        <meta property="og:image" content="/og-image.png" />
+        <meta
+          property="og:url"
+          content="https://bot.samkiel.dev/deploy-whatsapp-bot"
+        />
+        <meta property="og:type" content="article" />
       </Head>
 
       <main className="max-w-4xl mx-auto px-6 py-12">

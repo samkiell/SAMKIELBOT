@@ -20,6 +20,20 @@ export default function WhatsAppBotPage() {
           name="description"
           content="Learn everything about WhatsApp bots. Discover how WhatsApp automation can transform your group management and personal productivity with SAMKIEL BOT."
         />
+        <meta
+          property="og:title"
+          content="What is a WhatsApp Bot? Comprehensive Guide | SAMKIEL BOT"
+        />
+        <meta
+          property="og:description"
+          content="Learn everything about WhatsApp bots and how automation can transform your group management."
+        />
+        <meta property="og:image" content="/og-image.png" />
+        <meta
+          property="og:url"
+          content="https://bot.samkiel.dev/whatsapp-bot"
+        />
+        <meta property="og:type" content="article" />
       </Head>
 
       <main className="max-w-4xl mx-auto px-6 py-12">

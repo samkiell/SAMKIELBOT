@@ -20,6 +20,20 @@ export default function ViewOnceWhatsAppBotPage() {
           name="description"
           content="Want to see WhatsApp view once messages again? Use SAMKIEL BOT to automatically save and archive view once images, videos, and voice notes."
         />
+        <meta
+          property="og:title"
+          content="Save WhatsApp View Once Messages & Media | SAMKIEL BOT"
+        />
+        <meta
+          property="og:description"
+          content="Use SAMKIEL BOT to automatically save and archive view once images, videos, and voice notes."
+        />
+        <meta property="og:image" content="/og-image.png" />
+        <meta
+          property="og:url"
+          content="https://bot.samkiel.dev/view-once-whatsapp"
+        />
+        <meta property="og:type" content="article" />
       </Head>
 
       <main className="max-w-4xl mx-auto px-6 py-12">

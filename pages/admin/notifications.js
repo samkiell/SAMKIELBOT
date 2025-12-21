@@ -10,6 +10,10 @@ import {
   FaCheckCircle,
   FaExclamationTriangle,
   FaTimesCircle,
+  FaSync,
+  FaTools,
+  FaBullhorn,
+  FaTag,
 } from "react-icons/fa";
 
 export default function AdminNotifications() {
@@ -141,6 +145,16 @@ export default function AdminNotifications() {
         return <FaExclamationTriangle className="text-yellow-500" />;
       case "error":
         return <FaTimesCircle className="text-red-500" />;
+      case "update":
+        return <FaSync className="text-indigo-500" />;
+      case "maintenance":
+        return <FaTools className="text-orange-500" />;
+      case "alert":
+        return <FaExclamationTriangle className="text-orange-600" />;
+      case "announcement":
+        return <FaBullhorn className="text-purple-500" />;
+      case "offer":
+        return <FaTag className="text-emerald-500" />;
       default:
         return <FaInfoCircle className="text-blue-500" />;
     }
@@ -210,6 +224,11 @@ export default function AdminNotifications() {
                     <option value="success">Success</option>
                     <option value="warning">Warning</option>
                     <option value="error">Error</option>
+                    <option value="update">Update</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="alert">Alert</option>
+                    <option value="announcement">Announcement</option>
+                    <option value="offer">Offer</option>
                   </select>
                 </div>
               </div>

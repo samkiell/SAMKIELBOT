@@ -117,6 +117,17 @@ const deploymentSchema = new mongoose.Schema({
     ramInfos: { type: [Number], default: [] },
   },
   lastActivity: { type: Date, default: Date.now },
+  // Heartbeat tracking
+  lastHeartbeatAt: {
+    type: Date,
+  },
+  restartCount: {
+    type: Number,
+    default: 0,
+  },
+  instanceId: {
+    type: String, // Trace specific bot process runs
+  },
   deployedAt: {
     type: Date,
     default: Date.now,

@@ -210,6 +210,14 @@ export default function BotCard({ deployment, refreshData }) {
               {formatUptime()}
             </span>
           </p>
+          {deployment.lastHeartbeatAt && (
+            <p className="text-gray-500 dark:text-gray-500 text-[10px] mt-1 text-right italic">
+              Bot signal:{" "}
+              {new Date(deployment.lastHeartbeatAt).toLocaleTimeString()}
+              {deployment.restartCount > 0 &&
+                ` (${deployment.restartCount} restarts)`}
+            </p>
+          )}
         </div>
       </div>
 

@@ -128,18 +128,18 @@ export default function Dashboard() {
         <title>Dashboard - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
       </Head>
 
-      <main className="max-w-7xl mx-auto px-0 md:px-6 py-0 md:py-8 pt-0 md:pt-0 min-h-screen">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8 pt-4 md:pt-0 min-h-screen">
         {/* Header Section with Credits */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-6 mb-4 md:mb-12">
-          <div className="px-1">
-            <h1 className="text-xl md:text-4xl font-bold mb-0.5 md:mb-2 text-gray-900 dark:text-white capitalize">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 mb-8 md:mb-12">
+          <div>
+            <h1 className="text-xl md:text-4xl font-bold mb-1 md:mb-2 text-gray-900 dark:text-white capitalize">
               {getGreeting()}, {user.username} 👋
             </h1>
-            <p className="text-[11px] md:text-base text-gray-500 dark:text-gray-400">
+            <p className="text-xs md:text-base text-gray-500 dark:text-gray-400">
               Manage your bots efficiently.
             </p>
           </div>
-          <div className="flex flex-row items-center gap-1.5 md:gap-3 w-full md:w-auto px-1">
+          <div className="flex flex-row items-center gap-2 md:gap-3 w-full md:w-auto">
             <div className="flex-none">
               <CreditBalance key={refreshKey} />
             </div>

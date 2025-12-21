@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import toast from "react-hot-toast";
 import { useAuth } from "../lib/auth";
@@ -254,11 +255,18 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+              className={`w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 flex items-center justify-center gap-2 ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? "Signing In..." : "Sign In"}
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  <span>Signing In...</span>
+                </>
+              ) : (
+                "Sign In"
+              )}
             </button>
 
             <div className="text-center">

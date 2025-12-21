@@ -34,6 +34,7 @@ export default function AdminLayout({ children }) {
       icon: AlertTriangle,
     },
     { href: "/admin/suggestions", label: "Suggestions", icon: Menu },
+    { href: "/admin/routes", label: "Route Map", icon: Activity },
     { href: "/admin/settings", label: "System Policy", icon: Settings },
   ];
 

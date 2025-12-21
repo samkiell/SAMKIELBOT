@@ -344,8 +344,12 @@ export default function BotsList() {
                   {/* Footer Info */}
                   <div className="flex items-center justify-between text-xs text-gray-400 border-t border-gray-100 dark:border-slate-700 pt-4">
                     <span>
-                      Last Active:{" "}
-                      {new Date(bot.lastActive).toLocaleDateString()}
+                      Last Heartbeat:{" "}
+                      {bot.lastHeartbeat
+                        ? new Date(bot.lastHeartbeat).toLocaleDateString(
+                            "en-GB"
+                          )
+                        : new Date(bot.lastActive).toLocaleDateString("en-GB")}
                     </span>
                     <Shield
                       size={14}

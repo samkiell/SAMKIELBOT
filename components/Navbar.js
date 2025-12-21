@@ -102,8 +102,8 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center justify-between px-4 py-2">
-          <div className="flex gap-8 items-center text-gray-800 dark:text-gray-100">
+        <div className="hidden md:flex items-center justify-between px-4 py-2 flex-1 min-w-0 ml-4">
+          <div className="flex-1 min-w-0 flex gap-6 items-center text-gray-800 dark:text-gray-100 overflow-x-auto no-scrollbar [&>a]:shrink-0 [&>a]:whitespace-nowrap px-2 mask-linear-fade">
             {isVerified && (
               <>
                 <Link
@@ -191,7 +191,7 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 ml-4 flex-shrink-0">
             {isVerified && <NotificationDropdown />}
 
             {/* Theme Toggle Button */}

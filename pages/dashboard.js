@@ -128,7 +128,7 @@ export default function Dashboard() {
         <title>Dashboard - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
       </Head>
 
-      <main className="max-w-7xl mx-auto px-2 md:px-6 py-2 md:py-8 pt-11 md:pt-32 min-h-screen">
+      <main className="max-w-7xl mx-auto px-0 md:px-6 py-0 md:py-8 pt-0 md:pt-0 min-h-screen">
         {/* Header Section with Credits */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-6 mb-4 md:mb-12">
           <div className="px-1">

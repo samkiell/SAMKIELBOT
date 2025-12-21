@@ -148,6 +148,20 @@ export default function BotsList() {
     }
   };
 
+  // Format relative time (e.g., "5 seconds ago")
+  const formatRelativeTime = (timestamp) => {
+    if (!timestamp) return "Never";
+    const diff = Math.floor(
+      (currentTime - new Date(timestamp).getTime()) / 1000
+    );
+
+    if (diff < 5) return "just now";
+    if (diff < 60) return `${diff} seconds ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+    return new Date(timestamp).toLocaleDateString("en-GB");
+  };
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -345,11 +359,7 @@ export default function BotsList() {
                   <div className="flex items-center justify-between text-xs text-gray-400 border-t border-gray-100 dark:border-slate-700 pt-4">
                     <span>
                       Last Heartbeat:{" "}
-                      {bot.lastHeartbeat
-                        ? new Date(bot.lastHeartbeat).toLocaleDateString(
-                            "en-GB"
-                          )
-                        : new Date(bot.lastActive).toLocaleDateString("en-GB")}
+                      {formatRelativeTime(bot.lastHeartbeat || bot.lastActive)}
                     </span>
                     <Shield
                       size={14}

@@ -22,6 +22,28 @@ import Snowfall from "../components/Snowfall";
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [stats, setStats] = useState({
+    activeUsers: 400,
+    botsDeployed: 30,
+    uptimeStreak: 99.9,
+    countriesSupported: 5,
+  });
+
+  useEffect(() => {
+    // Fetch real-time stats
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/platform-stats");
+        const data = await res.json();
+        if (data.success && data.data) {
+          setStats(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch platform stats:", error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -384,25 +406,25 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
               <div className="text-4xl md:text-5xl font-black text-white mb-2">
-                400+
+                {stats.activeUsers}+
               </div>
               <div className="text-indigo-100 font-medium">Active Users</div>
             </div>
             <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
               <div className="text-4xl md:text-5xl font-black text-white mb-2">
-                30+
+                {stats.botsDeployed}+
               </div>
               <div className="text-indigo-100 font-medium">Bots Deployed</div>
             </div>
             <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
               <div className="text-4xl md:text-5xl font-black text-white mb-2">
-                99.9%
+                {stats.uptimeStreak}%
               </div>
               <div className="text-indigo-100 font-medium">Uptime Streak</div>
             </div>
             <div className="p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/10">
               <div className="text-4xl md:text-5xl font-black text-white mb-2">
-                5+
+                {stats.countriesSupported}+
               </div>
               <div className="text-indigo-100 font-medium">
                 Countries Supported
@@ -429,76 +451,88 @@ export default function Home() {
           <div className="flex overflow-x-auto pb-8 -mx-6 px-6 md:mx-0 md:px-0 gap-6 no-scrollbar snap-x snap-mandatory">
             {[
               {
-                name: "Chinedu Okafor",
-                role: "Group Admin",
-                text: "Honestly, the View Once recovery saved me so many times. Managing my campus group is way easier now.",
-                bg: "bg-blue-50 dark:bg-blue-900/20",
-              },
-              {
                 name: "Sarah Johnson",
                 role: "Student",
                 text: "I didn't know how to code, but I deployed a bot in like 2 minutes. The dashboard is super simple.",
                 bg: "bg-purple-50 dark:bg-purple-900/20",
+                image: "https://randomuser.me/api/portraits/women/44.jpg",
               },
               {
-                name: "David Adeleke",
-                role: "Developer",
-                text: "The isolated containers are a game changer. My bot doesn't crash anymore because of shared resources. Solid work.",
-                bg: "bg-indigo-50 dark:bg-indigo-900/20",
-              },
-              {
-                name: "Priya Patel",
-                role: "Tech Enthusiast",
-                text: "Love the daily free credits. It lets me test my bot ideas without paying upfront. Best platform I've used.",
-                bg: "bg-green-50 dark:bg-green-900/20",
-              },
-              {
-                name: "Tunde Bakare",
-                role: "Discord Mod",
-                text: "Moving my WhatsApp community automation here was the best decision. 99% uptime is not a joke.",
-                bg: "bg-yellow-50 dark:bg-yellow-900/20",
-              },
-              {
-                name: "Lerato Khumalo",
-                role: "Business Owner",
-                text: "My support bot runs 24/7 now. I don't have to worry about my phone being online. Huge relief!",
-                bg: "bg-pink-50 dark:bg-pink-900/20",
+                name: "Chinedu Okafor",
+                role: "Group Admin",
+                text: "Honestly, the View Once recovery saved me so many times. Managing my campus group is way easier now.",
+                bg: "bg-blue-50 dark:bg-blue-900/20",
+                image: "https://randomuser.me/api/portraits/men/10.jpg",
               },
               {
                 name: "Michael Smith",
                 role: "Freelancer",
                 text: "The cloud hosting is fast. Messages deliver instantly. No lag like other free hosts.",
                 bg: "bg-cyan-50 dark:bg-cyan-900/20",
+                image: "https://randomuser.me/api/portraits/men/55.jpg",
               },
               {
-                name: "Amina Yusuf",
-                role: "Student Leader",
-                text: "We use it for our department announcements. It just works. The 'stay alive' feature is great.",
-                bg: "bg-teal-50 dark:bg-teal-900/20",
-              },
-              {
-                name: "James Wilson",
-                role: "Bot Dev",
-                text: "Finally, a platform that gives me terminal-like control from a web UI. The restart button actually works immediately.",
-                bg: "bg-orange-50 dark:bg-orange-900/20",
+                name: "David Adeleke",
+                role: "Developer",
+                text: "The isolated containers are a game changer. My bot doesn't crash anymore because of shared resources. Solid work.",
+                bg: "bg-indigo-50 dark:bg-indigo-900/20",
+                image: "https://randomuser.me/api/portraits/men/22.jpg",
               },
               {
                 name: "Thabo Mbeki",
                 role: "Community Manager",
                 text: "Secure, fast, and the support team actually replies on WhatsApp. Unbeatable service.",
                 bg: "bg-red-50 dark:bg-red-900/20",
-              },
-              {
-                name: "Ngozi Eze",
-                role: "Entrepreneur",
-                text: "Setting up auto-replies for my store was easy. I recommend SAMKIEL BOT to anyone.",
-                bg: "bg-emerald-50 dark:bg-emerald-900/20",
+                image: "https://randomuser.me/api/portraits/men/15.jpg",
               },
               {
                 name: "Chris Evans",
                 role: "Code Newbie",
                 text: "I broke my bot 3 times and the auto-healing kicked in perfectly. This thing is robust.",
                 bg: "bg-violet-50 dark:bg-violet-900/20",
+                image: "https://randomuser.me/api/portraits/men/4.jpg",
+              },
+              {
+                name: "Priya Patel",
+                role: "Tech Enthusiast",
+                text: "Love the daily free credits. It lets me test my bot ideas without paying upfront. Best platform I've used.",
+                bg: "bg-green-50 dark:bg-green-900/20",
+                image: "https://randomuser.me/api/portraits/women/65.jpg",
+              },
+              {
+                name: "Tunde Bakare",
+                role: "Discord Mod",
+                text: "Moving my WhatsApp community automation here was the best decision. 99% uptime is not a joke.",
+                bg: "bg-yellow-50 dark:bg-yellow-900/20",
+                image: "https://randomuser.me/api/portraits/men/33.jpg",
+              },
+              {
+                name: "Ngozi Eze",
+                role: "Entrepreneur",
+                text: "Setting up auto-replies for my store was easy. I recommend SAMKIEL BOT to anyone.",
+                bg: "bg-emerald-50 dark:bg-emerald-900/20",
+                image: "https://randomuser.me/api/portraits/women/90.jpg",
+              },
+              {
+                name: "James Wilson",
+                role: "Bot Dev",
+                text: "Finally, a platform that gives me terminal-like control from a web UI. The restart button actually works immediately.",
+                bg: "bg-orange-50 dark:bg-orange-900/20",
+                image: "https://randomuser.me/api/portraits/men/85.jpg",
+              },
+              {
+                name: "Lerato Khumalo",
+                role: "Business Owner",
+                text: "My support bot runs 24/7 now. I don't have to worry about my phone being online. Huge relief!",
+                bg: "bg-pink-50 dark:bg-pink-900/20",
+                image: "https://randomuser.me/api/portraits/women/29.jpg",
+              },
+              {
+                name: "Amina Yusuf",
+                role: "Student Leader",
+                text: "We use it for our department announcements. It just works. The 'stay alive' feature is great.",
+                bg: "bg-teal-50 dark:bg-teal-900/20",
+                image: "https://randomuser.me/api/portraits/women/68.jpg",
               },
             ].map((testimonial, i) => (
               <motion.div
@@ -523,9 +557,11 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="flex items-center gap-3 mt-auto border-t border-black/5 dark:border-white/5 pt-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center text-sm font-bold text-gray-600 dark:text-gray-300">
-                    {testimonial.name.charAt(0)}
-                  </div>
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-800 shadow-sm"
+                  />
                   <div>
                     <h4 className="font-bold text-gray-900 dark:text-white text-sm">
                       {testimonial.name}

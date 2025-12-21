@@ -76,7 +76,7 @@ export default function Navbar() {
           : "bg-transparent border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-2.5 md:py-4 flex items-center justify-between">
         <Link
           href={isVerified ? "/dashboard" : "/"}
           className="flex items-center space-x-3"

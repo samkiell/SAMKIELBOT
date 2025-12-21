@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Allow: /whatsapp-bot
+Allow: /deploy-whatsapp-bot
+Allow: /free-whatsapp-bot
+Allow: /view-once-whatsapp
+Allow: /login
+Allow: /register
+
+# Block private dashboard routes
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+Disallow: /deploy
+Disallow: /settings
+Disallow: /bots
+
+Sitemap: https://bot.samkiel.dev/sitemap.xml

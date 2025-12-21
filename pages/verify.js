@@ -54,7 +54,7 @@ export default function Verify() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success(`Welcome ${user?.username || "to SAMKIEL BOT"}!`);
+        toast.success(`Welcome ${user?.username}!`);
         const updatedUser = await refreshUser();
 
         // If refreshUser returns the updated user, we can immediately check it

@@ -140,6 +140,12 @@ export default function Navbar() {
                 >
                   Support
                 </Link>
+                <Link
+                  href="/status"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Status
+                </Link>
               </>
             )}
             {isVerified ? (
@@ -354,6 +360,13 @@ export default function Navbar() {
                 label="Help & Support"
                 onClick={() => setMenuOpen(false)}
                 active={router.pathname === "/support"}
+              />
+              <MobileNavLink
+                href="/status"
+                icon={Activity}
+                label="System Status"
+                onClick={() => setMenuOpen(false)}
+                active={router.pathname === "/status"}
               />
               {user?.role === "admin" && (
                 <MobileNavLink

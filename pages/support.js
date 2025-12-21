@@ -46,7 +46,7 @@ export default function Support() {
       label: "Personal WhatsApp",
       description:
         "Direct support for urgent issues and technical emergencies.",
-      link: "https://wa.me/2340000000000", // Placeholder number
+      link: "https://wa.me/2348087357158",
       buttonText: "Chat Now",
       color: "bg-indigo-50 dark:bg-indigo-900/20",
     },

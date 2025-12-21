@@ -85,7 +85,7 @@ export default function Login() {
     try {
       const user = await login(formData.identifier, formData.password);
       if (user) {
-        toast.success(`Welcome back, ${user.username}! 👋`);
+        // Success handled in useAuth
       }
       // Clear all flags after successful login
       localStorage.removeItem("samkiel_agreed");

@@ -98,6 +98,27 @@ export default function Register() {
         toast.success(
           "🎉 Registration successful! An OTP has been sent to your email."
         );
+        setTimeout(() => {
+          toast(
+            (t) => (
+              <div className="flex flex-col gap-2">
+                <span className="font-semibold">
+                  Stay updated! Join our WhatsApp Channel 🚀
+                </span>
+                <a
+                  href="https://whatsapp.com/channel/0029VbAhWo3C6Zvf2t4Rne0h"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-green-500 text-white px-3 py-1 rounded text-sm text-center hover:bg-green-600 transition-colors"
+                  onClick={() => toast.dismiss(t.id)}
+                >
+                  Join Channel
+                </a>
+              </div>
+            ),
+            { duration: 6000, icon: "📢" }
+          );
+        }, 1000);
         // Clear all flags after successful registration
         localStorage.removeItem("samkiel_agreed");
         localStorage.removeItem("samkiel_clicked_terms");

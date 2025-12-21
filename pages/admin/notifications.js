@@ -66,122 +66,17 @@ export default function AdminNotifications() {
   // Send Broadcast
   const handleBroadcast = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.message) {
-      toast.error("Title and Message are required");
+    if (!formData.message) {
+      toast.error("Message is required");
       return;
     }
 
     setSending(true);
-    try {
-      const res = await fetch("/api/admin/notifications", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          ...formData,
-          userId: null, // Broadcast to all
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success("Broadcast sent successfully!");
-        setFormData({
-          title: "",
-          message: "",
-          type: "info",
-          link: "",
-          linkText: "",
-        });
-        fetchNotifications(); // Refresh list
-      } else {
-        toast.error(data.message || "Failed to send");
-      }
-    } catch (error) {
-      console.error("Send error:", error);
-      toast.error("Error sending broadcast");
-    } finally {
-      setSending(false);
-    }
-  };
-
-  // Delete notification
-  const handleDelete = async (id) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this broadcast log? This won't remove it from users who already received it."
-      )
-    )
-      return;
-
-    try {
-      const res = await fetch(`/api/admin/notifications/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success("Broadcast log deleted");
-        setNotifications(notifications.filter((n) => n._id !== id));
-      } else {
-        toast.error(data.message || "Failed to delete");
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error("Error deleting notification");
-    }
-  };
-
-  const getIcon = (type) => {
-    switch (type) {
-      case "success":
-        return <FaCheckCircle className="text-green-500" />;
-      case "warning":
-        return <FaExclamationTriangle className="text-yellow-500" />;
-      case "error":
-        return <FaTimesCircle className="text-red-500" />;
-      case "update":
-        return <FaSync className="text-indigo-500" />;
-      case "maintenance":
-        return <FaTools className="text-orange-500" />;
-      case "alert":
-        return <FaExclamationTriangle className="text-orange-600" />;
-      case "announcement":
-        return <FaBullhorn className="text-purple-500" />;
-      case "offer":
-        return <FaTag className="text-emerald-500" />;
-      default:
-        return <FaInfoCircle className="text-blue-500" />;
-    }
-  };
-
-  return (
-    <AdminLayout>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2 mb-2">
-          <FaBell className="text-indigo-600" /> Notification Center
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Send global broadcasts to all users and view history.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Broadcast Form */}
-        <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-              <FaPaperPlane className="text-indigo-500" /> Send Broadcast
-            </h2>
-            <form onSubmit={handleBroadcast} className="space-y-4">
+// ...
+// ...
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Title
+                  Title <span className="text-gray-400 font-normal text-xs">(Optional)</span>
                 </label>
                 <input
                   type="text"
@@ -190,7 +85,6 @@ export default function AdminNotifications() {
                   onChange={handleChange}
                   className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
                   placeholder="e.g. System Maintenance"
-                  required
                 />
               </div>
 

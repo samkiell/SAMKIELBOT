@@ -44,16 +44,16 @@ export default function CreditBalance({ showBuyButton = true }) {
   return (
     <div className="flex items-center gap-1.5 md:gap-3">
       <div
-        className={`flex items-center gap-1.5 md:gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-xl transition-all duration-200 shadow-lg border border-white/10 ${
+        className={`flex items-center justify-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-xl transition-all duration-200 shadow-lg border border-white/10 min-w-[90px] md:min-w-[120px] ${
           isLow
             ? "bg-gradient-to-r from-red-600 to-rose-700 text-white"
             : "bg-gradient-to-r from-yellow-500 to-orange-600 text-white"
         }`}
       >
-        <FaCoins className="text-white text-xs md:text-base" />
-        <span className="font-bold text-white text-[12px] md:text-base">
+        <FaCoins className="text-white text-sm md:text-lg" />
+        <span className="font-bold text-white text-[13px] md:text-base whitespace-nowrap">
           {Math.round(credits)}{" "}
-          <span className="hidden xs:inline">Credits</span>
+          <span className="hidden sm:inline">Credits</span>
         </span>
       </div>
       {showBuyButton && (

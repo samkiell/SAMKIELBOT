@@ -96,16 +96,28 @@ export default function Home() {
       <Snowfall />
       <Head>
         <title>
-          SAMKIEL Bot | Deploy & Manage WhatsApp Bots Online for Free
+          SAMKIEL BOT | #1 WhatsApp Bot Deployment & Hosting Platform
         </title>
         <meta
           name="description"
-          content="Deploy WhatsApp bot for free online with SAMKIEL. Easy WhatsApp automation, view once message recovery, and bot management. No technical knowledge required!"
+          content="Deploy your WhatsApp bot in minutes with SAMKIEL BOT. The leading platform for WhatsApp automation, hosting, and View Once message recovery. Start for free now!"
         />
         <meta
           name="keywords"
-          content="deploy WhatsApp bot for free, WhatsApp bot online, view once WhatsApp message, WhatsApp automation, SAMKIEL Bot, WhatsApp bot hosting, automate WhatsApp, WhatsApp bot manager, free WhatsApp bot deployment, WhatsApp bot platform, WhatsApp bot creator, WhatsApp bot dashboard, WhatsApp message recovery, WhatsApp bot script"
+          content="deploy WhatsApp bot, WhatsApp bot hosting, free WhatsApp bot, view once WhatsApp, WhatsApp automation, SAMKIEL Bot, WhatsApp bot manager"
         />
+        {/* Open Graph Meta Tags */}
+        <meta
+          property="og:title"
+          content="SAMKIEL BOT | #1 WhatsApp Bot Deployment & Hosting Platform"
+        />
+        <meta
+          property="og:description"
+          content="Professional WhatsApp bot deployment and hosting platform. Automate your chats and groups easily."
+        />
+        <meta property="og:image" content="/og-image.jpg" />
+        <meta property="og:url" content="https://bot.samkiel.dev" />
+        <meta property="og:type" content="website" />
         <link rel="icon" href="/SAMKIELBOT-LOGO.png" />
       </Head>
 
@@ -128,14 +140,14 @@ export default function Home() {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight drop-shadow-sm">
-              𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋
+              Deploy WhatsApp Bot with One Click
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed font-light">
               Automate your WhatsApp experience with power, simplicity, and full
               control.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-gray-500 dark:text-gray-400 mb-10">
+            <div className="flex flex-wrap justify-center gap-4 text-sm font-medium text-gray-500 dark:text-gray-400 mb-6">
               <span className="flex items-center bg-gray-200 dark:bg-white/5 px-3 py-1 rounded-lg">
                 ✨ 99.9% Uptime
               </span>
@@ -146,6 +158,13 @@ export default function Home() {
                 🔒 E2E Encrypted
               </span>
             </div>
+
+            <p className="max-w-3xl mx-auto text-gray-600 dark:text-gray-400 mb-10 leading-relaxed italic">
+              SAMKIEL BOT is the premier WhatsApp bot deployment and hosting
+              platform for developers and group admins. Get your
+              high-performance WhatsApp bot online instantly with our reliable
+              hosting infrastructure.
+            </p>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <Link
                 href="/register"
@@ -173,19 +192,88 @@ export default function Home() {
         <div className="absolute bottom-20 left-20 w-24 h-24 bg-purple-500/10 rounded-full blur-xl animate-bounce delay-1000"></div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="px-6 py-12 bg-white dark:bg-gray-800 border-b dark:border-gray-700">
+        <div className="max-w-6xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-gray-100">
+              How It Works
+            </h2>
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300">
+              Get your WhatsApp bot running in 3 simple steps.
+            </p>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-6 bg-gray-50 dark:bg-gray-900 rounded-xl">
+              <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                1
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Register Account</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Create your SAMKIEL BOT account to access the deployment
+                dashboard.
+              </p>
+            </div>
+            <div className="text-center p-6 bg-gray-50 dark:bg-gray-900 rounded-xl">
+              <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                2
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Configure Bot</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Choose your bot settings and features like View Once recovery.
+              </p>
+            </div>
+            <div className="text-center p-6 bg-gray-50 dark:bg-gray-900 rounded-xl">
+              <div className="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                3
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Deploy & Connect</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Click deploy and link your WhatsApp via QR or pairing code.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
       <section className="px-6 py-12 bg-white dark:bg-gray-800">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp}>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-              About SAMKIEL BOT
+              Why Choose SAMKIEL BOT?
             </h2>
-            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-              SAMKIEL BOT helps individuals, students, communities, and group
-              leaders automate WhatsApp tasks — from moderating groups to
-              managing files and saving View Once messages. Works both in groups
-              and private chats.
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+              SAMKIEL BOT provides the most stable WhatsApp bot hosting
+              environment. Manage group moderation, media recovery, and custom
+              automations with zero technical setup.
             </p>
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
+              <Link
+                href="/whatsapp-bot"
+                className="text-indigo-600 hover:underline"
+              >
+                WhatsApp Bot Guide
+              </Link>
+              <Link
+                href="/deploy-whatsapp-bot"
+                className="text-indigo-600 hover:underline"
+              >
+                Deployment Tips
+              </Link>
+              <Link
+                href="/free-whatsapp-bot"
+                className="text-indigo-600 hover:underline"
+              >
+                Free Hosting
+              </Link>
+              <Link
+                href="/view-once-whatsapp"
+                className="text-indigo-600 hover:underline"
+              >
+                View Once Recovery
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>

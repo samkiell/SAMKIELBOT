@@ -22,6 +22,7 @@ import {
   LogOut,
   BookOpen,
   Activity,
+  ChevronDown,
 } from "lucide-react";
 import NotificationDropdown from "./NotificationDropdown";
 import UserAvatarDropdown from "./UserAvatarDropdown";
@@ -102,68 +103,83 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Links */}
+        {/* Desktop Links */}
         <div className="hidden md:flex items-center justify-between px-4 py-2 flex-1 min-w-0 ml-4">
-          <div className="flex-1 min-w-0 flex gap-6 items-center text-gray-800 dark:text-gray-100 overflow-x-auto no-scrollbar [&>a]:shrink-0 [&>a]:whitespace-nowrap px-2 mask-linear-fade">
+          <div className="flex gap-6 items-center text-gray-800 dark:text-gray-100">
             {isVerified && (
               <>
                 <Link
+                  href="/dashboard"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+                >
+                  Dashboard
+                </Link>
+                <Link
                   href="/bots"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
                 >
                   Community Bots
                 </Link>
                 <Link
-                  href="/suggest"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Suggest
-                </Link>
-                <Link
-                  href="/credits/claim"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Rewards
-                </Link>
-                <Link
                   href="/credits/buy"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
                 >
                   Buy Credits
                 </Link>
-                <Link
-                  href="/referrals"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Referrals
-                </Link>
-                <Link
-                  href="/support"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Support
-                </Link>
-                <Link
-                  href="/docs"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Docs
-                </Link>
-                <Link
-                  href="/status"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Status
-                </Link>
+
+                {/* More Dropdown */}
+                <div className="relative group z-50">
+                  <button className="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium py-2">
+                    More
+                    <ChevronDown size={16} />
+                  </button>
+                  <div className="absolute top-full left-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left">
+                    <div className="p-1">
+                      <Link
+                        href="/suggest"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                      >
+                        Suggest
+                      </Link>
+                      <Link
+                        href="/credits/claim"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                      >
+                        Rewards
+                      </Link>
+                      <Link
+                        href="/referrals"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                      >
+                        Referrals
+                      </Link>
+                      <div className="h-px bg-gray-100 dark:bg-gray-700 my-1" />
+                      <Link
+                        href="/support"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                      >
+                        Support
+                      </Link>
+                      <Link
+                        href="/docs"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                      >
+                        Docs
+                      </Link>
+                      <Link
+                        href="/status"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                      >
+                        Status
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
+
             {isVerified ? (
               <>
-                <Link
-                  href="/dashboard"
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                >
-                  Dashboard
-                </Link>
                 {user?.role === "admin" && (
                   <Link
                     href="/admin"

@@ -1,3 +1,4 @@
+import { NoActivityState } from "../components/EmptyStates";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -175,36 +176,8 @@ export default function Dashboard() {
                 />
               ))}
               {deployments.length === 0 && (
-                <div className="col-span-full text-center py-8 md:py-16">
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-700/40 p-8 max-w-md mx-auto">
-                    <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg
-                        className="w-8 h-8 text-purple-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
-                      No deployments yet
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Create your first bot deployment to get started!
-                    </p>
-                    <Link
-                      href="/deploy"
-                      className="inline-flex items-center bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg font-semibold transition-all duration-200"
-                    >
-                      Deploy Your First Bot
-                    </Link>
-                  </div>
+                <div className="col-span-full py-8">
+                  <NoActivityState />
                 </div>
               )}
             </div>

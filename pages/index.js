@@ -78,32 +78,32 @@ export default function Home() {
     {
       icon: <FaUsers className="text-indigo-500 text-3xl" />,
       title: "Universal Compatibility",
-      desc: "Seamlessly manages group permissions and private DMs without lag or downtime.",
+      desc: "Perfect for personal chats and large groups. Manage everything with zero technical knowledge.",
     },
     {
       icon: <FaEye className="text-indigo-500 text-3xl" />,
-      title: "Media Recovery Engine",
-      desc: "Automatically capture and store View Once media securely. Never miss a moment.",
+      title: "View Once Recovery",
+      desc: "Automatically save 'View Once' photos and videos. Never lose those disappearing moments again.",
     },
     {
       icon: <FaRocket className="text-indigo-500 text-3xl" />,
-      title: "One-Click Cloud Deploy",
-      desc: "No terminal needed. Launch from your browser directly to our high-speed servers.",
+      title: "Instant Video & Music",
+      desc: "Download any video or song directly from WhatsApp. Just send the link and the bot does the rest.",
     },
     {
       icon: <FaSync className="text-indigo-500 text-3xl" />,
-      title: "Auto-Updating Core",
-      desc: "Your bot stays patched and secure automatically. No manual maintenance required.",
+      title: "0% Coding Required",
+      desc: "If you can scan a QR code, you can deploy a bot. No servers to set up, no code to write.",
     },
     {
       icon: <FaTachometerAlt className="text-indigo-500 text-3xl" />,
-      title: "Real-Time Mission Control",
-      desc: "Start, stop, restart, and monitor your bots from a centralized dashboard.",
+      title: "Powerful Commands",
+      desc: "Access 100+ commands for fun, utility, and moderation. Explore them all in our growing library.",
     },
     {
       icon: <FaCloud className="text-indigo-500 text-3xl" />,
-      title: "Isolated Environments",
-      desc: "Every bot runs in its own container. No shared resource throttling or interference.",
+      title: "Cloud Powered",
+      desc: "Your bot stays online even when your phone is off. Fast, reliable, and 24/7 uptime.",
     },
   ];
 
@@ -151,18 +151,17 @@ export default function Home() {
             </div>
 
             <h1 className="text-4xl md:text-7xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight drop-shadow-sm leading-tight">
-              The Developer-First Platform for{" "}
-              <br className="hidden md:block" />
+              The Easiest Platform for <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
                 WhatsApp Automation
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed font-light">
-              Deploy, manage, and scale WhatsApp bots with zero server
-              headaches. <br />
+              Deploy powerful WhatsApp bots in seconds, even if you don't know
+              how to code. <br />
               <span className="font-medium text-gray-900 dark:text-white">
-                Features isolated containers, View Once recovery, and 99.9%
-                uptime.
+                Download videos, recover View Once media, and explore 100+
+                commands instantly.
               </span>
             </p>
 
@@ -221,7 +220,7 @@ export default function Home() {
                 1
               </div>
               <h3 className="text-xl font-bold mb-3">
-                Create Developer Account
+                Create Your Free Account
               </h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                 Sign up for free to access your personal mission control
@@ -257,7 +256,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp}>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-              Why Developers Choose SAMKIEL BOT
+              Why People Choose SAMKIEL BOT
             </h2>
             <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6 font-light">
               Stop fighting with downtime and complex setups. We provide{" "}
@@ -279,6 +278,12 @@ export default function Home() {
                 className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-full text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors border border-indigo-100 dark:border-indigo-500/10"
               >
                 Deployment Architecture
+              </Link>
+              <Link
+                href="/commands"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-medium hover:bg-indigo-700 transition-colors border border-indigo-500 shadow-md"
+              >
+                Explore 100+ Commands
               </Link>
               <Link
                 href="/free-whatsapp-bot"
@@ -582,7 +587,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-gray-100">
-              Transparent, Developer-Friendly Pricing
+              Transparent, Everyone-Friendly Pricing
             </h2>
             <p className="text-base md:text-lg text-gray-600 dark:text-gray-300">
               No hidden fees. Pay only for the resources you use.
@@ -659,7 +664,7 @@ export default function Home() {
               Ready to Automate your WhatsApp?
             </h2>
             <p className="text-base md:text-lg text-gray-200 mb-8 opacity-90">
-              Join 500+ Developers building the future of chat automation.
+              Join 500+ members building the future of chat automation.
             </p>
             <a
               href="https://whatsapp.com/channel/0029VbAhWo3C6Zvf2t4Rne0h"

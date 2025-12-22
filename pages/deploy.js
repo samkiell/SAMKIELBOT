@@ -45,6 +45,7 @@ export default function DeployPage() {
     prefix: ".",
     packName: "𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋",
     ownerName: user?.fullName || "User",
+    ownerNumber: user?.whatsappNumber || "",
     // Feature Toggles
     autoStatusView: "on", // "off" | "on" | "no-dl"
     sendRead: false,
@@ -58,7 +59,11 @@ export default function DeployPage() {
 
   useEffect(() => {
     if (user?.fullName) {
-      setFormData((prev) => ({ ...prev, ownerName: user.fullName }));
+      setFormData((prev) => ({
+        ...prev,
+        ownerName: user.fullName,
+        ownerNumber: user.whatsappNumber || prev.ownerNumber,
+      }));
     }
   }, [user]);
 
@@ -86,6 +91,14 @@ export default function DeployPage() {
       return;
     }
 
+    if (formData.ownerNumber && !/^\d{10,15}$/.test(formData.ownerNumber)) {
+      setError(
+        "Invalid Owner Number. Use international format without + or spaces."
+      );
+      setLoading(false);
+      return;
+    }
+
     // Prepare Payload
     const payload = {
       botName: formData.botName,
@@ -93,6 +106,7 @@ export default function DeployPage() {
       prefix: formData.prefix,
       packName: formData.packName, // Backend will enforce locking if needed
       ownerName: formData.ownerName,
+      ownerNumber: formData.ownerNumber, // Now passing this to backend
       featureToggles: {
         AUTO_STATUS_VIEW: formData.autoStatusView,
         SEND_READ: formData.sendRead,
@@ -272,6 +286,36 @@ export default function DeployPage() {
                   }`}
                   placeholder="𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Owner Name
+                </label>
+                <input
+                  type="text"
+                  name="ownerName"
+                  value={formData.ownerName}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  placeholder="Your Name"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Owner Number (Optional)
+                </label>
+                <input
+                  type="text"
+                  name="ownerNumber"
+                  value={formData.ownerNumber}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                  placeholder="2348012345678"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  The primary admin number for this bot. Defaults to your linked
+                  number if empty.
+                </p>
               </div>
             </div>
           </section>

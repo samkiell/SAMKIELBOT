@@ -41,6 +41,17 @@ const deploymentSchema = new mongoose.Schema({
   pairingCode: {
     type: String,
   },
+  // User Configuration Snapshot
+  configuration: {
+    prefix: { type: String, default: "." },
+    ownerName: { type: String },
+    packName: { type: String, default: "𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋" },
+    featureToggles: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
+  },
   // BOT STATUS STATE MACHINE
   status: {
     type: String,

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Eye, RotateCcw, Square, Play, Trash2, Clock } from "lucide-react";
 import { controlBot, deleteBot } from "../lib/api";
 import toast from "react-hot-toast";
@@ -54,11 +55,15 @@ export default function BotCard({ deployment, refreshData }) {
     };
   }, [deployment._id, refreshData]);
 
+  // ... (inside component)
+
   const getStatusConfig = (status) => {
     const config = {
       running: { label: "✅ Running", color: "green" },
       active: { label: "✅ Active", color: "green" },
       connected: { label: "✅ Connected", color: "green" },
+      online: { label: "✅ Online", color: "green" },
+      degraded: { label: "⚠️ Unstable", color: "yellow" },
       stopped: { label: "⛔ Stopped", color: "red" },
       offline: { label: "⚫ Offline", color: "gray" },
       installing: { label: "🛠 Installing", color: "yellow" },
@@ -67,6 +72,9 @@ export default function BotCard({ deployment, refreshData }) {
       awaiting_pairing: { label: "📲 Awaiting Pairing", color: "purple" },
       paired: { label: "🔗 Paired", color: "purple" },
       failed: { label: "❌ Failed", color: "red" },
+      error: { label: "❌ Error", color: "red" },
+      suspended: { label: "⛔ Suspended", color: "red" },
+      expired: { label: "⛔ Expired", color: "red" },
       pending: { label: "⏳ Pending", color: "gray" },
     };
     return config[status] || { label: status, color: "gray" };
@@ -161,9 +169,11 @@ export default function BotCard({ deployment, refreshData }) {
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-700/40 hover:shadow-lg transition-shadow duration-300">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-1">
-            {deployment.botName || `Bot ${deployment.botNumber}`}
-          </h3>
+          <Link href={`/bots/${deployment._id}`} className="hover:underline">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-1">
+              {deployment.botName || `Bot ${deployment.botNumber}`}
+            </h3>
+          </Link>
           <span
             className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
               deployment.status

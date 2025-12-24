@@ -69,6 +69,9 @@ const deploymentSchema = new mongoose.Schema({
       "offline",
       "failed",
       "suspended",
+      "online", // New: Fully operational
+      "degraded", // New: Running but connection unstable
+      "error", // New: Fatal runtime error
     ],
     default: "pending",
   },

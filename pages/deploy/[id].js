@@ -299,12 +299,22 @@ export default function DeploymentSessionPage() {
 
       case "connected":
       case "active":
+      case "online": // Handle new ONLINE state
         return {
           icon: <CheckCircle size={48} />,
           title: "Bot is Live! 🚀",
           message: "Your bot is now connected and ready to use.",
           color: "text-green-600 dark:text-green-400",
           success: true,
+          showControls: true,
+        };
+
+      case "degraded": // Handle DEGRADED state
+        return {
+          icon: <AlertCircle size={48} />,
+          title: "Connection Unstable",
+          message: "Bot is running but experiencing connection issues.",
+          color: "text-yellow-600 dark:text-yellow-400",
           showControls: true,
         };
 
@@ -315,6 +325,16 @@ export default function DeploymentSessionPage() {
           title: "Bot Offline",
           message: "Your bot is currently stopped.",
           color: "text-gray-600 dark:text-gray-400",
+          showControls: true,
+        };
+
+      case "error": // Handle Runtime ERROR
+        return {
+          icon: <AlertCircle size={48} />,
+          title: "Runtime Error",
+          message:
+            deployment.errorMessage || "A fatal error interrupted the bot.",
+          color: "text-red-600 dark:text-red-400",
           showControls: true,
         };
 

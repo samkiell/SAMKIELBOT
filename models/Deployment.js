@@ -72,6 +72,7 @@ const deploymentSchema = new mongoose.Schema({
       "online", // New: Fully operational
       "degraded", // New: Running but connection unstable
       "error", // New: Fatal runtime error
+      "expired", // New: Billing expired
     ],
     default: "pending",
   },
@@ -120,7 +121,24 @@ const deploymentSchema = new mongoose.Schema({
   },
   dailyBurn: {
     type: Number,
-    default: 2, // Base daily burn
+    default: 5, // Updated to 5 credits/day
+  },
+  lastRenewedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  nextRenewalAt: {
+    type: Date,
+    default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // +24 hours
+  },
+  totalCreditsSpent: {
+    type: Number,
+    default: 50, // Initial cost
+  },
+  billingStatus: {
+    type: String,
+    enum: ["active", "suspended", "expired"],
+    default: "active",
   },
   lastBurnDate: {
     type: Date,

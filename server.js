@@ -88,11 +88,6 @@ app.prepare().then(async () => {
   });
 
   botHealthService.on("bot.log", (data) => {
-    console.log(
-      `[Socket.IO] Bot log received for ${
-        data.deploymentId
-      }: ${data.log.substring(0, 50)}...`
-    );
     io.to(data.deploymentId).emit("bot:log", data);
   });
 

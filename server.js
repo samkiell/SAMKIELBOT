@@ -126,9 +126,9 @@ app.prepare().then(async () => {
     console.log(`> Environment: ${dev ? "development" : "production"}`);
 
     // Initialize Bot Health Monitoring in the background after server is live
-    // console.log("[Server] Initializing Bot Health Monitors (Background)...");
-    // botHealthService.initializeAllMonitors().catch((err) => {
-    //   console.error("[BotHealth] background init error:", err);
-    // });
+    console.log("[Server] Initializing Bot Health Monitors (Background)...");
+    botHealthService.initializeAllMonitors().catch((err) => {
+      console.error("[BotHealth] background init error:", err);
+    });
   });
 });

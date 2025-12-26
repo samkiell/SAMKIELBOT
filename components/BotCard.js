@@ -220,12 +220,30 @@ export default function BotCard({ deployment, refreshData }) {
               {formatUptime()}
             </span>
           </p>
-          {deployment.lastHeartbeatAt && (
-            <p className="text-gray-500 dark:text-gray-500 text-[10px] mt-1 text-right italic">
-              Health sync:{" "}
-              {new Date(deployment.lastHeartbeatAt).toLocaleTimeString()}
-              {deployment.restartCount > 0 &&
-                ` (${deployment.restartCount} restarts)`}
+          <div className="pt-2 border-t border-gray-100 dark:border-gray-700 mt-2 flex justify-between items-center text-[10px] uppercase tracking-wider font-bold">
+            <div className="flex items-center gap-1 text-gray-400">
+              <div
+                className={`h-1.5 w-1.5 rounded-full ${
+                  deployment.isActive
+                    ? "bg-green-500 animate-pulse"
+                    : "bg-gray-400"
+                }`}
+              ></div>
+              Last Heartbeat
+            </div>
+            <div className="text-gray-600 dark:text-gray-300">
+              {deployment.lastHeartbeatAt
+                ? new Date(deployment.lastHeartbeatAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })
+                : "N/A"}
+            </div>
+          </div>
+          {deployment.restartCount > 0 && (
+            <p className="text-amber-500 text-[9px] text-right mt-1 font-medium italic">
+              {deployment.restartCount} automatic restarts detected
             </p>
           )}
         </div>

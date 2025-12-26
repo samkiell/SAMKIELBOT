@@ -19,21 +19,7 @@ export default function DeployPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  // Determine User Tier
-  const userPlan = user?.subscription?.plan?.name || "Free"; // Free, Starter, Pro, Max
-  const isFree = userPlan === "Free";
-  const isStarter = userPlan === "Starter";
-  const isPro = userPlan === "Pro";
-  const isMax = userPlan === "Max";
-
-  // Tier Levels for ease of comparison
-  const tierLevel = {
-    Free: 0,
-    Starter: 1,
-    Pro: 2,
-    Max: 3,
-  };
-  const currentTierLevel = tierLevel[userPlan] || 0;
+  const [step, setStep] = useState(1);
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -73,10 +59,6 @@ export default function DeployPage() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-  };
-
-  const isFeatureLocked = (minTier) => {
-    return currentTierLevel < tierLevel[minTier];
   };
 
   const handleSubmit = async (e) => {
@@ -179,28 +161,6 @@ export default function DeployPage() {
               Customize your bot's personality and security settings.
             </p>
           </div>
-          <div className="flex items-center gap-3 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-sm">
-            <span className="text-sm font-medium text-gray-500">
-              Current Plan:
-            </span>
-            <span
-              className={`text-sm font-bold px-2 py-0.5 rounded ${
-                isFree
-                  ? "bg-gray-100 text-gray-600"
-                  : "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
-              }`}
-            >
-              {userPlan}
-            </span>
-            {isFree && (
-              <Link
-                href="/pricing"
-                className="text-xs bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-3 py-1.5 rounded-full hover:opacity-90 transition-opacity"
-              >
-                Upgrade
-              </Link>
-            )}
-          </div>
         </div>
 
         {error && (
@@ -267,23 +227,13 @@ export default function DeployPage() {
               <div className="relative">
                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300 flex justify-between">
                   Sticker Pack Name
-                  {isFeatureLocked("Starter") && (
-                    <span className="text-xs text-indigo-500 flex items-center gap-1">
-                      <Lock size={12} /> Starter+
-                    </span>
-                  )}
                 </label>
                 <input
                   type="text"
                   name="packName"
                   value={formData.packName}
                   onChange={handleChange}
-                  disabled={isFeatureLocked("Starter")}
-                  className={`w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all ${
-                    isFeatureLocked("Starter")
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   placeholder="𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋"
                 />
               </div>
@@ -335,21 +285,11 @@ export default function DeployPage() {
                   name="commandMode"
                   value={formData.commandMode}
                   onChange={handleChange}
-                  disabled={isFeatureLocked("Starter")}
-                  className={`w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all ${
-                    isFeatureLocked("Starter")
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 >
                   <option value="public">Public (Everyone can use)</option>
                   <option value="private">Private (Owner only)</option>
                 </select>
-                {isFeatureLocked("Starter") && (
-                  <p className="text-xs text-indigo-500 mt-1">
-                    Upgrade to Starter to enable Private mode.
-                  </p>
-                )}
               </div>
 
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
@@ -475,45 +415,25 @@ export default function DeployPage() {
                 >
                   <option value="off">Off</option>
                   <option value="on">On (View Only)</option>
-                  <option
-                    value="no-dl"
-                    disabled={isFeatureLocked("Pro")}
-                    className={isFeatureLocked("Pro") ? "text-gray-400" : ""}
-                  >
-                    No Download (Pro Only)
-                  </option>
+                  <option value="no-dl">No Download</option>
                 </select>
-                {isFeatureLocked("Pro") && (
-                  <p className="text-xs text-indigo-500 mt-1">
-                    Upgrade to Pro for advanced status control.
-                  </p>
-                )}
               </div>
 
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg opacity-100 relative overflow-hidden">
                 <div>
                   <span className="block font-medium dark:text-gray-200 flex items-center gap-2">
                     Auto Reaction
-                    {isFeatureLocked("Pro") && <Lock size={14} />}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     React to incoming messages
                   </span>
                 </div>
-                {isFeatureLocked("Pro") && (
-                  <div className="absolute inset-0 bg-gray-100/50 dark:bg-gray-800/60 z-10 flex items-center justify-center backdrop-blur-[1px]">
-                    <span className="text-xs font-bold bg-white dark:bg-gray-900 px-2 py-1 rounded shadow text-indigo-500">
-                      Pro Only
-                    </span>
-                  </div>
-                )}
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     name="autoReaction"
                     checked={formData.autoReaction}
                     onChange={handleChange}
-                    disabled={isFeatureLocked("Pro")}
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>

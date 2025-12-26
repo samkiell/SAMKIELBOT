@@ -38,6 +38,11 @@ app.prepare().then(async () => {
   // Make io accessible to API routes
   server.set("io", io);
 
+  // Health check route
+  server.get("/health-check", (req, res) => {
+    res.send("Express is responding");
+  });
+
   console.log("[Server] Connecting to MongoDB...");
   await connectDB();
   console.log("[Server] MongoDB connected.");

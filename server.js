@@ -9,7 +9,7 @@ const path = require("path");
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "localhost";
+const hostname = "0.0.0.0";
 const port = parseInt(process.env.PORT || "3000", 10);
 
 // Initialize Next.js
@@ -38,8 +38,9 @@ app.prepare().then(async () => {
   // Make io accessible to API routes
   server.set("io", io);
 
-  // Connect to MongoDB
+  console.log("[Server] Connecting to MongoDB...");
   await connectDB();
+  console.log("[Server] MongoDB connected.");
 
   // Initialize Scheduler
   initScheduler();
@@ -87,10 +88,12 @@ app.prepare().then(async () => {
     io.to(data.deploymentId.toString()).emit("bot:offline", data);
   });
 
-  botHealthService.on("bot.log", (data) => {    io.to(data.deploymentId).emit("bot:log", data);
+  botHealthService.on("bot.log", (data) => {
+    io.to(data.deploymentId).emit("bot:log", data);
   });
 
   // Initialize Bot Health Monitoring
+  console.log("[Server] Initializing Bot Health Monitors...");
   botHealthService.initializeAllMonitors().then(() => {
     console.log("[BotHealth] All monitors initialized");
   });
@@ -102,9 +105,11 @@ app.prepare().then(async () => {
     return handle(req, res);
   });
 
+  console.log("[Server] Starting HTTP server...");
   httpServer.listen(port, (err) => {
     if (err) throw err;
-    console.log(`> Ready on http://${hostname}:${port}`);
+    console.log(`> Ready on http://localhost:${port}`);
+    console.log(`> Ready on http://127.0.0.1:${port}`);
     console.log(`> Environment: ${dev ? "development" : "production"}`);
   });
 });

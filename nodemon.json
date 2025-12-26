@@ -1,0 +1,16 @@
+{
+  "ignore": [
+    "logs/*",
+    ".next/*",
+    "node_modules/*",
+    "*.log"
+  ],
+  "watch": [
+    "server.js",
+    "lib/**/*",
+    "pages/**/*",
+    "components/**/*",
+    "models/**/*"
+  ],
+  "ext": "js,json"
+}

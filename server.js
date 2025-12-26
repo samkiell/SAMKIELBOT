@@ -92,11 +92,7 @@ app.prepare().then(async () => {
     io.to(data.deploymentId).emit("bot:log", data);
   });
 
-  // Initialize Bot Health Monitoring
-  console.log("[Server] Initializing Bot Health Monitors...");
-  botHealthService.initializeAllMonitors().then(() => {
-    console.log("[BotHealth] All monitors initialized");
-  });
+  // Bot initialization moved after server start
 
   // Let Next.js handle all other routes
   server.all("*", (req, res) => {
@@ -111,5 +107,11 @@ app.prepare().then(async () => {
     console.log(`> Ready on http://localhost:${port}`);
     console.log(`> Ready on http://127.0.0.1:${port}`);
     console.log(`> Environment: ${dev ? "development" : "production"}`);
+
+    // Initialize Bot Health Monitoring in the background after server is live
+    console.log("[Server] Initializing Bot Health Monitors (Background)...");
+    botHealthService.initializeAllMonitors().catch((err) => {
+      console.error("[BotHealth] background init error:", err);
+    });
   });
 });

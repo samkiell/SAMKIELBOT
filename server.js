@@ -64,28 +64,40 @@ app.prepare().then(async () => {
 
   // Bot Health Service Event Forwarding
   botHealthService.on("bot.status_change", (data) => {
-    io.to(data.deploymentId.toString()).emit("bot:status_change", data);
+    if (data.deploymentId) {
+      io.to(data.deploymentId.toString()).emit("bot:status_change", data);
+    }
     io.emit("bot:status_change", data); // Keep global for dashboard?
   });
 
   botHealthService.on("bot.pairing_code", (data) => {
-    io.to(data.deploymentId.toString()).emit("bot:pairing_code", data);
+    if (data.deploymentId) {
+      io.to(data.deploymentId.toString()).emit("bot:pairing_code", data);
+    }
   });
 
   botHealthService.on("bot.paired", (data) => {
-    io.to(data.deploymentId.toString()).emit("bot:paired", data);
+    if (data.deploymentId) {
+      io.to(data.deploymentId.toString()).emit("bot:paired", data);
+    }
   });
 
   botHealthService.on("bot.connected", (data) => {
-    io.to(data.deploymentId.toString()).emit("bot:connected", data);
+    if (data.deploymentId) {
+      io.to(data.deploymentId.toString()).emit("bot:connected", data);
+    }
   });
 
   botHealthService.on("bot.active", (data) => {
-    io.to(data.deploymentId.toString()).emit("bot:active", data);
+    if (data.deploymentId) {
+      io.to(data.deploymentId.toString()).emit("bot:active", data);
+    }
   });
 
   botHealthService.on("bot.offline", (data) => {
-    io.to(data.deploymentId.toString()).emit("bot:offline", data);
+    if (data.deploymentId) {
+      io.to(data.deploymentId.toString()).emit("bot:offline", data);
+    }
   });
 
   botHealthService.on("bot.log", (data) => {

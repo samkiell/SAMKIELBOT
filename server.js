@@ -87,8 +87,7 @@ app.prepare().then(async () => {
     io.to(data.deploymentId.toString()).emit("bot:offline", data);
   });
 
-  botHealthService.on("bot.log", (data) => {
-    io.to(data.deploymentId).emit("bot:log", data);
+  botHealthService.on("bot.log", (data) => {    io.to(data.deploymentId).emit("bot:log", data);
   });
 
   // Initialize Bot Health Monitoring

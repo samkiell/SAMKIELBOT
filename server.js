@@ -9,7 +9,7 @@ const path = require("path");
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "0.0.0.0";
+const hostname = "localhost";
 const port = parseInt(process.env.PORT || "3000", 10);
 
 // Initialize Next.js
@@ -37,11 +37,6 @@ app.prepare().then(async () => {
 
   // Make io accessible to API routes
   server.set("io", io);
-
-  // Health check route
-  server.get("/health-check", (req, res) => {
-    res.send("Express is responding");
-  });
 
   console.log("[Server] Connecting to MongoDB...");
   await connectDB();

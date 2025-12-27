@@ -12,8 +12,15 @@ import {
   Lock,
   MessageSquare,
   Zap,
+  Info,
+  X,
+  Clock,
+  CreditCard,
+  AlertTriangle,
+  CheckCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function DeployPage() {
   const { user, loading: authLoading } = useAuth();
@@ -21,7 +28,7 @@ export default function DeployPage() {
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [showInfo, setShowInfo] = useState(false);
 
   const [formData, setFormData] = useState({
     botName: "",
@@ -62,17 +69,17 @@ export default function DeployPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-
     // client-side validation
     if (!/^\d{10,15}$/.test(formData.botNumber)) {
-      setError("Invalid WhatsApp number. Use international format without +.");
+      toast.error(
+        "Invalid WhatsApp number. Use international format without +."
+      );
       setLoading(false);
       return;
     }
 
     if (formData.ownerNumber && !/^\d{10,15}$/.test(formData.ownerNumber)) {
-      setError(
+      toast.error(
         "Invalid Owner Number. Use international format without + or spaces."
       );
       setLoading(false);
@@ -113,7 +120,6 @@ export default function DeployPage() {
         error.response?.data?.error ||
         error.message ||
         "Deployment failed. Please try again.";
-      setError(errorMessage);
       toast.error(errorMessage);
       setLoading(false);
     }
@@ -143,7 +149,7 @@ export default function DeployPage() {
 
       <main className="container mx-auto px-4 max-w-4xl pt-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <Link
               href="/dashboard"
@@ -159,13 +165,149 @@ export default function DeployPage() {
               Customize your bot's personality and security settings.
             </p>
           </div>
+
+          <button
+            onClick={() => setShowInfo(true)}
+            className="p-3 rounded-xl bg-white dark:bg-gray-800 text-indigo-500 hover:text-indigo-600 transition-all shadow-md border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-900 group"
+            title="Deployment Information"
+          >
+            <Info
+              size={24}
+              className="group-hover:scale-110 transition-transform"
+            />
+          </button>
         </div>
 
-        {error && (
-          <div className="bg-red-100 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-400 p-4 mb-8 rounded-r">
-            <p>{error}</p>
-          </div>
-        )}
+        {/* Info Modal */}
+        <AnimatePresence>
+          {showInfo && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowInfo(false)}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              />
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-100 dark:border-gray-700"
+              >
+                <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-indigo-500/5 to-purple-500/5">
+                  <h2 className="text-xl font-bold flex items-center gap-2">
+                    <Info className="text-indigo-500" size={22} />
+                    Deployment Guide
+                  </h2>
+                  <button
+                    onClick={() => setShowInfo(false)}
+                    className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                  {/* Cost */}
+                  <div className="flex gap-4">
+                    <div className="mt-1 p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 shrink-0">
+                      <CreditCard size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 dark:text-white">
+                        Deployment Cost
+                      </h3>
+                      <ul className="mt-1 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                        <li>
+                          • Setup Fee:{" "}
+                          <span className="font-semibold text-gray-900 dark:text-white">
+                            50 Credits
+                          </span>{" "}
+                          (One-time)
+                        </li>
+                        <li>
+                          • Maintenance:{" "}
+                          <span className="font-semibold text-gray-900 dark:text-white">
+                            5 Credits
+                          </span>{" "}
+                          / day
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Time */}
+                  <div className="flex gap-4">
+                    <div className="mt-1 p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shrink-0">
+                      <Clock size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 dark:text-white">
+                        Provisioning Time
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Deployment is not instant. It typically takes{" "}
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          2 to 5 minutes
+                        </span>{" "}
+                        to fully provision your instance and connect to
+                        WhatsApp. Please avoid repeated clicks.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Responsibility */}
+                  <div className="flex gap-4">
+                    <div className="mt-1 p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shrink-0">
+                      <AlertTriangle size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 dark:text-white">
+                        Usage Responsibility
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Misuse of automation can lead to WhatsApp account bans.
+                        Enforcement is outside our control.{" "}
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          SAMKIEL Bot
+                        </span>{" "}
+                        is not responsible for any bans resulting from your
+                        bot's activity.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Monitoring */}
+                  <div className="flex gap-4">
+                    <div className="mt-1 p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 shrink-0">
+                      <CheckCircle size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 dark:text-white">
+                        Operational Status
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        The bot state will update automatically once
+                        initialization completes. Please rely on the dashboard
+                        status indicators rather than assumptions.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-700">
+                  <button
+                    onClick={() => setShowInfo(false)}
+                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-colors shadow-lg shadow-indigo-500/20"
+                  >
+                    Got it, thanks!
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Section 1: Core Identity */}

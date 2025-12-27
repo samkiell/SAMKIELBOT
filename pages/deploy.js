@@ -359,6 +359,7 @@ export default function DeployPage() {
                   className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                 >
                   <option value=".">. (Dot)</option>
+                  <option value=",">, (Comma)</option>
                   <option value="!">! (Exclamation)</option>
                   <option value="#"># (Hash)</option>
                   <option value="/">/ (Slash)</option>

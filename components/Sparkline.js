@@ -7,10 +7,12 @@ const Sparkline = ({ data, color, label }) => {
   const range = max - min || 1;
   const height = 30;
   const width = 100;
+  const padding = 2;
   const points = data
     .map((val, i) => {
       const x = (i / (data.length - 1)) * width;
-      const y = height - ((val - min) / range) * height;
+      const effectiveHeight = height - padding * 2;
+      const y = height - padding - ((val - min) / range) * effectiveHeight;
       return `${x},${y}`;
     })
     .join(" ");

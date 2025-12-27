@@ -24,9 +24,12 @@ export default function BotCard({ deployment, refreshData }) {
 
   // Socket.IO for real-time updates
   useEffect(() => {
-    const socketUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    socket = io(socketUrl);
+    const socketUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    socket = io(socketUrl, {
+      path: "/socket.io",
+      transports: ["websocket", "polling"],
+      reconnectionAttempts: 5,
+    });
 
     socket.on("bot:status_change", (data) => {
       if (data.deploymentId === deployment._id) {

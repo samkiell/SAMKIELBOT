@@ -43,8 +43,11 @@ export default function DeploymentSessionPage() {
     if (!id) return;
 
     // In a unified app, we connect to the current origin
-    const socketUrl = process.env.NEXT_PUBLIC_API_URL || window.location.origin;
-    socket = io(socketUrl);
+    const socketUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    socket = io(socketUrl, {
+      path: "/socket.io",
+      transports: ["websocket", "polling"],
+    });
 
     socket.on("connect", () => {
       console.log("[Socket.IO] Connected to", socketUrl);
@@ -101,14 +104,18 @@ export default function DeploymentSessionPage() {
 
     socket.on("bot:stats", (data) => {
       if (data.deploymentId === id) {
-        setDeployment((prev) => ({
-          ...prev,
-          status: data.status || prev.status,
-          resources: {
-            ...prev?.resources,
-            ...data.resources,
-          },
-        }));
+        setDeployment((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            status: data.status || prev.status,
+            usageStats: data.usageStats || prev.usageStats,
+            resources: {
+              ...prev?.resources,
+              ...data.resources,
+            },
+          };
+        });
       }
     });
 
@@ -466,26 +473,7 @@ export default function DeploymentSessionPage() {
                 </p>
               </div>
               <div className="flex flex-col items-end shrink-0">
-                {formatUptime(
-                  deployment.uptimeStart,
-                  deployment.status,
-                  deployment.resources
-                ) !== "Starting..." && (
-                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5 md:px-4 md:py-2 flex items-center gap-2">
-                    <Activity size={14} className="text-green-500" />
-                    <span className="font-mono text-sm md:text-base font-medium">
-                      {["online", "active", "connected"].includes(
-                        deployment.status
-                      )
-                        ? `Uptime: ${formatUptime(
-                            deployment.uptimeStart,
-                            deployment.status,
-                            deployment.resources
-                          )}`
-                        : "Session: Live"}
-                    </span>
-                  </div>
-                )}
+                {/* Uptime pill removed per user request */}
               </div>
             </div>
 

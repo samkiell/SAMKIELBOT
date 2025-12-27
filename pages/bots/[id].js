@@ -45,8 +45,11 @@ export default function BotManagementPage() {
   useEffect(() => {
     if (!id) return;
 
-    const socketUrl = process.env.NEXT_PUBLIC_API_URL || window.location.origin;
-    socket = io(socketUrl);
+    const socketUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    socket = io(socketUrl, {
+      path: "/socket.io",
+      transports: ["websocket", "polling"],
+    });
 
     socket.on("connect", () => {
       socket.emit("join", id);
@@ -66,14 +69,18 @@ export default function BotManagementPage() {
 
     socket.on("bot:stats", (data) => {
       if (data.deploymentId === id) {
-        setDeployment((prev) => ({
-          ...prev,
-          status: data.status || prev.status,
-          resources: {
-            ...prev.resources,
-            ...data.resources,
-          },
-        }));
+        setDeployment((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            status: data.status || prev.status,
+            usageStats: data.usageStats || prev.usageStats, // Allow real-time stats updates if sent
+            resources: {
+              ...prev.resources,
+              ...data.resources,
+            },
+          };
+        });
       }
     });
 

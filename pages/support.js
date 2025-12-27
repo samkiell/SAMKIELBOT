@@ -11,7 +11,6 @@ import {
   FaRocket,
   FaEye,
 } from "react-icons/fa";
-import Footer from "../components/Footer";
 import Layout from "../components/Layout";
 import { useState, useEffect } from "react";
 import { useAuth } from "../lib/auth";
@@ -457,8 +456,6 @@ export default function Support() {
             </div>
           </section>
         </main>
-
-        <Footer />
       </div>
     </Layout>
   );

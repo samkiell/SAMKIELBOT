@@ -1,7 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
 import Layout from "../components/Layout";
-import Footer from "../components/Footer";
 import { motion } from "framer-motion";
 
 export default function WhatsAppBotPage() {
@@ -151,7 +150,7 @@ export default function WhatsAppBotPage() {
           </div>
         </motion.div>
       </main>
-      <Footer />
+      </main>
     </Layout>
   );
 }

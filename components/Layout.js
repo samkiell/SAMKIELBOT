@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 export default function Layout({ children }) {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function Layout({ children }) {
       <div className={isAdmin ? "" : isHome ? "" : "pt-[60px] md:pt-24"}>
         {children}
       </div>
+      {!isAdmin && <Footer />}
     </div>
   );
 }

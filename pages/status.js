@@ -15,7 +15,6 @@ import {
   Activity,
   ArrowLeft,
 } from "lucide-react";
-import Footer from "../components/Footer";
 import Layout from "../components/Layout";
 
 export default function StatusPage() {
@@ -418,8 +417,6 @@ export default function StatusPage() {
             </Link>
           </motion.div>
         </main>
-
-        <Footer />
       </div>
     </Layout>
   );

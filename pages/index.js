@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useAuth } from "../lib/auth";
-import Footer from "../components/Footer";
 import {
   FaUsers,
   FaEye,
@@ -715,8 +714,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

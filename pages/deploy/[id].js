@@ -542,8 +542,10 @@ export default function DeploymentSessionPage() {
               <DetailRow
                 label="Created"
                 value={
-                  deployment.createdAt
-                    ? new Date(deployment.createdAt).toLocaleDateString()
+                  deployment.deployedAt || deployment.createdAt
+                    ? new Date(
+                        deployment.deployedAt || deployment.createdAt
+                      ).toLocaleDateString()
                     : "Pending..."
                 }
               />
@@ -599,7 +601,8 @@ export default function DeploymentSessionPage() {
             {/* Pairing Section */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
               <h3 className="font-bold text-lg mb-4">WhatsApp Connection</h3>
-              {deployment.pairingCode ? (
+              {deployment.pairingCode &&
+              !["online", "active", "connected"].includes(deployment.status) ? (
                 <div className="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-xl border border-amber-200 dark:border-amber-800 text-center">
                   <p className="text-sm text-amber-600 dark:text-amber-300 mb-1 font-medium">
                     SCAN OR ENTER PAIRING CODE

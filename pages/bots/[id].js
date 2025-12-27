@@ -323,7 +323,9 @@ export default function BotManagementPage() {
               <div className="space-y-3">
                 <DetailRow
                   label="Created"
-                  value={new Date(deployment.createdAt).toLocaleDateString()}
+                  value={new Date(
+                    deployment.deployedAt || deployment.createdAt || Date.now()
+                  ).toLocaleDateString()}
                 />
                 <DetailRow
                   label="Pterodactyl ID"
@@ -343,7 +345,8 @@ export default function BotManagementPage() {
             {/* Connection Info */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
               <h3 className="font-bold text-lg mb-4">WhatsApp Connection</h3>
-              {deployment.pairingCode ? (
+              {deployment.pairingCode &&
+              !["online", "active", "connected"].includes(deployment.status) ? (
                 <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl text-center">
                   <p className="text-sm text-indigo-600 dark:text-indigo-300 mb-2">
                     Pairing Code

@@ -18,17 +18,18 @@ import Skeleton, {
 } from "../../components/Skeleton";
 
 export default function AdminDashboard() {
-  const { user, token } = useAuth();
+  const { user, token, loading: authLoading } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user?.role === "admin") {
+    if (!authLoading && user?.role === "admin" && token) {
       fetchStats();
     }
-  }, [user]);
+  }, [user, token, authLoading]);
 
   const fetchStats = async () => {
+    if (!token) return;
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`,

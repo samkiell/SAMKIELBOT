@@ -302,6 +302,11 @@ export default async function handler(req, res) {
           return await deleteNotification(req, res);
         }
 
+        // Route: GET /api/admin/revenue
+        if (slug && slug[0] === "revenue" && method === "GET") {
+          return await getRevenueStats(req, res);
+        }
+
         // Method not allowed
         res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
         return res.status(405).json({ error: `Method ${method} Not Allowed` });

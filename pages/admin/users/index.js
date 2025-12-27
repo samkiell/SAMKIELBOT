@@ -32,10 +32,13 @@ export default function UserManagement() {
   const [addingCredits, setAddingCredits] = useState(false);
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (token) {
+      fetchUsers();
+    }
+  }, [token]);
 
   const fetchUsers = async () => {
+    if (!token) return;
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/users`,

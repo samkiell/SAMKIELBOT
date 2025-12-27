@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Bug,
+  DollarSign,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
@@ -27,6 +28,7 @@ export default function AdminLayout({ children }) {
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/users", label: "User Governance", icon: Users },
     { href: "/admin/bots", label: "Bot Control", icon: Server },
+    { href: "/admin/revenue", label: "Revenue", icon: DollarSign },
     { href: "/admin/server", label: "Servers", icon: HardDrive },
     { href: "/admin/audit", label: "Audit Logs", icon: Shield },
     {

@@ -20,7 +20,6 @@ import {
   Check,
 } from "lucide-react";
 import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
 import { fetchCommands } from "../../lib/githubService";
 
 export async function getStaticProps() {
@@ -188,8 +187,6 @@ export default function CommandsPage({ commands, lastUpdated }) {
           />
         )}
       </AnimatePresence>
-
-      <Footer />
     </div>
   );
 }

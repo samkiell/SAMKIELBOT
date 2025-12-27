@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Footer from "../components/Footer";
 import BotCard from "../components/BotCard";
 import StatsOverview from "../components/StatsOverview";
 import ReferralCard from "../components/ReferralCard";
@@ -209,8 +208,6 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </>
   );
 }

@@ -20,8 +20,6 @@ export default function DeployPage() {
   const router = useRouter();
 
   const [step, setStep] = useState(1);
-
-  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 

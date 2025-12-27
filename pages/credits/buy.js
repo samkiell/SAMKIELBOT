@@ -182,11 +182,24 @@ export default function BuyCredits() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-lg text-gray-600 dark:text-gray-400"
+              className="text-lg text-gray-600 dark:text-gray-400 mb-4"
             >
               Select a credit package below. Credits cover deployment fees and
               daily server maintenance.
             </motion.p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Link
+                href="/how-billing-works"
+                className="inline-flex items-center gap-2 text-sm font-bold text-indigo-500 hover:text-indigo-400 bg-indigo-500/5 px-4 py-2 rounded-full border border-indigo-500/20"
+              >
+                <Info size={16} />
+                Honest Explanation: Why we use credits
+              </Link>
+            </motion.div>
             {meta && meta.isSupported === false && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -347,11 +360,17 @@ export default function BuyCredits() {
           </div>
           <div className="bg-white/50 dark:bg-slate-800/50 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 backdrop-blur-sm">
             <Server className="text-indigo-500 mb-4" size={32} />
-            <h3 className="text-xl font-bold mb-3">Low Maintenance</h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Only burn credits when your bots are active. Stop a bot to pause
-              his credit consumption.
+            <h3 className="text-xl font-bold mb-2">Fair Usage</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Credits fund 24/7 VPS hosting and high-speed network traffic for
+              your bots.
             </p>
+            <Link
+              href="/how-billing-works"
+              className="text-xs font-bold text-indigo-500 hover:underline flex items-center gap-1"
+            >
+              Learn how we use credits <Zap size={10} />
+            </Link>
           </div>
         </div>
 

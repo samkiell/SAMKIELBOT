@@ -268,6 +268,29 @@ export default function DeployPage() {
           </div>
         </div>
 
+        {/* Billing Transparency Summary */}
+        <div className="mb-10 p-6 bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50 rounded-2xl flex flex-col md:flex-row items-center gap-6 shadow-sm">
+          <div className="p-4 bg-indigo-100 dark:bg-indigo-800 rounded-2xl text-indigo-600 dark:text-indigo-300 shrink-0">
+            <CreditCard size={32} />
+          </div>
+          <div className="flex-1 text-center md:text-left">
+            <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-100 mb-1">
+              How Billing Works
+            </h3>
+            <p className="text-sm text-indigo-700 dark:text-indigo-300 opacity-80 leading-relaxed">
+              Deployment costs <strong>50 credits</strong> (setup) followed by{" "}
+              <strong>5 credits/day</strong> for maintenance. These fees cover
+              our dedicated VPS hosting and resources.
+            </p>
+          </div>
+          <Link
+            href="/how-billing-works"
+            className="px-5 py-2.5 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 rounded-xl text-sm font-bold shadow-sm border border-indigo-100 dark:border-indigo-800 hover:scale-105 transition-transform shrink-0"
+          >
+            Learn More
+          </Link>
+        </div>
+
         {/* Info Modal */}
         <AnimatePresence>
           {showInfo && (

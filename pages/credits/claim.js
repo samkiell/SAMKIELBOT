@@ -30,6 +30,7 @@ export default function ClaimCredits() {
     canClaim: false,
     nextClaimTime: null,
     lastClaim: null,
+    dailyStreak: 0,
   });
   const [timeLeft, setTimeLeft] = useState(0);
   const [turnstileToken, setTurnstileToken] = useState(null);
@@ -275,10 +276,27 @@ export default function ClaimCredits() {
                 ? "Your Reward is Ready!"
                 : "Come Back Tomorrow"}
             </h2>
+            <div className="flex items-center justify-center gap-2 mb-6">
+              {[1, 2, 3, 4, 5, 6, 7].map((s) => (
+                <div
+                  key={s}
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all duration-500 ${
+                    (claimStatus.dailyStreak || 0) >= s
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
+                      : "bg-gray-100 dark:bg-slate-700 text-gray-400"
+                  } ${s === 7 ? "border-2 border-yellow-500/50" : ""}`}
+                  title={s === 7 ? "Day 7: Mega Reward!" : `Day ${s}`}
+                >
+                  {s === 7 ? "🎁" : s}
+                </div>
+              ))}
+            </div>
             <p className="text-gray-500 dark:text-gray-400 mb-8">
               {claimStatus.canClaim
-                ? "Claim your daily check-in bonus to keep your bots running."
-                : "You've already claimed your credits for today."}
+                ? `Claim your day ${
+                    (claimStatus.dailyStreak || 0) + 1
+                  } check-in bonus.`
+                : `Current Streak: ${claimStatus.dailyStreak || 0} days`}
             </p>
 
             {claimStatus.canClaim ? (
@@ -305,7 +323,9 @@ export default function ClaimCredits() {
                   ) : (
                     <>
                       <Gift className="w-6 h-6" />
-                      Claim 5 Credits
+                      {claimStatus.dailyStreak >= 6
+                        ? "Claim 15 Streak Credits! 🎉"
+                        : "Claim 5 Day Credits"}
                     </>
                   )}
                 </button>

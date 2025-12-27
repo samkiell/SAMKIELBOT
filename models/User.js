@@ -64,6 +64,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    dailyStreak: {
+      type: Number,
+      default: 0,
+    },
     totalReferrals: {
       type: Number,
       default: 0,

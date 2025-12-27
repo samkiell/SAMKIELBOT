@@ -589,10 +589,38 @@ export default function DeploymentSessionPage() {
                       <Copy size={20} />
                     </button>
                   </div>
-                  <p className="text-xs text-amber-500 dark:text-amber-400 mt-4 leading-relaxed">
-                    Link a device in WhatsApp Settings by entering this code
-                    when prompted.
-                  </p>
+                  <div className="mt-6 pt-6 border-t border-amber-200/50 dark:border-amber-800/50 text-left">
+                    <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-3">
+                      How to link:
+                    </p>
+                    <ul className="space-y-2 text-xs text-amber-600/80 dark:text-amber-400/70">
+                      <li className="flex gap-2">
+                        <span className="font-bold text-amber-700 dark:text-amber-300">
+                          1.
+                        </span>
+                        Open WhatsApp on your mobile phone.
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="font-bold text-amber-700 dark:text-amber-300">
+                          2.
+                        </span>
+                        Go to <b>Settings</b> &gt; <b>Linked Devices</b>.
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="font-bold text-amber-700 dark:text-amber-300">
+                          3.
+                        </span>
+                        Tap <b>Link a Device</b> &gt;{" "}
+                        <b>Link with phone number instead</b>.
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="font-bold text-amber-700 dark:text-amber-300">
+                          4.
+                        </span>
+                        Enter the 8-character code shown above.
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               ) : (
                 <div className="flex items-center gap-4">

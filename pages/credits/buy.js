@@ -15,6 +15,7 @@ import {
   HelpCircle,
   ArrowLeft,
   Coins,
+  Info,
 } from "lucide-react";
 import Skeleton from "../../components/Skeleton";
 import toast from "react-hot-toast";

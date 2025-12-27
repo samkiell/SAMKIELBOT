@@ -13,12 +13,67 @@ import {
 } from "react-icons/fa";
 import Footer from "../components/Footer";
 import Layout from "../components/Layout";
+import { useState, useEffect } from "react";
+import { useAuth } from "../lib/auth";
+import { getDeployments, submitSupportTicket } from "../lib/api";
+import toast from "react-hot-toast";
+import { FaBug, FaPaperPlane } from "react-icons/fa";
 
 export default function Support() {
   const fadeUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.6 },
+  };
+
+  const { user } = useAuth();
+  const [bots, setBots] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    category: "Deployment",
+    description: "",
+    botId: "",
+  });
+
+  useEffect(() => {
+    if (user) {
+      fetchBots();
+    }
+  }, [user]);
+
+  const fetchBots = async () => {
+    try {
+      const data = await getDeployments();
+      setBots(data || []);
+    } catch (error) {
+      console.error("Error fetching bots:", error);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.description.trim()) {
+      return toast.error("Please provide a description of the issue.");
+    }
+
+    setLoading(true);
+    try {
+      await submitSupportTicket(formData);
+      toast.success("Bug report submitted! Our team will look into it.");
+      setFormData({
+        category: "Deployment",
+        description: "",
+        botId: "",
+      });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to submit report.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const supportChannels = [
@@ -262,6 +317,145 @@ export default function Support() {
               </p>
             </div>
           </section>
+
+          {/* Bug Reporting Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-12"
+            id="report-issue"
+          >
+            <div className="bg-indigo-600 rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl shadow-indigo-500/20 relative overflow-hidden">
+              {/* Decorative Background Circles */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/10 rounded-full -ml-32 -mb-32 blur-3xl"></div>
+
+              <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white font-bold text-xs uppercase tracking-widest mb-6">
+                    <FaBug className="text-indigo-200" /> Bug Reporting
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">
+                    Spotted a Bug? <br />
+                    Let us squash it.
+                  </h2>
+                  <p className="text-indigo-100 text-lg mb-8 leading-relaxed">
+                    Help us improve SAMKIEL BOT by reporting any issues or
+                    irregularities you encounter. Our engineers review every
+                    legitimate report.
+                  </p>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-xs font-bold">
+                        ✓
+                      </div>
+                      <span className="text-indigo-50 text-sm">
+                        Deployment & Connectivity issues
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-xs font-bold">
+                        ✓
+                      </div>
+                      <span className="text-indigo-50 text-sm">
+                        Billing & Credit discrepancies
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center text-xs font-bold">
+                        ✓
+                      </div>
+                      <span className="text-indigo-50 text-sm">
+                        Dashboard & UI glitches
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-3xl p-6 md:p-10 shadow-xl">
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        Issue Category
+                      </label>
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                      >
+                        <option value="Deployment">Deployment</option>
+                        <option value="Credits & Billing">
+                          Credits & Billing
+                        </option>
+                        <option value="Bot Runtime">Bot Runtime</option>
+                        <option value="UI / Dashboard">UI / Dashboard</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    {user && bots.length > 0 && (
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">
+                          Related Bot (Optional)
+                        </label>
+                        <select
+                          name="botId"
+                          value={formData.botId}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        >
+                          <option value="">None / Selective</option>
+                          {bots.map((bot) => (
+                            <option key={bot._id} value={bot._id}>
+                              {bot.botName} ({bot.status})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        Issue Description
+                      </label>
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="What happened? How can we reproduce it?"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all min-h-[120px] resize-none"
+                        required
+                      ></textarea>
+                    </div>
+
+                    <p className="text-[10px] text-gray-400 leading-tight">
+                      By submitting, you agree to share your account metadata
+                      (email, ID, bot status) with our support team to help
+                      diagnose the issue.
+                    </p>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="group w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/30 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-70"
+                    >
+                      {loading ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      ) : (
+                        <>
+                          <FaPaperPlane className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                          Submit Report
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </motion.section>
         </main>
 
         <Footer />

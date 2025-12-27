@@ -28,6 +28,10 @@ import {
   getAllNotifications,
   deleteNotification,
 } from "@/lib/controllers/adminController";
+import {
+  getTickets,
+  updateTicketStatus,
+} from "@/lib/controllers/supportController";
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -273,6 +277,17 @@ export default async function handler(req, res) {
           method === "GET"
         ) {
           return await getAllNotifications(req, res);
+        }
+
+        // Route: GET /api/admin/bugs
+        if (slug && slug[0] === "bugs" && !slug[1] && method === "GET") {
+          return await getTickets(req, res);
+        }
+
+        // Route: PUT /api/admin/bugs/:id
+        if (slug && slug[0] === "bugs" && slug[1] && method === "PUT") {
+          req.params = { id: slug[1] };
+          return await updateTicketStatus(req, res);
         }
 
         // Route: DELETE /api/admin/notifications/:id

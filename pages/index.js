@@ -459,7 +459,7 @@ export default function Home() {
                 role: "Student",
                 text: "I didn't know how to code, but I deployed a bot in like 2 minutes. The dashboard is super simple.",
                 bg: "bg-purple-50 dark:bg-purple-900/20",
-                image: "https://randomuser.me/api/portraits/women/44.jpg",
+                image: "/testimonials/sarah_johnson.png",
               },
               {
                 name: "Chinedu Okafor",
@@ -473,7 +473,7 @@ export default function Home() {
                 role: "Freelancer",
                 text: "The cloud hosting is fast. Messages deliver instantly. No lag like other free hosts.",
                 bg: "bg-cyan-50 dark:bg-cyan-900/20",
-                image: "https://randomuser.me/api/portraits/men/55.jpg",
+                image: "/testimonials/michael_smith.png",
               },
               {
                 name: "David Adeleke",
@@ -494,14 +494,14 @@ export default function Home() {
                 role: "Code Newbie",
                 text: "I broke my bot 3 times and the auto-healing kicked in perfectly. This thing is robust.",
                 bg: "bg-violet-50 dark:bg-violet-900/20",
-                image: "https://randomuser.me/api/portraits/men/4.jpg",
+                image: "/testimonials/chris_evans.png",
               },
               {
                 name: "Priya Patel",
                 role: "Tech Enthusiast",
                 text: "Love the daily free credits. It lets me test my bot ideas without paying upfront. Best platform I've used.",
                 bg: "bg-green-50 dark:bg-green-900/20",
-                image: "https://randomuser.me/api/portraits/women/65.jpg",
+                image: "/testimonials/priya_patel.png",
               },
               {
                 name: "Tunde Bakare",
@@ -522,7 +522,7 @@ export default function Home() {
                 role: "Bot Dev",
                 text: "Finally, a platform that gives me terminal-like control from a web UI. The restart button actually works immediately.",
                 bg: "bg-orange-50 dark:bg-orange-900/20",
-                image: "https://randomuser.me/api/portraits/men/85.jpg",
+                image: "/testimonials/james_wilson.png",
               },
               {
                 name: "Lerato Khumalo",

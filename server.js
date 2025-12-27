@@ -9,8 +9,16 @@ const path = require("path");
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "localhost";
-const port = parseInt(process.env.PORT || "3000", 10);
+const hostname = "0.0.0.0";
+
+// Parse command line arguments for port
+const args = process.argv.slice(2);
+const portIndex =
+  args.indexOf("-p") !== -1 ? args.indexOf("-p") : args.indexOf("--port");
+const port = parseInt(
+  (portIndex !== -1 && args[portIndex + 1]) || process.env.PORT || "3000",
+  10
+);
 
 // Initialize Next.js
 const app = next({ dev, hostname, port });
@@ -139,17 +147,24 @@ app.prepare().then(async () => {
     return handle(req, res);
   });
 
-  console.log("[Server] Starting HTTP server...");
-  httpServer.listen(port, (err) => {
+  console.log(
+    "\x1b[36m%s\x1b[0m",
+    "[Server] 🚀 Starting SAMKIEL BOT Infrastructure..."
+  );
+  httpServer.listen(port, hostname, (err) => {
     if (err) throw err;
-    console.log(`> Ready on http://localhost:${port}`);
-    console.log(`> Ready on http://127.0.0.1:${port}`);
-    console.log(`> Environment: ${dev ? "development" : "production"}`);
+    console.log(`[Server] 🚀 Server running at http://localhost:${port}`);
+    console.log(`[Server] Listening on interface: ${hostname}`);
+    console.log(`[Server] Environment: ${dev ? "development" : "production"}`);
 
-    // Initialize Bot Health Monitoring in the background after server is live
-    console.log("[Server] Initializing Bot Health Monitors (Background)...");
-    botHealthService.initializeAllMonitors().catch((err) => {
-      console.error("[BotHealth] background init error:", err);
-    });
+    // Initialize Bot Health Monitoring in the background after server is live (with slight delay)
+    setTimeout(() => {
+      console.log(
+        "\x1b[36minfo\x1b[0m  - [BotHealth] Initializing background monitors..."
+      );
+      botHealthService.initializeAllMonitors().catch((err) => {
+        console.error("[BotHealth] background init error:", err);
+      });
+    }, 2000);
   });
 });

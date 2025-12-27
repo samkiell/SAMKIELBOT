@@ -255,14 +255,17 @@ export default function BotCard({ deployment, refreshData }) {
           const isBusy = ["creating", "installing", "pending"].includes(
             deployment.status
           );
-          const isActive = [
-            "running",
-            "starting",
-            "awaiting_pairing",
-            "active",
-            "connected",
-            "paired",
-          ].includes(deployment.status);
+          const isActive =
+            deployment.isActive ||
+            [
+              "running",
+              "starting",
+              "awaiting_pairing",
+              "active",
+              "connected",
+              "online",
+              "paired",
+            ].includes(deployment.status);
           // Start: Show if stopped or failed
           const showStart = ["stopped", "failed", "offline"].includes(
             deployment.status

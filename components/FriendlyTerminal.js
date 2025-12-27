@@ -77,9 +77,16 @@ const FriendlyTerminal = ({ logs = [], status }) => {
     },
   ];
 
-  // Auto-scroll to bottom
+  const containerRef = useRef(null);
+
+  // Auto-scroll to bottom (Internal only)
   useEffect(() => {
-    terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }, [displayedFriendlyLogs]);
 
   // Handle Simulated Stages
@@ -215,7 +222,10 @@ const FriendlyTerminal = ({ logs = [], status }) => {
         </div>
 
         {/* Content Area */}
-        <div className="p-4 md:p-8 min-h-[250px] md:min-h-[300px] max-h-[350px] md:max-h-[450px] overflow-y-auto custom-scrollbar">
+        <div
+          ref={containerRef}
+          className="p-4 md:p-8 min-h-[250px] md:min-h-[300px] max-h-[350px] md:max-h-[450px] overflow-y-auto custom-scrollbar"
+        >
           <AnimatePresence initial={false}>
             <ul className="space-y-4 md:space-y-6">
               {displayedFriendlyLogs.map((log, index) => (

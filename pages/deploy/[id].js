@@ -99,6 +99,19 @@ export default function DeploymentSessionPage() {
       }
     });
 
+    socket.on("bot:stats", (data) => {
+      if (data.deploymentId === id) {
+        setDeployment((prev) => ({
+          ...prev,
+          status: data.status || prev.status,
+          resources: {
+            ...prev?.resources,
+            ...data.resources,
+          },
+        }));
+      }
+    });
+
     return () => {
       if (socket) socket.disconnect();
     };

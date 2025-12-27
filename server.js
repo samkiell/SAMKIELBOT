@@ -104,6 +104,12 @@ app.prepare().then(async () => {
     io.to(data.deploymentId).emit("bot:log", data);
   });
 
+  botHealthService.on("bot.stats", (data) => {
+    if (data.deploymentId) {
+      io.to(data.deploymentId.toString()).emit("bot:stats", data);
+    }
+  });
+
   // Bot initialization moved after server start
 
   // Let Next.js handle all other routes

@@ -13,7 +13,6 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
-import Footer from "../components/Footer";
 import Layout from "../components/Layout";
 
 export default function DocsPage() {
@@ -669,8 +668,6 @@ export default function DocsPage() {
             </div>
           </motion.div>
         </main>
-
-        <Footer />
       </div>
     </Layout>
   );

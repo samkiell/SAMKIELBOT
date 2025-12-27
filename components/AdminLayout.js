@@ -13,6 +13,7 @@ import {
   Home,
   Menu,
   X,
+  Bug,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
@@ -34,6 +35,7 @@ export default function AdminLayout({ children }) {
       icon: AlertTriangle,
     },
     { href: "/admin/suggestions", label: "Suggestions", icon: Menu },
+    { href: "/admin/bugs", label: "Bug Tracking", icon: Bug },
     { href: "/admin/routes", label: "Route Map", icon: Activity },
     { href: "/admin/settings", label: "System Policy", icon: Settings },
   ];

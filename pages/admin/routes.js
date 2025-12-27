@@ -9,6 +9,7 @@ import {
   Users,
   CreditCard,
   Terminal,
+  Bug,
 } from "lucide-react";
 
 export default function AdminRoutes() {
@@ -99,6 +100,12 @@ export default function AdminRoutes() {
       name: "Suggestions",
       path: "/admin/suggestions",
       icon: FileText,
+      category: "Admin",
+    },
+    {
+      name: "Bug Tracking",
+      path: "/admin/bugs",
+      icon: Bug,
       category: "Admin",
     },
 

@@ -71,6 +71,7 @@ export default function DeploymentSessionPage() {
           status: "awaiting_pairing",
           pairingCode: data.code,
         }));
+        setActiveTab("overview");
         setLoading(false);
         toast.success("Pairing code found! 📱");
       }
@@ -80,6 +81,7 @@ export default function DeploymentSessionPage() {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Bot connected!");
         fetchDeploymentStatus();
+        setActiveTab("overview");
         toast.success("Bot connected successfully! 🚀");
         // Trigger celebration
         triggerConfetti();
@@ -90,6 +92,7 @@ export default function DeploymentSessionPage() {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Bot is now active!");
         fetchDeploymentStatus();
+        setActiveTab("overview");
         // Also trigger if it skips connected status
         triggerConfetti();
       }
@@ -124,6 +127,16 @@ export default function DeploymentSessionPage() {
       const result = await response.json();
       setDeployment(result.data);
       setLoading(false);
+
+      // Auto-switch to overview if finished or pairing and current tab is still logs
+      if (
+        ["online", "active", "connected", "awaiting_pairing"].includes(
+          result.data.status
+        ) &&
+        activeTab === "logs"
+      ) {
+        setActiveTab("overview");
+      }
     } catch (err) {
       console.error("Error fetching deployment:", err);
       setError(err.message);
@@ -511,22 +524,33 @@ export default function DeploymentSessionPage() {
                 value={new Date(deployment.createdAt).toLocaleDateString()}
               />
             </div>
-            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 font-medium text-amber-600 flex items-center gap-2">
-              <AlertCircle size={16} />
-              Deployment in progress...
-            </div>
+            {!["online", "active", "connected"].includes(deployment.status) ? (
+              <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 font-medium text-amber-600 flex items-center gap-2">
+                <AlertCircle size={16} />
+                Deployment in progress...
+              </div>
+            ) : (
+              <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 font-medium text-green-600 flex items-center gap-2">
+                <CheckCircle size={16} />
+                Bot fully operational
+              </div>
+            )}
           </div>
         </div>
 
         {/* Tab Navigation */}
         <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
           <nav className="flex space-x-8">
-            <TabButton
-              active={activeTab === "logs"}
-              onClick={() => setActiveTab("logs")}
-              label="Deployment Logs"
-              icon={<Terminal size={18} />}
-            />
+            {!["online", "active", "connected", "awaiting_pairing"].includes(
+              deployment.status
+            ) && (
+              <TabButton
+                active={activeTab === "logs"}
+                onClick={() => setActiveTab("logs")}
+                label="Deployment Logs"
+                icon={<Terminal size={18} />}
+              />
+            )}
             <TabButton
               active={activeTab === "overview"}
               onClick={() => setActiveTab("overview")}

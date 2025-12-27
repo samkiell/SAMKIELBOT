@@ -89,6 +89,12 @@ export default function Footer() {
               >
                 View Once Recovery
               </Link>
+              <Link
+                href="/how-billing-works"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium"
+              >
+                How Billing Works (Transparency)
+              </Link>
             </div>
           </div>
 

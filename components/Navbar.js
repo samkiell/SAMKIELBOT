@@ -24,7 +24,9 @@ import {
   Activity,
   ChevronDown,
   Terminal,
+  Sparkles,
 } from "lucide-react";
+
 import NotificationDropdown from "./NotificationDropdown";
 import UserAvatarDropdown from "./UserAvatarDropdown";
 import { useRouter } from "next/router";
@@ -134,11 +136,18 @@ export default function Navbar() {
             <div className="flex gap-6 items-center text-gray-800 dark:text-gray-100">
               {/* Public Links */}
               <Link
+                href="/features"
+                className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium text-indigo-600 dark:text-indigo-400"
+              >
+                Features
+              </Link>
+              <Link
                 href="/commands"
                 className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
               >
                 Commands
               </Link>
+
               <Link
                 href="/bots"
                 className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
@@ -413,7 +422,15 @@ export default function Navbar() {
             </>
           )}
 
+          <MobileNavLink
+            href="/features"
+            icon={Sparkles}
+            label="Key Features"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/features"}
+          />
           {/* Public Mobile Links moved below profile */}
+
           <MobileNavLink
             href="/commands"
             icon={Terminal}

@@ -17,6 +17,8 @@ import {
   FaEnvelope,
 } from "react-icons/fa";
 import Snowfall from "../components/Snowfall";
+import { featuresData } from "../lib/data/features";
+import { FaArrowRight } from "react-icons/fa";
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
@@ -73,38 +75,7 @@ export default function Home() {
     transition: { duration: 0.6 },
   };
 
-  const features = [
-    {
-      icon: <FaUsers className="text-indigo-500 text-3xl" />,
-      title: "Universal Compatibility",
-      desc: "Perfect for personal chats and large groups. Manage everything with zero technical knowledge.",
-    },
-    {
-      icon: <FaEye className="text-indigo-500 text-3xl" />,
-      title: "View Once Recovery",
-      desc: "Automatically save 'View Once' photos and videos. Never lose those disappearing moments again.",
-    },
-    {
-      icon: <FaRocket className="text-indigo-500 text-3xl" />,
-      title: "Instant Video & Music",
-      desc: "Download any video or song directly from WhatsApp. Just send the link and the bot does the rest.",
-    },
-    {
-      icon: <FaSync className="text-indigo-500 text-3xl" />,
-      title: "0% Coding Required",
-      desc: "If you can scan a QR code, you can deploy a bot. No servers to set up, no code to write.",
-    },
-    {
-      icon: <FaTachometerAlt className="text-indigo-500 text-3xl" />,
-      title: "Powerful Commands",
-      desc: "Access 100+ commands for fun, utility, and moderation. Explore them all in our growing library.",
-    },
-    {
-      icon: <FaCloud className="text-indigo-500 text-3xl" />,
-      title: "Cloud Powered",
-      desc: "Your bot stays online even when your phone is off. Fast, reliable, and 24/7 uptime.",
-    },
-  ];
+  const landingFeatures = featuresData.filter((f) => f.isTop);
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
@@ -313,21 +284,44 @@ export default function Home() {
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {features.map((feature, index) => (
+            {landingFeatures.map((feature, index) => (
               <motion.div
                 key={index}
                 {...slideIn}
                 className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-700/40 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
               >
-                <div className="mb-4">{feature.icon}</div>
+                <div className="mb-4 text-3xl">{feature.icon}</div>
                 <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
                   {feature.title}
                 </h3>
                 <p className="text-sm md:text-base text-gray-600 dark:text-gray-300">
-                  {feature.desc}
+                  {feature.description}
                 </p>
               </motion.div>
             ))}
+
+            {/* View More Features CTA Card */}
+            <motion.div
+              {...slideIn}
+              className="bg-gradient-to-br from-indigo-600 to-purple-600 p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex flex-col justify-between items-start text-white group cursor-pointer"
+            >
+              <div className="mb-4 text-3xl bg-white/20 p-3 rounded-lg">
+                <FaRocket />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Explore More</h3>
+                <p className="text-indigo-100 text-sm mb-6">
+                  100+ commands for automation, utility, and pure fun. See the
+                  full list.
+                </p>
+              </div>
+              <Link
+                href="/features"
+                className="mt-auto flex items-center gap-2 font-bold text-white group-hover:translate-x-2 transition-transform"
+              >
+                View All Features <FaArrowRight />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>

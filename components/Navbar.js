@@ -154,6 +154,14 @@ export default function Navbar() {
                   >
                     Dashboard
                   </Link>
+                  {user?.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="text-indigo-600 dark:text-indigo-400 font-bold hover:scale-110 transition-transform underline decoration-2 underline-offset-4"
+                    >
+                      Admin
+                    </Link>
+                  )}
                   <Link
                     href="/credits/buy"
                     className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
@@ -211,6 +219,14 @@ export default function Navbar() {
                         >
                           Referrals
                         </Link>
+                        {user?.role === "admin" && (
+                          <Link
+                            href="/admin"
+                            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/60"
+                          >
+                            Admin Control
+                          </Link>
+                        )}
                       </>
                     )}
                   </div>

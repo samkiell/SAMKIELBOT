@@ -456,7 +456,15 @@ export default function DeploymentSessionPage() {
                 <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5 md:px-4 md:py-2 flex items-center gap-2">
                   <Activity size={14} className="text-green-500" />
                   <span className="font-mono text-sm md:text-base font-medium">
-                    Session: Live
+                    {["online", "active", "connected"].includes(
+                      deployment.status
+                    )
+                      ? `Uptime: ${formatUptime(
+                          deployment.uptimeStart,
+                          deployment.status,
+                          deployment.resources
+                        )}`
+                      : "Session: Live"}
                   </span>
                 </div>
               </div>
@@ -787,4 +795,25 @@ function TabButton({ active, onClick, label, icon }) {
       <span className="font-medium">{label}</span>
     </button>
   );
+}
+
+function formatUptime(startTime, status, resources) {
+  if (status === "offline" || status === "stopped") return "Offline";
+
+  // Use uptimeMs from resources as first-class fallback
+  if (resources?.uptimeMs > 0) {
+    const mins = Math.floor(resources.uptimeMs / 60000);
+    const hrs = Math.floor(mins / 60);
+    if (hrs > 24) return `${Math.floor(hrs / 24)}d ${hrs % 24}h`;
+    if (hrs > 0) return `${hrs}h ${mins % 60}m`;
+    return `${mins}m`;
+  }
+
+  if (!startTime) return "Starting...";
+  const diff = Date.now() - new Date(startTime).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hrs = Math.floor(mins / 60);
+  if (hrs > 24) return `${Math.floor(hrs / 24)}d ${hrs % 24}h`;
+  if (hrs > 0) return `${hrs}h ${mins % 60}m`;
+  return `${mins}m`;
 }

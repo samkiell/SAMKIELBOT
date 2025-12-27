@@ -209,7 +209,11 @@ export default function BotManagementPage() {
                   <Activity size={16} className="text-green-500" />
                   <span className="font-mono font-medium">
                     Uptime:{" "}
-                    {formatUptime(deployment.uptimeStart, deployment.status)}
+                    {formatUptime(
+                      deployment.uptimeStart,
+                      deployment.status,
+                      deployment.resources
+                    )}
                   </span>
                 </div>
               </div>
@@ -352,7 +356,9 @@ export default function BotManagementPage() {
                 <div className="flex items-center gap-4">
                   <div
                     className={`p-3 rounded-full ${
-                      ["online", "active"].includes(deployment.status)
+                      ["online", "active", "connected"].includes(
+                        deployment.status
+                      )
                         ? "bg-green-100 text-green-600"
                         : "bg-gray-100 text-gray-500"
                     }`}
@@ -361,7 +367,9 @@ export default function BotManagementPage() {
                   </div>
                   <div>
                     <h4 className="font-medium">
-                      {["online", "active"].includes(deployment.status)
+                      {["online", "active", "connected"].includes(
+                        deployment.status
+                      )
                         ? "Connected via Baileys"
                         : "Waiting for connection..."}
                     </h4>
@@ -459,8 +467,18 @@ function TabButton({ active, onClick, label, icon }) {
   );
 }
 
-function formatUptime(startTime, status) {
+function formatUptime(startTime, status, resources) {
   if (status === "offline" || status === "stopped") return "Offline";
+
+  // Use uptimeMs from resources as first-class fallback
+  if (resources?.uptimeMs > 0) {
+    const mins = Math.floor(resources.uptimeMs / 60000);
+    const hrs = Math.floor(mins / 60);
+    if (hrs > 24) return `${Math.floor(hrs / 24)}d ${hrs % 24}h`;
+    if (hrs > 0) return `${hrs}h ${mins % 60}m`;
+    return `${mins}m`;
+  }
+
   if (!startTime) return "Starting...";
   const diff = Date.now() - new Date(startTime).getTime();
   const mins = Math.floor(diff / 60000);

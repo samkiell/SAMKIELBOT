@@ -466,7 +466,7 @@ export default function Home() {
                 role: "Group Admin",
                 text: "Honestly, the View Once recovery saved me so many times. Managing my campus group is way easier now.",
                 bg: "bg-blue-50 dark:bg-blue-900/20",
-                image: "https://randomuser.me/api/portraits/men/10.jpg",
+                image: "/testimonials/chinedu_okafor.png",
               },
               {
                 name: "Michael Smith",
@@ -480,14 +480,14 @@ export default function Home() {
                 role: "Developer",
                 text: "The isolated containers are a game changer. My bot doesn't crash anymore because of shared resources. Solid work.",
                 bg: "bg-indigo-50 dark:bg-indigo-900/20",
-                image: "https://randomuser.me/api/portraits/men/22.jpg",
+                image: "/testimonials/david_adeleke.png",
               },
               {
                 name: "Thabo Mbeki",
                 role: "Community Manager",
                 text: "Secure, fast, and the support team actually replies on WhatsApp. Unbeatable service.",
                 bg: "bg-red-50 dark:bg-red-900/20",
-                image: "https://randomuser.me/api/portraits/men/15.jpg",
+                image: "/testimonials/thabo_mbeki.png",
               },
               {
                 name: "Chris Evans",
@@ -508,14 +508,14 @@ export default function Home() {
                 role: "Discord Mod",
                 text: "Moving my WhatsApp community automation here was the best decision. 99% uptime is not a joke.",
                 bg: "bg-yellow-50 dark:bg-yellow-900/20",
-                image: "https://randomuser.me/api/portraits/men/33.jpg",
+                image: "/testimonials/tunde_bakare.png",
               },
               {
                 name: "Ngozi Eze",
                 role: "Entrepreneur",
                 text: "Setting up auto-replies for my store was easy. I recommend SAMKIEL BOT to anyone.",
                 bg: "bg-emerald-50 dark:bg-emerald-900/20",
-                image: "https://randomuser.me/api/portraits/women/90.jpg",
+                image: "/testimonials/ngozi_eze.png",
               },
               {
                 name: "James Wilson",
@@ -529,14 +529,14 @@ export default function Home() {
                 role: "Business Owner",
                 text: "My support bot runs 24/7 now. I don't have to worry about my phone being online. Huge relief!",
                 bg: "bg-pink-50 dark:bg-pink-900/20",
-                image: "https://randomuser.me/api/portraits/women/29.jpg",
+                image: "/testimonials/lerato_khumalo.png",
               },
               {
                 name: "Amina Yusuf",
                 role: "Student Leader",
                 text: "We use it for our department announcements. It just works. The 'stay alive' feature is great.",
                 bg: "bg-teal-50 dark:bg-teal-900/20",
-                image: "https://randomuser.me/api/portraits/women/68.jpg",
+                image: "/testimonials/amina_yusuf.png",
               },
             ].map((testimonial, i) => (
               <motion.div

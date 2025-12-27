@@ -19,9 +19,227 @@ import { motion, AnimatePresence } from "framer-motion";
  * - logs: Array of raw log strings
  * - status: Current deployment status
  */
-const FriendlyTerminal = ({ logs = [], status }) => {
+const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
   const terminalEndRef = useRef(null);
   const [displayedFriendlyLogs, setDisplayedFriendlyLogs] = useState([]);
+  const [isRawMode, setIsRawMode] = useState(false);
+  const [command, setCommand] = useState("");
+  const containerRef = useRef(null);
+
+  // Auto-scroll to bottom
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [displayedFriendlyLogs, logs, isRawMode]);
+
+  // Handle Simulated Stages (simplified for brevity here, keeping previous logic)
+  useEffect(() => {
+    if (
+      logs.length === 0 &&
+      (status === "creating" ||
+        status === "installing" ||
+        status === "starting")
+    ) {
+      const timers = stages.map((stage, index) => {
+        return setTimeout(() => {
+          setDisplayedFriendlyLogs((prev) => {
+            if (prev.some((l) => l.friendly === stage.friendly)) return prev;
+            return [
+              ...prev,
+              { ...stage, timestamp: new Date().toLocaleTimeString() },
+            ];
+          });
+        }, stage.delay);
+      });
+      return () => timers.forEach((t) => clearTimeout(t));
+    }
+  }, [logs.length, status]);
+
+  // Handle Real Logs Integration (Friendly)
+  useEffect(() => {
+    if (logs.length > 0) {
+      const transformLog = (log) => {
+        if (!log) return null;
+        const raw = log.toString();
+        const mappings = [
+          {
+            pattern: /installing dependencies|npm install|yarn install|building/i,
+            friendly: "Teaching your bot its core functions... 📚",
+            icon: <Coffee className="w-4 h-4 text-amber-400" />,
+            type: "friendly",
+          },
+          {
+            pattern: /connecting to whatsapp|connecting\.\.\.|initializing connection|wa connection/i,
+            friendly: "Scanning the horizon for WhatsApp... 📡",
+            icon: <Zap className="w-4 h-4 text-yellow-400" />,
+            type: "friendly",
+          },
+          {
+            pattern: /bot connected successfully|successfully logged in|client is ready|connected to whatsapp/i,
+            friendly: "System Online. Your bot is now live! 🚀",
+            icon: <CheckCircle className="w-4 h-4 text-green-400" />,
+            type: "success",
+          },
+          {
+            pattern: /git clone|cloning|fetching repository|pulling/i,
+            friendly: "Syncing latest modules from secure vault... 📦",
+            icon: <Shield className="w-4 h-4 text-purple-400" />,
+            type: "friendly",
+          },
+          {
+            pattern: /(?:Your pairing code|Pairing code|Code)\s*[:\s-]*\s*([A-Z0-9]{4}-[A-Z0-9]{4})/i,
+            friendly: "Pairing code found! Check above to link WhatsApp. ✨",
+            icon: <CheckCircle className="w-4 h-4 text-green-400" />,
+            type: "success",
+          },
+        ];
+
+        for (const mapping of mappings) {
+          if (mapping.pattern.test(raw)) return mapping;
+        }
+        return null;
+      };
+
+      const newFriendlyItems = logs
+        .map((log) => {
+          const transformed = transformLog(log);
+          return transformed
+            ? { ...transformed, timestamp: new Date().toLocaleTimeString() }
+            : null;
+        })
+        .filter((item) => item !== null);
+
+      setDisplayedFriendlyLogs((prev) => {
+        const unique = [...prev];
+        newFriendlyItems.forEach((newItem) => {
+          if (!unique.some((u) => u.friendly === newItem.friendly)) {
+            unique.push(newItem);
+          }
+        });
+        return unique;
+      });
+    }
+  }, [logs]);
+
+  const handleCommandSubmit = (e) => {
+    e.preventDefault();
+    if (!command.trim()) return;
+    if (onCommand) {
+      onCommand(command);
+    }
+    setCommand("");
+  };
+
+  return (
+    <div className="w-full max-w-4xl mx-auto mt-6 md:mt-10 relative px-0 sm:px-4">
+      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+
+      <div className="relative bg-slate-950/90 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col h-[500px]">
+        {/* Apple Style Header */}
+        <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+              <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+              <div className="w-3 h-3 rounded-full bg-[#28C840]" />
+            </div>
+            <div className="h-4 w-[1px] bg-white/10 mx-2" />
+            <button 
+              onClick={() => setIsRawMode(false)}
+              className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded ${!isRawMode ? 'text-blue-400 bg-blue-500/10' : 'text-white/40 hover:text-white/60'}`}
+            >
+              Friendly
+            </button>
+            <button 
+              onClick={() => setIsRawMode(true)}
+              className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded ${isRawMode ? 'text-emerald-400 bg-emerald-500/10' : 'text-white/40 hover:text-white/60'}`}
+            >
+              Raw Console
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[9px] font-mono text-emerald-400/80 uppercase">Connected</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Console Area */}
+        <div
+          ref={containerRef}
+          className="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar font-mono"
+        >
+          {isRawMode ? (
+            <div className="space-y-1">
+              {logs.map((log, i) => (
+                <div key={i} className="text-[12px] text-white/70 break-all leading-relaxed">
+                  <span className="text-white/20 mr-2">[{new Date().toLocaleTimeString()}]</span>
+                  {log}
+                </div>
+              ))}
+              {logs.length === 0 && <div className="text-white/30 italic text-sm">Waiting for console output...</div>}
+            </div>
+          ) : (
+            <AnimatePresence initial={false}>
+              <ul className="space-y-4">
+                {displayedFriendlyLogs.map((log, index) => (
+                  <motion.li
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-start gap-4"
+                  >
+                    <div className={`p-2 rounded-lg bg-white/5 ${log.type === "success" ? "text-green-400" : "text-blue-400"}`}>
+                      {React.cloneElement(log.icon, { className: "w-4 h-4" })}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] text-white/20 uppercase tracking-widest">{log.timestamp}</span>
+                      <span className={`text-[14px] font-medium ${log.type === "success" ? "text-white" : "text-white/80"}`}>{log.friendly}</span>
+                    </div>
+                  </motion.li>
+                ))}
+              </ul>
+            </AnimatePresence>
+          )}
+          <div ref={terminalEndRef} />
+        </div>
+
+        {/* Command Input Area */}
+        <div className="p-3 bg-white/5 border-t border-white/5">
+          <form onSubmit={handleCommandSubmit} className="flex items-center gap-2">
+            <span className="text-emerald-500 font-bold ml-2">➜</span>
+            <input
+              type="text"
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              placeholder="Type a command (e.g. .ping, .restart)..."
+              className="flex-1 bg-transparent border-none outline-none text-white font-mono text-sm placeholder:text-white/20"
+            />
+            <button 
+              type="submit"
+              className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white/60 text-[10px] rounded font-bold uppercase tracking-wider transition-colors"
+            >
+              Execute
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+      `}</style>
+    </div>
+  );
+};
+
+export default FriendlyTerminal;
 
   // Simulated stage management for when real logs haven't hit yet
   const [simulatedStage, setSimulatedStage] = useState(0);

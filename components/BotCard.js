@@ -7,6 +7,52 @@ import io from "socket.io-client";
 
 let socket;
 
+const Sparkline = ({ data, color, label }) => {
+  if (!data || data.length < 2) return null;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  const height = 30;
+  const width = 100;
+  const points = data
+    .map((val, i) => {
+      const x = (i / (data.length - 1)) * width;
+      const y = height - ((val - min) / range) * height;
+      return `${x},${y}`;
+    })
+    .join(" ");
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex justify-between items-center text-[9px] text-gray-400 font-bold uppercase tracking-wider">
+        <span>{label}</span>
+        <span
+          className={`${
+            color === "indigo" ? "text-indigo-500" : "text-emerald-500"
+          }`}
+        >
+          {data[data.length - 1]}
+          {label === "CPU" ? "%" : label === "RAM" ? "MB" : ""}
+        </span>
+      </div>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="w-full h-8 overflow-visible"
+      >
+        <polyline
+          fill="none"
+          stroke={color === "indigo" ? "#6366f1" : "#10b981"}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          points={points}
+          className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
+        />
+      </svg>
+    </div>
+  );
+};
+
 export default function BotCard({ deployment, refreshData }) {
   const [loading, setLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -245,6 +291,23 @@ export default function BotCard({ deployment, refreshData }) {
             <p className="text-amber-500 text-[9px] text-right mt-1 font-medium italic">
               {deployment.restartCount} automatic restarts detected
             </p>
+          )}
+
+          {/* Sparklines */}
+          {(deployment.usageStats?.cpuInfos?.length > 1 ||
+            deployment.usageStats?.ramInfos?.length > 1) && (
+            <div className="grid grid-cols-2 gap-4 py-3 border-t border-gray-100 dark:border-gray-700 mt-2">
+              <Sparkline
+                label="CPU"
+                data={deployment.usageStats.cpuInfos}
+                color="indigo"
+              />
+              <Sparkline
+                label="RAM"
+                data={deployment.usageStats.ramInfos}
+                color="emerald"
+              />
+            </div>
           )}
         </div>
       </div>

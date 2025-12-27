@@ -14,7 +14,12 @@ import {
   RotateCw,
   Trash2,
   Copy,
+  Info,
+  Activity,
+  Shield,
+  Terminal,
 } from "lucide-react";
+import Navbar from "../../components/Navbar";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
 
@@ -30,6 +35,7 @@ export default function DeploymentSessionPage() {
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [activeTab, setActiveTab] = useState("logs"); // Default to logs during deployment
 
   // Initialize Socket.IO
   useEffect(() => {
@@ -360,10 +366,11 @@ export default function DeploymentSessionPage() {
   const statusDisplay = getStatusDisplay();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white pb-20">
       <Head>
         <title>Deployment Status - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
       </Head>
+      <Navbar />
 
       {/* Celebration Overlay */}
       {showCelebration && (
@@ -395,163 +402,238 @@ export default function DeploymentSessionPage() {
         </div>
       )}
 
-      <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl">
-        {/* Back Button */}
-        <div className="mb-6 pt-8">
+      <main className="container mx-auto px-4 pt-8 max-w-7xl">
+        {/* Navigation */}
+        <div className="mb-8">
           <Link
             href="/dashboard"
-            className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+            className="inline-flex items-center text-gray-500 hover:text-indigo-600 transition-colors"
           >
             <ArrowLeft size={20} className="mr-2" />
             Back to Dashboard
           </Link>
         </div>
 
-        {/* Status Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-700/40 p-8">
-          <div className="text-center">
-            {/* Icon */}
-            <div className={`flex justify-center mb-6 ${statusDisplay?.color}`}>
-              {statusDisplay?.icon}
-            </div>
-
-            {/* Title */}
-            <h1 className="text-3xl font-bold mb-4">{statusDisplay?.title}</h1>
-
-            {/* Message */}
-            <p className="text-gray-600 dark:text-gray-400 text-lg mb-6">
-              {statusDisplay?.message}
-            </p>
-
-            {/* Friendly Terminal */}
-            {!statusDisplay?.showPairingCode && (
-              <FriendlyTerminal logs={logs} status={deployment?.status} />
-            )}
-
-            {/* Pairing Code Display */}
-            {statusDisplay?.showPairingCode && deployment?.pairingCode && (
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-lg p-6 mb-6">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                  Your Pairing Code:
-                </p>
-
-                <div className="flex items-center justify-center gap-3 my-4">
-                  <div className="text-4xl font-mono font-bold text-yellow-700 dark:text-yellow-300 tracking-wider">
-                    {deployment.pairingCode}
-                  </div>
-                  <button
-                    onClick={handleCopyCode}
-                    className="p-2 bg-yellow-100 dark:bg-yellow-800 hover:bg-yellow-200 dark:hover:bg-yellow-700 rounded-lg transition-colors text-yellow-700 dark:text-yellow-300"
-                    title="Copy Pairing Code"
-                  >
-                    <Copy size={24} />
-                  </button>
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
-                  Open WhatsApp → Settings → Linked Devices → Link a Device →
-                  Enter this code
+        {/* Header Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Main Status Info */}
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+                  {deployment.botName}
+                  <StatusBadge status={deployment.status} />
+                </h1>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {deployment.botNumber} •{" "}
+                  {deployment.configuration?.packName || "Standard Bot"}
                 </p>
               </div>
-            )}
-
-            {/* Control Buttons */}
-            {statusDisplay?.showControls && (
-              <div className="space-y-4 mt-8">
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => handlePowerAction("start")}
-                    disabled={
-                      actionLoading ||
-                      deployment?.status === "active" ||
-                      deployment?.status === "connected"
-                    }
-                    className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
-                  >
-                    <Play size={20} />
-                    Start
-                  </button>
-                  <button
-                    onClick={() => handlePowerAction("stop")}
-                    disabled={
-                      actionLoading ||
-                      deployment?.status === "stopped" ||
-                      deployment?.status === "offline"
-                    }
-                    className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
-                  >
-                    <Square size={20} />
-                    Stop
-                  </button>
+              <div className="flex flex-col items-end">
+                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2 flex items-center gap-2">
+                  <Activity size={16} className="text-green-500" />
+                  <span className="font-mono font-medium">Session: Live</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Status Message */}
+            <div className="mt-6 flex items-center gap-4 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-xl">
+              <div className={`${statusDisplay?.color}`}>
+                {statusDisplay?.icon &&
+                  React.cloneElement(statusDisplay.icon, { size: 24 })}
+              </div>
+              <div>
+                <h4 className="font-bold text-indigo-900 dark:text-indigo-200">
+                  {statusDisplay?.title}
+                </h4>
+                <p className="text-sm text-indigo-700 dark:text-indigo-300">
+                  {statusDisplay?.message}
+                </p>
+              </div>
+            </div>
+
+            {/* Controls Toolbar (Only if appropriate) */}
+            {statusDisplay?.showControls && (
+              <div className="mt-8 flex flex-wrap gap-4">
+                <button
+                  onClick={() => handlePowerAction("start")}
+                  disabled={
+                    actionLoading ||
+                    ["active", "connected", "online"].includes(
+                      deployment.status
+                    )
+                  }
+                  className="flex items-center px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Play size={18} className="mr-2" /> Start
+                </button>
+                <button
+                  onClick={() => handlePowerAction("stop")}
+                  disabled={actionLoading || deployment.status === "stopped"}
+                  className="flex items-center px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Square size={18} className="mr-2" /> Stop
+                </button>
                 <button
                   onClick={() => handlePowerAction("restart")}
                   disabled={actionLoading}
-                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
+                  className="flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <RotateCw size={20} />
-                  Restart
+                  <RotateCw size={18} className="mr-2" /> Restart
                 </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={actionLoading}
-                  className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
-                >
-                  <Trash2 size={20} />
-                  Delete Bot
-                </button>
-              </div>
-            )}
-
-            {/* Navigation Buttons (for success state without controls shown yet) */}
-            {statusDisplay?.success && !statusDisplay?.showControls && (
-              <div className="space-y-4 mt-8">
-                <Link
-                  href="/bots"
-                  className="block w-full bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
-                >
-                  View My Bots
-                </Link>
-                <Link
-                  href="/dashboard"
-                  className="block w-full bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-100 px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
-                >
-                  Go to Dashboard
-                </Link>
-              </div>
-            )}
-
-            {/* Bot Details */}
-            {deployment && (
-              <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <div className="grid grid-cols-2 gap-4 text-left">
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Bot Name
-                    </p>
-                    <p className="font-semibold">{deployment.botName}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Status
-                    </p>
-                    <p className="font-semibold capitalize">
-                      {deployment.status.replace("_", " ")}
-                    </p>
-                  </div>
-                  {deployment.connectedAt && (
-                    <div className="col-span-2">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Connected At
-                      </p>
-                      <p className="font-semibold">
-                        {new Date(deployment.connectedAt).toLocaleString()}
-                      </p>
-                    </div>
-                  )}
-                </div>
               </div>
             )}
           </div>
+
+          {/* Quick Info Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-1">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <Shield size={18} className="text-indigo-500" /> Security
+            </h2>
+            <div className="space-y-4">
+              <DetailRow
+                label="Node"
+                value={`Node-${deployment.nodeId || "1"}`}
+              />
+              <DetailRow
+                label="Resources"
+                value={`${deployment.resources?.cpuLimit || 25}% CPU / ${
+                  deployment.resources?.ramLimit || 300
+                }MB RAM`}
+              />
+              <DetailRow
+                label="Identifier"
+                value={`#${deployment.identifier || "---"}`}
+              />
+              <DetailRow
+                label="Created"
+                value={new Date(deployment.createdAt).toLocaleDateString()}
+              />
+            </div>
+            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 font-medium text-amber-600 flex items-center gap-2">
+              <AlertCircle size={16} />
+              Deployment in progress...
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
+          <nav className="flex space-x-8">
+            <TabButton
+              active={activeTab === "logs"}
+              onClick={() => setActiveTab("logs")}
+              label="Deployment Logs"
+              icon={<Terminal size={18} />}
+            />
+            <TabButton
+              active={activeTab === "overview"}
+              onClick={() => setActiveTab("overview")}
+              label="Bot Info"
+              icon={<Info size={18} />}
+            />
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === "logs" && (
+          <div className="bg-gray-900 rounded-2xl p-1 shadow-lg border border-gray-700">
+            <FriendlyTerminal logs={logs} status={deployment?.status} />
+          </div>
+        )}
+
+        {activeTab === "overview" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Pairing Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+              <h3 className="font-bold text-lg mb-4">WhatsApp Connection</h3>
+              {deployment.pairingCode ? (
+                <div className="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-xl border border-amber-200 dark:border-amber-800 text-center">
+                  <p className="text-sm text-amber-600 dark:text-amber-300 mb-1 font-medium">
+                    SCAN OR ENTER PAIRING CODE
+                  </p>
+                  <div className="flex items-center justify-center gap-3 my-4">
+                    <div className="text-4xl font-mono font-bold tracking-widest text-amber-700 dark:text-amber-300">
+                      {deployment.pairingCode}
+                    </div>
+                    <button
+                      onClick={handleCopyCode}
+                      className="p-2 bg-amber-100 dark:bg-amber-800 hover:bg-amber-200 dark:hover:bg-amber-700 rounded-lg transition-colors text-amber-700"
+                      title="Copy"
+                    >
+                      <Copy size={20} />
+                    </button>
+                  </div>
+                  <p className="text-xs text-amber-500 dark:text-amber-400 mt-4 leading-relaxed">
+                    Link a device in WhatsApp Settings by entering this code
+                    when prompted.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`p-3 rounded-full ${
+                      ["online", "active", "connected"].includes(
+                        deployment.status
+                      )
+                        ? "bg-green-100 text-green-600"
+                        : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    <CheckCircle size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">
+                      {["online", "active", "connected"].includes(
+                        deployment.status
+                      )
+                        ? "Bot Live & Connected"
+                        : "Waiting for Pairing Code..."}
+                    </h4>
+                    <p className="text-sm text-gray-500">
+                      Process will update automatically
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Deployment Meta */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+              <h3 className="font-bold text-lg mb-4">Deployment Metadata</h3>
+              <div className="space-y-3">
+                <DetailRow
+                  label="Configuration"
+                  value={deployment.configuration?.prefix || "."}
+                />
+                <DetailRow
+                  label="Owner"
+                  value={deployment.configuration?.ownerName || "---"}
+                />
+                <DetailRow
+                  label="Features"
+                  value={`${
+                    Object.values(
+                      deployment.configuration?.featureToggles || {}
+                    ).filter((v) => v !== "off" && v !== false).length
+                  } Enabled`}
+                />
+                <DetailRow label="Pricing Tier" value="Free Tier" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Global Action Buttons (Delete only here) */}
+        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+          <button
+            onClick={handleDelete}
+            disabled={actionLoading}
+            className="flex items-center gap-2 px-6 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors font-medium border border-transparent hover:border-red-200 dark:hover:border-red-800"
+          >
+            <Trash2 size={18} /> Delete Bot Deployment
+          </button>
         </div>
       </main>
 
@@ -573,5 +655,65 @@ export default function DeploymentSessionPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+// Add necessary sub-components identical to BotManagementPage
+function StatusBadge({ status }) {
+  const map = {
+    online:
+      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    active:
+      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    connected:
+      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    degraded:
+      "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+    error: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+    installing:
+      "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    creating:
+      "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    starting:
+      "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+    stopped: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
+    offline: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
+  };
+
+  return (
+    <span
+      className={`${
+        map[status] || map["offline"]
+      } px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider`}
+    >
+      {status}
+    </span>
+  );
+}
+
+function DetailRow({ label, value }) {
+  return (
+    <div className="flex justify-between items-center py-1">
+      <span className="text-gray-500 dark:text-gray-400 text-sm font-normal">
+        {label}
+      </span>
+      <span className="font-semibold text-sm">{value}</span>
+    </div>
+  );
+}
+
+function TabButton({ active, onClick, label, icon }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 pb-4 px-2 border-b-2 transition-colors ${
+        active
+          ? "border-indigo-500 text-indigo-600 dark:text-indigo-400"
+          : "border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+      }`}
+    >
+      {icon}
+      <span className="font-medium">{label}</span>
+    </button>
   );
 }

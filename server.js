@@ -9,7 +9,7 @@ const path = require("path");
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "0.0.0.0";
+// No explicit hostname to allow defaults
 
 // Parse command line arguments for port
 const args = process.argv.slice(2);
@@ -21,7 +21,7 @@ const port = parseInt(
 );
 
 // Initialize Next.js
-const app = next({ dev, hostname, port });
+const app = next({ dev });
 const handle = app.getRequestHandler();
 
 // Database connection
@@ -151,11 +151,10 @@ app.prepare().then(async () => {
     "\x1b[36m%s\x1b[0m",
     "[Server] 🚀 Starting SAMKIEL BOT Infrastructure..."
   );
-  httpServer.listen(port, hostname, (err) => {
+  httpServer.listen(port, (err) => {
     if (err) throw err;
-    console.log(`[Server] 🚀 Server running at http://localhost:${port}`);
-    console.log(`[Server] Listening on interface: ${hostname}`);
-    console.log(`[Server] Environment: ${dev ? "development" : "production"}`);
+    console.log(`> Server ready on http://localhost:${port}`);
+    console.log(`> Mode: ${dev ? "development" : "production"}`);
 
     // Initialize Bot Health Monitoring in the background after server is live (with slight delay)
     setTimeout(() => {

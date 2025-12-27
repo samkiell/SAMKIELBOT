@@ -18,6 +18,11 @@ const paymentTransactionSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    currency: {
+      type: String,
+      default: "NGN",
+      required: true,
+    },
     creditsGranted: {
       type: Number,
       required: true,

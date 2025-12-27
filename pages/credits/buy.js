@@ -25,6 +25,7 @@ export default function BuyCredits() {
   const [packages, setPackages] = useState([]);
   const [processing, setProcessing] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [meta, setMeta] = useState({ currency: "NGN" });
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -46,16 +47,31 @@ export default function BuyCredits() {
         const data = await res.json();
         if (data.success) {
           setPackages(data.data);
+          if (data.meta) {
+            setMeta(data.meta);
+          }
           return;
         }
       }
 
       // Fallback if API fails
       setPackages([
-        { id: "p1", credits: 50, price: 500, popular: false },
-        { id: "p2", credits: 120, price: 1000, popular: true },
-        { id: "p3", credits: 260, price: 2000, popular: false },
-        { id: "p4", credits: 700, price: 5000, popular: false },
+        { id: "p1", credits: 50, price: 500, popular: false, currency: "NGN" },
+        { id: "p2", credits: 120, price: 1000, popular: true, currency: "NGN" },
+        {
+          id: "p3",
+          credits: 260,
+          price: 2000,
+          popular: false,
+          currency: "NGN",
+        },
+        {
+          id: "p4",
+          credits: 700,
+          price: 5000,
+          popular: false,
+          currency: "NGN",
+        },
       ]);
     } catch (error) {
       console.error("Failed to fetch packages:", error);
@@ -171,6 +187,23 @@ export default function BuyCredits() {
               Select a credit package below. Credits cover deployment fees and
               daily server maintenance.
             </motion.p>
+            {meta && meta.isSupported === false && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl flex items-center gap-3 text-amber-800 dark:text-amber-200 text-sm"
+              >
+                <div className="p-2 bg-amber-100 dark:bg-amber-800 rounded-lg">
+                  <CreditCard size={18} />
+                </div>
+                <p>
+                  Your local currency ({meta.detectedLocalCurrency}) is not
+                  directly supported by our payment processor. Prices have been
+                  converted to <strong>{meta.currency}</strong> for your
+                  convenience.
+                </p>
+              </motion.div>
+            )}
           </div>
         </div>
 
@@ -230,10 +263,27 @@ export default function BuyCredits() {
 
                   <div className="text-center mb-8">
                     <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                      ₦{pkg.price.toLocaleString()}
+                      {pkg.currency === "NGN"
+                        ? "₦"
+                        : pkg.currency === "USD"
+                        ? "$"
+                        : pkg.currency === "ZAR"
+                        ? "R"
+                        : pkg.currency === "GHS"
+                        ? "GH₵"
+                        : pkg.currency === "KES"
+                        ? "KSh"
+                        : ""}
+                      {pkg.price.toLocaleString(undefined, {
+                        minimumFractionDigits: pkg.currency === "NGN" ? 0 : 2,
+                        maximumFractionDigits: 2,
+                      })}{" "}
+                      <span className="text-sm font-normal text-gray-500">
+                        {pkg.currency}
+                      </span>
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      ₦{(pkg.price / pkg.credits).toFixed(2)} per credit
+                      {(pkg.price / pkg.credits).toFixed(2)} per credit
                     </div>
                   </div>
 

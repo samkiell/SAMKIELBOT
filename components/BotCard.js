@@ -28,7 +28,11 @@ const Sparkline = ({ data, color, label }) => {
         <span>{label}</span>
         <span
           className={`${
-            color === "indigo" ? "text-indigo-500" : "text-emerald-500"
+            color === "indigo"
+              ? "text-indigo-500"
+              : color === "emerald"
+              ? "text-emerald-500"
+              : "text-orange-500"
           }`}
         >
           {data[data.length - 1]}
@@ -41,7 +45,13 @@ const Sparkline = ({ data, color, label }) => {
       >
         <polyline
           fill="none"
-          stroke={color === "indigo" ? "#6366f1" : "#10b981"}
+          stroke={
+            color === "indigo"
+              ? "#6366f1"
+              : color === "emerald"
+              ? "#10b981"
+              : "#f59e0b"
+          }
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -296,7 +306,7 @@ export default function BotCard({ deployment, refreshData }) {
           {/* Sparklines */}
           {(deployment.usageStats?.cpuInfos?.length > 1 ||
             deployment.usageStats?.ramInfos?.length > 1) && (
-            <div className="grid grid-cols-2 gap-4 py-3 border-t border-gray-100 dark:border-gray-700 mt-2">
+            <div className="grid grid-cols-3 gap-3 py-3 border-t border-gray-100 dark:border-gray-700 mt-2">
               <Sparkline
                 label="CPU"
                 data={deployment.usageStats.cpuInfos}
@@ -306,6 +316,11 @@ export default function BotCard({ deployment, refreshData }) {
                 label="RAM"
                 data={deployment.usageStats.ramInfos}
                 color="emerald"
+              />
+              <Sparkline
+                label="ACT"
+                data={deployment.usageStats.activityInfos || [0, 0]}
+                color="orange"
               />
             </div>
           )}

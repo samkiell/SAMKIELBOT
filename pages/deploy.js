@@ -38,7 +38,7 @@ export default function DeployPage() {
     ownerName: user?.fullName || "User",
     ownerNumber: user?.whatsappNumber || "",
     // Feature Toggles
-    autoStatusView: "on", // "off" | "on" | "no-dl"
+    autoStatusView: "on", // "off" | "on" | "msg"
     sendRead: false,
     alwaysOnline: true,
     rejectCall: true,
@@ -555,7 +555,7 @@ export default function DeployPage() {
                 >
                   <option value="off">Off</option>
                   <option value="on">On (View Only)</option>
-                  <option value="no-dl">No Download</option>
+                  <option value="msg">View + Message</option>
                 </select>
               </div>
 

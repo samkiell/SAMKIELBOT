@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -36,6 +36,7 @@ export default function DeploymentSessionPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [logs, setLogs] = useState([]);
   const [activeTab, setActiveTab] = useState("logs"); // Default to logs during deployment
+  const tabsRef = useRef(null);
 
   // Initialize Socket.IO
   useEffect(() => {
@@ -102,6 +103,15 @@ export default function DeploymentSessionPage() {
       if (socket) socket.disconnect();
     };
   }, [id]);
+
+  // Auto-scroll to tabs when pairing is ready
+  useEffect(() => {
+    if (deployment?.status === "awaiting_pairing" && tabsRef.current) {
+      setTimeout(() => {
+        tabsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 500); // Small delay for tab switch animation
+    }
+  }, [deployment?.status]);
 
   // Fetch deployment status
   const fetchDeploymentStatus = async () => {
@@ -430,22 +440,24 @@ export default function DeploymentSessionPage() {
         {/* Header Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           {/* Main Status Info */}
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="flex justify-between items-start">
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex flex-col md:flex-row justify-between items-start gap-4">
               <div>
-                <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+                <h1 className="text-2xl md:text-3xl font-bold mb-2 flex flex-wrap items-center gap-2 md:gap-3">
                   {deployment.botName}
                   <StatusBadge status={deployment.status} />
                 </h1>
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className="text-sm md:text-base text-gray-500 dark:text-gray-400">
                   {deployment.botNumber} •{" "}
                   {deployment.configuration?.packName || "Standard Bot"}
                 </p>
               </div>
-              <div className="flex flex-col items-end">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2 flex items-center gap-2">
-                  <Activity size={16} className="text-green-500" />
-                  <span className="font-mono font-medium">Session: Live</span>
+              <div className="flex flex-col items-end shrink-0">
+                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5 md:px-4 md:py-2 flex items-center gap-2">
+                  <Activity size={14} className="text-green-500" />
+                  <span className="font-mono text-sm md:text-base font-medium">
+                    Session: Live
+                  </span>
                 </div>
               </div>
             </div>
@@ -521,7 +533,11 @@ export default function DeploymentSessionPage() {
               />
               <DetailRow
                 label="Created"
-                value={new Date(deployment.createdAt).toLocaleDateString()}
+                value={
+                  deployment.createdAt
+                    ? new Date(deployment.createdAt).toLocaleDateString()
+                    : "Pending..."
+                }
               />
             </div>
             {!["online", "active", "connected"].includes(deployment.status) ? (
@@ -539,7 +555,10 @@ export default function DeploymentSessionPage() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
+        <div
+          ref={tabsRef}
+          className="border-b border-gray-200 dark:border-gray-700 mb-8 pt-4"
+        >
           <nav className="flex space-x-8">
             {!["online", "active", "connected", "awaiting_pairing"].includes(
               deployment.status

@@ -57,6 +57,26 @@ app.prepare().then(async () => {
       socket.join(room);
     });
 
+    socket.on("terminal:command", async (data) => {
+      const { deploymentId, command } = data;
+      console.log(
+        `[Socket.IO] Terminal command for ${deploymentId}: ${command}`
+      );
+      if (deploymentId && command) {
+        try {
+          await botHealthService.sendCommandToBot(deploymentId, command);
+        } catch (error) {
+          console.error(
+            `[Socket.IO] Failed to send terminal command:`,
+            error.message
+          );
+          socket.emit("terminal:error", {
+            message: "Failed to send command to bot.",
+          });
+        }
+      }
+    });
+
     socket.on("disconnect", () => {
       console.log(`[Socket.IO] Client disconnected: ${socket.id}`);
     });

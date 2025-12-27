@@ -146,7 +146,9 @@ const deploymentSchema = new mongoose.Schema({
   usageStats: {
     uptimeMinutes: { type: Number, default: 0 },
     cpuUsedMinutes: { type: Number, default: 0 },
-    ramInfos: { type: [Number], default: [] },
+    ramInfos: { type: [Number], default: [] }, // Last 24 samples (hourly or every 10 mins)
+    cpuInfos: { type: [Number], default: [] }, // Last 24 samples
+    activityInfos: { type: [Number], default: [] }, // Message count or activity level
   },
   lastActivity: { type: Date, default: Date.now },
   // Heartbeat tracking

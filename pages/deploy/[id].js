@@ -466,20 +466,26 @@ export default function DeploymentSessionPage() {
                 </p>
               </div>
               <div className="flex flex-col items-end shrink-0">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5 md:px-4 md:py-2 flex items-center gap-2">
-                  <Activity size={14} className="text-green-500" />
-                  <span className="font-mono text-sm md:text-base font-medium">
-                    {["online", "active", "connected"].includes(
-                      deployment.status
-                    )
-                      ? `Uptime: ${formatUptime(
-                          deployment.uptimeStart,
-                          deployment.status,
-                          deployment.resources
-                        )}`
-                      : "Session: Live"}
-                  </span>
-                </div>
+                {formatUptime(
+                  deployment.uptimeStart,
+                  deployment.status,
+                  deployment.resources
+                ) !== "Starting..." && (
+                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5 md:px-4 md:py-2 flex items-center gap-2">
+                    <Activity size={14} className="text-green-500" />
+                    <span className="font-mono text-sm md:text-base font-medium">
+                      {["online", "active", "connected"].includes(
+                        deployment.status
+                      )
+                        ? `Uptime: ${formatUptime(
+                            deployment.uptimeStart,
+                            deployment.status,
+                            deployment.resources
+                          )}`
+                        : "Session: Live"}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 

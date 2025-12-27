@@ -219,47 +219,63 @@ export default function BotManagementPage() {
                   isSuspended ? "opacity-50 pointer-events-none" : ""
                 }`}
               >
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2 flex items-center gap-2">
-                  <Activity size={16} className="text-green-500" />
-                  <span className="font-mono font-medium">
-                    Uptime:{" "}
-                    {formatUptime(
-                      deployment.uptimeStart,
-                      deployment.status,
-                      deployment.resources
-                    )}
-                  </span>
-                </div>
+                {deployment.status !== "starting" &&
+                  formatUptime(
+                    deployment.uptimeStart,
+                    deployment.status,
+                    deployment.resources
+                  ) !== "Starting..." && (
+                    <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2 flex items-center gap-2">
+                      <Activity size={16} className="text-green-500" />
+                      <span className="font-mono font-medium">
+                        Uptime:{" "}
+                        {formatUptime(
+                          deployment.uptimeStart,
+                          deployment.status,
+                          deployment.resources
+                        )}
+                      </span>
+                    </div>
+                  )}
               </div>
             </div>
 
             {/* Resource Usage Graphs */}
-            {(deployment.usageStats?.cpuInfos?.length > 1 ||
-              deployment.usageStats?.ramInfos?.length > 1) && (
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 bg-gray-50 dark:bg-gray-900/40 rounded-xl border border-gray-100 dark:border-gray-800">
-                <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
-                  <Sparkline
-                    label="CPU Usage"
-                    data={deployment.usageStats.cpuInfos}
-                    color="indigo"
-                  />
-                </div>
-                <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
-                  <Sparkline
-                    label="RAM Usage"
-                    data={deployment.usageStats.ramInfos}
-                    color="emerald"
-                  />
-                </div>
-                <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
-                  <Sparkline
-                    label="Recent Activity"
-                    data={deployment.usageStats.activityInfos || [0, 0]}
-                    color="orange"
-                  />
-                </div>
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 bg-gray-50 dark:bg-gray-900/40 rounded-xl border border-gray-100 dark:border-gray-800">
+              <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+                <Sparkline
+                  label="CPU Usage"
+                  data={
+                    deployment.usageStats?.cpuInfos?.length > 1
+                      ? deployment.usageStats.cpuInfos
+                      : [0, 0]
+                  }
+                  color="indigo"
+                />
               </div>
-            )}
+              <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+                <Sparkline
+                  label="RAM Usage"
+                  data={
+                    deployment.usageStats?.ramInfos?.length > 1
+                      ? deployment.usageStats.ramInfos
+                      : [0, 0]
+                  }
+                  color="emerald"
+                />
+              </div>
+              <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+                <Sparkline
+                  label="Recent Activity"
+                  data={
+                    deployment.usageStats?.activityInfos?.length > 1
+                      ? deployment.usageStats.activityInfos
+                      : [0, 0]
+                  }
+                  color="orange"
+                />
+              </div>
+            </div>
 
             {/* Controls Toolbar */}
             <div className="mt-8 flex flex-wrap gap-4">

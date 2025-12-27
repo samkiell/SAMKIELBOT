@@ -22,7 +22,7 @@ import {
 import Navbar from "../../components/Navbar";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
-import Sparkline from "../../components/Sparkline";
+import io from "socket.io-client";
 
 let socket;
 

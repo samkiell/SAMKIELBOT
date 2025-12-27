@@ -150,7 +150,6 @@ export default function WhatsAppBotPage() {
           </div>
         </motion.div>
       </main>
-      </main>
     </Layout>
   );
 }

@@ -155,7 +155,6 @@ export default function ViewOnceWhatsAppBotPage() {
           </div>
         </motion.div>
       </main>
-      </main>
     </Layout>
   );
 }

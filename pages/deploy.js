@@ -30,6 +30,65 @@ export default function DeployPage() {
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
 
+  const templates = [
+    {
+      id: "all-rounder",
+      name: "The All-Rounder",
+      icon: "⚡",
+      desc: "Perfect balance of features and efficiency.",
+      config: {
+        autoStatusView: "on",
+        sendRead: false,
+        alwaysOnline: true,
+        rejectCall: true,
+        commandMode: "public",
+        antiDelete: true,
+        antiDeleteType: "all",
+        autoReaction: false,
+      },
+    },
+    {
+      id: "privacy-pro",
+      name: "Privacy Pro",
+      icon: "🛡️",
+      desc: "Maximum security and discrete automation.",
+      config: {
+        autoStatusView: "off",
+        sendRead: false,
+        alwaysOnline: false,
+        rejectCall: true,
+        commandMode: "private",
+        antiDelete: true,
+        antiDeleteType: "all",
+        autoReaction: false,
+      },
+    },
+    {
+      id: "social-hub",
+      name: "Social Hub",
+      icon: "🎉",
+      desc: "Great for groups and interactive chats.",
+      config: {
+        autoStatusView: "msg",
+        sendRead: true,
+        alwaysOnline: true,
+        rejectCall: false,
+        commandMode: "public",
+        antiDelete: false,
+        antiDeleteType: "none",
+        autoReaction: true,
+      },
+    },
+  ];
+
+  const applyTemplate = (template) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...template.config,
+    }));
+    toast.success(`${template.name} template applied!`);
+  };
+
   const [formData, setFormData] = useState({
     botName: "",
     botNumber: "",
@@ -176,6 +235,37 @@ export default function DeployPage() {
               className="group-hover:scale-110 transition-transform"
             />
           </button>
+        </div>
+
+        {/* Template Selector */}
+        <div className="mb-10">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+            Quick Start Templates
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {templates.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => applyTemplate(t)}
+                className="group relative bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 transition-all text-left shadow-sm hover:shadow-md"
+              >
+                <div className="text-3xl mb-3">{t.icon}</div>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-500 transition-colors">
+                  {t.name}
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {t.desc}
+                </p>
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="bg-indigo-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    APPLY
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Info Modal */}

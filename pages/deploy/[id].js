@@ -605,7 +605,19 @@ export default function DeploymentSessionPage() {
         {/* Tab Content */}
         {activeTab === "logs" && (
           <div className="bg-gray-900 rounded-2xl p-1 shadow-lg border border-gray-700">
-            <FriendlyTerminal logs={logs} status={deployment?.status} />
+            <FriendlyTerminal
+              logs={logs}
+              status={deployment?.status}
+              onCommand={(command) => {
+                if (socket) {
+                  socket.emit("terminal:command", {
+                    deploymentId: id,
+                    command,
+                  });
+                  toast.success("Command sent to bot terminal");
+                }
+              }}
+            />
           </div>
         )}
 

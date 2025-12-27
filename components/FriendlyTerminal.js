@@ -2,29 +2,60 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Terminal,
   CheckCircle,
-  Info,
   Zap,
   Coffee,
-  Globe,
   Shield,
   Clock,
   Layout,
+  Globe,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-/**
- * Friendly Terminal Component - Apple/Premium Inspired
- *
- * Props:
- * - logs: Array of raw log strings
- * - status: Current deployment status
- */
 const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
   const terminalEndRef = useRef(null);
   const [displayedFriendlyLogs, setDisplayedFriendlyLogs] = useState([]);
   const [isRawMode, setIsRawMode] = useState(false);
   const [command, setCommand] = useState("");
   const containerRef = useRef(null);
+
+  const stages = [
+    {
+      friendly: "Initializing bot deployment engine...",
+      icon: <Zap className="w-4 h-4 text-blue-400" />,
+      type: "friendly",
+      delay: 0,
+    },
+    {
+      friendly: "Configuring secure workspace...",
+      icon: <Shield className="w-4 h-4 text-indigo-400" />,
+      type: "friendly",
+      delay: 5000,
+    },
+    {
+      friendly: "Allocating dedicated CPU & RAM...",
+      icon: <Layout className="w-4 h-4 text-cyan-400" />,
+      type: "friendly",
+      delay: 10000,
+    },
+    {
+      friendly: "Establishing connection to secure vault...",
+      icon: <Globe className="w-4 h-4 text-emerald-400" />,
+      type: "friendly",
+      delay: 15000,
+    },
+    {
+      friendly: "Fetching bot modules from GitHub...",
+      icon: <Shield className="w-4 h-4 text-purple-400" />,
+      type: "friendly",
+      delay: 20000,
+    },
+    {
+      friendly: "Teaching bot its core functions...",
+      icon: <Coffee className="w-4 h-4 text-amber-400" />,
+      type: "friendly",
+      delay: 25000,
+    },
+  ];
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -36,13 +67,11 @@ const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
     }
   }, [displayedFriendlyLogs, logs, isRawMode]);
 
-  // Handle Simulated Stages (simplified for brevity here, keeping previous logic)
+  // Handle Simulated Stages
   useEffect(() => {
     if (
       logs.length === 0 &&
-      (status === "creating" ||
-        status === "installing" ||
-        status === "starting")
+      ["creating", "installing", "starting"].includes(status)
     ) {
       const timers = stages.map((stage, index) => {
         return setTimeout(() => {
@@ -67,19 +96,22 @@ const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
         const raw = log.toString();
         const mappings = [
           {
-            pattern: /installing dependencies|npm install|yarn install|building/i,
+            pattern:
+              /installing dependencies|npm install|yarn install|building/i,
             friendly: "Teaching your bot its core functions... 📚",
             icon: <Coffee className="w-4 h-4 text-amber-400" />,
             type: "friendly",
           },
           {
-            pattern: /connecting to whatsapp|connecting\.\.\.|initializing connection|wa connection/i,
+            pattern:
+              /connecting to whatsapp|connecting\.\.\.|initializing connection|wa connection/i,
             friendly: "Scanning the horizon for WhatsApp... 📡",
             icon: <Zap className="w-4 h-4 text-yellow-400" />,
             type: "friendly",
           },
           {
-            pattern: /bot connected successfully|successfully logged in|client is ready|connected to whatsapp/i,
+            pattern:
+              /bot connected successfully|successfully logged in|client is ready|connected to whatsapp/i,
             friendly: "System Online. Your bot is now live! 🚀",
             icon: <CheckCircle className="w-4 h-4 text-green-400" />,
             type: "success",
@@ -91,7 +123,8 @@ const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
             type: "friendly",
           },
           {
-            pattern: /(?:Your pairing code|Pairing code|Code)\s*[:\s-]*\s*([A-Z0-9]{4}-[A-Z0-9]{4})/i,
+            pattern:
+              /(?:Your pairing code|Pairing code|Code)\s*[:\s-]*\s*([A-Z0-9]{4}-[A-Z0-9]{4})/i,
             friendly: "Pairing code found! Check above to link WhatsApp. ✨",
             icon: <CheckCircle className="w-4 h-4 text-green-400" />,
             type: "success",
@@ -135,11 +168,9 @@ const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-6 md:mt-10 relative px-0 sm:px-4">
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-
-      <div className="relative bg-slate-950/90 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col h-[500px]">
-        {/* Apple Style Header */}
+    <div className="w-full relative">
+      <div className="relative bg-slate-950/90 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-2xl flex flex-col h-[500px]">
+        {/* Terminal Header */}
         <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="flex gap-1.5">
@@ -148,23 +179,35 @@ const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
               <div className="w-3 h-3 rounded-full bg-[#28C840]" />
             </div>
             <div className="h-4 w-[1px] bg-white/10 mx-2" />
-            <button 
-              onClick={() => setIsRawMode(false)}
-              className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded ${!isRawMode ? 'text-blue-400 bg-blue-500/10' : 'text-white/40 hover:text-white/60'}`}
-            >
-              Friendly
-            </button>
-            <button 
-              onClick={() => setIsRawMode(true)}
-              className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded ${isRawMode ? 'text-emerald-400 bg-emerald-500/10' : 'text-white/40 hover:text-white/60'}`}
-            >
-              Raw Console
-            </button>
+            <div className="flex bg-black/40 rounded-lg p-1">
+              <button
+                onClick={() => setIsRawMode(false)}
+                className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-md transition-all ${
+                  !isRawMode
+                    ? "text-white bg-indigo-600 shadow-lg"
+                    : "text-white/40 hover:text-white/60"
+                }`}
+              >
+                Friendly
+              </button>
+              <button
+                onClick={() => setIsRawMode(true)}
+                className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-md transition-all ${
+                  isRawMode
+                    ? "text-white bg-emerald-600 shadow-lg"
+                    : "text-white/40 hover:text-white/60"
+                }`}
+              >
+                Raw Console
+              </button>
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
+            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-md">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9px] font-mono text-emerald-400/80 uppercase">Connected</span>
+              <span className="text-[9px] font-mono text-emerald-400/80 uppercase">
+                Live Stream
+              </span>
             </div>
           </div>
         </div>
@@ -177,12 +220,22 @@ const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
           {isRawMode ? (
             <div className="space-y-1">
               {logs.map((log, i) => (
-                <div key={i} className="text-[12px] text-white/70 break-all leading-relaxed">
-                  <span className="text-white/20 mr-2">[{new Date().toLocaleTimeString()}]</span>
-                  {log}
+                <div
+                  key={i}
+                  className="text-[12px] text-white/70 break-all leading-relaxed flex gap-3"
+                >
+                  <span className="text-white/20 shrink-0">
+                    [{new Date().toLocaleTimeString()}]
+                  </span>
+                  <span className="text-emerald-400 select-none">$</span>
+                  <span>{log}</span>
                 </div>
               ))}
-              {logs.length === 0 && <div className="text-white/30 italic text-sm">Waiting for console output...</div>}
+              {logs.length === 0 && (
+                <div className="text-white/30 italic text-sm">
+                  Waiting for console output...
+                </div>
+              )}
             </div>
           ) : (
             <AnimatePresence initial={false}>
@@ -192,14 +245,35 @@ const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
                     key={index}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="flex items-start gap-4"
+                    className="flex items-start gap-4 group"
                   >
-                    <div className={`p-2 rounded-lg bg-white/5 ${log.type === "success" ? "text-green-400" : "text-blue-400"}`}>
+                    <div
+                      className={`p-2.5 rounded-xl border transition-all ${
+                        log.type === "success"
+                          ? "bg-green-500/20 border-green-500/20 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.1)]"
+                          : "bg-white/5 border-white/5 text-blue-400"
+                      }`}
+                    >
                       {React.cloneElement(log.icon, { className: "w-4 h-4" })}
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-white/20 uppercase tracking-widest">{log.timestamp}</span>
-                      <span className={`text-[14px] font-medium ${log.type === "success" ? "text-white" : "text-white/80"}`}>{log.friendly}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-white/20 uppercase tracking-widest">
+                          {log.timestamp}
+                        </span>
+                        {index === displayedFriendlyLogs.length - 1 && (
+                          <div className="w-1 h-1 rounded-full bg-blue-500 animate-ping" />
+                        )}
+                      </div>
+                      <span
+                        className={`text-sm md:text-base font-medium ${
+                          log.type === "success"
+                            ? "text-white"
+                            : "text-white/80"
+                        }`}
+                      >
+                        {log.friendly}
+                      </span>
                     </div>
                   </motion.li>
                 ))}
@@ -211,336 +285,38 @@ const FriendlyTerminal = ({ logs = [], status, onCommand }) => {
 
         {/* Command Input Area */}
         <div className="p-3 bg-white/5 border-t border-white/5">
-          <form onSubmit={handleCommandSubmit} className="flex items-center gap-2">
-            <span className="text-emerald-500 font-bold ml-2">➜</span>
+          <form
+            onSubmit={handleCommandSubmit}
+            className="flex items-center gap-2 bg-black/40 rounded-xl px-4 py-2 border border-white/5 focus-within:border-indigo-500/50 transition-all"
+          >
+            <span className="text-emerald-500 font-bold font-mono">➜</span>
             <input
               type="text"
               value={command}
               onChange={(e) => setCommand(e.target.value)}
-              placeholder="Type a command (e.g. .ping, .restart)..."
+              placeholder="Execute command on bot... (e.g. .restart)"
               className="flex-1 bg-transparent border-none outline-none text-white font-mono text-sm placeholder:text-white/20"
             />
-            <button 
+            <button
               type="submit"
-              className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white/60 text-[10px] rounded font-bold uppercase tracking-wider transition-colors"
+              className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] rounded-lg font-bold uppercase tracking-wider transition-all shadow-lg shadow-indigo-500/20"
             >
-              Execute
+              Run
             </button>
           </form>
         </div>
       </div>
 
       <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-      `}</style>
-    </div>
-  );
-};
-
-export default FriendlyTerminal;
-
-  // Simulated stage management for when real logs haven't hit yet
-  const [simulatedStage, setSimulatedStage] = useState(0);
-
-  const stages = [
-    {
-      friendly: "Initializing bot deployment engine...",
-      icon: <Zap className="w-4 h-4 text-blue-400" />,
-      type: "friendly",
-      delay: 0,
-    },
-    {
-      friendly: "Configuring secure workspace...",
-      icon: <Shield className="w-4 h-4 text-indigo-400" />,
-      type: "friendly",
-      delay: 8000,
-    },
-    {
-      friendly: "Allocating dedicated CPU & RAM...",
-      icon: <Layout className="w-4 h-4 text-cyan-400" />,
-      type: "friendly",
-      delay: 18000,
-    },
-    {
-      friendly: "Establishing connection to secure vault...",
-      icon: <Globe className="w-4 h-4 text-emerald-400" />,
-      type: "friendly",
-      delay: 35000,
-    },
-    {
-      friendly: "Fetching bot modules from GitHub repository...",
-      icon: <Shield className="w-4 h-4 text-purple-400" />,
-      type: "friendly",
-      delay: 55000,
-    },
-    {
-      friendly: "Teaching bot its core functions (Node.js)...",
-      icon: <Coffee className="w-4 h-4 text-amber-400" />,
-      type: "friendly",
-      delay: 80000,
-    },
-    {
-      friendly: "Connecting to global node network...",
-      icon: <Zap className="w-4 h-4 text-yellow-400" />,
-      type: "friendly",
-      delay: 100000,
-    },
-    {
-      friendly: "Finalizing system handshake with WhatsApp...",
-      icon: <CheckCircle className="w-4 h-4 text-green-400" />,
-      type: "friendly",
-      delay: 115000,
-    },
-  ];
-
-  const containerRef = useRef(null);
-
-  // Auto-scroll to bottom (Internal only)
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: containerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [displayedFriendlyLogs]);
-
-  // Handle Simulated Stages
-  useEffect(() => {
-    if (
-      logs.length === 0 &&
-      (status === "creating" ||
-        status === "installing" ||
-        status === "starting")
-    ) {
-      const timers = stages.map((stage, index) => {
-        return setTimeout(() => {
-          setDisplayedFriendlyLogs((prev) => {
-            if (prev.some((l) => l.friendly === stage.friendly)) return prev;
-            return [
-              ...prev,
-              { ...stage, timestamp: new Date().toLocaleTimeString() },
-            ];
-          });
-        }, stage.delay);
-      });
-      return () => timers.forEach((t) => clearTimeout(t));
-    }
-  }, [logs.length, status]);
-
-  // Handle Real Logs Integration
-  useEffect(() => {
-    if (logs.length > 0) {
-      const transformLog = (log) => {
-        if (!log) return null;
-        const raw = log.toString();
-
-        const mappings = [
-          {
-            pattern:
-              /installing dependencies|npm install|yarn install|building/i,
-            friendly: "Teaching your bot its core functions... 📚",
-            icon: <Coffee className="w-4 h-4 text-amber-400" />,
-            type: "friendly",
-          },
-          {
-            pattern:
-              /connecting to whatsapp|connecting\.\.\.|initializing connection|wa connection/i,
-            friendly: "Scanning the horizon for WhatsApp... 📡",
-            icon: <Zap className="w-4 h-4 text-yellow-400" />,
-            type: "friendly",
-          },
-          {
-            pattern:
-              /bot connected successfully|successfully logged in|client is ready|connected to whatsapp/i,
-            friendly: "System Online. Your bot is now live! 🚀",
-            icon: <CheckCircle className="w-4 h-4 text-green-400" />,
-            type: "success",
-          },
-          {
-            pattern: /git clone|cloning|fetching repository|pulling/i,
-            friendly: "Syncing latest modules from secure vault... 📦",
-            icon: <Shield className="w-4 h-4 text-purple-400" />,
-            type: "friendly",
-          },
-          {
-            pattern:
-              /(?:Your pairing code|Pairing code|Code)\s*[:\s-]*\s*([A-Z0-9]{4}-[A-Z0-9]{4})/i,
-            friendly: "Pairing code found! Check above to link WhatsApp. ✨",
-            icon: <CheckCircle className="w-4 h-4 text-green-400" />,
-            type: "success",
-          },
-          {
-            pattern: /success|ready|finished|done|complete|finalizing/i,
-            friendly: "Finalizing system handshake... ✨",
-            icon: <CheckCircle className="w-4 h-4 text-green-400" />,
-            type: "friendly",
-          },
-        ];
-
-        for (const mapping of mappings) {
-          if (mapping.pattern.test(raw)) return mapping;
-        }
-        return null;
-      };
-
-      const newFriendlyItems = logs
-        .map((log) => {
-          const transformed = transformLog(log);
-          return transformed
-            ? { ...transformed, timestamp: new Date().toLocaleTimeString() }
-            : null;
-        })
-        .filter((item) => item !== null);
-
-      setDisplayedFriendlyLogs((prev) => {
-        const unique = [...prev];
-        newFriendlyItems.forEach((newItem) => {
-          if (!unique.some((u) => u.friendly === newItem.friendly)) {
-            unique.push(newItem);
-          }
-        });
-        return unique;
-      });
-    }
-  }, [logs]);
-
-  return (
-    <div className="w-full max-w-2xl mx-auto mt-6 md:mt-10 relative px-0 sm:px-4">
-      {/* Background Glow */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-
-      {/* Main Terminal Body */}
-      <div className="relative bg-slate-950/80 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-        {/* Apple Style Header */}
-        <div className="flex items-center justify-between px-4 py-2 md:px-5 md:py-3 bg-white/5 border-b border-white/5 backdrop-blur-md">
-          <div className="flex items-center gap-2">
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
-              <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-              <div className="w-3 h-3 rounded-full bg-[#28C840]" />
-            </div>
-            <div className="ml-2 md:ml-4 flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 bg-black/20 rounded-lg">
-              <Terminal size={10} className="text-blue-400/80" />
-              <span className="text-[9px] md:text-[11px] font-mono text-white/40 tracking-wider">
-                SAMKIEL-AI
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded-md">
-              <Clock size={10} className="text-blue-400" />
-              <span className="text-[9px] font-mono text-blue-400/80 uppercase tracking-tighter">
-                Live Session
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div
-          ref={containerRef}
-          className="p-4 md:p-8 min-h-[250px] md:min-h-[300px] max-h-[350px] md:max-h-[450px] overflow-y-auto custom-scrollbar"
-        >
-          <AnimatePresence initial={false}>
-            <ul className="space-y-4 md:space-y-6">
-              {displayedFriendlyLogs.map((log, index) => (
-                <motion.li
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 20,
-                    delay: 0.1,
-                  }}
-                  className="group flex items-start gap-3 md:gap-5"
-                >
-                  <div
-                    className={`mt-0.5 p-2 md:p-3 rounded-xl transition-all duration-500 ${
-                      log.type === "success"
-                        ? "bg-green-500/20 text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.15)] scale-110"
-                        : "bg-white/5 text-blue-400 border border-white/5 group-hover:bg-blue-500/10 transition-colors"
-                    }`}
-                  >
-                    {React.cloneElement(log.icon, {
-                      className: "w-3.5 h-3.5 md:w-4 md:h-4",
-                    })}
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-3">
-                      <span className="text-white/20 text-[10px] font-mono tracking-widest">
-                        {log.timestamp}
-                      </span>
-                      {index === displayedFriendlyLogs.length - 1 && (
-                        <div className="flex items-center gap-2">
-                          <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-                          <span className="text-[10px] font-semibold text-blue-400 uppercase tracking-widest animate-pulse">
-                            Running
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <span
-                      className={`text-[13px] md:text-[16px] font-medium tracking-tight ${
-                        log.type === "success" ? "text-white" : "text-white/80"
-                      }`}
-                    >
-                      {log.friendly}
-                    </span>
-
-                    {index === displayedFriendlyLogs.length - 1 && (
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "100%" }}
-                        transition={{ duration: 3 }}
-                        className="h-0.5 mt-2 bg-gradient-to-r from-blue-500/50 to-transparent rounded-full"
-                      />
-                    )}
-                  </div>
-                </motion.li>
-              ))}
-
-              {/* Waiting cursor */}
-              {displayedFriendlyLogs.length > 0 &&
-                status !== "active" &&
-                status !== "connected" && (
-                  <motion.li
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center gap-4 pl-14 pt-2"
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500/30 animate-ping" />
-                    <span className="text-[9px] md:text-[11px] font-mono text-white/10 uppercase tracking-[0.2em] md:tracking-[0.3em]">
-                      Awaiting next sequence
-                    </span>
-                  </motion.li>
-                )}
-
-              <div ref={terminalEndRef} />
-            </ul>
-          </AnimatePresence>
-        </div>
-
-        {/* Glossy Footer Overlay */}
-        <div className="h-12 absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none" />
-      </div>
-
-      <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
+          width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
+          background: rgba(255, 255, 255, 0.01);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
           background: rgba(255, 255, 255, 0.1);
-          border-radius: 20px;
+          border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.2);

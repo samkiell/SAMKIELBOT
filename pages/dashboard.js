@@ -95,6 +95,60 @@ export default function Dashboard() {
       console.error("Error fetching deployments:", error);
     } finally {
       setLoading(false);
+
+      // Low Balance Check
+      if (user && data) {
+        const activeBotsCount = data.filter((d) =>
+          [
+            "active",
+            "connected",
+            "online",
+            "degraded",
+            "starting",
+            "awaiting_pairing",
+            "paired",
+          ].includes(d.status)
+        ).length;
+
+        if (activeBotsCount > 0) {
+          const dailyBurn = activeBotsCount * 5;
+          const threeDayThreshold = dailyBurn * 3;
+
+          if (user.credits < threeDayThreshold) {
+            toast(
+              (t) => (
+                <div className="flex flex-col gap-1">
+                  <span className="font-bold text-amber-600 dark:text-amber-400">
+                    Low Credit Balance! ⚠️
+                  </span>
+                  <span className="text-xs text-gray-600 dark:text-gray-300">
+                    Your balance ({Math.round(user.credits)} credits) will last
+                    less than 3 days. Total daily burn: {dailyBurn} credits.
+                  </span>
+                  <Link
+                    href="/credits/buy"
+                    onClick={() => toast.dismiss(t.id)}
+                    className="mt-2 text-[10px] font-black uppercase tracking-widest bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-center hover:bg-indigo-700 transition-colors"
+                  >
+                    Top Up Now
+                  </Link>
+                </div>
+              ),
+              {
+                duration: 6000,
+                icon: "💳",
+                style: {
+                  borderRadius: "16px",
+                  background: "#1e293b",
+                  color: "#fff",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  padding: "16px",
+                },
+              }
+            );
+          }
+        }
+      }
     }
   };
 

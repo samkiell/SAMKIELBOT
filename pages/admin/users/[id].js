@@ -294,7 +294,7 @@ export default function UserDetails() {
                       <td className="px-6 py-4">
                         <div className="font-bold text-indigo-600">
                           <Link
-                            href={`/admin/server/${bot._id}`}
+                            href={`/admin/bots/${bot._id}`}
                             className="hover:underline"
                           >
                             {bot.botName || `Bot ${bot.botNumber}`}

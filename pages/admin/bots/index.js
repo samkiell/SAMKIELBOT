@@ -159,7 +159,7 @@ export default function BotControl() {
                   {bot.status}
                 </span>
                 <Link
-                  href={`/admin/server/${bot._id}`}
+                  href={`/admin/bots/${bot._id}`}
                   className="hover:text-indigo-600 transition-colors"
                 >
                   <h3 className="font-bold text-lg">{bot.botName}</h3>

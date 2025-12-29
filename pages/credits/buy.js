@@ -28,6 +28,9 @@ export default function BuyCredits() {
   const [loading, setLoading] = useState(true);
   const [meta, setMeta] = useState({ currency: "NGN" });
 
+  const [history, setHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login");
@@ -35,8 +38,31 @@ export default function BuyCredits() {
     }
     if (user) {
       fetchPackages();
+      fetchHistory();
     }
   }, [user, authLoading]);
+
+  const fetchHistory = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/credits/history`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setHistory(data.data);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch history:", error);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
 
   const fetchPackages = async () => {
     try {
@@ -109,6 +135,24 @@ export default function BuyCredits() {
     } finally {
       setProcessing(null);
     }
+  };
+
+  const truncateString = (str, n) => {
+    return str?.length > n ? str.substr(0, n - 1) + "..." : str;
+  };
+
+  const getTransactionIcon = (type, amount) => {
+    if (amount > 0)
+      return (
+        <div className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg">
+          <Zap size={16} />
+        </div>
+      );
+    return (
+      <div className="p-2 bg-rose-500/10 text-rose-500 rounded-lg">
+        <CreditCard size={16} />
+      </div>
+    );
   };
 
   const container = {
@@ -188,36 +232,29 @@ export default function BuyCredits() {
               Select a credit package below. Credits cover deployment fees and
               daily server maintenance.
             </motion.p>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Link
-                href="/how-billing-works"
-                className="inline-flex items-center gap-2 text-sm font-bold text-indigo-500 hover:text-indigo-400 bg-indigo-500/5 px-4 py-2 rounded-full border border-indigo-500/20"
-              >
-                <Info size={16} />
-                Honest Explanation: Why we use credits
-              </Link>
-            </motion.div>
-            {meta && meta.isSupported === false && (
+            <div className="flex flex-wrap justify-center gap-4">
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl flex items-center gap-3 text-amber-800 dark:text-amber-200 text-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
               >
-                <div className="p-2 bg-amber-100 dark:bg-amber-800 rounded-lg">
-                  <CreditCard size={18} />
-                </div>
-                <p>
-                  Your local currency ({meta.detectedLocalCurrency}) is not
-                  directly supported by our payment processor. Prices have been
-                  converted to <strong>{meta.currency}</strong> for your
-                  convenience.
-                </p>
+                <Link
+                  href="/how-billing-works"
+                  className="inline-flex items-center gap-2 text-sm font-bold text-indigo-500 hover:text-indigo-400 bg-indigo-500/5 px-4 py-2 rounded-full border border-indigo-500/20"
+                >
+                  <Info size={16} />
+                  How Billing Works
+                </Link>
               </motion.div>
-            )}
+              <div className="px-5 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md flex items-center gap-3">
+                <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Active Wallet
+                </span>
+                <span className="text-lg font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                  {Math.round(user.credits)} Credits
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -341,37 +378,134 @@ export default function BuyCredits() {
               ))}
         </motion.div>
 
-        {/* Info Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-20">
-          <div className="bg-white/50 dark:bg-slate-800/50 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 backdrop-blur-sm">
-            <Zap className="text-amber-500 mb-4" size={32} />
-            <h3 className="text-xl font-bold mb-3">Instant Activation</h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Credits are added to your account immediately after successful
-              payment via Paystack.
-            </p>
+        {/* Transaction History Section */}
+        <div className="mb-20">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-black flex items-center gap-3">
+              <div className="p-2 bg-indigo-500/10 rounded-lg">
+                <TrendingUp className="text-indigo-500" size={20} />
+              </div>
+              Wallet History
+            </h2>
+            {history.length > 0 && (
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+                {history.length} Recent entries
+              </span>
+            )}
           </div>
-          <div className="bg-white/50 dark:bg-slate-800/50 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 backdrop-blur-sm">
-            <Shield className="text-emerald-500 mb-4" size={32} />
-            <h3 className="text-xl font-bold mb-3">Safe & Secure</h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              All transactions are encrypted and processed securely. We never
-              store your card details.
-            </p>
-          </div>
-          <div className="bg-white/50 dark:bg-slate-800/50 p-8 rounded-2xl border border-gray-100 dark:border-slate-700 backdrop-blur-sm">
-            <Server className="text-indigo-500 mb-4" size={32} />
-            <h3 className="text-xl font-bold mb-2">Fair Usage</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Credits fund 24/7 VPS hosting and high-speed network traffic for
-              your bots.
-            </p>
-            <Link
-              href="/how-billing-works"
-              className="text-xs font-bold text-indigo-500 hover:underline flex items-center gap-1"
-            >
-              Learn how we use credits <Zap size={10} />
-            </Link>
+
+          <div className="bg-[#161b2c]/60 backdrop-blur-xl rounded-3xl border border-white/5 overflow-hidden shadow-2xl">
+            {historyLoading ? (
+              <div className="p-12 text-center">
+                <div className="animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p className="text-gray-500 text-sm font-medium">
+                  Decrypting transaction ledger...
+                </p>
+              </div>
+            ) : history.length === 0 ? (
+              <div className="p-16 text-center">
+                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/5">
+                  <CreditCard className="text-gray-600" size={32} />
+                </div>
+                <h3 className="text-lg font-bold text-gray-300 mb-2">
+                  No Transactions Found
+                </h3>
+                <p className="text-gray-500 text-sm max-w-sm mx-auto">
+                  Your transaction history is empty. Purchase credits or claim
+                  rewards to see activity here.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-white/5 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] border-b border-white/5">
+                      <th className="px-8 py-5">Transaction</th>
+                      <th className="px-8 py-5">Context</th>
+                      <th className="px-8 py-5">Date</th>
+                      <th className="px-8 py-5 text-right">Impact</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.02]">
+                    {history.map((tx, idx) => (
+                      <motion.tr
+                        key={tx._id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="group hover:bg-white/[0.02] transition-colors"
+                      >
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-4">
+                            {getTransactionIcon(tx.type, tx.amount)}
+                            <div>
+                              <div className="font-bold text-gray-200 group-hover:text-white transition-colors">
+                                {tx.description}
+                              </div>
+                              <div className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mt-1">
+                                {tx.type.replace("_", " ")}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          {tx.deployment ? (
+                            <div className="flex items-center gap-2">
+                              <Server size={12} className="text-indigo-400" />
+                              <span className="text-xs font-bold text-gray-400">
+                                {tx.deployment.botName}
+                              </span>
+                            </div>
+                          ) : tx.referredUser ? (
+                            <div className="flex items-center gap-2">
+                              <Users size={12} className="text-purple-400" />
+                              <span className="text-xs font-bold text-gray-400">
+                                {tx.referredUser.username}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+                              System
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="text-xs font-bold text-gray-400">
+                            {new Date(tx.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }
+                            )}
+                          </div>
+                          <div className="text-[10px] text-gray-600 font-mono mt-1">
+                            {new Date(tx.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </div>
+                        </td>
+                        <td className="px-8 py-6 text-right">
+                          <div
+                            className={`text-sm font-black ${
+                              tx.amount > 0 ? "text-emerald-400" : "text-white"
+                            }`}
+                          >
+                            {tx.amount > 0 ? "+" : ""}
+                            {tx.amount}
+                          </div>
+                          <div className="text-[10px] text-gray-500 font-mono mt-1">
+                            Bal: {Math.round(tx.balanceAfter)}
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
 

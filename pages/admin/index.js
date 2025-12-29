@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import { useAuth } from "../../lib/auth";
 import AdminLayout from "../../components/AdminLayout";
 import {
@@ -89,19 +90,23 @@ export default function AdminDashboard() {
 
       {/* Top Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          title="Total Users"
-          value={stats?.totalUsers || 0}
-          icon={Users}
-          color="indigo"
-        />
-        <StatCard
-          title="Active Bots"
-          value={stats?.runningBots || 0}
-          total={stats?.totalBots}
-          icon={Server}
-          color="green"
-        />
+        <Link href="/admin/users" className="block h-full">
+          <StatCard
+            title="Total Users"
+            value={stats?.totalUsers || 0}
+            icon={Users}
+            color="indigo"
+          />
+        </Link>
+        <Link href="/admin/bots" className="block h-full">
+          <StatCard
+            title="Active Bots"
+            value={stats?.runningBots || 0}
+            total={stats?.totalBots}
+            icon={Server}
+            color="green"
+          />
+        </Link>
         <StatCard
           title="Failed Today"
           value={stats?.failedDeploymentsToday || 0}

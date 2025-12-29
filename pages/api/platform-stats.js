@@ -40,10 +40,8 @@ export default async function handler(req, res) {
     const activeUsersCount = await User.countDocuments({});
 
     // 2. Count Total Deployments
-    // Count all active or running bots
-    const botsDeployedCount = await Deployment.countDocuments({
-      status: { $in: ["active", "running", "connected", "paired", "starting"] },
-    });
+    // Count all bots ever deployed
+    const botsDeployedCount = await Deployment.countDocuments({});
 
     // 3. Calculate Uptime Streak (Mock logic for now, or based on successful pings if you have logs)
     // For now, let's keep it static or slowly increasing towards 99.99

@@ -16,6 +16,8 @@ import {
   ArrowLeft,
   Coins,
   Info,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 import Skeleton from "../../components/Skeleton";
 import toast from "react-hot-toast";

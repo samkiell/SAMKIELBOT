@@ -17,6 +17,7 @@ const creditTransactionSchema = new mongoose.Schema(
         "bot_creation",
         "resource_upgrade",
         "daily_burn",
+        "daily_renewal",
         "daily_claim",
         "refund",
         "admin_adjustment",

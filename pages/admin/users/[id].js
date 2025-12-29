@@ -152,28 +152,50 @@ export default function UserDetails() {
   const getStatusBadge = (status) => {
     const styles = {
       running: "bg-green-100 text-green-800 border-green-200",
+      online: "bg-green-100 text-green-800 border-green-200",
+      active: "bg-green-100 text-green-800 border-green-200",
+      connected: "bg-green-100 text-green-800 border-green-200",
       installing: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      starting: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      paired: "bg-yellow-100 text-yellow-800 border-yellow-200",
       stopped: "bg-gray-100 text-gray-800 border-gray-200",
+      offline: "bg-gray-100 text-gray-800 border-gray-200",
       failed: "bg-red-100 text-red-800 border-red-200",
+      error: "bg-red-100 text-red-800 border-red-200",
       suspended: "bg-orange-100 text-orange-800 border-orange-200",
+      expired: "bg-orange-100 text-orange-800 border-orange-200",
+      degraded: "bg-amber-100 text-amber-800 border-amber-200",
+      awaiting_pairing: "bg-blue-100 text-blue-800 border-blue-200",
+      pending: "bg-blue-100 text-blue-800 border-blue-200",
     };
 
     const icons = {
       running: "🟢",
-      installing: "⏳",
-      stopped: "🔴",
+      online: "🌐",
+      active: "⚡",
+      connected: "🔗",
+      installing: "⚙️",
+      starting: "🚀",
+      paired: "🤝",
+      stopped: "🛑",
+      offline: "💤",
       failed: "⚠️",
+      error: "❌",
       suspended: "⛔",
+      expired: "⏰",
+      degraded: "📉",
+      awaiting_pairing: "🔑",
+      pending: "⏲️",
     };
 
     const style = styles[status] || styles.stopped;
-    const icon = icons[status] || "";
+    const icon = icons[status] || "⚪";
 
     return (
       <span
-        className={`px-2 py-1 rounded-full text-xs font-medium border ${style} flex items-center gap-1 w-fit`}
+        className={`px-2 py-1 rounded-full text-[10px] font-bold border ${style} flex items-center gap-1 w-fit uppercase`}
       >
-        <span>{icon}</span> {status.toUpperCase()}
+        <span>{icon}</span> {status}
       </span>
     );
   };

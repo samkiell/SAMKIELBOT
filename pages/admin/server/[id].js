@@ -4,6 +4,7 @@ import AdminLayout from "../../../components/AdminLayout";
 import { useAuth } from "../../../lib/auth";
 import toast from "react-hot-toast";
 import { Terminal, Power, Database, Activity, RefreshCw } from "lucide-react";
+import FriendlyTerminal from "../../../components/FriendlyTerminal";
 
 export default function AdminServerDetail() {
   const router = useRouter();
@@ -13,18 +14,13 @@ export default function AdminServerDetail() {
   const [logs, setLogs] = useState([]);
   const [socket, setSocket] = useState(null);
   const [wsAuth, setWsAuth] = useState(null);
-  const logsEndRef = useRef(null);
 
   useEffect(() => {
     if (id) fetchServerDetails();
     return () => {
       if (socket) socket.close();
     };
-  }, [id]);
-
-  useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [logs]);
+  }, [id, token]);
 
   const fetchServerDetails = async () => {
     try {
@@ -79,7 +75,7 @@ export default function AdminServerDetail() {
         ws.send(JSON.stringify({ event: "send logs", args: [null] }));
       }
       if (msg.event === "console output") {
-        setLogs((prev) => [...prev, msg.args[0]]);
+        setLogs((prev) => [...prev, msg.args[0]].slice(-200));
       }
       if (msg.event === "stats") {
         // stats args: [{memory_bytes, cpu_absolute, ...}]
@@ -106,27 +102,32 @@ export default function AdminServerDetail() {
           <div className="animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
         </div>
       ) : (
-        <div className="flex flex-col h-[calc(100vh-100px)]">
-          <div className="mb-4 flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm">
+        <div className="flex flex-col h-full bg-[#0b0f1a] rounded-3xl overflow-hidden p-6 border border-white/5 shadow-2xl relative">
+          {/* Mesh Gradient Overlay */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+          <div className="mb-8 flex justify-between items-center bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/5 relative z-10">
             <div>
-              <h1 className="text-xl font-bold flex items-center gap-2">
-                <Terminal size={24} className="text-indigo-500" />
-                {server.botName}
+              <h1 className="text-2xl font-black flex items-center gap-3">
+                <Terminal size={28} className="text-indigo-500" />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                  {server.botName}
+                </span>
               </h1>
-              <p className="text-xs text-gray-500 font-mono">
-                {server.identifier}
+              <p className="text-xs text-gray-500 font-mono tracking-widest uppercase mt-1">
+                INSTANCE ID: {server.identifier}
               </p>
             </div>
-            <div className="flex gap-4">
-              <div className="text-center">
-                <div className="text-xs text-gray-500 uppercase font-bold">
-                  Status
+            <div className="flex gap-6">
+              <div className="text-right">
+                <div className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">
+                  Cluster Status
                 </div>
                 <div
-                  className={`font-bold ${
+                  className={`font-black text-xs uppercase tracking-widest px-3 py-1 rounded-full border ${
                     server.status === "running"
-                      ? "text-green-500"
-                      : "text-gray-500"
+                      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                      : "bg-white/5 text-gray-500 border-white/10"
                   }`}
                 >
                   {server.status}
@@ -135,29 +136,12 @@ export default function AdminServerDetail() {
             </div>
           </div>
 
-          {/* Console */}
-          <div className="flex-1 bg-black rounded-xl p-4 font-mono text-sm text-gray-300 overflow-hidden flex flex-col shadow-inner">
-            <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar">
-              {logs.map((log, i) => (
-                <div key={i} className="whitespace-pre-wrap break-all">
-                  {log.replace(/\u001b\[.*?m/g, "")}
-                </div>
-              ))}
-              <div ref={logsEndRef} />
-            </div>
-            <div className="mt-2 flex gap-2">
-              <span className="text-green-500 select-none">$</span>
-              <input
-                className="flex-1 bg-transparent border-none outline-none text-white"
-                placeholder="Type command..."
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    sendCommand(e.target.value);
-                    e.target.value = "";
-                  }
-                }}
-              />
-            </div>
+          <div className="flex-1 min-h-0 relative z-10">
+            <FriendlyTerminal
+              logs={logs}
+              status={server.status}
+              onCommand={sendCommand}
+            />
           </div>
         </div>
       )}

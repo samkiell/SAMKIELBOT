@@ -91,10 +91,6 @@ export default function Dashboard() {
     try {
       const data = await getDeployments();
       setDeployments(data);
-    } catch (error) {
-      console.error("Error fetching deployments:", error);
-    } finally {
-      setLoading(false);
 
       // Low Balance Check
       if (user && data) {
@@ -149,6 +145,10 @@ export default function Dashboard() {
           }
         }
       }
+    } catch (error) {
+      console.error("Error fetching deployments:", error);
+    } finally {
+      setLoading(false);
     }
   };
 

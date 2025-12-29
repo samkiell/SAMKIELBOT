@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import AdminLayout from "../../../components/AdminLayout";
 import { useAuth } from "../../../lib/auth";
 import toast from "react-hot-toast";
@@ -144,7 +145,12 @@ export default function BotControl() {
                 >
                   {bot.status}
                 </span>
-                <h3 className="font-bold text-lg">{bot.botName}</h3>
+                <Link
+                  href={`/admin/server/${bot._id}`}
+                  className="hover:text-indigo-600 transition-colors"
+                >
+                  <h3 className="font-bold text-lg">{bot.botName}</h3>
+                </Link>
                 <span className="text-xs font-mono text-gray-400">
                   {bot.identifier || "No ID"}
                 </span>

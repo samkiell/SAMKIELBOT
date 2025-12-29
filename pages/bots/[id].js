@@ -186,13 +186,20 @@ export default function BotManagementPage() {
     deployment.status === "suspended";
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white pb-20">
+    <div className="min-h-screen bg-[#0b0f1a] text-gray-100 pb-20 relative overflow-hidden">
+      {/* Mesh Gradient Background */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <Head>
-        <title>{deployment.botName} - Management</title>
+        <title>{deployment.botName} | Samkiel Bot</title>
       </Head>
       <Navbar />
 
-      <main className="container mx-auto px-4 pt-8 max-w-7xl">
+      <main className="container mx-auto px-4 pt-10 max-w-7xl relative z-10">
         {/* Navigation */}
         <div className="mb-8">
           <Link
@@ -205,22 +212,33 @@ export default function BotManagementPage() {
         </div>
 
         {/* Header Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
           {/* Main Info Card */}
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-                  {deployment.botName}
+          <div className="lg:col-span-2 bg-[#161b2c]/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/5 relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-indigo-500 to-purple-600 opacity-50" />
+
+            <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <h1 className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                    {deployment.botName}
+                  </h1>
                   <StatusBadge
                     status={deployment.status}
                     billingStatus={deployment.billingStatus}
                   />
-                </h1>
-                <p className="text-gray-500 dark:text-gray-400">
-                  {deployment.botNumber} • {deployment.configuration?.packName}
+                </div>
+                <p className="text-gray-400 font-medium flex items-center gap-2">
+                  <span className="bg-white/5 px-2 py-0.5 rounded text-xs font-mono">
+                    {deployment.botNumber}
+                  </span>
+                  <span className="text-gray-600">•</span>
+                  <span className="text-indigo-400/80 tracking-wide uppercase text-xs font-bold">
+                    {deployment.configuration?.packName}
+                  </span>
                 </p>
               </div>
+
               <div
                 className={`flex flex-col items-end ${
                   isSuspended ? "opacity-50 pointer-events-none" : ""
@@ -232,24 +250,28 @@ export default function BotManagementPage() {
                     deployment.status,
                     deployment.resources
                   ) !== "Starting..." && (
-                    <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2 flex items-center gap-2">
-                      <Activity size={16} className="text-green-500" />
-                      <span className="font-mono font-medium">
-                        Uptime:{" "}
-                        {formatUptime(
-                          deployment.uptimeStart,
-                          deployment.status,
-                          deployment.resources
-                        )}
-                      </span>
+                    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3 shadow-inner">
+                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none mb-1">
+                          Live Uptime
+                        </span>
+                        <span className="font-mono font-bold text-white leading-none">
+                          {formatUptime(
+                            deployment.uptimeStart,
+                            deployment.status,
+                            deployment.resources
+                          )}
+                        </span>
+                      </div>
                     </div>
                   )}
               </div>
             </div>
 
             {/* Resource Usage Graphs */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 bg-gray-50 dark:bg-gray-900/40 rounded-xl border border-gray-100 dark:border-gray-800">
-              <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl transition-all duration-300 hover:bg-white/10 hover:border-white/10 group/card">
                 <Sparkline
                   label="CPU Usage"
                   data={
@@ -260,7 +282,7 @@ export default function BotManagementPage() {
                   color="indigo"
                 />
               </div>
-              <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl transition-all duration-300 hover:bg-white/10 hover:border-white/10 group/card">
                 <Sparkline
                   label="RAM Usage"
                   data={
@@ -271,7 +293,7 @@ export default function BotManagementPage() {
                   color="emerald"
                 />
               </div>
-              <div className="bg-white dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+              <div className="bg-white/5 border border-white/5 p-5 rounded-2xl transition-all duration-300 hover:bg-white/10 hover:border-white/10 group/card">
                 <Sparkline
                   label="Recent Activity"
                   data={
@@ -285,30 +307,32 @@ export default function BotManagementPage() {
             </div>
 
             {/* Controls Toolbar */}
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-wrap gap-4">
               <button
                 onClick={() => handlePowerAction("start")}
                 disabled={
                   actionLoading ||
                   ["active", "connected", "online"].includes(deployment.status)
                 }
-                className="flex items-center px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group flex items-center px-8 py-3 bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white border border-green-500/20 hover:border-green-500 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-green-500/5 disabled:opacity-20 disabled:cursor-not-allowed"
               >
-                <Play size={18} className="mr-2" /> Start
+                <Play size={20} className="mr-2 fill-current" />{" "}
+                <span>Start Bot</span>
               </button>
               <button
                 onClick={() => handlePowerAction("stop")}
                 disabled={actionLoading || deployment.status === "stopped"}
-                className="flex items-center px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group flex items-center px-8 py-3 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-red-500 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-red-500/5 disabled:opacity-20 disabled:cursor-not-allowed"
               >
-                <Square size={18} className="mr-2" /> Stop
+                <Square size={20} className="mr-2 fill-current" />{" "}
+                <span>Stop Bot</span>
               </button>
               <button
                 onClick={() => handlePowerAction("restart")}
                 disabled={actionLoading}
-                className="flex items-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group flex items-center px-8 py-3 bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white border border-blue-500/20 hover:border-blue-500 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-blue-500/5 disabled:opacity-20 disabled:cursor-not-allowed"
               >
-                <RotateCw size={18} className="mr-2" /> Restart
+                <RotateCw size={20} className="mr-2" /> <span>Restart</span>
               </button>
             </div>
 
@@ -329,120 +353,156 @@ export default function BotManagementPage() {
           </div>
 
           {/* Billing Snapshot Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 lg:col-span-1 flex flex-col justify-between">
+          <div className="bg-[#161b2c]/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/5 lg:col-span-1 flex flex-col justify-between relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16" />
             <div>
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <CreditCard className="text-indigo-500" /> Billing
+              <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
+                <div className="p-2 bg-indigo-500/10 rounded-lg">
+                  <CreditCard className="text-indigo-400" size={20} />
+                </div>
+                Billing Summary
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <BillingItem
-                  label="Daily Cost"
+                  label="Daily Consumption"
                   value={formatCredits(deployment.dailyBurn || 5)}
                 />
                 <BillingItem
-                  label="Total Spent"
+                  label="Cumulative Usage"
                   value={formatCredits(deployment.totalCreditsSpent || 50)}
                 />
                 <BillingItem
-                  label="Next Renewal"
+                  label="Next Billing Cycle"
                   value={new Date(
                     deployment.nextRenewalAt || Date.now()
-                  ).toLocaleDateString()}
+                  ).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                   sub={getRelativeTime(deployment.nextRenewalAt)}
                 />
               </div>
             </div>
-            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-              <p className="text-sm text-gray-500 mb-2">Wallet Balance</p>
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+            <div className="mt-10 pt-8 border-t border-white/5">
+              <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">
+                Account Balance
+              </p>
+              <div className="text-4xl font-black text-white">
                 {formatCredits(user?.credits || 0)}
               </div>
+              <p className="text-xs text-indigo-400 mt-2 font-medium">
+                Auto-renew active
+              </p>
             </div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
-          <nav className="flex space-x-8">
-            <TabButton
-              active={activeTab === "overview"}
-              onClick={() => setActiveTab("overview")}
-              label="Overview"
-              icon={<Activity size={18} />}
-            />
-            <TabButton
-              active={activeTab === "logs"}
-              onClick={() => setActiveTab("logs")}
-              label="Live Logs"
-              icon={<Terminal size={18} />}
-            />
-          </nav>
+        <div className="flex gap-1 mb-8 bg-white/5 p-1 rounded-2xl w-fit border border-white/5">
+          <TabButton
+            active={activeTab === "overview"}
+            onClick={() => setActiveTab("overview")}
+            label="System Overview"
+            icon={<Activity size={16} />}
+          />
+          <TabButton
+            active={activeTab === "logs"}
+            onClick={() => setActiveTab("logs")}
+            label="Live Console"
+            icon={<Terminal size={16} />}
+          />
         </div>
 
         {/* Tab Content */}
         {activeTab === "overview" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Deployment Details */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h3 className="font-bold text-lg mb-4">Deployment Details</h3>
-              <div className="space-y-3">
+            <div className="bg-[#161b2c]/40 backdrop-blur-md rounded-3xl p-8 border border-white/5 shadow-xl">
+              <h3 className="font-bold text-lg mb-6 flex items-center gap-2 text-indigo-400">
+                <Activity size={20} /> Deployment Specification
+              </h3>
+              <div className="grid gap-4">
                 <DetailRow
-                  label="Created"
+                  label="Deployment Date"
+                  icon={<Clock size={16} />}
                   value={new Date(
                     deployment.deployedAt || deployment.createdAt || Date.now()
-                  ).toLocaleDateString()}
+                  ).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
                 />
                 <DetailRow
                   label="Pterodactyl ID"
+                  icon={<Terminal size={16} />}
                   value={`#${deployment.identifier}`}
                 />
                 <DetailRow
-                  label="Node"
-                  value={`Node-${deployment.nodeId || "1"}`}
+                  label="Assigned Node"
+                  icon={<ShieldAlert size={16} />}
+                  value={`Cluster-Node-${deployment.nodeId || "01"}`}
                 />
                 <DetailRow
-                  label="Resources"
+                  label="Resource Quota"
+                  icon={<Activity size={16} />}
                   value={`${deployment.resources?.cpuLimit}% CPU / ${deployment.resources?.ramLimit}MB RAM`}
                 />
               </div>
             </div>
 
             {/* Connection Info */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-              <h3 className="font-bold text-lg mb-4">WhatsApp Connection</h3>
+            <div className="bg-[#161b2c]/40 backdrop-blur-md rounded-3xl p-8 border border-white/5 shadow-xl transition-all duration-500 hover:border-indigo-500/20">
+              <h3 className="font-bold text-lg mb-6 flex items-center gap-2 text-emerald-400">
+                <CheckCircle size={20} /> Bot Connectivity
+              </h3>
               {deployment.pairingCode &&
               !["online", "active", "connected"].includes(deployment.status) ? (
-                <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl text-center">
-                  <p className="text-sm text-indigo-600 dark:text-indigo-300 mb-2">
-                    Pairing Code
+                <div className="bg-indigo-500/5 border border-indigo-500/20 p-6 rounded-2xl text-center relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500/30" />
+                  <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-3">
+                    Awaiting External Link
                   </p>
-                  <div className="text-2xl font-mono font-bold tracking-widest text-indigo-700 dark:text-indigo-400">
+                  <div className="text-4xl font-mono font-black tracking-[0.2em] text-white drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]">
                     {deployment.pairingCode}
                   </div>
+                  <p className="text-[10px] text-gray-500 mt-4 leading-relaxed">
+                    Enter this code in your WhatsApp linked devices section
+                    <br />
+                    to establish an encrypted session.
+                  </p>
                 </div>
               ) : (
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-6 p-4 rounded-2xl bg-white/5">
                   <div
-                    className={`p-3 rounded-full ${
+                    className={`p-4 rounded-2xl shadow-lg transition-all duration-1000 ${
                       ["online", "active", "connected"].includes(
                         deployment.status
                       )
-                        ? "bg-green-100 text-green-600"
-                        : "bg-gray-100 text-gray-500"
+                        ? "bg-emerald-500/20 text-emerald-400 shadow-emerald-500/10"
+                        : "bg-gray-500/10 text-gray-500"
                     }`}
                   >
-                    <CheckCircle size={24} />
+                    <CheckCircle size={32} />
                   </div>
                   <div>
-                    <h4 className="font-medium">
+                    <h4 className="font-bold text-xl">
                       {["online", "active", "connected"].includes(
                         deployment.status
                       )
-                        ? "Connected via Baileys"
-                        : "Waiting for connection..."}
+                        ? "Tunnel Established"
+                        : "Synchronizing..."}
                     </h4>
-                    <p className="text-sm text-gray-500">
-                      Last update:{" "}
+                    <p className="text-sm text-gray-500 mt-1">
+                      {["online", "active", "connected"].includes(
+                        deployment.status
+                      )
+                        ? "Securely bridged via Baileys API"
+                        : "Waiting for handshake response"}
+                    </p>
+                    <p className="text-[10px] text-gray-600 mt-3 font-mono">
+                      LATENCY SYNC:{" "}
                       {new Date(deployment.updatedAt).toLocaleTimeString()}
                     </p>
                   </div>
@@ -477,7 +537,7 @@ export default function BotManagementPage() {
 function StatusBadge({ status, billingStatus }) {
   if (billingStatus === "suspended") {
     return (
-      <span className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+      <span className="bg-rose-500/10 text-rose-400 border border-rose-500/20 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-rose-500/10">
         Suspended
       </span>
     );
@@ -485,26 +545,30 @@ function StatusBadge({ status, billingStatus }) {
 
   const map = {
     online:
-      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+      "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-emerald-500/10",
     active:
-      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+      "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-emerald-500/10",
     degraded:
-      "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-    error: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+      "bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-amber-500/10",
+    error:
+      "bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-rose-500/10",
     installing:
-      "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+      "bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-blue-500/10",
     starting:
-      "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-    stopped: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
-    offline: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
+      "bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-purple-500/10",
+    stopped: "bg-white/5 text-gray-400 border border-white/10 shadow-black/10",
+    offline: "bg-white/5 text-gray-400 border border-white/10 shadow-black/10",
   };
+
+  const currentStyle = map[status] || map["offline"];
 
   return (
     <span
-      className={`${
-        map[status] || map["offline"]
-      } px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider`}
+      className={`${currentStyle} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2`}
     >
+      {["online", "active", "connected"].includes(status) && (
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+      )}
       {status}
     </span>
   );
@@ -522,11 +586,13 @@ function BillingItem({ label, value, sub }) {
   );
 }
 
-function DetailRow({ label, value }) {
+function DetailRow({ label, value, icon }) {
   return (
-    <div className="flex justify-between">
-      <span className="text-gray-500 dark:text-gray-400">{label}</span>
-      <span className="font-medium">{value}</span>
+    <div className="flex justify-between items-center group/row">
+      <span className="text-gray-500 text-sm flex items-center gap-2 group-hover/row:text-gray-300 transition-colors">
+        {icon} {label}
+      </span>
+      <span className="font-bold text-gray-200">{value}</span>
     </div>
   );
 }
@@ -535,14 +601,16 @@ function TabButton({ active, onClick, label, icon }) {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 pb-4 px-2 border-b-2 transition-colors ${
+      className={`flex items-center gap-2 py-2.5 px-6 rounded-xl transition-all duration-300 ${
         active
-          ? "border-indigo-500 text-indigo-600 dark:text-indigo-400"
-          : "border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+          ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
+          : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
       }`}
     >
       {icon}
-      <span className="font-medium">{label}</span>
+      <span className="font-bold text-xs uppercase tracking-widest">
+        {label}
+      </span>
     </button>
   );
 }

@@ -661,16 +661,16 @@ export default function DeploymentSessionPage() {
                   <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-4">
                     SCAN OR ENTER PAIRING CODE
                   </p>
-                  <div className="flex items-center justify-center gap-5 mb-8">
-                    <div className="text-5xl font-mono font-black tracking-[0.2em] text-white drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]">
+                  <div className="flex items-center justify-center gap-3 sm:gap-5 mb-8">
+                    <div className="text-2xl sm:text-4xl md:text-5xl font-mono font-black tracking-[0.1em] sm:tracking-[0.2em] text-white drop-shadow-[0_0_10px_rgba(99,102,241,0.5)] break-all text-center">
                       {deployment.pairingCode}
                     </div>
                     <button
                       onClick={handleCopyCode}
-                      className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-white/60 hover:text-white"
+                      className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-white/60 hover:text-white shrink-0"
                       title="Copy"
                     >
-                      <Copy size={24} />
+                      <Copy size={20} className="sm:w-6 sm:h-6" />
                     </button>
                   </div>
                   <div className="pt-8 border-t border-white/5 text-left">

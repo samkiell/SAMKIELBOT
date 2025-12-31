@@ -129,17 +129,20 @@ export default function DeployPage() {
     e.preventDefault();
     setLoading(true);
     // client-side validation
-    if (!/^\d{10,15}$/.test(formData.botNumber)) {
+    // Enforce international format without + or spaces or special chars
+    const phoneRegex = /^\d{10,15}$/;
+
+    if (!phoneRegex.test(formData.botNumber)) {
       toast.error(
-        "Invalid WhatsApp number. Use international format without +."
+        "Invalid Bot Number. Please use international format (e.g., 2348012345678) without '+'."
       );
       setLoading(false);
       return;
     }
 
-    if (formData.ownerNumber && !/^\d{10,15}$/.test(formData.ownerNumber)) {
+    if (formData.ownerNumber && !phoneRegex.test(formData.ownerNumber)) {
       toast.error(
-        "Invalid Owner Number. Use international format without + or spaces."
+        "Invalid Owner Number. Please use international format (e.g., 2348012345678) without '+'."
       );
       setLoading(false);
       return;

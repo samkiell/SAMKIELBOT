@@ -526,7 +526,7 @@ export default function DocsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-16"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8"
           >
             {sections.map((section) => {
               const Icon = section.icon;
@@ -552,7 +552,7 @@ export default function DocsPage() {
           </motion.div>
 
           {/* Documentation Sections */}
-          <div className="space-y-12">
+          <div className="space-y-6">
             {sections.map((section, index) => {
               const Icon = section.icon;
               return (

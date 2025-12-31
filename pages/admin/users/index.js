@@ -14,6 +14,7 @@ import {
   Plus,
   Minus,
   X,
+  Search,
 } from "lucide-react";
 
 import { TableSkeleton } from "../../../components/Skeleton";
@@ -22,6 +23,7 @@ export default function UserManagement() {
   const { token } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // ... rest of state
   const [showCreditModal, setShowCreditModal] = useState(false);
@@ -37,17 +39,21 @@ export default function UserManagement() {
     }
   }, [token]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (query = searchTerm) => {
     if (!token) return;
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users`,
-        {
-          headers: /** @type {Record<string, string>} */ ({
-            Authorization: `Bearer ${token}`,
-          }),
-        }
-      );
+      setLoading(true);
+      const url = query
+        ? `${
+            process.env.NEXT_PUBLIC_API_URL
+          }/admin/users?search=${encodeURIComponent(query)}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
+
+      const res = await fetch(url, {
+        headers: /** @type {Record<string, string>} */ ({
+          Authorization: `Bearer ${token}`,
+        }),
+      });
       const data = await res.json();
       setUsers(data.data || []);
     } catch (err) {
@@ -163,11 +169,33 @@ export default function UserManagement() {
 
   return (
     <AdminLayout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">User Governance</h1>
-        <div className="text-sm text-gray-500">
-          Total: <span className="font-bold">{users.length}</span>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">User Governance</h1>
+          <div className="text-sm text-gray-500">
+            Total: <span className="font-bold">{users.length}</span>
+          </div>
         </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            fetchUsers(searchTerm);
+          }}
+          className="relative w-full md:w-auto"
+        >
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            size={18}
+          />
+          <input
+            type="text"
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 pr-4 py-2 w-full md:w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+          />
+        </form>
       </div>
 
       {loading ? (

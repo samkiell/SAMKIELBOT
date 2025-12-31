@@ -113,28 +113,17 @@ export default function DocsPage() {
                   className="text-green-600 dark:text-green-400"
                   size={18}
                 />
-                Step 2: Provide GitHub Repository
+                Step 2: Configure Bot Settings
               </h4>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                Enter your bot's GitHub repository URL. The repository must be
-                public or you must provide access credentials.
+                Enter your <strong>Bot Name</strong>,{" "}
+                <strong>WhatsApp Number</strong>, and{" "}
+                <strong>Owner Number</strong>.
               </p>
-              <code className="text-xs bg-white dark:bg-slate-900 px-2 py-1 rounded border border-gray-200 dark:border-slate-700">
-                https://github.com/username/bot-repo
-              </code>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-4">
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
-                <CheckCircle
-                  className="text-green-600 dark:text-green-400"
-                  size={18}
-                />
-                Step 3: Select Resources
-              </h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Choose CPU, RAM, and disk space. Higher resources cost more
-                credits per day.
+                Select your desired features like{" "}
+                <strong>Auto Status View</strong>, <strong>Anti-Delete</strong>,
+                and <strong>Command Mode</strong>.
               </p>
             </div>
 
@@ -144,10 +133,10 @@ export default function DocsPage() {
                   className="text-green-600 dark:text-green-400"
                   size={18}
                 />
-                Step 4: Confirm & Deploy
+                Step 3: Confirm & Deploy
               </h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Review the estimated daily cost and click{" "}
+                Review your configuration and click{" "}
                 <strong>"Deploy Bot"</strong>. Credits will be deducted upfront.
               </p>
             </div>
@@ -158,7 +147,7 @@ export default function DocsPage() {
                   className="text-green-600 dark:text-green-400"
                   size={18}
                 />
-                Step 5: Wait for Deployment
+                Step 4: Wait for Deployment
               </h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 The system will provision your bot. This takes 2-5 minutes.
@@ -268,7 +257,7 @@ export default function DocsPage() {
                   referral
                 </li>
                 <li>
-                  • <strong>Purchase:</strong> Buy credits via Paystack
+                  • <strong>Purchase:</strong> Buy credits via dashboard
                 </li>
               </ul>
             </div>
@@ -289,29 +278,6 @@ export default function DocsPage() {
                 <li>
                   • <strong>Suspension:</strong> Bots pause when credits reach
                   zero
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-4">
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">
-                📊 Estimated Costs
-              </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                Daily credit consumption depends on your bot's resources:
-              </p>
-              <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                <li>
-                  • <strong>Basic (512MB RAM, 50% CPU):</strong> ~2-3
-                  credits/day
-                </li>
-                <li>
-                  • <strong>Standard (1GB RAM, 100% CPU):</strong> ~5-7
-                  credits/day
-                </li>
-                <li>
-                  • <strong>Premium (2GB RAM, 200% CPU):</strong> ~10-15
-                  credits/day
                 </li>
               </ul>
             </div>
@@ -470,41 +436,30 @@ export default function DocsPage() {
               </h4>
               <ol className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
                 <li>1. Someone sends a View Once photo/video to your bot</li>
-                <li>
-                  2. The bot intercepts and saves the media before it disappears
-                </li>
-                <li>3. Media is stored in your bot's designated folder</li>
-                <li>
-                  4. You can access saved media via bot commands or file manager
-                </li>
+                <li>2. The bot intercepts the media instantly</li>
+                <li>3. Use the command below to retrieve it</li>
               </ol>
             </div>
 
             <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-4">
               <h4 className="font-bold text-gray-900 dark:text-white mb-2">
-                Enabling View Once
+                Using the Command
               </h4>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                This feature is usually enabled by default in most bot
-                templates. To verify:
+                You cannot access server files directly. Instead, simply send
+                this command to the bot:
               </p>
-              <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                <li>• Check your bot's configuration file</li>
-                <li>
-                  • Look for{" "}
-                  <code className="bg-white dark:bg-slate-900 px-1 py-0.5 rounded text-xs">
-                    viewOnce: true
-                  </code>
-                </li>
-                <li>• Restart your bot after making changes</li>
-              </ul>
+              <div className="bg-white dark:bg-slate-900 p-3 rounded-lg border border-gray-200 dark:border-slate-700 inline-block">
+                <code className="text-indigo-600 dark:text-indigo-400 font-mono font-bold text-lg">
+                  deyplay
+                </code>
+              </div>
             </div>
 
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
               <p className="text-sm text-blue-900 dark:text-blue-200">
                 <strong>Privacy Note:</strong> Use this feature responsibly.
-                Respect user privacy and comply with local laws regarding media
-                storage.
+                Respect user privacy and comply with local laws.
               </p>
             </div>
           </div>

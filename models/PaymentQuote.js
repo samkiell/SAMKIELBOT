@@ -20,8 +20,13 @@ const paymentQuoteSchema = new mongoose.Schema(
       required: true,
     },
     processingCurrency: {
-      type: String, // e.g., "USD", "NGN" (What Paystack sees)
+      type: String, // e.g., "USD", "NGN"
       required: true,
+    },
+    provider: {
+      type: String, // "paystack" or "flutterwave"
+      required: true,
+      default: "paystack",
     },
     exchangeRate: {
       type: Number,

@@ -15,8 +15,12 @@ export default async function handler(req, res) {
       return await paymentController.getCreditPackages(req, res);
     }
 
-    // Route: POST /api/payments/webhook (no auth, validated by signature)
+    // Route: POST /api/payments/webhook
     if (slug && slug[0] === "webhook" && !slug[1] && method === "POST") {
+      const { provider } = req.query;
+      if (provider === "flutterwave") {
+        return await webhookController.handleFlutterwaveWebhook(req, res);
+      }
       return await webhookController.handlePaystackWebhook(req, res);
     }
 

@@ -35,10 +35,14 @@ const paymentTransactionSchema = new mongoose.Schema(
     },
     provider: {
       type: String,
-      enum: ["paystack"],
+      enum: ["paystack", "flutterwave"],
       default: "paystack",
     },
     paystackData: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
+    flutterwaveData: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
     },

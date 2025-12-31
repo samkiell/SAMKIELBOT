@@ -366,7 +366,12 @@ export default function CheckoutSummary() {
 
                 <div className="mt-4 flex justify-center items-center gap-2 text-xs text-gray-400">
                   <ShieldCheck size={12} />
-                  <span>Secured by Paystack</span>
+                  <span>
+                    Secured by{" "}
+                    {quote.provider === "flutterwave"
+                      ? "Flutterwave"
+                      : "Paystack"}
+                  </span>
                 </div>
               </div>
             </div>

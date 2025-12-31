@@ -32,6 +32,7 @@ import {
 import {
   getTickets,
   updateTicketStatus,
+  deleteTicket,
 } from "@/lib/controllers/supportController";
 
 export default async function handler(req, res) {
@@ -289,6 +290,12 @@ export default async function handler(req, res) {
         if (slug && slug[0] === "bugs" && slug[1] && method === "PUT") {
           req.params = { id: slug[1] };
           return await updateTicketStatus(req, res);
+        }
+
+        // Route: DELETE /api/admin/bugs/:id
+        if (slug && slug[0] === "bugs" && slug[1] && method === "DELETE") {
+          req.params = { id: slug[1] };
+          return await deleteTicket(req, res);
         }
 
         // Route: DELETE /api/admin/notifications/:id

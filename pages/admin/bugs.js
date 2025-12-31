@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useAuth } from "../../lib/auth";
 import AdminLayout from "../../components/AdminLayout";
-import { getAdminBugs, updateAdminBugStatus } from "../../lib/api";
+import {
+  getAdminBugs,
+  updateAdminBugStatus,
+  deleteAdminBug,
+} from "../../lib/api";
 import {
   Bug,
   Filter,
@@ -13,6 +17,7 @@ import {
   User,
   Bot as BotIcon,
   Search,
+  Trash2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
@@ -56,6 +61,24 @@ export default function AdminBugsPage() {
       }
     } catch (err) {
       toast.error("Failed to update status");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this ticket? This action cannot be undone."
+      )
+    )
+      return;
+    try {
+      await deleteAdminBug(id);
+      toast.success("Ticket deleted successfully");
+      fetchTickets();
+      setSelectedTicket(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete ticket");
     }
   };
 
@@ -304,6 +327,12 @@ export default function AdminBugsPage() {
                       className="w-full py-2.5 px-4 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-bold text-sm border border-red-100 dark:border-red-900/40 hover:bg-red-100 transition-all flex items-center justify-center gap-2"
                     >
                       <AlertCircle size={16} /> Reopen Ticket
+                    </button>
+                    <button
+                      onClick={() => handleDelete(selectedTicket._id)}
+                      className="w-full py-2.5 px-4 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-bold text-sm border border-gray-200 dark:border-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-all flex items-center justify-center gap-2 mt-4"
+                    >
+                      <Trash2 size={16} /> Delete Ticket
                     </button>
                   </div>
                 </div>

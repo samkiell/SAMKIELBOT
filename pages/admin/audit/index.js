@@ -215,13 +215,15 @@ export default function AuditLogs() {
                     <div className="col-span-11 sm:col-span-3 sm:block">
                       <div className="flex items-center space-x-2">
                         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-[10px] text-white font-bold hidden sm:flex">
-                          {log.adminEmail.charAt(0).toUpperCase()}
+                          {(log.adminUsername || log.adminEmail)
+                            .charAt(0)
+                            .toUpperCase()}
                         </div>
                         <span
                           className="text-sm text-gray-700 dark:text-gray-300 truncate"
                           title={log.adminEmail}
                         >
-                          {log.adminEmail}
+                          {log.adminUsername || log.adminEmail}
                         </span>
                       </div>
                     </div>

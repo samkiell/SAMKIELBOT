@@ -32,6 +32,14 @@ export default function FeaturesPage() {
     (f) => f.category === FEATURE_CATEGORIES.PRODUCTIVITY_FUN
   );
 
+  const featureImages = {
+    "view-once": "/features/deyplay.png",
+    "video-downloader": "/features/video.png",
+    "music-downloader": "/features/play.png",
+    "high-quality": "/features/largevid.png",
+    "zero-coding": "/features/zerocode.png",
+  };
+
   return (
     <div className="bg-gray-50 dark:bg-[#0f172a] min-h-screen text-gray-800 dark:text-gray-100">
       <Head>
@@ -160,12 +168,22 @@ export default function FeaturesPage() {
                   )}
                 </div>
 
-                <div className="flex-1 w-full h-[300px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl flex items-center justify-center border border-indigo-500/10 relative overflow-hidden">
-                  {/* Decorative element or Image would go here */}
-                  <div className="absolute inset-0 bg-grid-slate-200/20 [mask-image:radial-gradient(ellipse_at_center,black,transparent)]"></div>
-                  <FaRocket className="text-9xl text-indigo-500/20 animate-bounce" />
+                <div className="flex-1 w-full h-[300px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl flex items-center justify-center border border-indigo-500/10 relative overflow-hidden group">
+                  {featureImages[feature.id] ? (
+                    <img
+                      src={featureImages[feature.id]}
+                      alt={feature.title}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 bg-grid-slate-200/20 [mask-image:radial-gradient(ellipse_at_center,black,transparent)]"></div>
+                      <FaRocket className="text-9xl text-indigo-500/0 animate-bounce" />
+                    </>
+                  )}
+                  {/* Tag */}
                   <div className="absolute bottom-4 right-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-xs font-mono text-indigo-600 dark:text-indigo-400">
-                    FEATURE_ID: {feature.id}
+                    FEATURE: {feature.id}
                   </div>
                 </div>
               </motion.div>

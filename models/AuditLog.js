@@ -10,6 +10,10 @@ const auditLogSchema = new mongoose.Schema({
     enum: ["User", "Deployment", "Node", "System"],
     required: true,
   },
+  action: {
+    type: String,
+    required: true,
+  },
   targetId: {
     type: mongoose.Schema.Types.ObjectId,
     refPath: "targetType",

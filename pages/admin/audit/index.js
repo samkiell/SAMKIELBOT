@@ -56,7 +56,7 @@ export default function AuditLogs() {
     setExpandedLogId(expandedLogId === id ? null : id);
   };
 
-  const getActionColor = (action) => {
+  const getActionColor = (action = "") => {
     const lower = action.toLowerCase();
     if (
       lower.includes("delete") ||
@@ -86,7 +86,7 @@ export default function AuditLogs() {
     return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400 border border-gray-200 dark:border-gray-700";
   };
 
-  const getActionIcon = (action) => {
+  const getActionIcon = (action = "") => {
     const lower = action.toLowerCase();
     if (lower.includes("delete"))
       return <Trash2 className="w-3.5 h-3.5 mr-1.5" />;
@@ -113,10 +113,9 @@ export default function AuditLogs() {
 
   const filteredLogs = logs.filter(
     (log) =>
-      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.adminEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (log.targetType &&
-        log.targetType.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (log.action || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.adminEmail || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.targetType || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (log.details &&
         JSON.stringify(log.details)
           .toLowerCase()

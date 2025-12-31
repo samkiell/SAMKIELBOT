@@ -12,7 +12,7 @@ The SAMKIEL BOT referral system is already implemented and functional. This docu
 
 1. **User logs into dashboard**
    - Sees referral card with unique referral link
-   - Link format: `https://bot.samkiel.dev/register/ref/[username]`
+   - Link format: `https://samkielbot.app/register/ref/[username]`
 
 2. **User copies referral link**
    - Clicks "Copy" button
@@ -453,7 +453,7 @@ Authorization: Bearer <token>
 {
   "success": true,
   "data": {
-    "referralLink": "https://bot.samkiel.dev/register/ref/samkiel",
+    "referralLink": "https://samkielbot.app/register/ref/samkiel",
     "totalReferrals": 15,
     "totalCreditsEarned": 150,
     "referredUsers": [

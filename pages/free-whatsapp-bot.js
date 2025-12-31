@@ -30,7 +30,7 @@ export default function FreeWhatsAppBotPage() {
         <meta property="og:image" content="/og-image.png" />
         <meta
           property="og:url"
-          content="https://bot.samkiel.dev/free-whatsapp-bot"
+          content="https://samkielbot.app/free-whatsapp-bot"
         />
         <meta property="og:type" content="article" />
       </Head>

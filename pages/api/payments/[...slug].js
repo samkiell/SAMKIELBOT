@@ -41,6 +41,13 @@ export default async function handler(req, res) {
       });
     }
 
+    // Route: POST /api/payments/quote
+    if (slug && slug[0] === "quote" && method === "POST") {
+      return await protect(req, res, async () => {
+        return await paymentController.createQuote(req, res);
+      });
+    }
+
     // Route: GET /api/payments/verify
     if (slug && slug[0] === "verify" && method === "GET") {
       return await protect(req, res, async () => {

@@ -30,7 +30,7 @@ export default function ViewOnceWhatsAppBotPage() {
         <meta property="og:image" content="/og-image.png" />
         <meta
           property="og:url"
-          content="https://bot.samkiel.dev/view-once-whatsapp"
+          content="https://samkielbot.app/view-once-whatsapp"
         />
         <meta property="og:type" content="article" />
       </Head>

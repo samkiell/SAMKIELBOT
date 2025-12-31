@@ -30,7 +30,7 @@ export default function DeployWhatsAppBotPage() {
         <meta property="og:image" content="/og-image.png" />
         <meta
           property="og:url"
-          content="https://bot.samkiel.dev/deploy-whatsapp-bot"
+          content="https://samkielbot.app/deploy-whatsapp-bot"
         />
         <meta property="og:type" content="article" />
       </Head>

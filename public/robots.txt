@@ -15,4 +15,4 @@ Disallow: /deploy
 Disallow: /settings
 Disallow: /bots
 
-Sitemap: https://bot.samkiel.dev/sitemap.xml
+Sitemap: https://samkielbot.app/sitemap.xml

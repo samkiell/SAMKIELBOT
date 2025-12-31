@@ -28,10 +28,7 @@ export default function WhatsAppBotPage() {
           content="Learn everything about WhatsApp bots and how automation can transform your group management."
         />
         <meta property="og:image" content="/og-image.png" />
-        <meta
-          property="og:url"
-          content="https://bot.samkiel.dev/whatsapp-bot"
-        />
+        <meta property="og:url" content="https://samkielbot.app/whatsapp-bot" />
         <meta property="og:type" content="article" />
       </Head>
 

@@ -19,10 +19,12 @@ import {
 import Snowfall from "../components/Snowfall";
 import { featuresData } from "../lib/data/features";
 import { FaArrowRight } from "react-icons/fa";
+import ImageViewer from "../components/ImageViewer";
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [stats, setStats] = useState({
     activeUsers: 0,
     botsDeployed: 0,
@@ -339,7 +341,10 @@ export default function Home() {
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <motion.div {...slideIn} className="text-center group">
-              <div className="relative h-[300px] w-full max-w-[500px] mx-auto overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+              <div
+                className="relative h-[300px] w-full max-w-[500px] mx-auto overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-zoom-in"
+                onClick={() => setSelectedImage("/bot-menu-preview2.jpg")}
+              >
                 <Image
                   src="/bot-menu-preview2.jpg"
                   alt="Bot Command Menu"
@@ -352,7 +357,10 @@ export default function Home() {
               </p>
             </motion.div>
             <motion.div {...slideIn} className="text-center group">
-              <div className="relative h-[300px] w-full max-w-[500px] mx-auto overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+              <div
+                className="relative h-[300px] w-full max-w-[500px] mx-auto overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-zoom-in"
+                onClick={() => setSelectedImage("/viewonce-demo.jpg")}
+              >
                 <Image
                   src="/viewonce-demo.jpg"
                   alt="View Once Saver in Action"
@@ -710,6 +718,13 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+      {/* ImageViewer Modal */}
+      <ImageViewer
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        src={selectedImage}
+        alt="Full screen preview"
+      />
     </div>
   );
 }

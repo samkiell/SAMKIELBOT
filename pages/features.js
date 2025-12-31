@@ -1,8 +1,10 @@
+import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { featuresData, FEATURE_CATEGORIES } from "../lib/data/features";
 import { FaArrowRight, FaCheckCircle, FaRocket } from "react-icons/fa";
+import ImageViewer from "../components/ImageViewer";
 
 export default function FeaturesPage() {
   const fadeUp = {
@@ -21,6 +23,8 @@ export default function FeaturesPage() {
     },
     viewport: { once: true },
   };
+
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const topCapabilities = featuresData.filter(
     (f) => f.category === FEATURE_CATEGORIES.TOP
@@ -174,7 +178,10 @@ export default function FeaturesPage() {
                     <img
                       src={featureImages[feature.id]}
                       alt={feature.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-zoom-in"
+                      onClick={() =>
+                        setSelectedImage(featureImages[feature.id])
+                      }
                     />
                   ) : (
                     <>
@@ -183,7 +190,7 @@ export default function FeaturesPage() {
                     </>
                   )}
                   {/* Tag */}
-                  <div className="absolute bottom-4 right-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-xs font-mono text-indigo-600 dark:text-indigo-400">
+                  <div className="absolute bottom-4 right-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-xs font-mono text-indigo-600 dark:text-indigo-400 pointer-events-none">
                     FEATURE: {feature.id}
                   </div>
                 </div>
@@ -324,6 +331,13 @@ export default function FeaturesPage() {
           </motion.div>
         </div>
       </section>
+
+      <ImageViewer
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        src={selectedImage}
+        alt="Feature Preview"
+      />
     </div>
   );
 }

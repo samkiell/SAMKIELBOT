@@ -109,34 +109,8 @@ export default function BuyCredits() {
     }
   };
 
-  const handlePurchase = async (pkg) => {
-    setProcessing(pkg._id || pkg.id);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payments/init`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ packageId: pkg._id || pkg.id }),
-        }
-      );
-
-      const data = await res.json();
-      if (data.success) {
-        window.location.href = data.data.authorization_url;
-      } else {
-        toast.error(data.message || "Failed to initialize payment");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to initialize payment");
-    } finally {
-      setProcessing(null);
-    }
+  const handlePurchase = (pkg) => {
+    router.push(`/checkout/summary?packageId=${pkg._id || pkg.id}`);
   };
 
   const truncateString = (str, n) => {

@@ -124,12 +124,16 @@ export default function DeploymentSessionPage() {
     };
   }, [id]);
 
-  // Auto-scroll to tabs when pairing is ready
+  // Auto-scroll logic
   useEffect(() => {
     if (deployment?.status === "awaiting_pairing" && tabsRef.current) {
       setTimeout(() => {
         tabsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 500); // Small delay for tab switch animation
+      }, 500);
+    } else if (["online", "active", "connected"].includes(deployment?.status)) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 500);
     }
   }, [deployment?.status]);
 

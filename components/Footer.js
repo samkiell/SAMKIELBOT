@@ -32,6 +32,12 @@ export default function Footer() {
               >
                 Community Bots
               </Link>
+              <Link
+                href="/credits/buy"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                Pricing
+              </Link>
               {!user && (
                 <>
                   <Link

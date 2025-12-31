@@ -338,26 +338,28 @@ export default function Home() {
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            <motion.div {...slideIn} className="text-center">
-              <Image
-                src="/bot-menu-preview2.jpg"
-                alt="Bot Command Menu"
-                width={500}
-                height={300}
-                className="rounded-xl shadow-md mx-auto hover:shadow-lg transition-shadow duration-300"
-              />
+            <motion.div {...slideIn} className="text-center group">
+              <div className="relative h-[300px] w-full max-w-[500px] mx-auto overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                <Image
+                  src="/bot-menu-preview2.jpg"
+                  alt="Bot Command Menu"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
               <p className="mt-4 text-sm md:text-base text-gray-600 dark:text-gray-300">
                 Bot Command Menu
               </p>
             </motion.div>
-            <motion.div {...slideIn} className="text-center">
-              <Image
-                src="/viewonce-demo.jpg"
-                alt="View Once Saver in Action"
-                width={500}
-                height={300}
-                className="rounded-xl shadow-md mx-auto hover:shadow-lg transition-shadow duration-300"
-              />
+            <motion.div {...slideIn} className="text-center group">
+              <div className="relative h-[300px] w-full max-w-[500px] mx-auto overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                <Image
+                  src="/viewonce-demo.jpg"
+                  alt="View Once Saver in Action"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
               <p className="mt-4 text-sm md:text-base text-gray-600 dark:text-gray-300">
                 View Once Saver in Action
               </p>

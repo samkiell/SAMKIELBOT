@@ -38,6 +38,7 @@ export default function FeaturesPage() {
     "music-downloader": "/features/play.png",
     "high-quality": "/features/largevid.png",
     "zero-coding": "/features/zerocode.png",
+    "cloud-uptime": "/features/graph.png",
   };
 
   return (

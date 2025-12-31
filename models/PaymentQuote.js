@@ -40,7 +40,11 @@ const paymentQuoteSchema = new mongoose.Schema(
       required: true, // 8.5%
     },
     totalAmount: {
-      type: Number, // subtotalConverted + taxAmount
+      type: Number, // subtotalConverted + taxAmount (Display)
+      required: true,
+    },
+    paystackChargeAmount: {
+      type: Number, // The actual NGN amount to be charged
       required: true,
     },
     expiresAt: {

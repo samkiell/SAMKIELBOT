@@ -300,27 +300,24 @@ export default function CheckoutSummary() {
                       Exchange Rate <AlertCircle size={10} />
                     </span>
                     <span className="font-mono text-xs text-gray-400">
-                      {quote.exchangeRate.toFixed(4)}
+                      {quote.exchangeRate.toFixed(6)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300">
-                      Subtotal ({quote.processingCurrency})
+                      Subtotal ({quote.selectedCurrency})
                     </span>
                     <span className="font-medium">
                       {formatCurrency(
                         quote.subtotalConverted,
-                        quote.processingCurrency
+                        quote.selectedCurrency
                       )}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-red-400">
                     <span>Tax (8.5%)</span>
                     <span>
-                      {formatCurrency(
-                        quote.taxAmount,
-                        quote.processingCurrency
-                      )}
+                      {formatCurrency(quote.taxAmount, quote.selectedCurrency)}
                     </span>
                   </div>
 
@@ -330,9 +327,19 @@ export default function CheckoutSummary() {
                       <span className="block font-black text-2xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
                         {formatCurrency(
                           quote.totalAmount,
-                          quote.processingCurrency
+                          quote.selectedCurrency
                         )}
                       </span>
+                      {quote.processingCurrency !== quote.selectedCurrency && (
+                        <span className="text-[10px] text-gray-400 font-mono block mt-1">
+                          ~{" "}
+                          {formatCurrency(
+                            quote.paystackChargeAmount || 0,
+                            quote.processingCurrency
+                          )}{" "}
+                          billed
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -14,18 +14,21 @@ export default function FreeWhatsAppBotPage() {
   return (
     <Layout>
       <Head>
-        <title>Free WhatsApp Bot Hosting & Deployment | SAMKIEL BOT</title>
+        <title>
+          How to Deploy WhatsApp Bot for Free | SAMKIEL BOT - Deployment
+          Platform
+        </title>
         <meta
           name="description"
-          content="Looking for a free WhatsApp bot? SAMKIEL BOT offers free hosting for your WhatsApp automations. No credit card required. Start your journey for $0."
+          content="Learn how to deploy a WhatsApp bot for free. SAMKIEL BOT offers 24/7 free hosting for your WhatsApp automations. No credit card required. Start your journey for $0 today!"
         />
         <meta
           property="og:title"
-          content="Free WhatsApp Bot Hosting & Deployment | SAMKIEL BOT"
+          content="How to Deploy WhatsApp Bot for Free | SAMKIEL BOT"
         />
         <meta
           property="og:description"
-          content="SAMKIEL BOT offers free hosting for your WhatsApp automations. No credit card required."
+          content="Looking for free WhatsApp bot hosting? SAMKIEL BOT offers lifetime free deployment for your first bot. Start automating now."
         />
         <meta property="og:image" content="/og-image.png" />
         <meta
@@ -38,7 +41,7 @@ export default function FreeWhatsAppBotPage() {
       <main className="max-w-4xl mx-auto px-6 py-12">
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-8 text-gray-900 dark:text-white">
-            Get a Free WhatsApp Bot for Lifetime Automation
+            How to Deploy a WhatsApp Bot for Free (Lifetime Hosting)
           </h1>
 
           <div className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">

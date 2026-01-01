@@ -14,18 +14,21 @@ export default function DeployWhatsAppBotPage() {
   return (
     <Layout>
       <Head>
-        <title>How to Deploy WhatsApp Bot in 5 Minutes | SAMKIEL BOT</title>
+        <title>
+          How to Deploy a WhatsApp Bot Online | SAMKIEL BOT - Deployment
+          Platform
+        </title>
         <meta
           name="description"
-          content="Step-by-step guide on how to deploy a WhatsApp bot online. No coding required. Learn how to host your bot on SAMKIEL BOT with high uptime."
+          content="Step-by-step guide on how to deploy a WhatsApp bot online. No coding required. Learn the best way to host your WhatsApp bot with 99% uptime on SAMKIEL BOT."
         />
         <meta
           property="og:title"
-          content="How to Deploy WhatsApp Bot in 5 Minutes | SAMKIEL BOT"
+          content="How to Deploy a WhatsApp Bot Online | SAMKIEL BOT"
         />
         <meta
           property="og:description"
-          content="Step-by-step guide on how to deploy a WhatsApp bot online. No coding required."
+          content="Get your WhatsApp bot hosting started in 5 minutes. No technical experience needed."
         />
         <meta property="og:image" content="/og-image.png" />
         <meta
@@ -38,7 +41,7 @@ export default function DeployWhatsAppBotPage() {
       <main className="max-w-4xl mx-auto px-6 py-12">
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-8 text-gray-900 dark:text-white">
-            How to Deploy a WhatsApp Bot: The Ultimate Step-by-Step Guide
+            How to Deploy a WhatsApp Bot Online: Step-by-Step Guide
           </h1>
 
           <div className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">

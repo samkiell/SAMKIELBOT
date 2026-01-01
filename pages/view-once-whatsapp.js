@@ -14,18 +14,21 @@ export default function ViewOnceWhatsAppBotPage() {
   return (
     <Layout>
       <Head>
-        <title>Save WhatsApp View Once Messages & Media | SAMKIEL BOT</title>
+        <title>
+          How to See View Once Messages on WhatsApp | SAMKIEL BOT - Deployment
+          Platform
+        </title>
         <meta
           name="description"
-          content="Want to see WhatsApp view once messages again? Use SAMKIEL BOT to automatically save and archive view once images, videos, and voice notes."
+          content="Discover how to see viewonce messages on WhatsApp using SAMKIEL BOT. Automatically save and archive view once images, videos, and voice notes safely."
         />
         <meta
           property="og:title"
-          content="Save WhatsApp View Once Messages & Media | SAMKIEL BOT"
+          content="How to See and Save View Once WhatsApp Messages | SAMKIEL BOT"
         />
         <meta
           property="og:description"
-          content="Use SAMKIEL BOT to automatically save and archive view once images, videos, and voice notes."
+          content="Stop losing disappearing media. Use SAMKIEL BOT to archive and view WhatsApp 'View Once' messages indefinitely."
         />
         <meta property="og:image" content="/og-image.png" />
         <meta
@@ -38,7 +41,7 @@ export default function ViewOnceWhatsAppBotPage() {
       <main className="max-w-4xl mx-auto px-6 py-12">
         <motion.div {...fadeUp}>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-8 text-gray-900 dark:text-white">
-            How to See and Save View Once WhatsApp Messages
+            How to See and Save View Once WhatsApp Messages Automatically
           </h1>
 
           <div className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">

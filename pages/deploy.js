@@ -246,23 +246,25 @@ export default function DeployPage() {
             <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />
             Quick Start Templates
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             {templates.map((t) => (
               <button
                 key={t.id}
                 type="button"
                 onClick={() => applyTemplate(t)}
-                className="group relative bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 transition-all text-left shadow-sm hover:shadow-md"
+                className="group relative bg-white dark:bg-gray-800 p-3 md:p-5 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 transition-all text-left shadow-sm hover:shadow-md"
               >
-                <div className="text-3xl mb-3">{t.icon}</div>
-                <h3 className="font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-500 transition-colors">
+                <div className="text-2xl md:text-3xl mb-2 md:mb-3">
+                  {t.icon}
+                </div>
+                <h3 className="font-bold text-sm md:text-base text-gray-900 dark:text-white mb-1 group-hover:text-indigo-500 transition-colors">
                   {t.name}
                 </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 leading-tight">
                   {t.desc}
                 </p>
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="bg-indigo-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <div className="absolute top-2 right-2 md:top-4 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="bg-indigo-500 text-white text-[8px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                     APPLY
                   </div>
                 </div>

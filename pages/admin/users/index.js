@@ -221,9 +221,12 @@ export default function UserManagement() {
                     className="hover:bg-gray-50 dark:hover:bg-gray-700/30"
                   >
                     <td className="px-6 py-4">
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400">
+                      <Link
+                        href={`/admin/users/${u._id}`}
+                        className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+                      >
                         {u.username}
-                      </div>
+                      </Link>
                       <div className="text-gray-500 text-xs">{u.email}</div>
                     </td>
                     <td className="px-6 py-4">

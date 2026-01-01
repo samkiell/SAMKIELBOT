@@ -111,13 +111,13 @@ export default function ProfilePage() {
     e.preventDefault();
 
     // Validate phone number format
-    const phoneRegex = /^\+[1-9]\d{7,14}$/;
+    const phoneRegex = /^[1-9]\d{7,14}$/;
     if (
       formData.whatsappNumber &&
       !phoneRegex.test(formData.whatsappNumber.trim())
     ) {
       return toast.error(
-        "Phone number must be in strict country code format (e.g., +1234567890)"
+        "Phone number must include country code without '+' (e.g., 1234567890)"
       );
     }
 
@@ -345,10 +345,10 @@ export default function ProfilePage() {
                 value={formData.whatsappNumber}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                placeholder="+1234567890"
+                placeholder="1234567890"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Must be in international format (e.g., +1234567890)
+                Must include country code without '+' (e.g., 1234567890)
               </p>
             </div>
 

@@ -40,9 +40,8 @@ export default function AdminNotifications() {
       });
       const data = await res.json();
       if (data.success) {
-        // Filter for Broadcasts ONLY (where user is null)
-        const broadcasts = data.data.filter((n) => !n.user);
-        setNotifications(broadcasts);
+        // Show ALL notifications
+        setNotifications(data.data);
       } else {
         toast.error("Failed to fetch notifications");
       }
@@ -110,12 +109,7 @@ export default function AdminNotifications() {
 
   // Delete notification
   const handleDelete = async (id) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this broadcast log? This won't remove it from users who already received it."
-      )
-    )
-      return;
+    if (!confirm("Are you sure you want to delete this notification?")) return;
 
     try {
       const res = await fetch(`/api/admin/notifications/${id}`, {
@@ -284,6 +278,9 @@ export default function AdminNotifications() {
                         Content
                       </th>
                       <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
+                        Recipient
+                      </th>
+                      <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
                         Date
                       </th>
                       <th className="p-4 font-semibold text-gray-600 dark:text-gray-300 text-right">
@@ -312,6 +309,19 @@ export default function AdminNotifications() {
                           <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
                             {notif.message}
                           </p>
+                        </td>
+                        <td className="p-4 align-top text-sm">
+                          {notif.user ? (
+                            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded text-xs font-bold">
+                              {typeof notif.user === "object"
+                                ? notif.user.username
+                                : "User"}
+                            </span>
+                          ) : (
+                            <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded text-xs font-bold">
+                              BROADCAST
+                            </span>
+                          )}
                         </td>
                         <td className="p-4 align-top whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 w-32">
                           {format(new Date(notif.createdAt), "MMM d, HH:mm")}

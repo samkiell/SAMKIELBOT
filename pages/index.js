@@ -109,6 +109,46 @@ export default function Home() {
         <meta property="og:url" content="https://samkielbot.app" />
         <meta property="og:type" content="website" />
         <link rel="icon" href="/logo.png" />
+        <link rel="shortcut icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "SAMKIEL BOT",
+              url: "https://samkielbot.app",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://samkielbot.app/search?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+              hasPart: [
+                {
+                  "@type": "SiteNavigationElement",
+                  name: "Login",
+                  url: "https://samkielbot.app/login",
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  name: "Register",
+                  url: "https://samkielbot.app/register",
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  name: "Bot List",
+                  url: "https://samkielbot.app/bots",
+                },
+                {
+                  "@type": "SiteNavigationElement",
+                  name: "Support",
+                  url: "https://samkielbot.app/support",
+                },
+              ],
+            }),
+          }}
+        />
       </Head>
 
       {/* Hero Section */}

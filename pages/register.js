@@ -24,10 +24,9 @@ export default function Register() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   useEffect(() => {
-    // Restore agreement state if user has agreed or read termss
+    // Restore agreement state if user has agreed
     const agreed = localStorage.getItem("samkiel_agreed") === "true";
-    const read = localStorage.getItem("samkiel_read_terms") === "true";
-    if (agreed || read) setAgreeToTerms(true);
+    if (agreed) setAgreeToTerms(true);
   }, []);
   const { register, user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -66,13 +65,6 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const read = localStorage.getItem("samkiel_read_terms") === "true";
-
-    if (!read) {
-      toast.error("Abeg read the Terms & Conditions and Privacy Policy first.");
-      return;
-    }
-
     if (!agreeToTerms) {
       toast.error("You must agree to the Terms & Conditions to proceed.");
       return;
@@ -102,8 +94,6 @@ export default function Register() {
 
         // Clear all flags after successful registration
         localStorage.removeItem("samkiel_agreed");
-        localStorage.removeItem("samkiel_clicked_terms");
-        localStorage.removeItem("samkiel_read_terms");
         sessionStorage.removeItem("return_route");
       }
     } catch (error) {
@@ -358,10 +348,8 @@ export default function Register() {
                 <a
                   href="/terms"
                   onClick={(e) => {
-                    // record intent and route, then navigate
+                    // record route for 'Go Back' button functionality
                     sessionStorage.setItem("return_route", "register");
-                    localStorage.setItem("samkiel_clicked_terms", "true");
-                    // let the normal link proceed (no preventDefault)
                   }}
                   className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
                 >
@@ -371,10 +359,8 @@ export default function Register() {
                 <Link
                   href="/privacy"
                   onClick={(e) => {
-                    // record intent and route, then navigate
+                    // record route for 'Go Back' button functionality
                     sessionStorage.setItem("return_route", "register");
-                    localStorage.setItem("samkiel_clicked_terms", "true");
-                    // let the normal link proceed (no preventDefault)
                   }}
                   className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
                 >

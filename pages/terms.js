@@ -15,10 +15,6 @@ import {
 export default function Terms() {
   const router = useRouter();
 
-  useEffect(() => {
-    localStorage.setItem("samkiel_read_terms", "true");
-  }, []);
-
   const handleGoBack = () => {
     const returnRoute = sessionStorage.getItem("return_route");
     if (returnRoute) {

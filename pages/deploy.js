@@ -29,6 +29,7 @@ export default function DeployPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [showCreditAlert, setShowCreditAlert] = useState(false);
 
   const templates = [
     {
@@ -182,7 +183,16 @@ export default function DeployPage() {
         error.response?.data?.error ||
         error.message ||
         "Deployment failed. Please try again.";
-      toast.error(errorMessage);
+      if (
+        error.response?.status === 403 &&
+        errorMessage.includes("Insufficient credits")
+      ) {
+        setShowCreditAlert(true);
+        toast.error(errorMessage, { duration: 10000 });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        toast.error(errorMessage);
+      }
       setLoading(false);
     }
   };
@@ -211,6 +221,26 @@ export default function DeployPage() {
 
       <main className="container mx-auto px-4 max-w-4xl pt-8">
         {/* Header */}
+        {showCreditAlert && (
+          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3 animate-pulse">
+            <AlertTriangle className="text-red-500 shrink-0 mt-1" size={24} />
+            <div>
+              <h3 className="font-bold text-red-700 dark:text-red-400">
+                Insufficient Credits
+              </h3>
+              <p className="text-sm text-red-600 dark:text-red-300 mt-1">
+                You don't have enough credits to deploy this bot. Please top up
+                your wallet.
+              </p>
+              <Link
+                href="/credits/buy"
+                className="inline-block mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors"
+              >
+                Buy Credits Now
+              </Link>
+            </div>
+          </div>
+        )}
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <Link

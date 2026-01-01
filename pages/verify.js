@@ -55,6 +55,27 @@ export default function Verify() {
 
       if (response.ok) {
         toast.success(`Welcome ${user?.username}!`);
+        setTimeout(() => {
+          toast(
+            (t) => (
+              <div className="flex flex-col gap-2">
+                <span className="font-semibold">
+                  Stay updated! Join our WhatsApp Channel 🚀
+                </span>
+                <a
+                  href="https://whatsapp.com/channel/0029VbAhWo3C6Zvf2t4Rne0h"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-green-500 text-white px-3 py-1 rounded text-sm text-center hover:bg-green-600 transition-colors"
+                  onClick={() => toast.dismiss(t.id)}
+                >
+                  Join Channel
+                </a>
+              </div>
+            ),
+            { duration: null, icon: "📢" }
+          );
+        }, 1000);
         const updatedUser = await refreshUser();
 
         // If refreshUser returns the updated user, we can immediately check it

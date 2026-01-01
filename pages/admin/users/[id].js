@@ -262,7 +262,108 @@ export default function UserDetails() {
           </div>
         </div>
 
-        {/* User Info Cards maybe? For now just simple header */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Bio & Contact */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <span className="text-indigo-500">👤</span> Personal Info
+            </h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500 dark:text-gray-400">
+                  Full Name
+                </span>
+                <span className="font-medium">
+                  {userDetail.fullName || "N/A"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500 dark:text-gray-400">
+                  WhatsApp
+                </span>
+                <span className="font-mono">
+                  {userDetail.whatsappNumber || "N/A"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500 dark:text-gray-400">Joined</span>
+                <span>
+                  {new Date(userDetail.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 dark:text-gray-400">Status</span>
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${
+                    userDetail.accountStatus === "active"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {userDetail.accountStatus || "Active"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Credits & Billing */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <span className="text-yellow-500">🪙</span> Credits & Plan
+            </h3>
+            <div className="text-center mb-4">
+              <div className="text-4xl font-black text-gray-900 dark:text-white">
+                {Math.round(userDetail.credits || 0)}
+              </div>
+              <div className="text-xs text-gray-500 uppercase tracking-wide">
+                Available Credits
+              </div>
+            </div>
+            <div className="space-y-3 text-sm border-t border-gray-100 dark:border-gray-700 pt-4">
+              <div className="flex justify-between">
+                <span className="text-gray-500 dark:text-gray-400">
+                  Referrals
+                </span>
+                <span className="font-medium">
+                  {userDetail.totalReferrals || 0}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Limits */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <span className="text-blue-500">⚡</span> Account Limits
+            </h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500 dark:text-gray-400">
+                  Max Bots
+                </span>
+                <span className="font-medium">
+                  {userDetail.limits?.maxBots || 3}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500 dark:text-gray-400">
+                  Max RAM
+                </span>
+                <span className="font-medium">
+                  {userDetail.limits?.maxRam || 512} MB
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500 dark:text-gray-400">
+                  Max CPU
+                </span>
+                <span className="font-medium">
+                  {userDetail.limits?.maxCpu || 100}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Bots Selection */}
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">

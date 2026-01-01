@@ -20,6 +20,8 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     fullName: "",
     whatsappNumber: "",
+    username: "",
+    email: "",
   });
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -34,6 +36,8 @@ export default function ProfilePage() {
       setFormData({
         fullName: user.fullName || "",
         whatsappNumber: user.whatsappNumber || "",
+        username: user.username || "",
+        email: user.email || "",
       });
     }
   }, [user]);
@@ -128,7 +132,10 @@ export default function ProfilePage() {
       setUser(updatedUser);
       toast.success("Profile updated successfully!");
     } catch (error) {
-      toast.error("Failed to update profile. Please try again.");
+      const msg =
+        error.response?.data?.message ||
+        "Failed to update profile. Please try again.";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -311,12 +318,14 @@ export default function ProfilePage() {
               </label>
               <input
                 type="text"
-                value={user?.username || ""}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white opacity-60 cursor-not-allowed"
-                disabled
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                placeholder="Length 3-20, no spaces"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Username cannot be changed
+                Username must be unique
               </p>
             </div>
 
@@ -326,12 +335,14 @@ export default function ProfilePage() {
               </label>
               <input
                 type="email"
-                value={user?.email || ""}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white opacity-60 cursor-not-allowed"
-                disabled
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                placeholder="Valid email address"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Email cannot be changed
+                Changing email will require re-verification
               </p>
             </div>
 

@@ -117,7 +117,7 @@ export default function Home() {
             <div className="flex flex-col items-center gap-4 mb-6">
               <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-500/30 shadow-sm">
                 <span className="text-indigo-600 dark:text-indigo-300 font-bold text-xs md:text-sm tracking-wide uppercase">
-                  🚀 V3 Stable Release Now Live
+                  🚀 V2 Stable Release Now Live
                 </span>
               </div>
             </div>
@@ -381,7 +381,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div {...fadeUp}>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-              🚀 What’s New in Version 3
+              🚀 What’s New in Version 2
             </h2>
             <ul className="text-left text-base md:text-lg text-gray-600 dark:text-gray-300 space-y-4 max-w-2xl mx-auto">
               <li>• Improved stability & message delivery.</li>

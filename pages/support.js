@@ -11,7 +11,7 @@ import {
   FaRocket,
   FaEye,
 } from "react-icons/fa";
-import Layout from "../components/Layout";
+
 import { useState, useEffect } from "react";
 import { useAuth } from "../lib/auth";
 import { getDeployments, submitSupportTicket } from "../lib/api";
@@ -143,7 +143,7 @@ export default function Support() {
   ];
 
   return (
-    <Layout>
+    <>
       <div className="bg-white dark:bg-slate-900 min-h-screen">
         <Head>
           <title>Support & Help Center | SAMKIEL BOT</title>
@@ -457,6 +457,6 @@ export default function Support() {
           </section>
         </main>
       </div>
-    </Layout>
+    </>
   );
 }

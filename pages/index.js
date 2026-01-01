@@ -203,10 +203,10 @@ export default function Home() {
               <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-indigo-600/20">
                 2
               </div>
-              <h3 className="text-xl font-bold mb-3">Select Your Bot</h3>
+              <h3 className="text-xl font-bold mb-3">Configure Your Bot</h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                Choose from pre-built templates or configure your custom
-                instance with one click.
+                Fill in your bot configuration like bot name, WhatsApp number,
+                and desired features.
               </p>
             </div>
             <div className="text-center p-8 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800">

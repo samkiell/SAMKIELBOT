@@ -108,12 +108,22 @@ export default function BotCard({ deployment, refreshData }) {
 
     let uptimeMs = deployment.resources?.uptimeMs || 0;
 
+    // Use lastUptimeUpdate (updated every 60s) or fallback to lastHeartbeatAt
+    const lastUpdate = deployment.resources?.lastUptimeUpdate
+      ? new Date(deployment.resources.lastUptimeUpdate).getTime()
+      : deployment.lastHeartbeatAt
+      ? new Date(deployment.lastHeartbeatAt).getTime()
+      : Date.now();
+
+    const elapsedSinceUpdate = currentTime - lastUpdate;
+
     // Add elapsed time since last update for smooth counting
-    if (deployment.resources?.lastUptimeUpdate) {
-      const elapsedSinceUpdate =
-        currentTime - new Date(deployment.resources.lastUptimeUpdate).getTime();
+    if (elapsedSinceUpdate > 0) {
       uptimeMs += elapsedSinceUpdate;
-    } else if (deployment.uptimeStart) {
+    }
+
+    // Fallback: If Ptero uptime is 0 but we have a start time, use whichever is larger
+    if (deployment.uptimeStart) {
       const timeSinceStart =
         currentTime - new Date(deployment.uptimeStart).getTime();
       uptimeMs = Math.max(uptimeMs, timeSinceStart);

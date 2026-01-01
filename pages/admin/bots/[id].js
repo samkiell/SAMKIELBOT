@@ -21,6 +21,7 @@ import {
   Activity,
   ShieldAlert,
   User,
+  Clock3,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
@@ -38,6 +39,7 @@ export default function AdminBotDetailsPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [logs, setLogs] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
   // Initialize Socket.IO
   useEffect(() => {
@@ -113,10 +115,18 @@ export default function AdminBotDetailsPage() {
     }
   };
 
+  // Update current time every second for real-time uptime
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     if (id && token) {
       fetchDeploymentStatus();
-      const interval = setInterval(fetchDeploymentStatus, 10000);
+      const interval = setInterval(fetchDeploymentStatus, 15000); // 15s poll for admin
       return () => clearInterval(interval);
     }
   }, [id, token]);
@@ -229,7 +239,9 @@ export default function AdminBotDetailsPage() {
                     {formatUptime(
                       deployment.uptimeStart,
                       deployment.status,
-                      deployment.resources
+                      deployment.resources,
+                      deployment.lastHeartbeatAt,
+                      currentTime
                     )}
                   </span>
                 </div>
@@ -477,17 +489,51 @@ function DetailRow({ label, value }) {
   );
 }
 
-function formatUptime(startTime, status, resources) {
+function formatUptime(
+  startTime,
+  status,
+  resources,
+  lastHeartbeatAt,
+  currentTime
+) {
   if (status === "offline" || status === "stopped") return "Offline";
-  if (resources?.uptimeMs > 0) {
-    const mins = Math.floor(resources.uptimeMs / 60000);
-    const hrs = Math.floor(mins / 60);
-    if (hrs > 24) return `${Math.floor(hrs / 24)}d ${hrs % 24}h`;
-    if (hrs > 0) return `${hrs}h ${mins % 60}m`;
-    return `${mins}m`;
+
+  let uptimeMs = resources?.uptimeMs || 0;
+
+  // Use lastUptimeUpdate (updated every 60s) or fallback to lastHeartbeatAt
+  const lastUpdate = resources?.lastUptimeUpdate
+    ? new Date(resources.lastUptimeUpdate).getTime()
+    : lastHeartbeatAt
+    ? new Date(lastHeartbeatAt).getTime()
+    : Date.now();
+
+  const elapsedSinceUpdate = currentTime - lastUpdate;
+
+  // Add elapsed time since last update for smooth counting
+  if (elapsedSinceUpdate > 0) {
+    uptimeMs += elapsedSinceUpdate;
   }
-  if (!startTime) return "Starting...";
-  const diff = Date.now() - new Date(startTime).getTime();
-  const mins = Math.floor(diff / 60000);
-  return `${mins}m`;
+
+  // Fallback: If Ptero uptime is 0 but we have a start time, use whichever is larger
+  if (startTime) {
+    const timeSinceStart = currentTime - new Date(startTime).getTime();
+    uptimeMs = Math.max(uptimeMs, timeSinceStart);
+  }
+
+  if (uptimeMs <= 0) return "Starting...";
+
+  const days = Math.floor(uptimeMs / 86400000);
+  const hours = Math.floor((uptimeMs % 86400000) / 3600000);
+  const minutes = Math.floor((uptimeMs % 3600000) / 60000);
+  const seconds = Math.floor((uptimeMs % 60000) / 1000);
+
+  if (days > 0) {
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  } else if (hours > 0) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  } else if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  } else {
+    return `${seconds}s`;
+  }
 }

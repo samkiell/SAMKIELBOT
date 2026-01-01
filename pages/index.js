@@ -86,24 +86,25 @@ export default function Home() {
       <Snowfall />
       <Head>
         <title>
-          SAMKIEL BOT | #1 WhatsApp Bot Deployment & Hosting Platform
+          SAMKIEL BOT - Deployment Platform | #1 WhatsApp Bot Hosting
         </title>
         <meta
           name="description"
-          content="Deploy your WhatsApp bot in minutes with SAMKIEL BOT. The leading platform for WhatsApp automation, hosting, and View Once message recovery. Start for free now!"
+          content="SAMKIEL BOT - Deployment Platform: Deploy your WhatsApp bot in minutes. The most reliable platform for WhatsApp automation, hosting, and View Once message recovery. Start for free now!"
         />
         <meta
           name="keywords"
           content="deploy WhatsApp bot, WhatsApp bot hosting, free WhatsApp bot, view once WhatsApp, WhatsApp automation, SAMKIEL Bot, WhatsApp bot manager"
         />
-        {/* Open Graph Meta Tags */}
+        {/* Site Name and Open Graph Info */}
+        <meta property="og:site_name" content="SAMKIEL BOT" />
         <meta
           property="og:title"
-          content="SAMKIEL BOT | #1 WhatsApp Bot Deployment & Hosting Platform"
+          content="SAMKIEL BOT - Deployment Platform | WhatsApp Bot Hosting"
         />
         <meta
           property="og:description"
-          content="Professional WhatsApp bot deployment and hosting platform. Automate your chats and groups easily."
+          content="Professional WhatsApp bot deployment and hosting platform. Automate your chats and groups easily with SAMKIEL BOT."
         />
         <meta property="og:image" content="/og-image.png" />
         <meta property="og:url" content="https://samkielbot.app" />
@@ -117,7 +118,8 @@ export default function Home() {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "SAMKIEL BOT",
+              name: "SAMKIEL BOT - Deployment Platform",
+              alternateName: "SAMKIEL BOT",
               url: "https://samkielbot.app",
               potentialAction: {
                 "@type": "SearchAction",

@@ -6,6 +6,13 @@ Allow: /free-whatsapp-bot
 Allow: /view-once-whatsapp
 Allow: /login
 Allow: /register
+Allow: /bots
+Allow: /features
+Allow: /commands
+Allow: /terms
+Allow: /privacy
+Allow: /pricing
+Allow: /how-billing-works
 
 # Block private dashboard routes
 Disallow: /dashboard
@@ -13,6 +20,9 @@ Disallow: /admin
 Disallow: /api/
 Disallow: /deploy
 Disallow: /settings
-Disallow: /bots
+Disallow: /profile
+Disallow: /referrals
+Disallow: /verify
+Disallow: /forgot-password
 
 Sitemap: https://samkielbot.app/sitemap.xml

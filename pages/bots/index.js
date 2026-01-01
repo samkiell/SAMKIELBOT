@@ -186,7 +186,7 @@ export default function BotsList() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white transition-colors duration-300">
       <Head>
-        <title>Community Bots - SAMKIEL BOT</title>
+        <title>Community Bots | SAMKIEL BOT - Deployment Platform</title>
       </Head>
       <Navbar />
       <Snowfall />

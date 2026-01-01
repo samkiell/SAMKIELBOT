@@ -61,10 +61,10 @@ export default function CommandsPage({ commands, lastUpdated }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white transition-colors duration-300 font-sans">
       <Head>
-        <title>Bot Commands - SAMKIEL BOT</title>
+        <title>Bot Command Reference | SAMKIEL BOT - Deployment Platform</title>
         <meta
           name="description"
-          content={`Explore ${commands.length} powerful commands available on SAMKIEL BOT.`}
+          content={`Explore ${commands.length} powerful commands available on SAMKIEL BOT - Deployment Platform.`}
         />
       </Head>
 

@@ -48,10 +48,10 @@ export default function FeaturesPage() {
   return (
     <div className="bg-gray-50 dark:bg-[#0f172a] min-h-screen text-gray-800 dark:text-gray-100">
       <Head>
-        <title>Features | SAMKIEL BOT - WhatsApp Automation Powerhouse</title>
+        <title>Features | SAMKIEL BOT - Deployment Platform</title>
         <meta
           name="description"
-          content="Explore the powerful features of SAMKIEL BOT. From View Once recovery and video downloading to AI tools and group moderation, everything works directly inside WhatsApp."
+          content="Explore the powerful features of SAMKIEL BOT - Deployment Platform. From View Once recovery and video downloading to AI tools and group moderation, everything works directly inside WhatsApp."
         />
       </Head>
 

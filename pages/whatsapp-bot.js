@@ -14,14 +14,16 @@ export default function WhatsAppBotPage() {
   return (
     <Layout>
       <Head>
-        <title>What is a WhatsApp Bot? Comprehensive Guide | SAMKIEL BOT</title>
+        <title>
+          What is a WhatsApp Bot? Guide | SAMKIEL BOT - Deployment Platform
+        </title>
         <meta
           name="description"
-          content="Learn everything about WhatsApp bots. Discover how WhatsApp automation can transform your group management and personal productivity with SAMKIEL BOT."
+          content="Learn everything about WhatsApp bots. Discover how WhatsApp automation can transform your group management and personal productivity with SAMKIEL BOT - Deployment Platform."
         />
         <meta
           property="og:title"
-          content="What is a WhatsApp Bot? Comprehensive Guide | SAMKIEL BOT"
+          content="What is a WhatsApp Bot? Guide | SAMKIEL BOT - Deployment Platform"
         />
         <meta
           property="og:description"

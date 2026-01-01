@@ -481,6 +481,12 @@ export default function DeployPage() {
                   <option value="!">! (Exclamation)</option>
                   <option value="#"># (Hash)</option>
                   <option value="/">/ (Slash)</option>
+                  <option value="?">? (Question Mark)</option>
+                  <option value="$">$ (Dollar Sign)</option>
+                  <option value="+">+ (Plus)</option>
+                  <option value="-">- (Dash)</option>
+                  <option value="*">* (Star)</option>
+                  <option value="%">% (Percent)</option>
                 </select>
               </div>
               <div className="relative">

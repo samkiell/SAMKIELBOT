@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,6 +24,7 @@ import ImageViewer from "../components/ImageViewer";
 
 export default function Home() {
   const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [stats, setStats] = useState({
@@ -50,10 +52,10 @@ export default function Home() {
 
   useEffect(() => {
     if (!authLoading && user) {
-      setIsRedirecting(true); // Keep showing spinner/nothing while redirect happens
-      window.location.href = "/dashboard";
+      setIsRedirecting(true);
+      router.replace("/dashboard");
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, router]);
 
   if (authLoading || isRedirecting) {
     return (

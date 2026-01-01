@@ -378,27 +378,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* What’s New Section */}
-      <section className="px-6 py-12 bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div {...fadeUp}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-              🚀 What’s New in Version 2
-            </h2>
-            <ul className="text-left text-base md:text-lg text-gray-600 dark:text-gray-300 space-y-4 max-w-2xl mx-auto">
-              <li>• Improved stability & message delivery.</li>
-              <li>• Enhanced dashboard sync with Render.</li>
-              <li>• New View Once Media Saver.</li>
-              <li>• Advanced session recovery.</li>
-              <li>• Upgraded .update auto-refresh system.</li>
-            </ul>
-            <p className="mt-6 text-sm md:text-base text-gray-600 dark:text-gray-300">
-              Stay tuned for more exciting updates!
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Platform Stats Section */}
       <section className="px-6 py-16 bg-indigo-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]"></div>

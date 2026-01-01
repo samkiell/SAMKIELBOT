@@ -164,7 +164,7 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-8">
-          © 2025 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋. All rights reserved. <br />
+          © {new Date().getFullYear()} 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋. All rights reserved. <br />
           Made with ❤️ by{" "}
           <a
             href="https://www.samkiel.dev/"

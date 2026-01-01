@@ -23,11 +23,6 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  useEffect(() => {
-    // Restore agreement state if user has agreed
-    const agreed = localStorage.getItem("samkiel_agreed") === "true";
-    if (agreed) setAgreeToTerms(true);
-  }, []);
   const { register, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -339,15 +334,7 @@ export default function Register() {
                 name="agreeToTerms"
                 type="checkbox"
                 checked={agreeToTerms}
-                onChange={(e) => {
-                  const newValue = e.target.checked;
-                  setAgreeToTerms(newValue);
-                  if (newValue) {
-                    localStorage.setItem("samkiel_agreed", "true");
-                  } else {
-                    localStorage.removeItem("samkiel_agreed");
-                  }
-                }}
+                onChange={(e) => setAgreeToTerms(e.target.checked)}
                 className="mt-1 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
               />
               <label

@@ -43,9 +43,16 @@ export default function ProfilePage() {
   }, [user]);
 
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "whatsappNumber" && value && !/^[\d]*$/.test(value)) {
+      toast.error(
+        "Please enter only digits. Include country code but leave out the '+' sign."
+      );
+      return;
+    }
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
@@ -115,14 +122,18 @@ export default function ProfilePage() {
     e.preventDefault();
 
     // Validate phone number format
-    const phoneRegex = /^[1-9]\d{7,14}$/;
-    if (
-      formData.whatsappNumber &&
-      !phoneRegex.test(formData.whatsappNumber.trim())
-    ) {
-      return toast.error(
-        "Phone number must include country code without '+' (e.g., 1234567890)"
-      );
+    const phoneRegex = /^\d{10,15}$/;
+    if (formData.whatsappNumber) {
+      if (!phoneRegex.test(formData.whatsappNumber.trim())) {
+        return toast.error(
+          "Invalid WhatsApp number. Please use international format (10-15 digits, no '+')."
+        );
+      }
+      if (formData.whatsappNumber.trim().startsWith("0")) {
+        return toast.error(
+          "Please include your country code and remove the leading '0' (example: 23481... instead of 081...)."
+        );
+      }
     }
 
     setLoading(true);

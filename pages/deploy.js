@@ -120,6 +120,16 @@ export default function DeployPage() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (
+      (name === "botNumber" || name === "ownerNumber") &&
+      value &&
+      !/^[\d]*$/.test(value)
+    ) {
+      toast.error(
+        "Please enter only digits. Include country code but leave out the '+' sign."
+      );
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -135,18 +145,35 @@ export default function DeployPage() {
 
     if (!phoneRegex.test(formData.botNumber)) {
       toast.error(
-        "Invalid Bot Number. Please use international format (e.g., 2348012345678) without '+'."
+        "Invalid Bot Number. Please use international format (10-15 digits, no '+')."
       );
       setLoading(false);
       return;
     }
 
-    if (formData.ownerNumber && !phoneRegex.test(formData.ownerNumber)) {
+    if (formData.botNumber.startsWith("0")) {
       toast.error(
-        "Invalid Owner Number. Please use international format (e.g., 2348012345678) without '+'."
+        "Bot Number must include country code. Please remove the leading '0' (e.g., 23481...)."
       );
       setLoading(false);
       return;
+    }
+
+    if (formData.ownerNumber) {
+      if (!phoneRegex.test(formData.ownerNumber)) {
+        toast.error(
+          "Invalid Owner Number. Please use international format (10-15 digits, no '+')."
+        );
+        setLoading(false);
+        return;
+      }
+      if (formData.ownerNumber.startsWith("0")) {
+        toast.error(
+          "Owner Number must include country code. Please remove the leading '0' (e.g., 23481...)."
+        );
+        setLoading(false);
+        return;
+      }
     }
 
     // Prepare Payload
@@ -492,8 +519,9 @@ export default function DeployPage() {
                   placeholder="2348012345678"
                   required
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  International format. No '+' or spaces.
+                <p className="text-[10px] text-gray-500 mt-1">
+                  International format. <b>Include country code</b>, no "+"
+                  sign.
                 </p>
               </div>
               <div>
@@ -557,9 +585,9 @@ export default function DeployPage() {
                   className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   placeholder="2348012345678"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  The primary admin number for this bot. Defaults to your linked
-                  number if empty.
+                <p className="text-[10px] text-gray-500 mt-1">
+                  The primary admin number. <b>Include country code</b> (e.g.,
+                  23481...). Defaults to your linked number if empty.
                 </p>
               </div>
             </div>

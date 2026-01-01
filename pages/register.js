@@ -79,6 +79,13 @@ export default function Register() {
       return;
     }
 
+    if (formData.whatsappNumber.startsWith("0")) {
+      toast.error(
+        "Please include your country code and remove the leading '0' (e.g., 23481... instead of 081...)."
+      );
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -216,10 +223,13 @@ export default function Register() {
               <div>
                 <label
                   htmlFor="whatsappNumber"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                 >
                   WhatsApp Phone Number
                 </label>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  Include country code, no "+" sign (e.g., 2348123456789)
+                </p>
                 <input
                   id="whatsappNumber"
                   name="whatsappNumber"
@@ -230,9 +240,9 @@ export default function Register() {
                   value={formData.whatsappNumber}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (!/^[\d]*$/.test(value)) {
+                    if (value && !/^[\d]*$/.test(value)) {
                       toast.error(
-                        "Na Only valid WhatsApp numbers dey allowed (no +)."
+                        "Please enter only digits. Include country code but leave out the '+' sign."
                       );
                       return;
                     }

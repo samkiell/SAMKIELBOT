@@ -105,6 +105,7 @@ const deploymentSchema = new mongoose.Schema({
     usedDisk: { type: Number, default: 0 },
     state: { type: String, default: "offline" },
     uptimeMs: { type: Number, default: 0 },
+    lastUptimeUpdate: { type: Date },
   },
   // Credit-based billing
   creationCost: {

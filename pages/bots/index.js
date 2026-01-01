@@ -111,24 +111,29 @@ export default function BotsList() {
       return "Offline";
     }
 
-    // Use Pterodactyl's uptime (updated every 30s)
+    // Use Pterodactyl's uptime (updated every 60s)
     let uptimeMs = bot.uptimeMs || 0;
 
     // Add time elapsed since the last update to make it tick smoothly
-    // We use 'lastActive' or 'updatedAt' as the anchor for when we got the data
-    const lastUpdate = bot.lastActive
+    // We use 'lastUptimeUpdate' (newly added) or 'lastActive' as the anchor
+    const lastUpdate = bot.lastUptimeUpdate
+      ? new Date(bot.lastUptimeUpdate).getTime()
+      : bot.lastActive
       ? new Date(bot.lastActive).getTime()
       : Date.now();
+
     const elapsedSinceUpdate = currentTime - lastUpdate;
 
-    // Only add elapsed time if it's reasonable (e.g., < 60 seconds) to prevent huge jumps if data is stale
-    if (elapsedSinceUpdate > 0 && elapsedSinceUpdate < 60000) {
+    // Add elapsed time to make the counter tick smoothly
+    if (elapsedSinceUpdate > 0) {
       uptimeMs += elapsedSinceUpdate;
     }
 
-    // Fallback: If Pterodactyl uptime is 0 (fresh start/glitch) but we have a start time, use it
-    if (uptimeMs <= 0 && bot.uptimeStart) {
-      uptimeMs = currentTime - new Date(bot.uptimeStart).getTime();
+    // Fallback: If Pterodactyl uptime is 0 (fresh start/glitch) or suspicious,
+    // but we have a start time, use the larger value
+    if (bot.uptimeStart) {
+      const timeSinceStart = currentTime - new Date(bot.uptimeStart).getTime();
+      uptimeMs = Math.max(uptimeMs, timeSinceStart);
     }
 
     if (uptimeMs <= 0) return "0s";

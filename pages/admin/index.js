@@ -241,6 +241,63 @@ export default function AdminDashboard() {
                 value={infra?.host?.disk?.usedPercent || 0}
                 color="amber"
               />
+
+              {/* Individual Bot Loads */}
+              <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-800">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">
+                  Active Bot Loads
+                </p>
+                <div className="space-y-3">
+                  {infra?.bots?.slice(0, 3).map((bot, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            bot.state === "running"
+                              ? "bg-emerald-500 shadow-[0_0_8px_#10b981]"
+                              : "bg-gray-500"
+                          }`}
+                        />
+                        <span className="text-xs font-bold">{bot.name}</span>
+                      </div>
+                      <div className="flex items-center gap-6">
+                        <div className="text-right">
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">
+                            RAM
+                          </p>
+                          <p className="text-[10px] font-black">
+                            {bot.usedRam}MB
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[9px] font-bold text-gray-400 uppercase">
+                            CPU
+                          </p>
+                          <p className="text-[10px] font-black">
+                            {bot.usedCpu}%
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {(!infra?.bots || infra.bots.length === 0) && (
+                    <p className="text-xs text-center text-gray-500 py-4 italic">
+                      No active deployments detected.
+                    </p>
+                  )}
+                  {infra?.bots?.length > 3 && (
+                    <Link
+                      href="/admin/infrastructure"
+                      className="block text-center text-[10px] font-bold text-indigo-500 hover:underline mt-2"
+                    >
+                      View all {infra.bots.length} bots
+                    </Link>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

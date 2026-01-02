@@ -154,6 +154,16 @@ export default async function handler(req, res) {
           return await forceSyncBotStatuses(req, res);
         }
 
+        // Route: POST /api/admin/bots/sync-stats
+        if (
+          slug &&
+          slug[0] === "bots" &&
+          slug[1] === "sync-stats" &&
+          method === "POST"
+        ) {
+          return await syncServerStats(req, res);
+        }
+
         // Route: POST /api/admin/bots/:id/power
         if (
           slug &&

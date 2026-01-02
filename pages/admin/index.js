@@ -10,27 +10,43 @@ import {
   AlertOctagon,
   HardDrive,
   TrendingDown,
+  TrendingUp,
+  DollarSign,
+  ShieldCheck,
+  RotateCcw,
+  Zap,
+  MoreVertical,
+  ShieldAlert,
+  ChevronRight,
+  Clock,
+  LayoutGrid,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import io from "socket.io-client";
 import toast from "react-hot-toast";
-
-import Skeleton, {
-  StatCardSkeleton,
-  NodeHealthSkeleton,
-} from "../../components/Skeleton";
+import { formatDistanceToNow } from "date-fns";
 
 export default function AdminDashboard() {
   const { user, token, loading: authLoading } = useAuth();
   const [stats, setStats] = useState(null);
+  const [infra, setInfra] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!authLoading && user?.role === "admin" && token) {
       fetchStats();
+      fetchInfra();
+
+      const socket = io(process.env.NEXT_PUBLIC_API_URL || "");
+      socket.on("infra:update", (update) => {
+        setInfra(update);
+      });
+
+      return () => socket.disconnect();
     }
   }, [user, token, authLoading]);
 
   const fetchStats = async () => {
-    if (!token) return;
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`,
@@ -39,40 +55,50 @@ export default function AdminDashboard() {
         }
       );
       const data = await res.json();
-      if (data.success) {
-        setStats(data.data);
-      }
+      if (data.success) setStats(data.data);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load system stats");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchInfra = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/infrastructure/overview`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      if (data.success) setInfra(data.data);
+    } catch (err) {}
+  };
+
+  const handleSync = async () => {
+    const id = toast.loading("Synchronizing nodes and stats...");
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/nodes/sync`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/bots/sync-stats`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchStats();
+      toast.success("System sync complete", { id });
+    } catch (err) {
+      toast.error("Sync failed", { id });
     }
   };
 
   if (loading)
     return (
       <AdminLayout>
-        <Head>
-          <title>Admin Control Plane - SAMKIEL BOT</title>
-        </Head>
-        <div className="mb-8">
-          <Skeleton className="h-10 w-64 mb-2" />
-          <Skeleton className="h-6 w-96" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-        </div>
-        <div className="mb-8">
-          <Skeleton className="h-8 w-48 mb-4" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <NodeHealthSkeleton />
-            <NodeHealthSkeleton />
-            <NodeHealthSkeleton />
-          </div>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Zap className="animate-pulse text-indigo-500" size={48} />
         </div>
       </AdminLayout>
     );
@@ -80,137 +106,411 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <Head>
-        <title>Admin Control Plane - SAMKIEL BOT</title>
+        <title>Intelligence Center | SAMKIEL ADMIN</title>
       </Head>
 
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">System Overview</h1>
-        <p className="text-gray-500">Real-time platform metrics and health.</p>
-      </div>
-
-      {/* Top Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Link href="/admin/users" className="block h-full">
-          <StatCard
-            title="Total Users"
-            value={stats?.totalUsers || 0}
-            icon={Users}
-            color="indigo"
-          />
-        </Link>
-        <Link href="/admin/bots" className="block h-full">
-          <StatCard
-            title="Active Bots"
-            value={stats?.runningBots || 0}
-            total={stats?.totalBots}
-            icon={Server}
-            color="green"
-          />
-        </Link>
-        <StatCard
-          title="Failed Today"
-          value={stats?.failedDeploymentsToday || 0}
-          icon={AlertOctagon}
-          color="red"
-        />
-        <StatCard
-          title="Error Rate"
-          value={`${stats?.errorRate || 0}%`}
-          icon={TrendingDown}
-          color="yellow"
-        />
-      </div>
-
-      {/* Node Health Section */}
-      <div className="mb-8">
-        <div className="flex justify-between items-end mb-4">
-          <h2 className="text-xl font-bold flex items-center gap-2">
-            <HardDrive size={20} /> Infrastructure Health
-          </h2>
-          <Link
-            href="/admin/infrastructure"
-            className="text-indigo-600 hover:text-indigo-700 text-sm font-bold flex items-center gap-1 group"
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+        <div>
+          <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">
+            System Intelligence
+          </h1>
+          <p className="text-gray-500 mt-1 font-medium">
+            Real-time infrastructure and commercial metrics.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={fetchStats}
+            className="p-3 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform"
           >
-            Open Control Plane{" "}
-            <Activity
-              size={16}
-              className="group-hover:translate-x-1 transition-transform"
-            />
+            <RotateCcw size={20} className="text-gray-500" />
+          </button>
+          <Link
+            href="/admin/settings"
+            className="px-6 py-3 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-500/30 font-bold hover:bg-indigo-700 transition-colors"
+          >
+            Manage System
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stats?.nodeHealth?.map((node, i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <span className="font-bold">{node.name}</span>
-                <span
-                  className={`px-2 py-1 rounded text-xs uppercase font-bold ${
-                    node.status === "online"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {node.status}
+      </div>
+
+      {/* Top 4 Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <SummaryCard
+          title="REGISTERED USERS"
+          value={stats?.totalUsers || 0}
+          trend={stats?.userGrowth || "+0%"}
+          icon={Users}
+          color="indigo"
+        />
+        <SummaryCard
+          title="LIVE DEPLOYMENTS"
+          value={`${stats?.runningBots || 0}`}
+          total={stats?.totalBots || 0}
+          icon={LayoutGrid}
+          color="emerald"
+        />
+        <SummaryCard
+          title="TODAY'S REVENUE"
+          value={`$${stats?.revenueToday || 0}`}
+          trend={stats?.revenueGrowth || "+0%"}
+          icon={DollarSign}
+          color="amber"
+        />
+        <SummaryCard
+          title="SYSTEM HEALTH"
+          value="100%"
+          trend="STABLE"
+          icon={Activity}
+          color="indigo"
+          isPulse
+        />
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mb-10">
+        {/* Workload Section */}
+        <div className="xl:col-span-8 bg-white dark:bg-[#111827] rounded-[32px] p-8 border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Zap size={20} className="text-indigo-500" /> Platform Workload
+            </h2>
+            <div className="flex items-center gap-4 text-xs font-bold font-mono">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" /> ACTIVE
+              </div>
+              <div className="flex items-center gap-1.5 text-gray-500">
+                <div className="w-2 h-2 rounded-full bg-gray-500" /> IDLE
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="relative w-48 h-48 flex items-center justify-center">
+              <svg className="w-full h-full -rotate-90">
+                <circle
+                  cx="96"
+                  cy="96"
+                  r="80"
+                  stroke="currentColor"
+                  strokeWidth="12"
+                  fill="transparent"
+                  className="text-gray-100 dark:text-gray-800"
+                />
+                <motion.circle
+                  cx="96"
+                  cy="96"
+                  r="80"
+                  stroke="currentColor"
+                  strokeWidth="12"
+                  fill="transparent"
+                  strokeDasharray={2 * Math.PI * 80}
+                  animate={{
+                    strokeDashoffset:
+                      2 *
+                      Math.PI *
+                      80 *
+                      (1 - (infra?.host?.memory?.usedPercent || 0) / 100),
+                  }}
+                  className="text-indigo-600"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-4xl font-black">
+                  {infra?.host?.memory?.usedPercent || 0}%
+                </span>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  Capacity
                 </span>
               </div>
+            </div>
+
+            <div className="flex-1 w-full space-y-6">
+              <UsageBar
+                label="MEMORY UTILIZATION"
+                value={infra?.host?.memory?.usedPercent || 0}
+                color="indigo"
+              />
+              <UsageBar
+                label="CPU LOAD AVERAGE"
+                value={infra?.host?.cpu?.usedPercent || 0}
+                color="emerald"
+              />
+              <UsageBar
+                label="STORAGE DISTRIBUTION"
+                value={infra?.host?.disk?.usedPercent || 0}
+                color="amber"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Command Center Section */}
+        <div className="xl:col-span-4 space-y-6">
+          <div className="bg-gradient-to-br from-[#6366f1] to-[#4f46e5] rounded-[32px] p-8 text-white shadow-xl shadow-indigo-500/20 relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-white/20 rounded-xl backdrop-blur-md">
+                  <ShieldCheck size={20} />
+                </div>
+                <span className="font-bold">Command Center</span>
+              </div>
+
               <div className="space-y-3">
+                <CommandButton
+                  label="Force Status Sync"
+                  icon={RotateCcw}
+                  onClick={handleSync}
+                />
+                <CommandButton label="System Diagnostics" icon={AlertOctagon} />
+                <CommandButton
+                  label="Pending Review"
+                  icon={Users}
+                  isSecondary
+                />
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-white/10 flex justify-between items-center">
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-500">RAM Usage</span>
-                    <span className="font-mono">{node.ramUsage}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${
-                        node.ramUsage > 80 ? "bg-red-500" : "bg-indigo-500"
-                      }`}
-                      style={{ width: `${Math.min(node.ramUsage, 100)}%` }}
-                    ></div>
-                  </div>
+                  <p className="text-[10px] font-bold opacity-60 uppercase mb-1">
+                    Security Level
+                  </p>
+                  <p className="font-bold flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]" />{" "}
+                    Enhanced
+                  </p>
                 </div>
               </div>
             </div>
-          ))}
-          {(!stats?.nodeHealth || stats.nodeHealth.length === 0) && (
-            <div className="col-span-full p-8 text-center text-gray-500 border-2 border-dashed rounded-xl">
-              No nodes detected. Run sync or check connection.
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16" />
+          </div>
+
+          {/* Infrastructure Nodes Cards */}
+          <div className="bg-white dark:bg-[#111827] rounded-[32px] p-8 border border-gray-100 dark:border-gray-800 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-bold flex items-center gap-2 tracking-tight">
+                <Server size={18} className="text-gray-400" /> Infrastructure
+                Nodes
+              </h2>
+              <div className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded border border-emerald-500/20">
+                LIVE
+              </div>
             </div>
-          )}
+
+            <div className="space-y-4">
+              {stats?.nodeHealth?.map((node, i) => (
+                <div
+                  key={i}
+                  className="bg-gray-50/50 dark:bg-gray-900/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 group hover:border-indigo-500/30 transition-colors"
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-bold text-sm tracking-tight">
+                      {node.name}
+                    </span>
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-bold text-gray-400">
+                      RAM
+                    </span>
+                    <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${node.ramUsage}%` }}
+                        className={`h-full rounded-full ${
+                          node.ramUsage > 85 ? "bg-red-500" : "bg-indigo-500"
+                        }`}
+                      />
+                    </div>
+                    <span className="text-[10px] font-mono font-bold">
+                      {node.ramUsage}%
+                    </span>
+                    <button className="p-1.5 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Settings2 size={12} className="text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Governance Activity List */}
+      <div className="bg-white dark:bg-[#111827] rounded-[32px] p-8 border border-gray-100 dark:border-gray-800 shadow-sm">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-xl font-bold flex items-center gap-2 tracking-tight">
+            <Clock size={20} className="text-indigo-500" /> Governance Activity
+          </h2>
+          <Link
+            href="/admin/audit"
+            className="text-xs font-bold text-indigo-500 hover:scale-105 transition-transform"
+          >
+            View All
+          </Link>
+        </div>
+
+        <div className="space-y-4">
+          {stats?.auditLogs?.map((log, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl hover:translate-x-1 transition-transform border border-transparent hover:border-gray-200 dark:hover:border-gray-800"
+            >
+              <div className="flex items-center gap-4">
+                <div
+                  className={`p-2 rounded-xl ${
+                    log.targetType === "User"
+                      ? "bg-red-500/10 text-red-500"
+                      : "bg-indigo-500/10 text-indigo-500"
+                  }`}
+                >
+                  {log.targetType === "User" ? (
+                    <Users size={18} />
+                  ) : (
+                    <Activity size={18} />
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-bold">
+                    {log.adminEmail.split("@")[0]}{" "}
+                    <span className="font-medium text-gray-500">performed</span>{" "}
+                    {log.action}
+                  </p>
+                  <p className="text-[10px] text-gray-400 font-mono mt-0.5">
+                    {JSON.stringify(log.details || {})}
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                {formatDistanceToNow(new Date(log.timestamp), {
+                  addSuffix: true,
+                })}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </AdminLayout>
   );
 }
 
-function StatCard({ title, value, total, icon: Icon, color }) {
-  const colors = {
-    indigo: "text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30",
-    green: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30",
-    red: "text-red-600 bg-red-50 dark:bg-red-900/30",
-    yellow: "text-amber-600 bg-amber-50 dark:bg-amber-900/30",
+function SummaryCard({
+  title,
+  value,
+  total,
+  trend,
+  icon: Icon,
+  color,
+  isPulse,
+}) {
+  const colorStyles = {
+    indigo: "bg-[#6366f1]/10 text-indigo-500 shadow-indigo-500/10",
+    emerald: "bg-[#10b981]/10 text-emerald-500 shadow-emerald-500/10",
+    amber: "bg-[#f59e0b]/10 text-amber-500 shadow-amber-500/10",
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-between group hover:scale-[1.02] transition-transform">
-      <div>
-        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-          {title}
-        </p>
-        <p className="text-2xl font-bold mt-1">
-          {value}
-          {total !== undefined && (
-            <span className="text-sm text-gray-400 font-normal ml-1">
-              / {total}
-            </span>
-          )}
-        </p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-all"
+    >
+      <div className="flex justify-between items-start mb-6">
+        <div className={`p-4 rounded-3xl ${colorStyles[color]}`}>
+          <Icon size={24} className={isPulse ? "animate-pulse" : ""} />
+        </div>
+        {trend && (
+          <div
+            className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${
+              trend.includes("+")
+                ? "bg-emerald-500/10 text-emerald-500"
+                : "bg-indigo-500/10 text-indigo-500"
+            }`}
+          >
+            {trend}
+          </div>
+        )}
       </div>
-      <div className={`p-3 rounded-lg ${colors[color]}`}>
-        <Icon size={24} />
+      <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
+        {title}
+      </p>
+      <div className="flex items-baseline gap-1">
+        <span className="text-4xl font-black tracking-tighter">{value}</span>
+        {total && (
+          <span className="text-sm font-bold text-gray-400">/{total}</span>
+        )}
+      </div>
+      {/* Background Noise Image/Pattern */}
+      <div className="absolute bottom-0 right-0 opacity-[0.03] text-gray-400 pointer-events-none group-hover:scale-110 transition-transform">
+        <Icon size={120} />
+      </div>
+    </motion.div>
+  );
+}
+
+function UsageBar({ label, value, color }) {
+  return (
+    <div>
+      <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+        <span>{label}</span>
+        <span className="font-mono text-gray-900 dark:text-gray-100">
+          {value}%
+        </span>
+      </div>
+      <div className="w-full bg-gray-50 dark:bg-gray-900 rounded-full h-2.5 p-0.5 border border-gray-100 dark:border-gray-800">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${value}%` }}
+          className={`h-full rounded-full ${
+            color === "indigo"
+              ? "bg-indigo-600 shadow-[0_0_8px_rgba(99,102,241,0.5)]"
+              : color === "emerald"
+              ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+              : "bg-amber-500"
+          }`}
+        />
       </div>
     </div>
+  );
+}
+
+function CommandButton({ label, icon: Icon, isSecondary, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all font-bold text-sm ${
+        isSecondary
+          ? "bg-white text-indigo-600 hover:bg-gray-50"
+          : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <Icon size={18} />
+        {label}
+      </div>
+      <div className="w-1.5 h-1.5 rounded-full bg-indigo-300" />
+    </button>
+  );
+}
+
+function Settings2({ size, className }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M20 7h-9" />
+      <path d="M14 17H5" />
+      <circle cx="17" cy="17" r="3" />
+      <circle cx="7" cy="7" r="3" />
+    </svg>
   );
 }

@@ -94,7 +94,7 @@ export default function AdminSuggestions() {
                 </td>
                 <td className="px-6 py-4 max-w-md">
                   <div className="font-bold mb-1">{s.title}</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-300">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
                     {s.message}
                   </div>
                 </td>

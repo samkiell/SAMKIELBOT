@@ -208,7 +208,7 @@ export default function AdminBugsPage() {
                   </span>
                 </div>
 
-                <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1 line-clamp-1">
+                <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-1 line-clamp-2 whitespace-pre-wrap">
                   {ticket.description}
                 </h3>
 

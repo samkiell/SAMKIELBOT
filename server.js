@@ -26,6 +26,8 @@ const handle = app.getRequestHandler();
 
 // Database connection
 const connectDB = require("./lib/db");
+const { protect, admin } = require("./lib/utils/authMiddleware");
+const { successResponse } = require("./lib/utils/response");
 
 // Services
 const initScheduler = require("./lib/utils/scheduler");
@@ -136,6 +138,35 @@ app
     });
 
     // Bot initialization moved after server start
+
+    // Let Express handle certain API routes directly to share memory space (Infra state)
+    server.get("/api/admin/infrastructure/overview", async (req, res) => {
+      return await protect(req, res, async () => {
+        return await admin(req, res, async () => {
+          const liveState = await infraOrchestrator.getLiveState();
+          if (!liveState) {
+            return successResponse(res, {
+              status: "pending",
+              message: "Synchronizing with DigitalOcean...",
+              name: "Connecting (Express)...",
+              host: {
+                cpu: { usedPercent: 0, cores: 1 },
+                memory: {
+                  usedMB: 0,
+                  totalMB: 1024,
+                  usedPercent: 0,
+                  breakdown: { botsMB: 0, systemMB: 0 },
+                },
+                disk: { usedGB: 0, totalGB: 25, usedPercent: 0 },
+              },
+              bots: [],
+              prediction: { status: "calculating" },
+            });
+          }
+          return successResponse(res, liveState);
+        });
+      });
+    });
 
     // Let Next.js handle all other routes
     server.all("*", (req, res) => {

@@ -131,6 +131,10 @@ app
       }
     });
 
+    infraOrchestrator.on("infra.update", (data) => {
+      io.emit("infra:update", data);
+    });
+
     // Bot initialization moved after server start
 
     // Let Next.js handle all other routes

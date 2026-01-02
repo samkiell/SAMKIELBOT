@@ -123,9 +123,21 @@ export default function AdminDashboard() {
 
       {/* Node Health Section */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <HardDrive size={20} /> Infrastructure Health
-        </h2>
+        <div className="flex justify-between items-end mb-4">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <HardDrive size={20} /> Infrastructure Health
+          </h2>
+          <Link
+            href="/admin/infrastructure"
+            className="text-indigo-600 hover:text-indigo-700 text-sm font-bold flex items-center gap-1 group"
+          >
+            Open Control Plane{" "}
+            <Activity
+              size={16}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </Link>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats?.nodeHealth?.map((node, i) => (
             <div

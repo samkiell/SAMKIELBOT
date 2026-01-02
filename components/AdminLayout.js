@@ -26,6 +26,7 @@ export default function AdminLayout({ children }) {
 
   const links = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/admin/infrastructure", label: "Control Plane", icon: Activity },
     { href: "/admin/users", label: "User Governance", icon: Users },
     { href: "/admin/bots", label: "Bot Control", icon: Server },
     { href: "/admin/revenue", label: "Revenue", icon: DollarSign },

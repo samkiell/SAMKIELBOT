@@ -29,6 +29,7 @@ import {
   deleteNotification,
   getRevenueStats,
   getInfraOverview,
+  refreshInfraOverview,
   throttleBot,
 } from "@/lib/controllers/adminController";
 import {
@@ -359,6 +360,16 @@ export default async function handler(req, res) {
           method === "GET"
         ) {
           return await getInfraOverview(req, res);
+        }
+
+        // Route: POST /api/admin/infrastructure/refresh
+        if (
+          slug &&
+          slug[0] === "infrastructure" &&
+          slug[1] === "refresh" &&
+          method === "POST"
+        ) {
+          return await refreshInfraOverview(req, res);
         }
 
         // Method not allowed

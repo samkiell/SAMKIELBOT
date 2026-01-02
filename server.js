@@ -139,31 +139,12 @@ app
 
     // Bot initialization moved after server start
 
-    // Infrastructure Direct Routes (Bypass Next.js for high-speed local admin access)
+    const adminController = require("./lib/controllers/adminController");
+
     server.get("/api/admin/infrastructure/overview", async (req, res) => {
       return await protect(req, res, async () => {
         return await admin(req, res, async () => {
-          const liveState = await infraOrchestrator.getLiveState();
-          if (!liveState) {
-            return successResponse(res, {
-              status: "pending",
-              message: "Synchronizing with DigitalOcean...",
-              name: "Connecting (Express)...",
-              host: {
-                cpu: { usedPercent: 0, cores: 1 },
-                memory: {
-                  usedMB: 0,
-                  totalMB: 1024,
-                  usedPercent: 0,
-                  breakdown: { botsMB: 0, systemMB: 0 },
-                },
-                disk: { usedGB: 0, totalGB: 25, usedPercent: 0 },
-              },
-              bots: [],
-              prediction: { status: "calculating" },
-            });
-          }
-          return successResponse(res, liveState);
+          return await adminController.getInfraOverview(req, res);
         });
       });
     });
@@ -171,13 +152,7 @@ app
     server.post("/api/admin/infrastructure/refresh", async (req, res) => {
       return await protect(req, res, async () => {
         return await admin(req, res, async () => {
-          await infraOrchestrator.poll();
-          const liveState = await infraOrchestrator.getLiveState();
-          return successResponse(
-            res,
-            liveState,
-            "Infrastructure stats refreshed"
-          );
+          return await adminController.refreshInfraOverview(req, res);
         });
       });
     });

@@ -30,6 +30,7 @@ const connectDB = require("./lib/db");
 // Services
 const initScheduler = require("./lib/utils/scheduler");
 const botHealthService = require("./lib/services/botHealthService");
+const infraOrchestrator = require("./lib/services/infraOrchestrator");
 
 app
   .prepare()
@@ -144,10 +145,14 @@ app
       if (err) throw err;
       console.log(`- ready on http://localhost:${port}`);
 
-      // Initialize Bot Health Monitoring in the background after server is live (with slight delay)
+      // Initialize Bot Health Monitoring and Infra Orchestrator in the background after server is live
       setTimeout(() => {
         botHealthService.initializeAllMonitors().catch((err) => {
           console.error("[BotHealth] background init error:", err);
+        });
+
+        infraOrchestrator.start().catch((err) => {
+          console.error("[InfraOrchestrator] background init error:", err);
         });
       }, 2000);
     });

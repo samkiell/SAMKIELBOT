@@ -28,6 +28,7 @@ import {
   getAllNotifications,
   deleteNotification,
   getRevenueStats,
+  getInfraOverview,
 } from "@/lib/controllers/adminController";
 import {
   getTickets,
@@ -313,6 +314,16 @@ export default async function handler(req, res) {
         // Route: GET /api/admin/revenue
         if (slug && slug[0] === "revenue" && method === "GET") {
           return await getRevenueStats(req, res);
+        }
+
+        // Route: GET /api/admin/infrastructure/overview
+        if (
+          slug &&
+          slug[0] === "infrastructure" &&
+          slug[1] === "overview" &&
+          method === "GET"
+        ) {
+          return await getInfraOverview(req, res);
         }
 
         // Method not allowed

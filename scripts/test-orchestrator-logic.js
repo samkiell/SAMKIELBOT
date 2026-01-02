@@ -10,9 +10,10 @@ async function testInfra() {
     console.log(`Polling droplet ${dropletId}...`);
 
     const info = await digitalOcean.getDropletInfo(dropletId);
-    console.log(
-      `Droplet Info: ${info.name} (${info.vcpus} vCPUs, ${info.memory}MB RAM)`
-    );
+    console.log(`Droplet Info: ${info.name}`);
+    console.log(`- VCPUs: ${info.vcpus}`);
+    console.log(`- Memory: ${info.memory} MB`);
+    console.log(`- Disk: ${info.disk} GB`);
 
     const metrics = await digitalOcean.getDropletMetrics(dropletId);
     console.log(`Metrics Fetched:`, metrics ? "YES" : "NO");

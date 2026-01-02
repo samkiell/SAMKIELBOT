@@ -139,7 +139,6 @@ app
 
     // Bot initialization moved after server start
 
-    // Let Express handle certain API routes directly to share memory space (Infra state)
     server.get("/api/admin/infrastructure/overview", async (req, res) => {
       return await protect(req, res, async () => {
         return await admin(req, res, async () => {
@@ -164,6 +163,20 @@ app
             });
           }
           return successResponse(res, liveState);
+        });
+      });
+    });
+
+    server.post("/api/admin/infrastructure/refresh", async (req, res) => {
+      return await protect(req, res, async () => {
+        return await admin(req, res, async () => {
+          await infraOrchestrator.poll();
+          const liveState = await infraOrchestrator.getLiveState();
+          return successResponse(
+            res,
+            liveState,
+            "Infrastructure stats refreshed"
+          );
         });
       });
     });

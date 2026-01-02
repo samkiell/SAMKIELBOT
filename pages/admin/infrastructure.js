@@ -25,8 +25,34 @@ export default function InfrastructureControlPlane() {
   const { token, user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const [socket, setSocket] = useState(null);
+
+  // ... rest of the code ...
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/infrastructure/refresh`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const result = await res.json();
+      if (result.success) {
+        setData(result.data);
+        setLastUpdate(new Date());
+        toast.success("Host data synchronized");
+      }
+    } catch (err) {
+      toast.error("Manual sync failed");
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // Fetch initial state
   useEffect(() => {

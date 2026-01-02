@@ -107,9 +107,9 @@ export default function Support() {
     {
       icon: <FaEnvelope className="text-red-500 text-3xl" />,
       title: "Email Support",
-      label: "samkielbot@gmail.com",
+      label: "support@samkielbot.app",
       description: "For account issues, billing, recovery, and formal support.",
-      link: "mailto:samkielbot@gmail.com",
+      link: "mailto:support@samkielbot.app",
       buttonText: "Send Email",
       color: "bg-red-50 dark:bg-red-900/20",
     },
@@ -126,7 +126,7 @@ export default function Support() {
       icon: <FaCreditCard className="text-indigo-500" />,
       question: "Credits not reflecting after purchase?",
       answer:
-        "Transactions are processed instantly. If your balance doesn't update within 5 minutes, please send your payment reference and email to samkielbot@gmail.com.",
+        "Transactions are processed instantly. If your balance doesn't update within 5 minutes, please send your payment reference and email to support@samkielbot.app.",
     },
     {
       icon: <FaRocket className="text-indigo-500" />,

@@ -166,7 +166,7 @@ export default function VerifyPayment() {
                 Buy Credits
               </Link>
               <Link
-                href="/contact"
+                href="/support"
                 className="flex-1 py-3 px-4 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 Contact Support

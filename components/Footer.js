@@ -148,7 +148,7 @@ export default function Footer() {
                 <FaLinkedin size={24} />
               </a>
               <a
-                href="mailto:samkielbot@gmail.com"
+                href="mailto:info@samkielbot.app"
                 className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hover:scale-110"
               >
                 <FaEnvelope size={24} />
@@ -156,7 +156,7 @@ export default function Footer() {
             </div>
             <div className="mt-4">
               <p className="text-gray-500 dark:text-gray-400 text-xs">
-                samkielbot@gmail.com
+                info@samkielbot.app
               </p>
             </div>
           </div>

@@ -347,10 +347,10 @@ export default function DocsPage() {
                 <strong>Solution:</strong> Wait 5 minutes. If credits don't
                 appear, email{" "}
                 <a
-                  href="mailto:samkielbot@gmail.com"
+                  href="mailto:support@samkielbot.app"
                   className="text-indigo-600 dark:text-indigo-400 hover:underline"
                 >
-                  samkielbot@gmail.com
+                  support@samkielbot.app
                 </a>{" "}
                 with your payment reference.
               </p>

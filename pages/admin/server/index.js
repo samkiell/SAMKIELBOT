@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import Skeleton, { ServerCardSkeleton } from "../../../components/Skeleton";
+
 export default function AdminOneServer() {
   const { token } = useAuth();
   const [servers, setServers] = useState([]);
@@ -28,11 +30,7 @@ export default function AdminOneServer() {
     // Silent loading for background updates
     if (servers.length === 0) setLoading(true);
     try {
-      // Use sync-stats to get live data if loading for first time or refreshing
-      // Regular polling might use getAllBots to avoid hammering Ptero too hard,
-      // but user asked for REAL TIME. sync-stats does the heavy lifting.
       const endpoint = "/admin/bots/sync-stats";
-
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
         method: "POST", // It's a POST now to trigger sync
         headers: { Authorization: `Bearer ${token}` },
@@ -45,6 +43,21 @@ export default function AdminOneServer() {
       setLoading(false);
     }
   };
+
+  if (loading)
+    return (
+      <AdminLayout>
+        <div className="flex justify-between items-center mb-6">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-10 w-10 rounded-full" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <ServerCardSkeleton />
+          <ServerCardSkeleton />
+          <ServerCardSkeleton />
+        </div>
+      </AdminLayout>
+    );
 
   return (
     <AdminLayout>

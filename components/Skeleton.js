@@ -137,4 +137,32 @@ export const TableSkeleton = ({ rows = 5, cols = 4 }) => (
   </div>
 );
 
+export const ServerCardSkeleton = () => (
+  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col h-[320px]">
+    <div className="p-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <Skeleton className="h-6 w-32 mb-1" />
+          <Skeleton className="h-3 w-20" />
+        </div>
+        <Skeleton className="h-5 w-16 rounded" />
+      </div>
+      <Skeleton className="h-3 w-40 mt-2" />
+    </div>
+    <div className="p-4 flex-1 space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-gray-50 dark:bg-gray-700/50 p-2 rounded">
+            <Skeleton className="h-3 w-10 mb-2" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+        ))}
+      </div>
+    </div>
+    <div className="p-4 border-t border-gray-100 dark:border-gray-700">
+      <Skeleton className="h-10 w-full rounded-lg" />
+    </div>
+  </div>
+);
+
 export default Skeleton;

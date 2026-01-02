@@ -300,7 +300,7 @@ Credits Not Reflecting After Purchase
 
 **Solution**:
 ```
-Wait 5 minutes. If credits don't appear, email samkielbot@gmail.com 
+Wait 5 minutes. If credits don't appear, email support@samkielbot.app 
 with your payment reference.
 ```
 

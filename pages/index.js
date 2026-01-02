@@ -729,14 +729,14 @@ export default function Home() {
                 <FaLinkedin size={30} />
               </a>
               <a
-                href="mailto:samkielbot@gmail.com"
+                href="mailto:info@samkielbot.app"
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition hover:scale-110"
               >
                 <FaEnvelope size={30} />
               </a>
             </div>
             <p className="mt-8 text-gray-500 dark:text-gray-400 font-medium">
-              samkielbot@gmail.com
+              info@samkielbot.app
             </p>
           </motion.div>
         </div>

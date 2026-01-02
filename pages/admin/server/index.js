@@ -88,12 +88,12 @@ export default function AdminOneServer() {
                   </p>
                 </div>
                 <span
-                  className={`px-2 py-1 rounded text-xs font-bold uppercase ${
-                    server.status === "running"
-                      ? "bg-green-100 text-green-700"
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider animate-in fade-in zoom-in duration-300 ${
+                    ["running", "online", "active"].includes(server.status)
+                      ? "bg-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                       : server.status === "suspended"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-500"
+                      ? "bg-red-500 text-white shadow-[0_0_12px_rgba(239,68,68,0.4)]"
+                      : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
                   }`}
                 >
                   {server.status}

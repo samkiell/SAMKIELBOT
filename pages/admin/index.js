@@ -358,26 +358,20 @@ export default function AdminDashboard() {
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`p-2 rounded-xl ${
-                    log.targetType === "User"
-                      ? "bg-red-500/10 text-red-500"
-                      : "bg-indigo-500/10 text-indigo-500"
-                  }`}
+                  className={`p-2 rounded-xl bg-indigo-500/10 text-indigo-500`}
                 >
-                  {log.targetType === "User" ? (
-                    <Users size={18} />
-                  ) : (
-                    <Activity size={18} />
-                  )}
+                  <ShieldCheck size={18} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold">
-                    {log.adminEmail.split("@")[0]}{" "}
+                  <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                    <span className="text-indigo-500">admin</span>{" "}
                     <span className="font-medium text-gray-500">performed</span>{" "}
-                    {log.action}
+                    {log.action.replace("_", " ")}
                   </p>
-                  <p className="text-[10px] text-gray-400 font-mono mt-0.5">
-                    {JSON.stringify(log.details || {})}
+                  <p className="text-[10px] text-gray-400 font-mono mt-0.5 opacity-60">
+                    ID:{" "}
+                    {log.targetId?.substring(log.targetId.length - 6) ||
+                      "SYSTEM"}
                   </p>
                 </div>
               </div>

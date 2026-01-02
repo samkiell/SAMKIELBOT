@@ -29,6 +29,7 @@ import {
   deleteNotification,
   getRevenueStats,
   getInfraOverview,
+  throttleBot,
 } from "@/lib/controllers/adminController";
 import {
   getTickets,
@@ -175,6 +176,18 @@ export default async function handler(req, res) {
         ) {
           req.params = { id: slug[1] };
           return await suspendBot(req, res);
+        }
+
+        // Route: POST /api/admin/bots/:id/throttle
+        if (
+          slug &&
+          slug[0] === "bots" &&
+          slug[1] &&
+          slug[2] === "throttle" &&
+          method === "POST"
+        ) {
+          req.params = { id: slug[1] };
+          return await throttleBot(req, res);
         }
 
         // Route: DELETE /api/admin/bots/:id

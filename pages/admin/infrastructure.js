@@ -16,6 +16,7 @@ import {
   Zap,
   ChevronRight,
   ShieldAlert,
+  RefreshCcw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import io from "socket.io-client";
@@ -182,10 +183,20 @@ export default function InfrastructureControlPlane() {
           </div>
           <div className="w-px h-8 bg-gray-200 dark:bg-gray-700 mx-1" />
           <button
-            onClick={fetchData}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-indigo-500"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-black uppercase tracking-widest text-[10px] sm:text-xs ${
+              refreshing
+                ? "bg-indigo-500/20 text-indigo-400 cursor-not-allowed"
+                : "bg-indigo-500 text-white hover:bg-indigo-600 shadow-xl shadow-indigo-500/40 active:scale-95 hover:-translate-y-0.5"
+            }`}
           >
-            <Activity size={18} />
+            {refreshing ? (
+              <RefreshCcw size={16} className="animate-spin" />
+            ) : (
+              <Zap size={16} className="fill-current" />
+            )}
+            {refreshing ? "SYNCING..." : "FORCE FETCH"}
           </button>
         </div>
       </div>

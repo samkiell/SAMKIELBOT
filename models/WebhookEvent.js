@@ -15,7 +15,6 @@ const webhookEventSchema = new mongoose.Schema(
     },
     reference: {
       type: String,
-      index: true,
     },
     data: {
       type: mongoose.Schema.Types.Mixed,

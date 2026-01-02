@@ -91,10 +91,17 @@ export default function InfrastructureControlPlane() {
     }
   };
 
-  const handleThrottle = async (botId, currentRam) => {
+  const handleThrottle = async (botId, currentRam, currentCpu, currentDisk) => {
     const newRam = prompt("Enter new RAM limit (MB):", currentRam);
-    if (!newRam || isNaN(newRam)) return;
+    if (newRam === null) return;
 
+    const newCpu = prompt("Enter new CPU limit (%):", currentCpu || 100);
+    if (newCpu === null) return;
+
+    const newDisk = prompt("Enter new Disk limit (MB):", currentDisk || 1024);
+    if (newDisk === null) return;
+
+    setRefreshing(true);
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/bots/${botId}/throttle`,
@@ -104,15 +111,24 @@ export default function InfrastructureControlPlane() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ memory: parseInt(newRam) }),
+          body: JSON.stringify({
+            memory: parseInt(newRam),
+            cpu: parseInt(newCpu),
+            disk: parseInt(newDisk),
+          }),
         }
       );
       const resData = await res.json();
       if (resData.success) {
-        toast.success("Resource limit updated");
+        toast.success("Resource limits updated");
+        fetchData(); // Refresh data to show new limits
+      } else {
+        toast.error(resData.message || "Failed to update resources");
       }
     } catch (err) {
       toast.error("Failed to update resources");
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -383,7 +399,14 @@ export default function InfrastructureControlPlane() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => handleThrottle(bot.id, bot.limitRam)}
+                          onClick={() =>
+                            handleThrottle(
+                              bot.id,
+                              bot.limitRam,
+                              bot.limitCpu,
+                              bot.limitDisk
+                            )
+                          }
                           className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-500 rounded-lg"
                           title="Adjust Limits"
                         >

@@ -66,7 +66,6 @@ export default function UserDetails() {
       );
       const botsData = await botsRes.json();
       setUserBots(botsData.data || []);
-      setLoading(false);
 
       // Fetch User Referrals
       const referralsRes = await fetch(
@@ -315,6 +314,19 @@ export default function UserDetails() {
                   {userDetail.accountStatus || "Active"}
                 </span>
               </div>
+              {userDetail.referredBy && (
+                <div className="flex justify-between mt-2 pt-2 border-t border-gray-50 dark:border-gray-700/50">
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Referred By
+                  </span>
+                  <Link
+                    href={`/admin/users/${userDetail.referredBy._id}`}
+                    className="text-indigo-500 font-bold hover:underline"
+                  >
+                    @{userDetail.referredBy.username}
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
 

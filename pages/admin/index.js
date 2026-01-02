@@ -153,7 +153,7 @@ export default function AdminDashboard() {
         />
         <SummaryCard
           title="TODAY'S REVENUE"
-          value={`$${stats?.revenueToday || 0}`}
+          value={`₦${stats?.revenueToday || 0}`}
           trend={stats?.revenueGrowth || "+0%"}
           icon={DollarSign}
           color="amber"

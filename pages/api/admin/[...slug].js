@@ -105,6 +105,18 @@ export default async function handler(req, res) {
           return await getUserBots(req, res);
         }
 
+        // Route: GET /api/admin/users/:id/referrals
+        if (
+          slug &&
+          slug[0] === "users" &&
+          slug[1] &&
+          slug[2] === "referrals" &&
+          method === "GET"
+        ) {
+          req.params = { id: slug[1] };
+          return await getUserReferrals(req, res);
+        }
+
         // Route: GET /api/admin/users/:id/credits
         if (
           slug &&

@@ -24,6 +24,7 @@ export default function UserDetails() {
 
   const [userDetail, setUserDetail] = useState(null);
   const [userBots, setUserBots] = useState([]);
+  const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
 
@@ -65,6 +66,17 @@ export default function UserDetails() {
       );
       const botsData = await botsRes.json();
       setUserBots(botsData.data || []);
+      setLoading(false);
+
+      // Fetch User Referrals
+      const referralsRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}/referrals`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const referralsData = await referralsRes.json();
+      setReferrals(referralsData.data || []);
     } catch (err) {
       toast.error("Failed to fetch user data");
     } finally {
@@ -371,7 +383,7 @@ export default function UserDetails() {
           {userBots.length})
         </h2>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-12">
           {userBots.length === 0 ? (
             <div className="p-12 text-center text-gray-500">
               No bots deployed by this user.
@@ -382,7 +394,7 @@ export default function UserDetails() {
                 <thead className="bg-gray-50 dark:bg-gray-700/50">
                   <tr>
                     <th className="px-6 py-4">Bot</th>
-                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4 text-center">Status</th>
                     <th className="px-6 py-4 text-right">Controls</th>
                   </tr>
                 </thead>
@@ -405,8 +417,10 @@ export default function UserDetails() {
                           ID: {bot._id}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        {getStatusBadge(bot.status)}
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex justify-center">
+                          {getStatusBadge(bot.status)}
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2">
@@ -433,7 +447,7 @@ export default function UserDetails() {
                           >
                             <RotateCcw size={16} />
                           </button>
-                          <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                          <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1"></div>
                           <button
                             onClick={() =>
                               setConfirmModal({
@@ -462,6 +476,62 @@ export default function UserDetails() {
                             <Trash2 size={16} />
                           </button>
                         </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Referred Users Selection */}
+        <h2 className="text-xl font-bold mt-12 mb-4 flex items-center gap-2">
+          <span className="text-indigo-500">🤝</span> Referred Users (
+          {referrals.length})
+        </h2>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-12">
+          {referrals.length === 0 ? (
+            <div className="p-12 text-center text-gray-500">
+              No users referred by this user.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-gray-50 dark:bg-gray-700/50">
+                  <tr>
+                    <th className="px-6 py-4">User</th>
+                    <th className="px-6 py-4 text-center">Credits</th>
+                    <th className="px-6 py-4 text-right">Joined At</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {referrals.map((refUser) => (
+                    <tr
+                      key={refUser._id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/30 group"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-gray-900 dark:text-gray-100">
+                          <Link
+                            href={`/admin/users/${refUser._id}`}
+                            className="hover:text-indigo-600 transition-colors"
+                          >
+                            {refUser.username || refUser.fullName}
+                          </Link>
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {refUser.email}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className="font-mono font-bold text-yellow-600 dark:text-yellow-500">
+                          {Math.round(refUser.credits)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right text-sm text-gray-500">
+                        {new Date(refUser.createdAt).toLocaleDateString()}
                       </td>
                     </tr>
                   ))}

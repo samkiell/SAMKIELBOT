@@ -106,6 +106,14 @@ export default function InfrastructureControlPlane() {
   const host = data?.host;
   const prediction = data?.prediction;
 
+  const formatUptime = (minutes) => {
+    if (!minutes) return "0m";
+    const d = Math.floor(minutes / 1440);
+    const h = Math.floor((minutes % 1440) / 60);
+    const m = minutes % 60;
+    return `${d > 0 ? d + "d " : ""}${h > 0 ? h + "h " : ""}${m}m`;
+  };
+
   return (
     <AdminLayout>
       <Head>
@@ -128,9 +136,14 @@ export default function InfrastructureControlPlane() {
               Live
             </div>
           </div>
-          <p className="text-gray-500 flex items-center gap-2 text-sm">
-            <Server size={14} /> {data?.name || "Initializing..."} •{" "}
-            {data?.dropletId}
+          <p className="text-gray-500 flex items-center gap-3 text-sm">
+            <Server size={14} /> {data?.name || "Initializing..."}
+            <span className="w-1 h-1 rounded-full bg-gray-300" />
+            <span className="flex items-center gap-1 text-indigo-500 font-medium">
+              <Clock size={12} /> {formatUptime(data?.uptimeMinutes)}
+            </span>
+            <span className="w-1 h-1 rounded-full bg-gray-300" />
+            ID: {data?.dropletId}
           </p>
         </div>
 

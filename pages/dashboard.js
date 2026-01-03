@@ -108,9 +108,9 @@ export default function Dashboard() {
 
         if (activeBotsCount > 0) {
           const dailyBurn = activeBotsCount * 5;
-          const threeDayThreshold = dailyBurn * 3;
+          const lowBalanceThreshold = dailyBurn * 2;
 
-          if (user.credits < threeDayThreshold) {
+          if (user.credits < lowBalanceThreshold) {
             toast(
               (t) => (
                 <div className="flex flex-col gap-1">
@@ -119,7 +119,7 @@ export default function Dashboard() {
                   </span>
                   <span className="text-xs text-gray-600 dark:text-gray-300">
                     Your balance ({Math.round(user.credits)} credits) will last
-                    less than 3 days. Total daily burn: {dailyBurn} credits.
+                    less than 2 days. Total daily burn: {dailyBurn} credits.
                   </span>
                   <Link
                     href="/credits/buy"

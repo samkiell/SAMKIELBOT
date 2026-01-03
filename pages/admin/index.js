@@ -260,52 +260,74 @@ export default function AdminDashboard() {
                 Active Bot Loads
               </p>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {infra?.bots?.slice(0, 5).map((bot) => (
                 <Link
                   key={bot.id}
                   href={`/admin/bots/${bot.id}`}
-                  className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-indigo-500/30 transition-all group cursor-pointer block"
+                  className="flex items-center justify-between p-5 bg-white dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800/60 hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group cursor-pointer block"
                 >
                   <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          bot.state === "running"
-                            ? "bg-emerald-500 shadow-[0_0_10px_#10b981]"
-                            : "bg-gray-500"
-                        }`}
-                      />
+                    <div className="flex items-center gap-5">
+                      <div className="relative">
+                        <div
+                          className={`w-3 h-3 rounded-full ${
+                            bot.state === "running"
+                              ? "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.6)]"
+                              : "bg-gray-400 dark:bg-gray-600 shadow-none"
+                          }`}
+                        />
+                        {bot.state === "running" && (
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.5, 1],
+                              opacity: [0.5, 0, 0.5],
+                            }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="absolute inset-0 rounded-full bg-emerald-500"
+                          />
+                        )}
+                      </div>
                       <div>
-                        <span className="text-sm font-bold text-gray-900 dark:text-gray-100 italic">
+                        <span className="text-lg font-black text-gray-900 dark:text-white tracking-tight leading-none block mb-1">
                           {bot.name}
                         </span>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
-                          {bot.user || "System"}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-black bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded uppercase tracking-widest">
+                            OWNER
+                          </span>
+                          <span className="text-xs font-bold text-gray-500 dark:text-gray-400 capitalize">
+                            {bot.user || "System"}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-8">
+
+                    <div className="flex items-center gap-10">
                       <div className="text-right">
-                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                          MEMORY
+                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-1">
+                          RAM ALLOC
                         </p>
-                        <p className="text-xs font-black font-mono text-indigo-500">
-                          {bot.usedRam}MB
+                        <p className="text-lg font-black font-mono text-indigo-600 dark:text-indigo-400">
+                          {bot.usedRam}
+                          <span className="text-xs ml-0.5 opacity-60">MB</span>
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                          PROCESSOR
+                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-1">
+                          CPU LOAD
                         </p>
-                        <p className="text-xs font-black font-mono text-emerald-500">
-                          {bot.usedCpu}%
+                        <p className="text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
+                          {bot.usedCpu}
+                          <span className="text-xs ml-0.5 opacity-60">%</span>
                         </p>
                       </div>
-                      <ChevronRight
-                        size={16}
-                        className="text-gray-300 group-hover:text-indigo-500 transition-colors"
-                      />
+                      <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-800 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                        <ChevronRight
+                          size={20}
+                          className="text-gray-400 dark:text-gray-300"
+                        />
+                      </div>
                     </div>
                   </div>
                 </Link>

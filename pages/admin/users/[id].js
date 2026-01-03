@@ -238,357 +238,199 @@ export default function UserDetails() {
   if (!userDetail) return <div>User not found</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white pb-20">
+    <div className="min-h-screen bg-white dark:bg-[#0a0a0b] text-gray-900 dark:text-white pb-20">
       <Head>
-        <title>{userDetail.username} - Admin Panel</title>
+        <title>{userDetail.username} | User Command Center</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Link
-            href="/admin"
-            className="p-2 bg-white dark:bg-gray-800 rounded-full shadow-sm hover:scale-105 transition-all"
-          >
-            <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              {userDetail.username}
-            </h1>
-            <p className="text-gray-500 text-sm font-mono">
-              {userDetail.email}
-            </p>
-          </div>
-          <div className="ml-auto">
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-bold ${
-                userDetail.role === "admin"
-                  ? "bg-purple-100 text-purple-700"
-                  : "bg-green-100 text-green-700"
-              }`}
-            >
-              {userDetail.role.toUpperCase()}
-            </span>
-          </div>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Back Button */}
+        <Link
+          href="/admin/users"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-indigo-500 font-bold mb-8 transition-colors group"
+        >
+          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+          Back to User Base
+        </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          {/* Bio & Contact */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <span className="text-indigo-500">👤</span> Personal Info
-            </h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
-                  Full Name
-                </span>
-                <span className="font-medium">
-                  {userDetail.fullName || "N/A"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
-                  WhatsApp
-                </span>
-                <span className="font-mono">
-                  {userDetail.whatsappNumber || "N/A"}
+        {/* Identity Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 rounded-[32px] bg-indigo-600 flex items-center justify-center text-white text-3xl font-black shadow-2xl shadow-indigo-500/20">
+              {userDetail.username?.[0]?.toUpperCase()}
+            </div>
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <h1 className="text-4xl font-black tracking-tight">{userDetail.username}</h1>
+                <span className={`px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest ${
+                  userDetail.role === "admin" 
+                    ? "bg-purple-500/10 text-purple-500 border border-purple-500/20" 
+                    : "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
+                }`}>
+                  {userDetail.role}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">Joined</span>
-                <span>
-                  {new Date(userDetail.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-500 dark:text-gray-400">Status</span>
-                <span
-                  className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${
-                    userDetail.accountStatus === "active"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {userDetail.accountStatus || "Active"}
-                </span>
-              </div>
-              {userDetail.referredBy && (
-                <div className="flex justify-between mt-2 pt-2 border-t border-gray-50 dark:border-gray-700/50">
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Referred By
-                  </span>
-                  <Link
-                    href={`/admin/users/${userDetail.referredBy._id}`}
-                    className="text-indigo-500 font-bold hover:underline"
-                  >
-                    @{userDetail.referredBy.username}
-                  </Link>
-                </div>
-              )}
+              <p className="text-gray-500 font-medium">{userDetail.email}</p>
             </div>
           </div>
 
-          {/* Credits & Billing */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <span className="text-yellow-500">🪙</span> Credits & Plan
-            </h3>
-            <div className="text-center mb-4">
-              <div className="text-4xl font-black text-gray-900 dark:text-white">
-                {Math.round(userDetail.credits || 0)}
-              </div>
-              <div className="text-xs text-gray-500 uppercase tracking-wide">
-                Available Credits
-              </div>
-            </div>
-            <div className="space-y-3 text-sm border-t border-gray-100 dark:border-gray-700 pt-4">
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
-                  Referrals
-                </span>
-                <span className="font-medium">
-                  {userDetail.totalReferrals || 0}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Limits */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <span className="text-blue-500">⚡</span> Account Limits
-            </h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
-                  Max Bots
-                </span>
-                <span className="font-medium">
-                  {userDetail.limits?.maxBots || 3}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
-                  Max RAM
-                </span>
-                <span className="font-medium">
-                  {userDetail.limits?.maxRam || 512} MB
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500 dark:text-gray-400">
-                  Max CPU
-                </span>
-                <span className="font-medium">
-                  {userDetail.limits?.maxCpu || 100}%
-                </span>
-              </div>
+          <div className="flex items-center gap-4">
+            <div className={`px-4 py-2 rounded-2xl font-black text-xs uppercase tracking-widest ${
+              userDetail.accountStatus === 'active' 
+                ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                : 'bg-red-500/10 text-red-500 border border-red-500/20'
+            }`}>
+              {userDetail.accountStatus || 'ACTIVE'}
             </div>
           </div>
         </div>
 
-        {/* Bots Selection */}
-        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <Shield size={20} className="text-indigo-600" /> Deployed Bots (
-          {userBots.length})
-        </h2>
+        {/* Intelligence Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <DetailStatCard 
+            label="WALLET BALANCE" 
+            value={Math.round(userDetail.credits || 0)} 
+            icon="🪙" 
+            suffix="CREDITS"
+          />
+          <DetailStatCard 
+            label="DEPLOYED FLEET" 
+            value={userBots.length} 
+            icon="🤖" 
+            suffix="BOTS"
+          />
+          <DetailStatCard 
+            label="RESOURCE CEILING" 
+            value={userDetail.limits?.maxRam || 512} 
+            icon="⚡" 
+            suffix="MB RAM"
+          />
+          <DetailStatCard 
+            label="NETWORK GROWTH" 
+            value={referrals.length} 
+            icon="🤝" 
+            suffix="REFERRALS"
+          />
+        </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-12">
-          {userBots.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              No bots deployed by this user.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-gray-50 dark:bg-gray-700/50">
-                  <tr>
-                    <th className="px-6 py-4">Bot</th>
-                    <th className="px-6 py-4 text-center">Status</th>
-                    <th className="px-6 py-4 text-right">Controls</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {userBots.map((bot) => (
-                    <tr
-                      key={bot._id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/30"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="font-bold text-indigo-600">
-                          <Link
-                            href={`/admin/bots/${bot._id}`}
-                            className="hover:underline"
-                          >
+        {/* Main Content Areas */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-10">
+          {/* Bot Fleet - Wide Column */}
+          <div className="xl:col-span-2 space-y-6">
+            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+              <span className="w-2 h-8 bg-indigo-600 rounded-full" />
+              Active Deployments
+            </h2>
+
+            {userBots.length === 0 ? (
+              <div className="bg-gray-50 dark:bg-gray-900/50 border border-dashed border-gray-200 dark:border-gray-800 rounded-[32px] p-20 text-center text-gray-400 font-bold">
+                No active bot instances detected.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {userBots.map((bot) => (
+                  <div key={bot._id} className="bg-white dark:bg-[#111827] p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all">
+                    <div className="flex flex-col md:flex-row lg:items-center justify-between gap-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-xl">
+                          🤖
+                        </div>
+                        <div>
+                          <Link href={`/admin/bots/${bot._id}`} className="text-lg font-black hover:text-indigo-500 transition-colors">
                             {bot.botName || `Bot ${bot.botNumber}`}
                           </Link>
+                          <div className="text-[10px] font-mono text-gray-400 mt-1 uppercase tracking-wider">
+                            ID: {bot._id}
+                          </div>
                         </div>
-                        <div className="text-xs font-mono text-gray-400">
-                          ID: {bot._id}
+                      </div>
+                      
+                      <div className="flex items-center gap-4 flex-wrap">
+                        {getStatusBadge(bot.status)}
+                        <div className="h-6 w-px bg-gray-100 dark:bg-gray-800 hidden md:block" />
+                        <div className="flex items-center gap-2">
+                          <ControlBtn icon={Play} color="text-emerald-500" bg="bg-emerald-500/10" onClick={() => handlePowerAction(bot._id, "start")} />
+                          <ControlBtn icon={Square} color="text-red-500" bg="bg-red-500/10" onClick={() => handlePowerAction(bot._id, "stop")} />
+                          <ControlBtn icon={RotateCcw} color="text-blue-500" bg="bg-blue-500/10" onClick={() => handlePowerAction(bot._id, "restart")} />
+                          <div className="w-px h-6 bg-gray-100 dark:bg-gray-800 mx-1" />
+                          <ControlBtn icon={PauseCircle} color="text-amber-500" bg="bg-amber-500/10" onClick={() => setConfirmModal({ show: true, action: bot.status === "suspended" ? "unsuspend" : "suspend", bot })} />
+                          <ControlBtn icon={Trash2} color="text-red-500" bg="bg-red-500/10" onClick={() => setConfirmModal({ show: true, action: "delete", bot })} />
                         </div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex justify-center">
-                          {getStatusBadge(bot.status)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => handlePowerAction(bot._id, "start")}
-                            disabled={actionLoading === bot._id}
-                            className="p-2 bg-green-100 text-green-600 rounded hover:bg-green-200 disabled:opacity-50"
-                          >
-                            <Play size={16} />
-                          </button>
-                          <button
-                            onClick={() => handlePowerAction(bot._id, "stop")}
-                            disabled={actionLoading === bot._id}
-                            className="p-2 bg-red-100 text-red-600 rounded hover:bg-red-200 disabled:opacity-50"
-                          >
-                            <Square size={16} />
-                          </button>
-                          <button
-                            onClick={() =>
-                              handlePowerAction(bot._id, "restart")
-                            }
-                            disabled={actionLoading === bot._id}
-                            className="p-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 disabled:opacity-50"
-                          >
-                            <RotateCcw size={16} />
-                          </button>
-                          <div className="w-px h-6 bg-gray-300 dark:bg-gray-700 mx-1"></div>
-                          <button
-                            onClick={() =>
-                              setConfirmModal({
-                                show: true,
-                                action:
-                                  bot.status === "suspended"
-                                    ? "unsuspend"
-                                    : "suspend",
-                                bot,
-                              })
-                            }
-                            className="p-2 bg-orange-100 text-orange-600 rounded hover:bg-orange-200"
-                          >
-                            <PauseCircle size={16} />
-                          </button>
-                          <button
-                            onClick={() =>
-                              setConfirmModal({
-                                show: true,
-                                action: "delete",
-                                bot,
-                              })
-                            }
-                            className="p-2 bg-red-100 text-red-600 rounded hover:bg-red-200"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-        {/* Referred Users Selection */}
-        <h2 className="text-xl font-bold mt-12 mb-4 flex items-center gap-2">
-          <span className="text-indigo-500">🤝</span> Referred Users (
-          {referrals.length})
-        </h2>
+          {/* Right Column - Secondary Info */}
+          <div className="space-y-10">
+            {/* Extended Info */}
+            <section className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
+              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Subject Profile</h3>
+              <div className="space-y-6">
+                <ProfileInfoRow label="Legal Name" value={userDetail.fullName || "N/A"} />
+                <ProfileInfoRow label="Direct Comms" value={userDetail.whatsappNumber || "N/A"} />
+                <ProfileInfoRow label="First Access" value={new Date(userDetail.createdAt).toLocaleDateString()} />
+                {userDetail.referredBy && (
+                  <div className="flex justify-between items-center py-4 border-t border-gray-50 dark:border-gray-800">
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Architect</span>
+                    <Link href={`/admin/users/${userDetail.referredBy._id}`} className="text-indigo-500 font-black hover:underline">
+                      @{userDetail.referredBy.username}
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </section>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden mb-12">
-          {referrals.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              No users referred by this user.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-gray-50 dark:bg-gray-700/50">
-                  <tr>
-                    <th className="px-6 py-4">User</th>
-                    <th className="px-6 py-4 text-center">Credits</th>
-                    <th className="px-6 py-4 text-right">Joined At</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {referrals.map((refUser) => (
-                    <tr
-                      key={refUser._id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/30 group"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="font-bold text-gray-900 dark:text-gray-100">
-                          <Link
-                            href={`/admin/users/${refUser._id}`}
-                            className="hover:text-indigo-600 transition-colors"
-                          >
-                            {refUser.username || refUser.fullName}
-                          </Link>
+            {/* Referrals */}
+            <section className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
+              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Referral Network ({referrals.length})</h3>
+              {referrals.length === 0 ? (
+                <p className="text-gray-400 font-bold text-sm italic">No network connections.</p>
+              ) : (
+                <div className="space-y-4">
+                  {referrals.map(ref => (
+                    <Link key={ref._id} href={`/admin/users/${ref._id}`} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black text-xs">
+                          {ref.username?.[0]?.toUpperCase()}
                         </div>
-                        <div className="text-xs text-gray-400">
-                          {refUser.email}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="font-mono font-bold text-yellow-600 dark:text-yellow-500">
-                          {Math.round(refUser.credits)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right text-sm text-gray-500">
-                        {new Date(refUser.createdAt).toLocaleDateString()}
-                      </td>
-                    </tr>
+                        <span className="font-bold text-sm group-hover:text-indigo-500 transition-colors truncate max-w-[100px]">{ref.username}</span>
+                      </div>
+                      <span className="font-mono text-[10px] text-gray-400">{new Date(ref.createdAt).toLocaleDateString()}</span>
+                    </Link>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                </div>
+              )}
+            </section>
+          </div>
         </div>
 
         {/* Confirmation Modal */}
         {confirmModal.show && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-3 text-red-600 mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+            <div className="bg-white dark:bg-gray-900 rounded-[40px] shadow-2xl max-w-md w-full p-10 border border-gray-100 dark:border-gray-800">
+              <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 mb-6">
                 <AlertTriangle size={32} />
-                <h3 className="text-xl font-bold">Confirm Action</h3>
               </div>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Are you sure you want to
-                <span className="font-bold text-red-500 mx-1 uppercase">
-                  {confirmModal.action}
-                </span>
-                <span className="font-mono bg-gray-100 dark:bg-gray-700 px-1 rounded ml-1">
-                  {confirmModal.bot.botName || "Bot"}
-                </span>
-                ?
+              <h3 className="text-2xl font-black tracking-tight mb-2">Authorize Action</h3>
+              <p className="text-gray-500 font-medium mb-8">
+                Confirm {confirmModal.action} signal for <span className="font-mono text-indigo-500 bg-indigo-500/5 px-2 py-0.5 rounded">{confirmModal.bot.botName || "instance"}</span>. This cannot be undone.
               </p>
-              <div className="flex justify-end gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <button
-                  onClick={() =>
-                    setConfirmModal({ show: false, action: null, bot: null })
-                  }
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  onClick={() => setConfirmModal({ show: false, action: null, bot: null })}
+                  className="px-6 py-4 text-gray-600 dark:text-gray-300 font-black text-sm uppercase tracking-widest hover:bg-gray-100 dark:hover:bg-gray-800 rounded-2xl transition-all"
                 >
-                  Cancel
+                  Abort
                 </button>
                 <button
-                  onClick={() =>
-                    confirmModal.action === "delete"
-                      ? handleDelete(confirmModal.bot._id)
-                      : handleSuspend(confirmModal.bot)
-                  }
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium shadow-lg shadow-red-500/30"
+                  onClick={() => confirmModal.action === "delete" ? handleDelete(confirmModal.bot._id) : handleSuspend(confirmModal.bot)}
+                  className="px-6 py-4 bg-red-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20"
                 >
-                  Confirm {confirmModal.action}
+                  Execute
                 </button>
               </div>
             </div>
@@ -596,5 +438,38 @@ export default function UserDetails() {
         )}
       </div>
     </div>
+  );
+}
+
+function DetailStatCard({ label, value, icon, suffix }) {
+  return (
+    <div className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
+      <div className="text-2xl mb-4">{icon}</div>
+      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{label}</p>
+      <div className="flex items-baseline gap-2">
+        <span className="text-3xl font-black tracking-tighter">{value}</span>
+        <span className="text-[10px] font-bold text-gray-400">{suffix}</span>
+      </div>
+    </div>
+  );
+}
+
+function ProfileInfoRow({ label, value }) {
+  return (
+    <div className="flex justify-between items-center py-2">
+      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+      <span className="text-sm font-black">{value}</span>
+    </div>
+  );
+}
+
+function ControlBtn({ icon: Icon, color, bg, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`p-3 rounded-xl transition-all hover:scale-110 active:scale-90 ${color} ${bg}`}
+    >
+      <Icon size={18} />
+    </button>
   );
 }

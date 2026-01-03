@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell } from "lucide-react";
+import { Bell, Trash2 } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import Link from "next/link";
 
@@ -63,6 +63,30 @@ export default function NotificationDropdown() {
     } catch (e) {}
   };
 
+  const deleteNotification = async (id, e) => {
+    e.stopPropagation();
+    if (!confirm("Are you sure you want to delete this notification?")) return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/notifications/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.ok) {
+        setNotifications((prev) => prev.filter((n) => n._id !== id));
+        fetchNotifications(); // Update unread count
+      }
+    } catch (e) {
+      console.error("Failed to delete", e);
+    }
+  };
+
   return (
     <div className="relative">
       <button
@@ -110,15 +134,24 @@ export default function NotificationDropdown() {
                     notification.isRead
                       ? "bg-white dark:bg-gray-800 opacity-60"
                       : "bg-indigo-50 dark:bg-indigo-900/20"
-                  }`}
+                  } group`}
                 >
                   <div className="flex justify-between items-start mb-1">
-                    <p className="font-semibold text-sm text-gray-800 dark:text-gray-200">
+                    <p className="font-semibold text-sm text-gray-800 dark:text-gray-200 flex-1 mr-2">
                       {notification.title}
                     </p>
-                    {!notification.isRead && (
-                      <div className="h-2 w-2 rounded-full bg-indigo-500 mt-1"></div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {!notification.isRead && (
+                        <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
+                      )}
+                      <button
+                        onClick={(e) => deleteNotification(notification._id, e)}
+                        className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                        title="Delete notification"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap">
                     {notification.message}

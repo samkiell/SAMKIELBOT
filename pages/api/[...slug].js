@@ -2,6 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import {
   getNotifications,
   markRead,
+  deleteNotification,
   createSuggestion,
   getBotsList,
 } from "@/lib/controllers/interactionsController";
@@ -30,6 +31,21 @@ export default async function handler(req, res) {
     ) {
       return await protect(req, res, async () => {
         return await markRead(req, res);
+      });
+    }
+
+    // Route: DELETE /api/notifications/:id
+    if (
+      slug &&
+      slug[0] === "notifications" &&
+      slug[1] &&
+      slug[1] !== "read" &&
+      method === "DELETE"
+    ) {
+      // Inject ID into query if not already present (though req.query.slug has it, deleteNotification expects req.query.id or we can set it)
+      req.query.id = slug[1];
+      return await protect(req, res, async () => {
+        return await deleteNotification(req, res);
       });
     }
 

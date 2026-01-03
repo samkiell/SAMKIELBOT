@@ -30,17 +30,37 @@ export default function AdminNotifications() {
     linkText: "",
   });
 
-  // Fetch notifications
+  // Filters
+  const [filterType, setFilterType] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [userSearch, setUserSearch] = useState("");
+
+  // Debounce for search
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Fetch notifications with filters
   const fetchNotifications = async () => {
+    setLoading(true);
     try {
-      const res = await fetch("/api/admin/notifications", {
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append("search", debouncedSearch);
+      if (filterType !== "all") params.append("type", filterType);
+      if (userSearch) params.append("userSearch", userSearch);
+
+      const res = await fetch(`/api/admin/notifications?${params.toString()}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       const data = await res.json();
       if (data.success) {
-        // Show ALL notifications
         setNotifications(data.data);
       } else {
         toast.error("Failed to fetch notifications");
@@ -55,7 +75,7 @@ export default function AdminNotifications() {
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [debouncedSearch, filterType, userSearch]); // Re-fetch when filters change (ignoring direct searchQuery to avoid rapid fire)
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -249,12 +269,42 @@ export default function AdminNotifications() {
         {/* Right Column: History Table */}
         <div className="lg:col-span-2">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
                 Broadcast History
               </h2>
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <input
+                  type="text"
+                  placeholder="Search messages..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
+                />
+                <input
+                  type="text"
+                  placeholder="Filter by User (Username/Email)"
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
+                />
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
+                >
+                  <option value="all">All Types</option>
+                  <option value="info">Info</option>
+                  <option value="success">Success</option>
+                  <option value="warning">Warning</option>
+                  <option value="error">Error</option>
+                  <option value="update">Update</option>
+                  <option value="maintenance">Maintenance</option>
+                  <option value="announcement">Announcement</option>
+                </select>
+              </div>
               <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
-                {notifications.length} Sent
+                {notifications.length} Found
               </span>
             </div>
 
@@ -264,7 +314,7 @@ export default function AdminNotifications() {
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-12 text-center text-gray-500">
-                No broadcast history found.
+                No matching notifications found.
               </div>
             ) : (
               <div className="overflow-x-auto">

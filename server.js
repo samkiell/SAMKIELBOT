@@ -7,6 +7,7 @@ const path = require("path");
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config({ path: path.resolve(__dirname, ".env.local") });
 
 const dev = process.env.NODE_ENV !== "production";
 // No explicit hostname to allow defaults

@@ -80,12 +80,13 @@ export default function AdminRevenue() {
         ...(filters.endDate && { endDate: filters.endDate }),
       });
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/revenue?${queryParams}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+        /\/$/,
+        ""
       );
+      const res = await fetch(`${apiUrl}/admin/revenue?${queryParams}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const result = await res.json();
       if (result.success) {
         setData(result.data);

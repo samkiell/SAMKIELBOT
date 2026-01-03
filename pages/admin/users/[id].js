@@ -47,29 +47,28 @@ export default function UserDetails() {
   const fetchUserDetails = async () => {
     setLoading(true);
     try {
-      // Fetch User Details
-      const userRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+        /\/$/,
+        ""
       );
+
+      // Fetch User Details
+      const userRes = await fetch(`${apiUrl}/admin/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const userData = await userRes.json();
       setUserDetail(userData.data);
 
       // Fetch User Bots
-      const botsRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}/bots`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const botsRes = await fetch(`${apiUrl}/admin/users/${id}/bots`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const botsData = await botsRes.json();
       setUserBots(botsData.data || []);
 
       // Fetch User Referrals
       const referralsRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}/referrals`,
+        `${apiUrl}/admin/users/${id}/referrals`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -85,18 +84,19 @@ export default function UserDetails() {
 
   const handlePowerAction = async (botId, signal) => {
     setActionLoading(botId);
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+      /\/$/,
+      ""
+    );
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/bots/${botId}/power`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ signal }),
-        }
-      );
+      const res = await fetch(`${apiUrl}/admin/bots/${botId}/power`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ signal }),
+      });
 
       if (!res.ok) throw new Error("Action failed");
 
@@ -112,18 +112,19 @@ export default function UserDetails() {
   const handleSuspend = async (bot) => {
     const action = bot.status === "suspended" ? "unsuspend" : "suspend";
     setActionLoading(bot._id);
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+      /\/$/,
+      ""
+    );
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/bots/${bot._id}/suspend`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ action }),
-        }
-      );
+      const res = await fetch(`${apiUrl}/admin/bots/${bot._id}/suspend`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
 
       if (!res.ok) throw new Error("Suspend failed");
 
@@ -139,14 +140,15 @@ export default function UserDetails() {
 
   const handleDelete = async (botId) => {
     setActionLoading(botId);
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+      /\/$/,
+      ""
+    );
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/bots/${botId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await fetch(`${apiUrl}/admin/bots/${botId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (!res.ok) throw new Error("Delete failed");
 
@@ -249,7 +251,10 @@ export default function UserDetails() {
           href="/admin/users"
           className="inline-flex items-center gap-2 text-gray-500 hover:text-indigo-500 font-bold mb-8 transition-colors group"
         >
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+          <ArrowLeft
+            size={18}
+            className="group-hover:-translate-x-1 transition-transform"
+          />
           Back to User Base
         </Link>
 
@@ -261,12 +266,16 @@ export default function UserDetails() {
             </div>
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-4xl font-black tracking-tight">{userDetail.username}</h1>
-                <span className={`px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest ${
-                  userDetail.role === "admin" 
-                    ? "bg-purple-500/10 text-purple-500 border border-purple-500/20" 
-                    : "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
-                }`}>
+                <h1 className="text-4xl font-black tracking-tight">
+                  {userDetail.username}
+                </h1>
+                <span
+                  className={`px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest ${
+                    userDetail.role === "admin"
+                      ? "bg-purple-500/10 text-purple-500 border border-purple-500/20"
+                      : "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
+                  }`}
+                >
                   {userDetail.role}
                 </span>
               </div>
@@ -275,40 +284,42 @@ export default function UserDetails() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className={`px-4 py-2 rounded-2xl font-black text-xs uppercase tracking-widest ${
-              userDetail.accountStatus === 'active' 
-                ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-                : 'bg-red-500/10 text-red-500 border border-red-500/20'
-            }`}>
-              {userDetail.accountStatus || 'ACTIVE'}
+            <div
+              className={`px-4 py-2 rounded-2xl font-black text-xs uppercase tracking-widest ${
+                userDetail.accountStatus === "active"
+                  ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                  : "bg-red-500/10 text-red-500 border border-red-500/20"
+              }`}
+            >
+              {userDetail.accountStatus || "ACTIVE"}
             </div>
           </div>
         </div>
 
         {/* Intelligence Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <DetailStatCard 
-            label="WALLET BALANCE" 
-            value={Math.round(userDetail.credits || 0)} 
-            icon="🪙" 
+          <DetailStatCard
+            label="WALLET BALANCE"
+            value={Math.round(userDetail.credits || 0)}
+            icon="🪙"
             suffix="CREDITS"
           />
-          <DetailStatCard 
-            label="DEPLOYED FLEET" 
-            value={userBots.length} 
-            icon="🤖" 
+          <DetailStatCard
+            label="DEPLOYED FLEET"
+            value={userBots.length}
+            icon="🤖"
             suffix="BOTS"
           />
-          <DetailStatCard 
-            label="RESOURCE CEILING" 
-            value={userDetail.limits?.maxRam || 512} 
-            icon="⚡" 
+          <DetailStatCard
+            label="RESOURCE CEILING"
+            value={userDetail.limits?.maxRam || 512}
+            icon="⚡"
             suffix="MB RAM"
           />
-          <DetailStatCard 
-            label="NETWORK GROWTH" 
-            value={referrals.length} 
-            icon="🤝" 
+          <DetailStatCard
+            label="NETWORK GROWTH"
+            value={referrals.length}
+            icon="🤝"
             suffix="REFERRALS"
           />
         </div>
@@ -329,14 +340,20 @@ export default function UserDetails() {
             ) : (
               <div className="space-y-4">
                 {userBots.map((bot) => (
-                  <div key={bot._id} className="bg-white dark:bg-[#111827] p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all">
+                  <div
+                    key={bot._id}
+                    className="bg-white dark:bg-[#111827] p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all"
+                  >
                     <div className="flex flex-col md:flex-row lg:items-center justify-between gap-6">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-xl">
                           🤖
                         </div>
                         <div>
-                          <Link href={`/admin/bots/${bot._id}`} className="text-lg font-black hover:text-indigo-500 transition-colors">
+                          <Link
+                            href={`/admin/bots/${bot._id}`}
+                            className="text-lg font-black hover:text-indigo-500 transition-colors"
+                          >
                             {bot.botName || `Bot ${bot.botNumber}`}
                           </Link>
                           <div className="text-[10px] font-mono text-gray-400 mt-1 uppercase tracking-wider">
@@ -344,17 +361,59 @@ export default function UserDetails() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-4 flex-wrap">
                         {getStatusBadge(bot.status)}
                         <div className="h-6 w-px bg-gray-100 dark:bg-gray-800 hidden md:block" />
                         <div className="flex items-center gap-2">
-                          <ControlBtn icon={Play} color="text-emerald-500" bg="bg-emerald-500/10" onClick={() => handlePowerAction(bot._id, "start")} />
-                          <ControlBtn icon={Square} color="text-red-500" bg="bg-red-500/10" onClick={() => handlePowerAction(bot._id, "stop")} />
-                          <ControlBtn icon={RotateCcw} color="text-blue-500" bg="bg-blue-500/10" onClick={() => handlePowerAction(bot._id, "restart")} />
+                          <ControlBtn
+                            icon={Play}
+                            color="text-emerald-500"
+                            bg="bg-emerald-500/10"
+                            onClick={() => handlePowerAction(bot._id, "start")}
+                          />
+                          <ControlBtn
+                            icon={Square}
+                            color="text-red-500"
+                            bg="bg-red-500/10"
+                            onClick={() => handlePowerAction(bot._id, "stop")}
+                          />
+                          <ControlBtn
+                            icon={RotateCcw}
+                            color="text-blue-500"
+                            bg="bg-blue-500/10"
+                            onClick={() =>
+                              handlePowerAction(bot._id, "restart")
+                            }
+                          />
                           <div className="w-px h-6 bg-gray-100 dark:bg-gray-800 mx-1" />
-                          <ControlBtn icon={PauseCircle} color="text-amber-500" bg="bg-amber-500/10" onClick={() => setConfirmModal({ show: true, action: bot.status === "suspended" ? "unsuspend" : "suspend", bot })} />
-                          <ControlBtn icon={Trash2} color="text-red-500" bg="bg-red-500/10" onClick={() => setConfirmModal({ show: true, action: "delete", bot })} />
+                          <ControlBtn
+                            icon={PauseCircle}
+                            color="text-amber-500"
+                            bg="bg-amber-500/10"
+                            onClick={() =>
+                              setConfirmModal({
+                                show: true,
+                                action:
+                                  bot.status === "suspended"
+                                    ? "unsuspend"
+                                    : "suspend",
+                                bot,
+                              })
+                            }
+                          />
+                          <ControlBtn
+                            icon={Trash2}
+                            color="text-red-500"
+                            bg="bg-red-500/10"
+                            onClick={() =>
+                              setConfirmModal({
+                                show: true,
+                                action: "delete",
+                                bot,
+                              })
+                            }
+                          />
                         </div>
                       </div>
                     </div>
@@ -368,15 +427,31 @@ export default function UserDetails() {
           <div className="space-y-10">
             {/* Extended Info */}
             <section className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
-              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Subject Profile</h3>
+              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">
+                Subject Profile
+              </h3>
               <div className="space-y-6">
-                <ProfileInfoRow label="Legal Name" value={userDetail.fullName || "N/A"} />
-                <ProfileInfoRow label="Direct Comms" value={userDetail.whatsappNumber || "N/A"} />
-                <ProfileInfoRow label="First Access" value={new Date(userDetail.createdAt).toLocaleDateString()} />
+                <ProfileInfoRow
+                  label="Legal Name"
+                  value={userDetail.fullName || "N/A"}
+                />
+                <ProfileInfoRow
+                  label="Direct Comms"
+                  value={userDetail.whatsappNumber || "N/A"}
+                />
+                <ProfileInfoRow
+                  label="First Access"
+                  value={new Date(userDetail.createdAt).toLocaleDateString()}
+                />
                 {userDetail.referredBy && (
                   <div className="flex justify-between items-center py-4 border-t border-gray-50 dark:border-gray-800">
-                    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Architect</span>
-                    <Link href={`/admin/users/${userDetail.referredBy._id}`} className="text-indigo-500 font-black hover:underline">
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Architect
+                    </span>
+                    <Link
+                      href={`/admin/users/${userDetail.referredBy._id}`}
+                      className="text-indigo-500 font-black hover:underline"
+                    >
                       @{userDetail.referredBy.username}
                     </Link>
                   </div>
@@ -386,20 +461,32 @@ export default function UserDetails() {
 
             {/* Referrals */}
             <section className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
-              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Referral Network ({referrals.length})</h3>
+              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">
+                Referral Network ({referrals.length})
+              </h3>
               {referrals.length === 0 ? (
-                <p className="text-gray-400 font-bold text-sm italic">No network connections.</p>
+                <p className="text-gray-400 font-bold text-sm italic">
+                  No network connections.
+                </p>
               ) : (
                 <div className="space-y-4">
-                  {referrals.map(ref => (
-                    <Link key={ref._id} href={`/admin/users/${ref._id}`} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
+                  {referrals.map((ref) => (
+                    <Link
+                      key={ref._id}
+                      href={`/admin/users/${ref._id}`}
+                      className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black text-xs">
                           {ref.username?.[0]?.toUpperCase()}
                         </div>
-                        <span className="font-bold text-sm group-hover:text-indigo-500 transition-colors truncate max-w-[100px]">{ref.username}</span>
+                        <span className="font-bold text-sm group-hover:text-indigo-500 transition-colors truncate max-w-[100px]">
+                          {ref.username}
+                        </span>
                       </div>
-                      <span className="font-mono text-[10px] text-gray-400">{new Date(ref.createdAt).toLocaleDateString()}</span>
+                      <span className="font-mono text-[10px] text-gray-400">
+                        {new Date(ref.createdAt).toLocaleDateString()}
+                      </span>
                     </Link>
                   ))}
                 </div>
@@ -415,19 +502,31 @@ export default function UserDetails() {
               <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 mb-6">
                 <AlertTriangle size={32} />
               </div>
-              <h3 className="text-2xl font-black tracking-tight mb-2">Authorize Action</h3>
+              <h3 className="text-2xl font-black tracking-tight mb-2">
+                Authorize Action
+              </h3>
               <p className="text-gray-500 font-medium mb-8">
-                Confirm {confirmModal.action} signal for <span className="font-mono text-indigo-500 bg-indigo-500/5 px-2 py-0.5 rounded">{confirmModal.bot.botName || "instance"}</span>. This cannot be undone.
+                Confirm {confirmModal.action} signal for{" "}
+                <span className="font-mono text-indigo-500 bg-indigo-500/5 px-2 py-0.5 rounded">
+                  {confirmModal.bot.botName || "instance"}
+                </span>
+                . This cannot be undone.
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <button
-                  onClick={() => setConfirmModal({ show: false, action: null, bot: null })}
+                  onClick={() =>
+                    setConfirmModal({ show: false, action: null, bot: null })
+                  }
                   className="px-6 py-4 text-gray-600 dark:text-gray-300 font-black text-sm uppercase tracking-widest hover:bg-gray-100 dark:hover:bg-gray-800 rounded-2xl transition-all"
                 >
                   Abort
                 </button>
                 <button
-                  onClick={() => confirmModal.action === "delete" ? handleDelete(confirmModal.bot._id) : handleSuspend(confirmModal.bot)}
+                  onClick={() =>
+                    confirmModal.action === "delete"
+                      ? handleDelete(confirmModal.bot._id)
+                      : handleSuspend(confirmModal.bot)
+                  }
                   className="px-6 py-4 bg-red-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20"
                 >
                   Execute
@@ -445,7 +544,9 @@ function DetailStatCard({ label, value, icon, suffix }) {
   return (
     <div className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
       <div className="text-2xl mb-4">{icon}</div>
-      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{label}</p>
+      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+        {label}
+      </p>
       <div className="flex items-baseline gap-2">
         <span className="text-3xl font-black tracking-tighter">{value}</span>
         <span className="text-[10px] font-bold text-gray-400">{suffix}</span>
@@ -457,7 +558,9 @@ function DetailStatCard({ label, value, icon, suffix }) {
 function ProfileInfoRow({ label, value }) {
   return (
     <div className="flex justify-between items-center py-2">
-      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+      <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+        {label}
+      </span>
       <span className="text-sm font-black">{value}</span>
     </div>
   );

@@ -34,12 +34,13 @@ export default function AdminServerDetail() {
       // Wait, we need WEBSOCKET credentials. `adminController` doesn't expose them yet.
       // I will add a new endpoint /api/admin/server/:id/console
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/server/${id}/console`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+        /\/$/,
+        ""
       );
+      const res = await fetch(`${apiUrl}/admin/server/${id}/console`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (res.status === 404) {
         toast.error("Endpoint not found (Backend update needed)");
         return;

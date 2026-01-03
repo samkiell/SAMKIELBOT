@@ -31,11 +31,28 @@ export default function CheckoutSummary() {
   const [processing, setProcessing] = useState(false);
 
   // Supported Currencies
-  const currencies = [
+  // Supported Currencies
+  const mainCurrencies = [
     { code: "NGN", name: "Nigerian Naira", flag: "🇳🇬" },
     { code: "USD", name: "US Dollar", flag: "🇺🇸" },
     { code: "GBP", name: "British Pound", flag: "🇬🇧" },
     { code: "EUR", name: "Euro", flag: "🇪🇺" },
+  ];
+
+  const otherCurrencies = [
+    { code: "KES", name: "Kenyan Shilling", flag: "🇰🇪" },
+    { code: "GHS", name: "Ghanaian Cedi", flag: "🇬🇭" },
+    { code: "ZAR", name: "South African Rand", flag: "🇿🇦" },
+    { code: "UGX", name: "Ugandan Shilling", flag: "🇺🇬" },
+    { code: "TZS", name: "Tanzanian Shilling", flag: "🇹🇿" },
+    { code: "RWF", name: "Rwandan Franc", flag: "🇷🇼" },
+    { code: "MWK", name: "Malawian Kwacha", flag: "🇲🇼" },
+    { code: "ZMW", name: "Zambian Kwacha", flag: "🇿🇲" },
+    { code: "XAF", name: "CFA Franc BEAC", flag: "🇨🇲" },
+    { code: "XOF", name: "CFA Franc BCEAO", flag: "🇸🇳" },
+    { code: "CDF", name: "Congolese Franc", flag: "🇨🇩" },
+    { code: "LSL", name: "Lesotho Loti", flag: "🇱🇸" },
+    { code: "SLL", name: "Sierra Leonean Leone", flag: "🇸🇱" },
   ];
 
   useEffect(() => {
@@ -232,8 +249,8 @@ export default function CheckoutSummary() {
                 Select Payment Currency
               </h3>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {currencies.map((c) => (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                {mainCurrencies.map((c) => (
                   <button
                     key={c.code}
                     onClick={() => setSelectedCurrency(c.code)}
@@ -248,6 +265,43 @@ export default function CheckoutSummary() {
                     <span className="text-[10px] text-gray-500">{c.name}</span>
                   </button>
                 ))}
+              </div>
+
+              {/* Other Currencies Dropdown */}
+              <div className="relative">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                  More Currencies
+                </label>
+                <div className="relative">
+                  <select
+                    value={
+                      otherCurrencies.find((c) => c.code === selectedCurrency)
+                        ? selectedCurrency
+                        : ""
+                    }
+                    onChange={(e) => {
+                      if (e.target.value) setSelectedCurrency(e.target.value);
+                    }}
+                    className={`w-full appearance-none bg-white dark:bg-[#1e293b] border rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
+                      otherCurrencies.find((c) => c.code === selectedCurrency)
+                        ? "border-indigo-500 text-indigo-500 font-bold"
+                        : "border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    <option value="" disabled>
+                      Select other currency...
+                    </option>
+                    {otherCurrencies.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.flag} {c.name} ({c.code})
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                    size={16}
+                  />
+                </div>
               </div>
 
               <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-start gap-3">

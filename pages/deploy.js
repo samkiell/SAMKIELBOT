@@ -275,23 +275,26 @@ export default function DeployPage() {
 
       <main className="container mx-auto px-4 max-w-4xl pt-8">
         {/* Header */}
-        {showCreditAlert && (
-          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3 animate-pulse">
+        {(showCreditAlert || isAtLimit) && (
+          <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3">
             <AlertTriangle className="text-red-500 shrink-0 mt-1" size={24} />
             <div>
               <h3 className="font-bold text-red-700 dark:text-red-400">
-                Insufficient Credits
+                {isAtLimit ? "Max Bots Reached" : "Insufficient Credits"}
               </h3>
               <p className="text-sm text-red-600 dark:text-red-300 mt-1">
-                You don't have enough credits to deploy this bot. Please top up
-                your wallet.
+                {isAtLimit
+                  ? "You’ve reached the maximum number of bots for your account."
+                  : "You don't have enough credits to deploy this bot. Please top up your wallet."}
               </p>
-              <Link
-                href="/credits/buy"
-                className="inline-block mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors"
-              >
-                Buy Credits Now
-              </Link>
+              {!isAtLimit && (
+                <Link
+                  href="/credits/buy"
+                  className="inline-block mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg transition-colors"
+                >
+                  Buy Credits Now
+                </Link>
+              )}
             </div>
           </div>
         )}
@@ -879,13 +882,21 @@ export default function DeployPage() {
             </Link>
             <button
               type="submit"
-              disabled={loading}
-              className="flex-2 w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/30 flex justify-center items-center gap-2"
+              disabled={loading || isAtLimit}
+              className={`flex-2 w-full px-6 py-4 rounded-xl font-bold transition-all shadow-lg flex justify-center items-center gap-2 ${
+                isAtLimit
+                  ? "bg-gray-400 cursor-not-allowed shadow-none"
+                  : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-indigo-500/30"
+              }`}
             >
               {loading ? (
                 <>
                   <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
                   Deploying...
+                </>
+              ) : isAtLimit ? (
+                <>
+                  <Lock size={20} /> Limit Reached
                 </>
               ) : (
                 <>

@@ -147,9 +147,9 @@ export default function AdminDashboard() {
           color="indigo"
         />
         <SummaryCard
-          title="LIVE DEPLOYMENTS"
-          value={`${stats?.runningBots || 0}`}
-          total={stats?.totalBots || 0}
+          title="TOTAL DEPLOYMENTS"
+          value={`${stats?.totalBots || 0}`}
+          trend={`${stats?.runningBots || 0} Running`}
           icon={LayoutGrid}
           color="emerald"
         />

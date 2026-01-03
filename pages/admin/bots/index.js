@@ -61,15 +61,18 @@ export default function BotControl() {
     return {
       total: bots.length,
       waActive: bots.filter((b) =>
-        ["online", "active", "connected", "paired"].includes(b.status)
+        ["online", "active", "connected"].includes(b.status)
       ).length,
       serverIdle: bots.filter(
         (b) =>
           b.resources?.state === "running" &&
           !["online", "active", "connected"].includes(b.status)
       ).length,
-      issues: bots.filter((b) =>
-        ["error", "failed", "suspended", "expired"].includes(b.status)
+      issues: bots.filter(
+        (b) =>
+          ["error", "failed", "suspended", "expired"].includes(b.status) ||
+          !b.resources?.state ||
+          b.resources?.state === "offline"
       ).length,
     };
   }, [bots]);
@@ -307,6 +310,17 @@ export default function BotControl() {
                         <span className="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
                           {bot.identifier || "NO_ID"}
                         </span>
+                        <span className="opacity-30">•</span>
+                        <div
+                          className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider ${
+                            bot.resources?.state === "running"
+                              ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                              : "bg-gray-500/10 text-gray-500 border border-gray-500/20"
+                          }`}
+                        >
+                          <Zap size={10} fill="currentColor" />
+                          {bot.resources?.state || "OFFLINE"}
+                        </div>
                         <span className="opacity-30">•</span>
                         <span>
                           {new Date(

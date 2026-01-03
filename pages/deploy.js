@@ -106,9 +106,6 @@ export default function DeployPage() {
     antiDelete: true,
     antiDeleteType: "all", // "all" | "group" | "private"
     autoReaction: false,
-    author: "𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋",
-    description:
-      "This is a bot for managing group commands and automating tasks.",
     personalMessage: false,
     disableStartMessage: false,
     ranking: false,
@@ -206,9 +203,7 @@ export default function DeployPage() {
         RANKING: formData.ranking,
         STATUS_VIEW_EMOJI: formData.statusViewEmoji,
       },
-      author: formData.author,
-      description: formData.description,
-};
+    };
 
     try {
       const deploymentData = await deployBot(payload);
@@ -600,32 +595,6 @@ export default function DeployPage() {
                   The primary admin number. <b>Include country code</b> (e.g.,
                   23481...). Defaults to your linked number if empty.
                 </p>
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                  Author Name
-                </label>
-                <input
-                  type="text"
-                  name="author"
-                  value={formData.author}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  placeholder="Author Name"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                  Bot Description
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows="3"
-                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  placeholder="Tell people what your bot does..."
-                ></textarea>
               </div>
             </div>
           </section>

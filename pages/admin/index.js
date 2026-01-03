@@ -258,41 +258,50 @@ export default function AdminDashboard() {
                 Active Bot Loads
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {infra?.bots?.slice(0, 3).map((bot, i) => (
+            <div className="space-y-3">
+              {infra?.bots?.slice(0, 5).map((bot, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-indigo-500/30 transition-all"
+                  className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-indigo-500/30 transition-all group"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div
-                      className={`w-1.5 h-1.5 rounded-full ${
+                      className={`w-2 h-2 rounded-full ${
                         bot.state === "running"
-                          ? "bg-emerald-500 shadow-[0_0_8px_#10b981]"
+                          ? "bg-emerald-500 shadow-[0_0_10px_#10b981]"
                           : "bg-gray-500"
                       }`}
                     />
-                    <span className="text-xs font-bold truncate max-w-[80px]">
-                      {bot.name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p className="text-[8px] font-bold text-gray-400 uppercase">
-                        RAM
+                    <div>
+                      <span className="text-sm font-bold text-gray-900 dark:text-gray-100 italic">
+                        {bot.name}
+                      </span>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
+                        {bot.user || "System"}
                       </p>
-                      <p className="text-[10px] font-black font-mono">
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-8">
+                    <div className="text-right">
+                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                        MEMORY
+                      </p>
+                      <p className="text-xs font-black font-mono text-indigo-500">
                         {bot.usedRam}MB
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[8px] font-bold text-gray-400 uppercase">
-                        CPU
+                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                        PROCESSOR
                       </p>
-                      <p className="text-[10px] font-black font-mono">
+                      <p className="text-xs font-black font-mono text-emerald-500">
                         {bot.usedCpu}%
                       </p>
                     </div>
+                    <ChevronRight
+                      size={16}
+                      className="text-gray-300 group-hover:text-indigo-500 transition-colors"
+                    />
                   </div>
                 </div>
               ))}

@@ -239,21 +239,19 @@ export default function BotCard({ deployment, refreshData }) {
             <div className="flex items-center gap-1 text-gray-400">
               <div
                 className={`h-1.5 w-1.5 rounded-full ${
-                  deployment.isActive
-                    ? "bg-green-500 animate-pulse"
-                    : "bg-gray-400"
+                  (deployment.resources?.usedRam || 0) >
+                  (deployment.resources?.ramLimit || 300) * 0.9
+                    ? "bg-red-500"
+                    : (deployment.resources?.usedRam || 0) >
+                      (deployment.resources?.ramLimit || 300) * 0.75
+                    ? "bg-amber-500"
+                    : "bg-green-500"
                 }`}
               ></div>
-              Last Heartbeat
+              RAM Usage
             </div>
-            <div className="text-gray-600 dark:text-gray-300">
-              {deployment.lastHeartbeatAt
-                ? new Date(deployment.lastHeartbeatAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })
-                : "N/A"}
+            <div className="text-gray-600 dark:text-gray-300 font-mono">
+              {deployment.resources?.usedRam || 0} MB
             </div>
           </div>
           {deployment.restartCount > 0 && (

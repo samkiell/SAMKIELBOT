@@ -230,6 +230,27 @@ export default function DeployPage() {
     }
   };
 
+  const [botCount, setBotCount] = useState(0);
+  const [isAtLimit, setIsAtLimit] = useState(false);
+
+  useEffect(() => {
+    async function checkBotLimit() {
+      try {
+        const deployments = await getDeployments();
+        const count = deployments.length;
+        setBotCount(count);
+        if (count >= 2) {
+          setIsAtLimit(true);
+        }
+      } catch (err) {
+        console.error("Error checking bot limit:", err);
+      }
+    }
+    if (user) {
+      checkBotLimit();
+    }
+  }, [user]);
+
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">

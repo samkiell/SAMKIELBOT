@@ -42,6 +42,10 @@ const notificationSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isAdminOnly: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -369,6 +369,13 @@ export default function CheckoutSummary() {
                     </span>
                   </div>
 
+                  <div className="flex justify-between items-center text-red-400">
+                    <span>VAT (8.5%)</span>
+                    <span>
+                      {formatCurrency(quote.taxAmount, quote.selectedCurrency)}
+                    </span>
+                  </div>
+
                   <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
                     <span className="font-bold text-lg">Total</span>
                     <div className="text-right">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import { useAuth } from "../../lib/auth";
@@ -27,6 +28,7 @@ import toast from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const { user, token, loading: authLoading } = useAuth();
   const [stats, setStats] = useState(null);
   const [infra, setInfra] = useState(null);
@@ -342,11 +344,16 @@ export default function AdminDashboard() {
                   icon={RotateCcw}
                   onClick={handleSync}
                 />
-                <CommandButton label="System Diagnostics" icon={AlertOctagon} />
+                <CommandButton
+                  label="System Diagnostics"
+                  icon={AlertOctagon}
+                  onClick={() => router.push("/admin/infrastructure")}
+                />
                 <CommandButton
                   label="Pending Review"
                   icon={Users}
                   isSecondary
+                  onClick={() => router.push("/admin/suggestions")}
                 />
               </div>
 

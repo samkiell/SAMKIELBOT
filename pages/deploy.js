@@ -102,7 +102,7 @@ export default function DeployPage() {
     sendRead: false,
     alwaysOnline: true,
     rejectCall: true,
-    commandMode: "public", // "public" | "private"
+    commandMode: "private", // "public" | "private"
     antiDelete: true,
     antiDeleteType: "all", // "all" | "group" | "private"
     autoReaction: false,
@@ -775,7 +775,6 @@ export default function DeployPage() {
                 >
                   <option value="off">Off</option>
                   <option value="on">On (View Only)</option>
-                  <option value="msg">View + Message</option>
                 </select>
               </div>
 

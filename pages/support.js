@@ -40,6 +40,25 @@ export default function Support() {
     }
   }, [user]);
 
+  // Handle Hash link
+  useEffect(() => {
+    if (window.location.hash === "#bug") {
+      const element = document.getElementById("report-issue");
+      if (element) {
+        // Short delay to ensure rendering
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+          // Optional: Highlight effect
+          element.classList.add("ring-4", "ring-indigo-300");
+          setTimeout(
+            () => element.classList.remove("ring-4", "ring-indigo-300"),
+            2000
+          );
+        }, 500);
+      }
+    }
+  }, []);
+
   const fetchBots = async () => {
     try {
       const data = await getDeployments();

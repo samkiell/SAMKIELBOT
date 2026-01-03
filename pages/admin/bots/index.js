@@ -58,21 +58,33 @@ export default function BotControl() {
   }, [bots, searchQuery]);
 
   const stats = useMemo(() => {
+    const now = new Date();
     return {
       total: bots.length,
-      waActive: bots.filter((b) =>
-        ["online", "active", "connected"].includes(b.status)
-      ).length,
+      waActive: bots.filter((b) => {
+        const isRecentlyActive =
+          b.lastHeartbeatAt &&
+          now - new Date(b.lastHeartbeatAt) < 5 * 60 * 1000;
+        return (
+          (["online", "active", "connected"].includes(b.status) ||
+            isRecentlyActive) &&
+          b.resources?.state === "running"
+        );
+      }).length,
       serverIdle: bots.filter(
         (b) =>
           b.resources?.state === "running" &&
+          !(
+            b.lastHeartbeatAt &&
+            now - new Date(b.lastHeartbeatAt) < 5 * 60 * 1000
+          ) &&
           !["online", "active", "connected"].includes(b.status)
       ).length,
       issues: bots.filter(
         (b) =>
           ["error", "failed", "suspended", "expired"].includes(b.status) ||
-          !b.resources?.state ||
-          b.resources?.state === "offline"
+          (b.resources?.state !== "running" &&
+            !["starting", "installing"].includes(b.status))
       ).length,
     };
   }, [bots]);
@@ -221,14 +233,14 @@ export default function BotControl() {
             color="indigo"
           />
           <StatCard
-            title="WA ONLINE"
+            title="WHATSAPP ACTIVE"
             value={stats.waActive}
             icon={Activity}
             color="emerald"
             isPulse
           />
           <StatCard
-            title="SERVER IDLE"
+            title="IDLE (NO WA)"
             value={stats.serverIdle}
             icon={Zap}
             color="amber"
@@ -261,6 +273,13 @@ export default function BotControl() {
           <AnimatePresence mode="popLayout">
             {filteredBots.map((bot) => {
               const config = getStatusConfig(bot.status);
+              const isWaActive =
+                (["online", "active", "connected"].includes(bot.status) ||
+                  (bot.lastHeartbeatAt &&
+                    new Date() - new Date(bot.lastHeartbeatAt) <
+                      5 * 60 * 1000)) &&
+                bot.resources?.state === "running";
+
               return (
                 <motion.div
                   layout
@@ -274,16 +293,20 @@ export default function BotControl() {
                   <div className="flex items-center gap-6 flex-1 w-full">
                     <div className="relative">
                       <div
-                        className={`w-3 h-3 rounded-full ${config.dot} shadow-[0_0_12px_rgba(0,0,0,0.2)]`}
+                        className={`w-3 h-3 rounded-full ${
+                          isWaActive
+                            ? "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]"
+                            : config.dot
+                        } shadow-[0_0_12px_rgba(0,0,0,0.2)]`}
                       />
-                      {["running", "online"].includes(bot.status) && (
+                      {isWaActive && (
                         <motion.div
                           animate={{
-                            scale: [1, 1.6, 1],
-                            opacity: [0.6, 0, 0.6],
+                            scale: [1, 2.5, 1],
+                            opacity: [0.5, 0, 0.5],
                           }}
                           transition={{ duration: 2, repeat: Infinity }}
-                          className={`absolute inset-0 rounded-full ${config.dot}`}
+                          className="absolute inset-0 rounded-full bg-emerald-500"
                         />
                       )}
                     </div>
@@ -301,6 +324,11 @@ export default function BotControl() {
                         >
                           {bot.status?.replace("_", " ")}
                         </div>
+                        {isWaActive && (
+                          <div className="px-2 py-0.5 rounded-lg text-[10px] uppercase font-black bg-emerald-500 text-white tracking-widest shadow-lg shadow-emerald-500/20">
+                            WHATSAPP
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-gray-400">
                         <span className="text-indigo-500/80">
@@ -327,6 +355,18 @@ export default function BotControl() {
                             bot.deployedAt || bot.createdAt
                           ).toLocaleDateString()}
                         </span>
+                        {bot.lastHeartbeatAt && (
+                          <>
+                            <span className="opacity-30">•</span>
+                            <span className="flex items-center gap-1 text-emerald-500 font-black italic">
+                              HB:{" "}
+                              {new Date(bot.lastHeartbeatAt).toLocaleTimeString(
+                                [],
+                                { hour: "2-digit", minute: "2-digit" }
+                              )}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

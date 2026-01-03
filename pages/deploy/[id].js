@@ -759,7 +759,6 @@ export default function DeploymentSessionPage() {
                     ).filter((v) => v !== "off" && v !== false).length
                   } / Total`}
                 />
-                <DetailRow label="Service Plan" value="ENTERPRISE CORE" />
               </div>
             </div>
           </div>

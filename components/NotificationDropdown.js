@@ -65,6 +65,7 @@ export default function NotificationDropdown() {
 
   const deleteNotification = async (id, e) => {
     e.stopPropagation();
+    if (user.role !== "admin") return; // Double check
     if (!confirm("Are you sure you want to delete this notification?")) return;
 
     try {
@@ -144,13 +145,17 @@ export default function NotificationDropdown() {
                       {!notification.isRead && (
                         <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
                       )}
-                      <button
-                        onClick={(e) => deleteNotification(notification._id, e)}
-                        className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
-                        title="Delete notification"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      {user.role === "admin" && (
+                        <button
+                          onClick={(e) =>
+                            deleteNotification(notification._id, e)
+                          }
+                          className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                          title="Delete notification (Admin)"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-300 break-words whitespace-pre-wrap">

@@ -261,77 +261,82 @@ export default function AdminDashboard() {
               </p>
             </div>
             <div className="space-y-4">
-              {infra?.bots?.slice(0, 5).map((bot) => (
-                <Link
-                  key={bot.id}
-                  href={`/admin/bots/${bot.id}`}
-                  className="flex items-center justify-between p-5 bg-white dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800/60 hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group cursor-pointer block"
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-5">
-                      <div className="relative">
-                        <div
-                          className={`w-3 h-3 rounded-full ${
-                            bot.state === "running"
-                              ? "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.6)]"
-                              : "bg-gray-400 dark:bg-gray-600 shadow-none"
-                          }`}
-                        />
-                        {bot.state === "running" && (
-                          <motion.div
-                            animate={{
-                              scale: [1, 1.5, 1],
-                              opacity: [0.5, 0, 0.5],
-                            }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="absolute inset-0 rounded-full bg-emerald-500"
+              {infra?.bots
+                ?.sort((a, b) => (b.usedRam || 0) - (a.usedRam || 0))
+                ?.slice(0, 5)
+                .map((bot) => (
+                  <Link
+                    key={bot.id}
+                    href={`/admin/bots/${bot.id}`}
+                    className="flex items-center justify-between p-5 bg-white dark:bg-gray-900/40 rounded-3xl border border-gray-100 dark:border-gray-800/60 hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group cursor-pointer block"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-5">
+                        <div className="relative">
+                          <div
+                            className={`w-3 h-3 rounded-full ${
+                              bot.state === "running"
+                                ? "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.6)]"
+                                : "bg-gray-400 dark:bg-gray-600 shadow-none"
+                            }`}
                           />
-                        )}
+                          {bot.state === "running" && (
+                            <motion.div
+                              animate={{
+                                scale: [1, 1.5, 1],
+                                opacity: [0.5, 0, 0.5],
+                              }}
+                              transition={{ duration: 2, repeat: Infinity }}
+                              className="absolute inset-0 rounded-full bg-emerald-500"
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <span className="text-lg font-black text-gray-900 dark:text-white tracking-tight leading-none block mb-1">
+                            {bot.name}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-black bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded uppercase tracking-widest">
+                              OWNER
+                            </span>
+                            <span className="text-xs font-bold text-gray-500 dark:text-gray-400 capitalize">
+                              {bot.user || "System"}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-lg font-black text-gray-900 dark:text-white tracking-tight leading-none block mb-1">
-                          {bot.name}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-black bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded uppercase tracking-widest">
-                            OWNER
-                          </span>
-                          <span className="text-xs font-bold text-gray-500 dark:text-gray-400 capitalize">
-                            {bot.user || "System"}
-                          </span>
+
+                      <div className="flex items-center gap-10">
+                        <div className="text-right">
+                          <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-1">
+                            RAM ALLOC
+                          </p>
+                          <p className="text-lg font-black font-mono text-indigo-600 dark:text-indigo-400">
+                            {bot.usedRam}
+                            <span className="text-xs ml-0.5 opacity-60">
+                              MB
+                            </span>
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-1">
+                            CPU LOAD
+                          </p>
+                          <p className="text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
+                            {bot.usedCpu}
+                            <span className="text-xs ml-0.5 opacity-60">%</span>
+                          </p>
+                        </div>
+                        <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-800 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
+                          <ChevronRight
+                            size={20}
+                            className="text-gray-400 dark:text-gray-300"
+                          />
                         </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-10">
-                      <div className="text-right">
-                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-1">
-                          RAM ALLOC
-                        </p>
-                        <p className="text-lg font-black font-mono text-indigo-600 dark:text-indigo-400">
-                          {bot.usedRam}
-                          <span className="text-xs ml-0.5 opacity-60">MB</span>
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-1">
-                          CPU LOAD
-                        </p>
-                        <p className="text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
-                          {bot.usedCpu}
-                          <span className="text-xs ml-0.5 opacity-60">%</span>
-                        </p>
-                      </div>
-                      <div className="p-2 rounded-xl bg-gray-50 dark:bg-gray-800 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
-                        <ChevronRight
-                          size={20}
-                          className="text-gray-400 dark:text-gray-300"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                ))}
             </div>
             {(!infra?.bots || infra.bots.length === 0) && (
               <p className="text-xs text-center text-gray-500 py-4 italic">

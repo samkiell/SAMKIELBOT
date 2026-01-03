@@ -435,7 +435,11 @@ export default function UserManagement() {
                                   <div className="w-px h-8 bg-gray-100 dark:bg-gray-800" />
                                   <div>
                                     <p className="font-black text-indigo-500 leading-none mb-1 text-sm">
-                                      {u.stats?.totalRamUsage || 0} MB
+                                      {u.stats?.totalRamUsage || 0}{" "}
+                                      <span className="text-gray-400 font-normal">
+                                        /
+                                      </span>{" "}
+                                      {u.stats?.totalRamAllocated || 0} MB
                                     </p>
                                     <p className="text-[10px] text-gray-400 font-black uppercase">
                                       RAM

@@ -27,22 +27,26 @@
     const listData = await listRes.json();
 
     let bots = listData.data || [];
-    // Optional: Filter by name to only delete StressBots
-    bots = bots.filter((b) => b.botName.startsWith("StressBot_"));
 
-    if (!bots || bots.length === 0) {
-      console.log("ℹ️ No 'StressBot_' bots found to delete.");
-      return;
+    // Choose mode
+    const deleteStressOnly = window.confirm(
+      "Filter deletion to 'StressBot_' only?\n\nOK = Yes, delete only test bots.\nCancel = No, I want to delete EVERYTHING."
+    );
+
+    if (deleteStressOnly) {
+      bots = bots.filter((b) => b.botName.startsWith("StressBot_"));
+      if (bots.length === 0) {
+        console.log("ℹ️ No 'StressBot_' bots found.");
+        return;
+      }
+    } else {
+      const confirmAll = window.confirm(
+        `⚠️ DANGER: You are about to delete ALL ${bots.length} active bots.\n\nAre you absolutely sure?`
+      );
+      if (!confirmAll) return;
     }
 
     console.log(`🗑️ Found ${bots.length} bots to delete.`);
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${bots.length} Stress Test bots?`
-    );
-    if (!confirmDelete) {
-      console.log("❌ Deletion process cancelled.");
-      return;
-    }
 
     let deletedCount = 0;
     for (const bot of bots) {

@@ -230,6 +230,8 @@ export default function DeployPage() {
         setShowCreditAlert(true);
         toast.error(errorMessage, { duration: 10000 });
         window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (error.response?.status === 503) {
+        toast.error(errorMessage, { duration: 8000, icon: "🚧" });
       } else {
         toast.error(errorMessage);
       }

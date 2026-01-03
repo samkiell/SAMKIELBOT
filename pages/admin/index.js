@@ -147,9 +147,9 @@ export default function AdminDashboard() {
           color="indigo"
         />
         <SummaryCard
-          title="TOTAL DEPLOYMENTS"
-          value={`${stats?.totalBots || 0}`}
-          trend={`${stats?.runningBots || 0} Running`}
+          title="LIVE DEPLOYMENTS"
+          value={stats?.runningBots || 0}
+          total={stats?.totalBots || 0}
           icon={LayoutGrid}
           color="emerald"
         />
@@ -597,7 +597,7 @@ function SummaryCard({
         {title}
       </p>
       <div className="flex items-baseline gap-1">
-        <span className="text-4xl font-black tracking-tighter">{value}</span>
+        <span className="text-5xl font-black tracking-tighter">{value}</span>
         {total && (
           <span className="text-sm font-bold text-gray-400">/{total}</span>
         )}

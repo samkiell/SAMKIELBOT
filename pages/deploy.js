@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { deployBot, getDeploymentById } from "../lib/api";
+import { deployBot, getDeploymentById, getDeployments } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import {
   ArrowLeft,

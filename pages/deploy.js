@@ -205,6 +205,13 @@ export default function DeployPage() {
       },
     };
 
+    console.log("🚀 [Deploy Debug] Form Data State:", formData);
+    console.log("🚀 [Deploy Debug] Sending Payload:", payload);
+    console.log(
+      "🚀 [Deploy Debug] Payload JSON:",
+      JSON.stringify(payload, null, 2)
+    );
+
     try {
       const deploymentData = await deployBot(payload);
       toast.success("Deployment initialized!");

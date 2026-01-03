@@ -36,6 +36,9 @@ export default function UserManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [activeTab, setActiveTab] = useState("list"); // "list" or "logs"
+  const [logs, setLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(false);
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [creditAmount, setCreditAmount] = useState("");
@@ -48,6 +51,30 @@ export default function UserManagement() {
       fetchUsers();
     }
   }, [token]);
+
+  const fetchLogs = async () => {
+    try {
+      setLogsLoading(true);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/audit-logs`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      setLogs(data.data || []);
+    } catch (err) {
+      toast.error("Failed to fetch logs");
+    } finally {
+      setLogsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "logs" && token) {
+      fetchLogs();
+    }
+  }, [activeTab, token]);
 
   const fetchUsers = async (query = searchTerm) => {
     if (!token) return;
@@ -216,10 +243,24 @@ export default function UserManagement() {
           </div>
 
           <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-2xl">
-            <button className="px-4 py-2 bg-white dark:bg-gray-700 shadow-sm rounded-xl text-sm font-bold">
+            <button
+              onClick={() => setActiveTab("list")}
+              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                activeTab === "list"
+                  ? "bg-white dark:bg-gray-700 shadow-sm text-indigo-600 dark:text-indigo-400"
+                  : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              }`}
+            >
               List View
             </button>
-            <button className="px-4 py-2 text-gray-500 text-sm font-bold">
+            <button
+              onClick={() => setActiveTab("logs")}
+              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                activeTab === "logs"
+                  ? "bg-white dark:bg-gray-700 shadow-sm text-indigo-600 dark:text-indigo-400"
+                  : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              }`}
+            >
               Activity Logs
             </button>
           </div>
@@ -247,290 +288,410 @@ export default function UserManagement() {
           />
         </div>
 
-        {/* Search Bar */}
-        <div className="relative mb-8">
-          <Search
-            className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"
-            size={20}
-          />
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-14 pr-6 py-5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-[28px] shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none text-lg font-medium transition-all"
-          />
-        </div>
-
-        {loading ? (
-          <TableSkeleton rows={8} cols={6} />
-        ) : (
+        {activeTab === "list" ? (
           <>
-            <div className="hidden lg:block bg-white dark:bg-[#111827] rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[1100px]">
-                  <thead>
-                    <tr className="bg-gray-50/50 dark:bg-gray-800/30 text-[11px] uppercase tracking-[0.15em] text-gray-500 font-black">
-                      <th className="px-6 py-5">Identity</th>
-                      <th className="px-6 py-5">Privileges</th>
-                      <th className="px-6 py-5">Status</th>
-                      <th className="px-6 py-5">Wallet</th>
-                      <th className="px-6 py-5">BOT</th>
-                      <th className="px-6 py-5 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50 dark:divide-gray-800/50">
-                    <AnimatePresence>
-                      {filteredUsers.map((u) => (
-                        <motion.tr
-                          layout
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          key={u._id}
-                          className="group hover:bg-gray-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors"
-                        >
-                          <td className="px-6 py-6">
-                            <Link
-                              href={`/admin/users/${u._id}`}
-                              className="group/link block"
+            {/* Search Bar */}
+            <div className="relative mb-8">
+              <Search
+                className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="text"
+                placeholder="Search by name or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-14 pr-6 py-5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-[28px] shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none text-lg font-medium transition-all"
+              />
+            </div>
+
+            {loading ? (
+              <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-white dark:bg-[#111827] h-24 w-full rounded-[32px] border border-gray-100 dark:border-gray-800 animate-pulse flex items-center px-8 gap-4"
+                  >
+                    <div className="w-12 h-12 bg-gray-200 dark:bg-gray-800 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-800 w-1/4 rounded" />
+                      <div className="h-3 bg-gray-200 dark:bg-gray-800 w-1/3 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+                <div className="hidden lg:block bg-white dark:bg-[#111827] rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[1100px]">
+                      <thead>
+                        <tr className="bg-gray-50/50 dark:bg-gray-800/30 text-[11px] uppercase tracking-[0.15em] text-gray-500 font-black">
+                          <th className="px-6 py-5">Identity</th>
+                          <th className="px-6 py-5">Privileges</th>
+                          <th className="px-6 py-5">Status</th>
+                          <th className="px-6 py-5">Wallet</th>
+                          <th className="px-6 py-5">BOT</th>
+                          <th className="px-6 py-5 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50 dark:divide-gray-800/50">
+                        <AnimatePresence mode="popLayout">
+                          {filteredUsers.map((u) => (
+                            <motion.tr
+                              layout
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              key={u._id}
+                              className="group hover:bg-gray-50/50 dark:hover:bg-indigo-500/[0.02] transition-all"
                             >
-                              <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black">
-                                  {u.username?.[0]?.toUpperCase()}
+                              <td className="px-6 py-6">
+                                <Link
+                                  href={`/admin/users/${u._id}`}
+                                  className="group/link block"
+                                >
+                                  <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black text-lg">
+                                      {u.username?.[0]?.toUpperCase()}
+                                    </div>
+                                    <div>
+                                      <h3 className="font-black text-gray-900 dark:text-gray-100 group-hover/link:text-indigo-600 transition-colors">
+                                        {u.username}
+                                      </h3>
+                                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
+                                        {u.email}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Link>
+                              </td>
+                              <td className="px-6 py-6">
+                                <div className="relative w-fit">
+                                  <MoreVertical
+                                    size={12}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50"
+                                  />
+                                  <select
+                                    className="appearance-none bg-gray-50 dark:bg-gray-800/50 border-none rounded-xl px-4 pr-10 py-2 text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                    value={u.role}
+                                    onChange={(e) =>
+                                      updateUser(u._id, {
+                                        role: e.target.value,
+                                      })
+                                    }
+                                  >
+                                    <option value="user">USER</option>
+                                    <option value="power_user">POWER</option>
+                                    <option value="admin">ADMIN</option>
+                                  </select>
                                 </div>
-                                <div>
-                                  <h4 className="font-black text-gray-900 dark:text-white leading-none mb-1.5 group-hover/link:text-indigo-500 transition-colors">
-                                    {u.username}
-                                  </h4>
-                                  <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium lowercase">
-                                    <Mail size={12} className="opacity-50" />
-                                    {u.email}
+                              </td>
+                              <td className="px-6 py-6">
+                                <div className="flex items-center gap-2">
+                                  <div
+                                    className={`w-2 h-2 rounded-full ${
+                                      u.accountStatus === "active"
+                                        ? "bg-emerald-500"
+                                        : "bg-red-500"
+                                    }`}
+                                  />
+                                  <span className="text-[10px] font-black uppercase tracking-widest">
+                                    {u.accountStatus || "ACTIVE"}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-6">
+                                <div className="flex items-center gap-4">
+                                  <div className="p-2.5 bg-yellow-500/10 rounded-xl">
+                                    <Coins
+                                      size={16}
+                                      className="text-yellow-600"
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="font-black text-gray-900 dark:text-gray-100 leading-none mb-1">
+                                      {Math.round(u.credits || 0)}
+                                    </p>
+                                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">
+                                      CREDITS
+                                    </p>
                                   </div>
                                 </div>
-                              </div>
-                            </Link>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="relative inline-block">
-                              <select
-                                className="appearance-none bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-none rounded-xl px-4 py-2 pr-8 text-xs font-bold focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                                value={u.role}
-                                onChange={(e) =>
-                                  updateUser(u._id, { role: e.target.value })
-                                }
-                              >
-                                <option value="user">USER</option>
-                                <option value="power_user">POWER</option>
-                                <option value="admin">ADMIN</option>
-                              </select>
-                              <MoreVertical
-                                size={12}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50"
-                              />
-                            </div>
-                          </td>
-                          <td className="px-6 py-6">
-                            <select
-                              className={`bg-transparent border-none rounded-xl px-3 py-2 text-[10px] font-black tracking-widest uppercase focus:ring-0 cursor-pointer ${
-                                u.accountStatus === "suspended"
-                                  ? "text-red-500"
-                                  : "text-emerald-500"
-                              }`}
-                              value={u.accountStatus || "active"}
-                              onChange={(e) =>
-                                updateUser(u._id, {
-                                  accountStatus: e.target.value,
-                                })
-                              }
-                            >
-                              <option value="active">● ACTIVE</option>
-                              <option value="suspended">● SUSPENDED</option>
-                              <option value="deleted">● TRASHED</option>
-                            </select>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="flex items-center gap-2">
-                              <div className="p-1.5 bg-amber-500/10 rounded-lg">
-                                <Coins size={14} className="text-amber-500" />
-                              </div>
-                              <span className="font-black text-gray-900 dark:text-white text-base tracking-tight">
-                                {Math.round(u.credits || 0)}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="flex items-center gap-3">
-                              <div className="text-right">
-                                <p className="font-black text-gray-900 dark:text-white leading-none mb-1">
-                                  {u.stats?.totalBots || 0}
-                                </p>
-                                <p className="text-[10px] text-gray-400 font-black uppercase">
-                                  BOTS
-                                </p>
-                              </div>
-                              <div className="w-px h-8 bg-gray-100 dark:bg-gray-800" />
-                              <div>
-                                <p className="font-black text-indigo-500 leading-none mb-1 text-sm">
-                                  {u.stats?.totalRamUsage || 0} MB
-                                </p>
-                                <p className="text-[10px] text-gray-400 font-black uppercase">
-                                  RAM
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6 text-right">
-                            <div className="flex justify-end gap-2">
-                              <ActionButton
-                                icon={Plus}
-                                color="text-emerald-500"
-                                bg="hover:bg-emerald-500/10"
-                                onClick={() => openCreditModal(u, "add")}
-                                title="Grant Credits"
-                              />
-                              <ActionButton
-                                icon={Minus}
-                                color="text-amber-500"
-                                bg="hover:bg-amber-500/10"
-                                onClick={() => openCreditModal(u, "reduce")}
-                                title="Revoke Credits"
-                              />
-                              <ActionButton
-                                icon={Trash2}
-                                color="text-red-500"
-                                bg="hover:bg-red-500/10"
-                                onClick={() => deleteUser(u._id)}
-                                title="Purge Record"
-                              />
-                            </div>
-                          </td>
-                        </motion.tr>
-                      ))}
-                    </AnimatePresence>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                              </td>
+                              <td className="px-6 py-6">
+                                <div className="flex items-center gap-4">
+                                  <div>
+                                    <p className="font-black text-indigo-500 leading-none mb-1 text-sm">
+                                      {u.stats?.totalBots || 0}
+                                    </p>
+                                    <p className="text-[10px] text-gray-400 font-black uppercase">
+                                      BOTS
+                                    </p>
+                                  </div>
+                                  <div className="w-px h-8 bg-gray-100 dark:bg-gray-800" />
+                                  <div>
+                                    <p className="font-black text-indigo-500 leading-none mb-1 text-sm">
+                                      {u.stats?.totalRamUsage || 0} MB
+                                    </p>
+                                    <p className="text-[10px] text-gray-400 font-black uppercase">
+                                      RAM
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-6 text-right">
+                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                  <ActionButton
+                                    icon={Plus}
+                                    color="text-emerald-500"
+                                    bg="bg-emerald-500/10"
+                                    onClick={() => {
+                                      setSelectedUser(u);
+                                      setCreditAction("add");
+                                      setShowCreditModal(true);
+                                    }}
+                                    title="Add Credits"
+                                  />
+                                  <ActionButton
+                                    icon={Minus}
+                                    color="text-amber-500"
+                                    bg="bg-amber-500/10"
+                                    onClick={() => {
+                                      setSelectedUser(u);
+                                      setCreditAction("reduce");
+                                      setShowCreditModal(true);
+                                    }}
+                                    title="Deduct Credits"
+                                  />
+                                  <ActionButton
+                                    icon={
+                                      u.accountStatus === "active"
+                                        ? Lock
+                                        : Unlock
+                                    }
+                                    color={
+                                      u.accountStatus === "active"
+                                        ? "text-red-500"
+                                        : "text-emerald-500"
+                                    }
+                                    bg={
+                                      u.accountStatus === "active"
+                                        ? "bg-red-500/10"
+                                        : "bg-emerald-500/10"
+                                    }
+                                    onClick={() =>
+                                      updateUser(u._id, {
+                                        accountStatus:
+                                          u.accountStatus === "active"
+                                            ? "suspended"
+                                            : "active",
+                                      })
+                                    }
+                                    title={
+                                      u.accountStatus === "active"
+                                        ? "Suspend"
+                                        : "Activate"
+                                    }
+                                  />
+                                  <ActionButton
+                                    icon={Trash2}
+                                    color="text-red-600"
+                                    bg="bg-red-600/10"
+                                    onClick={() => deleteUser(u._id)}
+                                    title="Delete User"
+                                  />
+                                </div>
+                              </td>
+                            </motion.tr>
+                          ))}
+                        </AnimatePresence>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
-            {/* Mobile Card Layout */}
-            <div className="lg:hidden space-y-4">
-              <AnimatePresence>
-                {filteredUsers.map((u) => (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    key={u._id}
-                    className="bg-white dark:bg-[#111827] p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm"
-                  >
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-lg font-black">
-                          {u.username?.[0]?.toUpperCase()}
-                        </div>
-                        <div>
-                          <h4 className="font-black text-gray-900 dark:text-white">
-                            {u.username}
-                          </h4>
-                          <p className="text-xs text-gray-500">{u.email}</p>
-                        </div>
-                      </div>
-                      <div
-                        className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${
-                          u.accountStatus === "suspended"
-                            ? "bg-red-500/10 text-red-500"
-                            : "bg-emerald-500/10 text-emerald-500"
-                        }`}
+                {/* Mobile View */}
+                <div className="lg:hidden space-y-4">
+                  <AnimatePresence>
+                    {filteredUsers.map((u) => (
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        key={u._id}
+                        className="bg-white dark:bg-[#111827] p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm"
                       >
-                        {u.accountStatus || "ACTIVE"}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                          PRIVILEGE
-                        </p>
-                        <select
-                          className="w-full bg-transparent border-none p-0 text-sm font-black text-indigo-500 focus:ring-0"
-                          value={u.role}
-                          onChange={(e) =>
-                            updateUser(u._id, { role: e.target.value })
-                          }
-                        >
-                          <option value="user">USER</option>
-                          <option value="power_user">POWER</option>
-                          <option value="admin">ADMIN</option>
-                        </select>
-                      </div>
-                      <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                          WALLET
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <Coins size={14} className="text-amber-500" />
-                          <span className="font-black text-gray-900 dark:text-white">
-                            {Math.round(u.credits || 0)}
-                          </span>
+                        <div className="flex justify-between items-start mb-6">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black">
+                              {u.username?.[0]?.toUpperCase()}
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-gray-900 dark:text-gray-100">
+                                {u.username}
+                              </h3>
+                              <p className="text-[10px] text-gray-500 font-medium uppercase font-mono">
+                                {u.email}
+                              </p>
+                            </div>
+                          </div>
+                          <Link
+                            href={`/admin/users/${u._id}`}
+                            className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl text-gray-400 hover:text-indigo-500 transition-colors"
+                          >
+                            <UserIcon size={18} />
+                          </Link>
                         </div>
-                      </div>
-                    </div>
 
-                    <div className="flex items-center justify-between border-t border-gray-50 dark:border-gray-800/50 pt-6">
-                      <div className="flex gap-4">
-                        <div className="text-center">
-                          <p className="font-black text-gray-900 dark:text-white">
-                            {u.stats?.totalBots || 0}
-                          </p>
-                          <p className="text-[8px] font-black text-gray-400 uppercase">
-                            BOTS
-                          </p>
+                        <div className="grid grid-cols-2 gap-4 mb-6">
+                          <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                              Role
+                            </p>
+                            <p className="text-xs font-bold uppercase">
+                              {u.role}
+                            </p>
+                          </div>
+                          <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                              Status
+                            </p>
+                            <p
+                              className={`text-xs font-bold uppercase ${
+                                u.accountStatus === "active"
+                                  ? "text-emerald-500"
+                                  : "text-red-500"
+                              }`}
+                            >
+                              {u.accountStatus || "Active"}
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-center">
-                          <p className="font-black text-indigo-500 text-sm">
-                            {((u.stats?.totalRamUsage || 0) / 1024).toFixed(1)}
-                            GB
-                          </p>
-                          <p className="text-[8px] font-black text-gray-400 uppercase">
-                            RAM
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => openCreditModal(u, "add")}
-                          className="p-3 bg-emerald-500/10 text-emerald-500 rounded-2xl"
-                        >
-                          <Plus size={18} />
-                        </button>
-                        <button
-                          onClick={() => openCreditModal(u, "reduce")}
-                          className="p-3 bg-amber-500/10 text-amber-500 rounded-2xl"
-                        >
-                          <Minus size={18} />
-                        </button>
-                        <button
-                          onClick={() => deleteUser(u._id)}
-                          className="p-3 bg-red-500/10 text-red-500 rounded-2xl"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
 
-            {filteredUsers.length === 0 && (
-              <div className="text-center py-20 bg-gray-50 dark:bg-gray-900/50 rounded-[40px] border-2 border-dashed border-gray-200 dark:border-gray-800">
-                <Search className="mx-auto text-gray-300 mb-4" size={48} />
-                <p className="text-xl font-bold text-gray-400">
-                  No users found matching your search.
-                </p>
-              </div>
+                        <div className="flex justify-between items-center pt-6 border-t border-gray-50 dark:border-gray-800">
+                          <div className="flex items-center gap-2">
+                            <div className="p-1.5 bg-yellow-500/10 rounded-lg">
+                              <Coins size={14} className="text-yellow-600" />
+                            </div>
+                            <span className="font-black text-lg tracking-tight">
+                              {Math.round(u.credits || 0)}
+                            </span>
+                          </div>
+                          <div className="flex gap-2">
+                            <ActionButton
+                              icon={Plus}
+                              color="text-emerald-500"
+                              bg="bg-emerald-500/10"
+                              onClick={() => {
+                                setSelectedUser(u);
+                                setCreditAction("add");
+                                setShowCreditModal(true);
+                              }}
+                            />
+                            <ActionButton
+                              icon={Minus}
+                              color="text-amber-500"
+                              bg="bg-amber-500/10"
+                              onClick={() => {
+                                setSelectedUser(u);
+                                setCreditAction("reduce");
+                                setShowCreditModal(true);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+
+                {filteredUsers.length === 0 && (
+                  <div className="text-center py-20 bg-gray-50 dark:bg-gray-900/50 rounded-[40px] border-2 border-dashed border-gray-200 dark:border-gray-800">
+                    <Search className="mx-auto text-gray-300 mb-4" size={48} />
+                    <p className="text-xl font-bold text-gray-400">
+                      No users found matching your search.
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </>
+        ) : (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+                <span className="w-2 h-8 bg-indigo-600 rounded-full" />
+                Audit Trail
+              </h2>
+              <button
+                onClick={fetchLogs}
+                disabled={logsLoading}
+                className="p-3 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-800 hover:scale-110 transition-all text-gray-500 active:scale-95 disabled:opacity-50"
+              >
+                <RefreshCw
+                  size={20}
+                  className={logsLoading ? "animate-spin" : ""}
+                />
+              </button>
+            </div>
+
+            {logsLoading ? (
+              <div className="space-y-4">
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-white dark:bg-[#111827] h-16 w-full rounded-2xl border border-gray-100 dark:border-gray-800 animate-pulse flex items-center px-6 gap-4"
+                  >
+                    <div className="w-8 h-8 bg-gray-200 dark:bg-gray-800 rounded-lg" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 bg-gray-200 dark:bg-gray-800 w-1/2 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : logs.length === 0 ? (
+              <div className="bg-white dark:bg-[#111827] rounded-[40px] border border-dashed border-gray-100 dark:border-gray-800 p-20 text-center">
+                <p className="text-gray-400 font-bold">
+                  No activity recorded yet.
+                </p>
+              </div>
+            ) : (
+              <div className="bg-white dark:bg-[#111827] rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                <div className="divide-y divide-gray-50 dark:divide-gray-800/50">
+                  {logs.map((log) => (
+                    <div
+                      key={log._id}
+                      className="p-6 hover:bg-gray-50 dark:hover:bg-indigo-500/[0.02] transition-colors flex items-center justify-between gap-6"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-lg">
+                          📝
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-gray-900 dark:text-gray-100 capitalize">
+                            {log.action.replace(/_/g, " ")}
+                          </p>
+                          <p className="text-[10px] text-gray-500 font-mono mt-0.5">
+                            {log.details}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] font-black uppercase text-indigo-500 tracking-widest">
+                          @{log.adminUsername}
+                        </p>
+                        <p className="text-[10px] text-gray-400 font-bold mt-1">
+                          {new Date(log.timestamp).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

@@ -355,9 +355,17 @@ export default function UserManagement() {
                                   className="group/link block"
                                 >
                                   <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black text-lg">
-                                      {u.username?.[0]?.toUpperCase()}
-                                    </div>
+                                    {u.profileImage ? (
+                                      <img
+                                        src={u.profileImage}
+                                        alt={u.username}
+                                        className="w-12 h-12 rounded-2xl object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black text-lg">
+                                        {u.username?.[0]?.toUpperCase()}
+                                      </div>
+                                    )}
                                     <div>
                                       <h3 className="font-black text-gray-900 dark:text-gray-100 group-hover/link:text-indigo-600 transition-colors">
                                         {u.username}

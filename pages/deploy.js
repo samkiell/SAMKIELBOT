@@ -246,7 +246,7 @@ export default function DeployPage() {
         const deployments = await getDeployments();
         const count = deployments.length;
         setBotCount(count);
-        if (count >= 2) {
+        if (count >= 2 && user?.role !== "admin") {
           setIsAtLimit(true);
         }
       } catch (err) {

@@ -207,7 +207,7 @@ export default function BotControl() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <StatCard
-            title="TOTAL FLEET"
+            title="TOTAL BOTS"
             value={stats.total}
             icon={LayoutGrid}
             color="indigo"

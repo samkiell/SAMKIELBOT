@@ -415,33 +415,87 @@ export default function AdminDashboard() {
               {stats?.nodeHealth?.map((node, i) => (
                 <div
                   key={i}
-                  className="bg-gray-50/50 dark:bg-gray-900/50 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 group hover:border-indigo-500/30 transition-colors"
+                  className="bg-gray-50/50 dark:bg-gray-900/50 p-6 rounded-[24px] border border-gray-100 dark:border-gray-800 group hover:border-indigo-500/30 transition-all hover:bg-white dark:hover:bg-gray-800"
                 >
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="font-bold text-sm tracking-tight">
-                      {node.name}
-                    </span>
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-gray-400">
-                      RAM
-                    </span>
-                    <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${node.ramUsage}%` }}
-                        className={`h-full rounded-full ${
-                          node.ramUsage > 85 ? "bg-red-500" : "bg-indigo-500"
-                        }`}
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          node.status === "online"
+                            ? "bg-emerald-500"
+                            : "bg-red-500"
+                        } animate-pulse`}
                       />
+                      <span className="font-black text-sm tracking-tight uppercase">
+                        {node.name}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-mono font-bold">
-                      {node.ramUsage}%
+                    <span className="text-[10px] font-bold text-gray-400 font-mono">
+                      ID: {node.id || "N/A"}
                     </span>
-                    <button className="p-1.5 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Settings2 size={12} className="text-gray-400" />
-                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Progress Bar */}
+                    <div>
+                      <div className="flex justify-between items-end mb-2">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                          RAM UTILIZATION
+                        </span>
+                        <span className="text-sm font-black text-indigo-500">
+                          {node.ramUsage}%
+                        </span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${node.ramUsage}%` }}
+                          className={`h-full rounded-full ${
+                            node.ramUsage > 80
+                              ? "bg-red-500"
+                              : node.ramUsage > 60
+                              ? "bg-amber-500"
+                              : "bg-indigo-500"
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 border-t border-gray-100 dark:border-gray-800 pt-4">
+                      <div className="text-center border-r border-gray-50 dark:border-gray-800/50">
+                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">
+                          Total RAM
+                        </p>
+                        <p className="text-[11px] font-bold">
+                          {node.totalRam}MB
+                        </p>
+                      </div>
+                      <div className="text-center border-r border-gray-50 dark:border-gray-800/50">
+                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">
+                          Allocated
+                        </p>
+                        <p className="text-[11px] font-bold text-indigo-500">
+                          {node.allocatedRam}MB
+                        </p>
+                      </div>
+                      <div className="text-center border-r border-gray-50 dark:border-gray-800/50">
+                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">
+                          Free RAM
+                        </p>
+                        <p className="text-[11px] font-bold text-emerald-500">
+                          {node.freeRam}MB
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-tighter">
+                          CPU Limit
+                        </p>
+                        <p className="text-[11px] font-bold text-amber-500">
+                          {node.totalCpu}%
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}

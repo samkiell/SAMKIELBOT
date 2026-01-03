@@ -185,47 +185,54 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="relative w-48 h-48 flex items-center justify-center">
-              <svg className="w-full h-full -rotate-90">
-                <circle
-                  cx="96"
-                  cy="96"
-                  r="80"
-                  stroke="currentColor"
-                  strokeWidth="12"
-                  fill="transparent"
-                  className="text-gray-100 dark:text-gray-800"
-                />
-                <motion.circle
-                  cx="96"
-                  cy="96"
-                  r="80"
-                  stroke="currentColor"
-                  strokeWidth="12"
-                  fill="transparent"
-                  strokeDasharray={2 * Math.PI * 80}
-                  animate={{
-                    strokeDashoffset:
-                      2 *
-                      Math.PI *
-                      80 *
-                      (1 - (infra?.host?.memory?.usedPercent || 0) / 100),
-                  }}
-                  className="text-indigo-600"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-black">
-                  {infra?.host?.memory?.usedPercent || 0}%
-                </span>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                  Capacity
-                </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Capacity Circle */}
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="relative w-56 h-56 flex items-center justify-center">
+                <svg className="w-full h-full -rotate-90">
+                  <circle
+                    cx="112"
+                    cy="112"
+                    r="92"
+                    stroke="currentColor"
+                    strokeWidth="14"
+                    fill="transparent"
+                    className="text-gray-100 dark:text-gray-800"
+                  />
+                  <motion.circle
+                    cx="112"
+                    cy="112"
+                    r="92"
+                    stroke="currentColor"
+                    strokeWidth="14"
+                    fill="transparent"
+                    strokeDasharray={2 * Math.PI * 92}
+                    initial={{ strokeDashoffset: 2 * Math.PI * 92 }}
+                    animate={{
+                      strokeDashoffset:
+                        2 *
+                        Math.PI *
+                        92 *
+                        (1 - (infra?.host?.memory?.usedPercent || 0) / 100),
+                    }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    className="text-indigo-600"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-5xl font-black">
+                    {infra?.host?.memory?.usedPercent || 0}%
+                  </span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                    Capacity
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex-1 w-full space-y-6">
+            {/* Stats Bars */}
+            <div className="space-y-6">
               <UsageBar
                 label="MEMORY UTILIZATION"
                 value={infra?.host?.memory?.usedPercent || 0}
@@ -241,64 +248,68 @@ export default function AdminDashboard() {
                 value={infra?.host?.disk?.usedPercent || 0}
                 color="amber"
               />
-
-              {/* Individual Bot Loads */}
-              <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-800">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">
-                  Active Bot Loads
-                </p>
-                <div className="space-y-3">
-                  {infra?.bots?.slice(0, 3).map((bot, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between p-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            bot.state === "running"
-                              ? "bg-emerald-500 shadow-[0_0_8px_#10b981]"
-                              : "bg-gray-500"
-                          }`}
-                        />
-                        <span className="text-xs font-bold">{bot.name}</span>
-                      </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-right">
-                          <p className="text-[9px] font-bold text-gray-400 uppercase">
-                            RAM
-                          </p>
-                          <p className="text-[10px] font-black">
-                            {bot.usedRam}MB
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-[9px] font-bold text-gray-400 uppercase">
-                            CPU
-                          </p>
-                          <p className="text-[10px] font-black">
-                            {bot.usedCpu}%
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {(!infra?.bots || infra.bots.length === 0) && (
-                    <p className="text-xs text-center text-gray-500 py-4 italic">
-                      No active deployments detected.
-                    </p>
-                  )}
-                  {infra?.bots?.length > 3 && (
-                    <Link
-                      href="/admin/infrastructure"
-                      className="block text-center text-[10px] font-bold text-indigo-500 hover:underline mt-2"
-                    >
-                      View all {infra.bots.length} bots
-                    </Link>
-                  )}
-                </div>
-              </div>
             </div>
+          </div>
+
+          {/* Individual Bot Loads - Now UNDER both */}
+          <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                Active Bot Loads
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {infra?.bots?.slice(0, 3).map((bot, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-indigo-500/30 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        bot.state === "running"
+                          ? "bg-emerald-500 shadow-[0_0_8px_#10b981]"
+                          : "bg-gray-500"
+                      }`}
+                    />
+                    <span className="text-xs font-bold truncate max-w-[80px]">
+                      {bot.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="text-[8px] font-bold text-gray-400 uppercase">
+                        RAM
+                      </p>
+                      <p className="text-[10px] font-black font-mono">
+                        {bot.usedRam}MB
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[8px] font-bold text-gray-400 uppercase">
+                        CPU
+                      </p>
+                      <p className="text-[10px] font-black font-mono">
+                        {bot.usedCpu}%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {(!infra?.bots || infra.bots.length === 0) && (
+              <p className="text-xs text-center text-gray-500 py-4 italic">
+                No active deployments detected.
+              </p>
+            )}
+            {infra?.bots?.length > 3 && (
+              <Link
+                href="/admin/infrastructure"
+                className="block text-center text-[10px] font-bold text-indigo-500 hover:underline mt-6 uppercase tracking-widest"
+              >
+                View all {infra.bots.length} active bots
+              </Link>
+            )}
           </div>
         </div>
 

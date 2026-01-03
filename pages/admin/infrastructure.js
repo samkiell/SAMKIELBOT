@@ -160,226 +160,359 @@ export default function InfrastructureControlPlane() {
   return (
     <AdminLayout>
       <Head>
-        <title>Platform Workload | SAMKIEL BOT</title>
+        <title>Infra Control Plane | SAMKIEL BOT</title>
       </Head>
 
-      <div className="min-h-screen bg-[#0a0f18] text-gray-100 p-4 md:p-8 rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl">
-        {/* Header Area */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-              <Zap className="text-indigo-400 fill-indigo-400/20" size={24} />
-            </div>
-            <div>
-              <h1 className="text-3xl font-black tracking-tight text-white uppercase italic">
-                Platform Workload
-              </h1>
-              <p className="text-[10px] font-bold text-gray-500 tracking-widest mt-1">
-                NODE: {data?.name || "CONNECTING..."} • ID: {data?.dropletId}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-gray-500">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                <span className="text-gray-300">Active</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-gray-600" />
-                <span>Idle</span>
-              </div>
-            </div>
-
-            <button
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all text-gray-400 hover:text-white"
-            >
-              <RefreshCcw
-                size={18}
-                className={refreshing ? "animate-spin" : ""}
+      {/* Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Infra Control Plane
+            </h1>
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs font-bold border border-green-500/20 uppercase tracking-widest">
+              <motion.div
+                animate={{ opacity: [1, 0.4, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-1.5 h-1.5 rounded-full bg-green-500"
               />
-            </button>
-          </div>
-        </div>
-
-        {/* Top Grid: Circular Capacity & Linear Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 items-center">
-          {/* Circular Capacity */}
-          <div className="flex justify-center relative py-10">
-            <CircularProgress value={host?.memory.usedPercent || 0} />
-          </div>
-
-          {/* Linear Stats */}
-          <div className="space-y-10 max-w-md mx-auto w-full">
-            <StatBar
-              label="Memory Utilization"
-              value={host?.memory.usedPercent || 0}
-              displayValue={`${host?.memory.usedPercent || 0}%`}
-              color="indigo"
-            />
-            <StatBar
-              label="CPU Load Average"
-              value={host?.cpu.usedPercent || 0}
-              displayValue={`${host?.cpu.usedPercent || 0}%`}
-              color="gray"
-            />
-            <StatBar
-              label="Storage Distribution"
-              value={host?.disk.usedPercent || 0}
-              displayValue={`${host?.disk.usedPercent || 0}%`}
-              color="amber"
-            />
-          </div>
-        </div>
-
-        {/* Bot List Section */}
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 border-b border-gray-800 pb-2 w-full">
-              Active Bot Loads
-            </h2>
-          </div>
-
-          <div className="space-y-3">
-            {data?.bots?.slice(0, 5).map((bot) => (
-              <BotLoadCard key={bot.id} bot={bot} />
-            ))}
-          </div>
-
-          {data?.bots?.length > 5 && (
-            <div className="mt-8 text-center">
-              <button className="text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-indigo-300 transition-colors">
-                View all {data.bots.length} bots
-              </button>
+              Live
             </div>
-          )}
+          </div>
+          <p className="text-gray-500 flex items-center gap-3 text-sm">
+            <Server size={14} /> {data?.name || "Initializing..."}
+            <span className="w-1 h-1 rounded-full bg-gray-300" />
+            <span className="flex items-center gap-1 text-indigo-500 font-medium">
+              <Clock size={12} /> {formatUptime(data?.uptimeMinutes)}
+            </span>
+            <span className="w-1 h-1 rounded-full bg-gray-300" />
+            ID: {data?.dropletId}
+          </p>
+        </div>
+
+        <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center gap-4 text-xs font-mono">
+          <div className="text-right">
+            <div className="text-gray-400">LAST HEARTBEAT</div>
+            <div className="text-gray-900 dark:text-gray-100">
+              {lastUpdate.toLocaleTimeString()}
+            </div>
+          </div>
+          <div className="w-px h-8 bg-gray-200 dark:bg-gray-700 mx-1" />
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-black uppercase tracking-widest text-[10px] sm:text-xs ${
+              refreshing
+                ? "bg-indigo-500/20 text-indigo-400 cursor-not-allowed"
+                : "bg-indigo-500 text-white hover:bg-indigo-600 shadow-xl shadow-indigo-500/40 active:scale-95 hover:-translate-y-0.5"
+            }`}
+          >
+            {refreshing ? (
+              <RefreshCcw size={16} className="animate-spin" />
+            ) : (
+              <Zap size={16} className="fill-current" />
+            )}
+            {refreshing ? "SYNCING..." : "FORCE FETCH"}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        {/* Host Usage Cards */}
+        <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <MetricCard
+            title="CPU Usage"
+            value={host?.cpu.usedPercent || 0}
+            subtitle={`${host?.cpu.cores} vCPUs Reserved`}
+            icon={Cpu}
+            color="indigo"
+          />
+          <MetricCard
+            title="RAM Usage"
+            value={host?.memory.usedPercent || 0}
+            subtitle={`${host?.memory.usedMB} / ${host?.memory.totalMB} MB`}
+            icon={Database}
+            color="emerald"
+            breakdown={host?.memory.breakdown}
+          />
+          <MetricCard
+            title="Storage"
+            value={host?.disk.usedPercent || 0}
+            subtitle={`${host?.disk.usedGB} / ${host?.disk.totalGB} GB`}
+            icon={HardDrive}
+            color="amber"
+          />
+        </div>
+
+        {/* Prediction / Capacity Card */}
+        <div className="lg:col-span-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`h-full p-6 rounded-3xl border shadow-xl relative overflow-hidden ${
+              prediction?.status === "critical"
+                ? "bg-red-500 text-white border-red-600"
+                : prediction?.status === "warning"
+                ? "bg-amber-500 text-white border-amber-600"
+                : "bg-indigo-600 text-white border-indigo-700"
+            }`}
+          >
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-bold uppercase tracking-tighter opacity-80">
+                    Capacity Intelligence
+                  </span>
+                  <Zap size={20} className="fill-white/30 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-1">
+                  {prediction?.status === "calculating"
+                    ? "Learning Patterns..."
+                    : prediction?.status === "stable"
+                    ? "No Pressure Detected"
+                    : prediction?.status === "critical"
+                    ? "Exhaustion Imminent"
+                    : "Healthy Scaling"}
+                </h3>
+                <p className="text-sm opacity-90 leading-relaxed capitalize">
+                  {prediction?.status === "calculating"
+                    ? "Monitoring data drift. Stand by."
+                    : prediction?.status === "stable"
+                    ? "Current bot load is negligible."
+                    : `Upgrade Urgency: ${prediction?.upgradeUrgency}`}
+                </p>
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-white/20">
+                {prediction?.predictedHoursToLimit ? (
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <div className="text-sm opacity-80 mb-1">
+                        Estimated Exhaustion
+                      </div>
+                      <div className="text-4xl font-black">
+                        {prediction.predictedHoursToLimit}
+                        <span className="text-lg font-bold ml-1">HRS</span>
+                      </div>
+                    </div>
+                    <TrendingUp size={32} className="opacity-40" />
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} />
+                    <span className="text-sm font-medium">
+                      Accumulating 24h history
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            {/* Dynamic BG Shape */}
+            <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Bot Attribution Area */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <Users size={20} className="text-indigo-500" />
+            Per-Bot Attribution
+            <span className="ml-2 px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs text-gray-400 font-mono">
+              {data?.bots?.length || 0} DEPLOYMENTS
+            </span>
+          </h2>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-gray-50/50 dark:bg-gray-900/50 text-gray-500 text-xs font-bold uppercase border-b border-gray-100 dark:border-gray-700">
+                  <th className="px-6 py-4">Bot Identity</th>
+                  <th className="px-6 py-4 text-center">Core Status</th>
+                  <th className="px-6 py-4">RAM Logic</th>
+                  <th className="px-6 py-4">CPU Intensity</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                {data?.bots?.map((bot) => (
+                  <tr
+                    key={bot.id}
+                    className="hover:bg-gray-50/80 dark:hover:bg-gray-900/30 transition-colors group"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="font-bold text-gray-900 dark:text-gray-100">
+                        {bot.name}
+                      </div>
+                      <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                        {bot.user} <ChevronRight size={10} />{" "}
+                        {bot.id.substring(bot.id.length - 6)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex justify-center">
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                            bot.state === "running"
+                              ? "bg-green-500/10 text-green-600"
+                              : bot.state === "offline"
+                              ? "bg-red-500/10 text-red-600"
+                              : "bg-amber-500/10 text-amber-600"
+                          }`}
+                        >
+                          {bot.state}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-24 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{
+                              width: `${Math.min(
+                                (bot.usedRam / bot.limitRam) * 100,
+                                100
+                              )}%`,
+                            }}
+                            className={`h-full rounded-full ${
+                              bot.usedRam / bot.limitRam > 0.8
+                                ? "bg-red-500"
+                                : "bg-indigo-500"
+                            }`}
+                          />
+                        </div>
+                        <span className="text-xs font-mono font-bold">
+                          {bot.usedRam} MB
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs font-mono px-2 py-1 bg-gray-100 dark:bg-gray-900 rounded font-bold">
+                        {bot.usedCpu}%
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() =>
+                            handleThrottle(
+                              bot.id,
+                              bot.limitRam,
+                              bot.limitCpu,
+                              bot.limitDisk
+                            )
+                          }
+                          className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-indigo-500 rounded-lg"
+                          title="Adjust Limits"
+                        >
+                          <Settings2 size={16} />
+                        </button>
+                        <button
+                          className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500 rounded-lg"
+                          title="Emergency Stop"
+                        >
+                          <ShieldAlert size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {(!data?.bots || data.bots.length === 0) && (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-6 py-12 text-center text-gray-500 font-medium italic"
+                    >
+                      Infrastructure is currently idle. No bots deployed.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </AdminLayout>
   );
 }
 
-function CircularProgress({ value }) {
-  const radius = 90;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (value / 100) * circumference;
-
-  return (
-    <div className="relative flex items-center justify-center w-64 h-64 scale-110 md:scale-125">
-      {/* Background Circle */}
-      <svg className="w-full h-full transform -rotate-90">
-        <circle
-          cx="128"
-          cy="128"
-          r={radius}
-          stroke="rgba(255,255,255,0.05)"
-          strokeWidth="12"
-          fill="transparent"
-        />
-        {/* Progress Circle */}
-        <motion.circle
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          cx="128"
-          cy="128"
-          r={radius}
-          stroke="url(#gradient)"
-          strokeWidth="12"
-          strokeDasharray={circumference}
-          strokeLinecap="round"
-          fill="transparent"
-        />
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#4f46e5" />
-          </linearGradient>
-        </defs>
-      </svg>
-      {/* Center Text */}
-      <div className="absolute text-center">
-        <div className="text-6xl font-black text-white leading-none">
-          {Math.round(value)}
-          <span className="text-2xl opacity-40">%</span>
-        </div>
-        <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 mt-2">
-          Capacity
-        </div>
-      </div>
-
-      {/* Glow Effect */}
-      <div className="absolute inset-0 rounded-full bg-indigo-500/5 blur-3xl -z-10" />
-    </div>
-  );
-}
-
-function StatBar({ label, value, displayValue, color }) {
+function MetricCard({ title, value, subtitle, icon: Icon, color, breakdown }) {
   const colors = {
-    indigo: "bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.4)]",
-    amber: "bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.4)]",
-    gray: "bg-gray-700",
+    indigo: "text-indigo-500 bg-indigo-500/10",
+    emerald: "text-emerald-500 bg-emerald-500/10",
+    amber: "text-amber-500 bg-amber-500/10",
   };
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-end mb-3">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
-          {label}
-        </span>
-        <span className="text-sm font-black text-white italic">
-          {displayValue}
-        </span>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden group hover:shadow-lg transition-all"
+    >
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+            {title}
+          </p>
+          <div className="text-3xl font-black text-gray-900 dark:text-white flex items-baseline">
+            {Math.round(value)}
+            <span className="text-base font-bold ml-0.5 opacity-40">%</span>
+          </div>
+        </div>
+        <div className={`p-3 rounded-2xl ${colors[color]}`}>
+          <Icon size={20} />
+        </div>
       </div>
-      <div className="h-2 bg-gray-900/50 rounded-full overflow-hidden border border-white/5">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${Math.min(value, 100)}%` }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className={`h-full rounded-full ${colors[color] || colors.indigo}`}
-        />
-      </div>
-    </div>
-  );
-}
 
-function BotLoadCard({ bot }) {
-  const isRunning = bot.state === "running";
-  return (
-    <div className="bg-[#111827]/40 backdrop-blur-sm border border-white/5 p-4 rounded-2xl flex items-center justify-between group hover:border-indigo-500/30 transition-all hover:translate-x-1">
-      <div className="flex items-center gap-4">
-        <div
-          className={`w-2 h-2 rounded-full ${
-            isRunning
-              ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
-              : "bg-gray-600"
-          }`}
-        />
-        <span className="text-sm font-bold text-gray-200 tracking-tight uppercase">
-          {bot.name}
-        </span>
-      </div>
-      <div className="flex gap-8">
-        <div className="text-right">
-          <div className="text-[8px] font-black text-gray-500 uppercase tracking-tighter">
-            RAM
-          </div>
-          <div className="text-xs font-black text-white italic">
-            {bot.usedRam}MB
-          </div>
+      <div className="space-y-4">
+        <div className="w-full h-3 bg-gray-50 dark:bg-gray-900 rounded-full p-0.5">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(value, 100)}%` }}
+            transition={{ duration: 1 }}
+            className={`h-full rounded-full shadow-[0_0_10px_rgba(0,0,0,0.1)] ${
+              value > 85
+                ? "bg-red-500"
+                : value > 70
+                ? "bg-amber-500"
+                : color === "indigo"
+                ? "bg-indigo-500"
+                : color === "emerald"
+                ? "bg-emerald-500"
+                : "bg-amber-500"
+            }`}
+          />
         </div>
-        <div className="text-right min-w-[40px]">
-          <div className="text-[8px] font-black text-gray-500 uppercase tracking-tighter">
-            CPU
-          </div>
-          <div className="text-xs font-black text-white italic">
-            {bot.usedCpu}%
-          </div>
+
+        <div className="flex justify-between items-center text-xs font-bold text-gray-400">
+          <span className="flex items-center gap-1.5">
+            <Clock size={12} /> {subtitle}
+          </span>
         </div>
+
+        {breakdown && (
+          <div className="pt-3 flex gap-2 border-t border-gray-50 dark:border-gray-700">
+            <div className="flex-1">
+              <div className="text-[10px] text-gray-400 mb-1">BOTS</div>
+              <div className="text-sm font-mono font-bold text-emerald-500">
+                {breakdown.botsMB}MB
+              </div>
+            </div>
+            <div className="w-px bg-gray-100 dark:bg-gray-700" />
+            <div className="flex-1">
+              <div className="text-[10px] text-gray-400 mb-1">SYSTEM</div>
+              <div className="text-sm font-mono font-bold text-indigo-500">
+                {breakdown.systemMB}MB
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </motion.div>
   );
 }

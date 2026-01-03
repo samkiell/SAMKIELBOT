@@ -274,7 +274,7 @@ export default function UserManagement() {
                       <th className="px-6 py-5">Privileges</th>
                       <th className="px-6 py-5">Status</th>
                       <th className="px-6 py-5">Wallet</th>
-                      <th className="px-6 py-5">Fleet</th>
+                      <th className="px-6 py-5">BOT</th>
                       <th className="px-6 py-5 text-right">Actions</th>
                     </tr>
                   </thead>

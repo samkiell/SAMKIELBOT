@@ -8,7 +8,7 @@ This project is a centralized web platform designed for the deployment, manageme
 
 **Target Audience**: 
 - Users seeking to run their own WhatsApp automated assistants.
-- Administrators managing a fleet of bot instances.
+- Administrators managing a BOT of bot instances.
 
 **Problem Solved**: Abstracts the complexity of server provisioning, git configuration, and application lifecycle management into a user-friendly web dashboard.
 

@@ -265,153 +265,154 @@ export default function UserManagement() {
           <TableSkeleton rows={8} cols={6} />
         ) : (
           <>
-            {/* Desktop Table View */}
             <div className="hidden lg:block bg-white dark:bg-[#111827] rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-50/50 dark:bg-gray-800/30 text-[11px] uppercase tracking-[0.15em] text-gray-500 font-black">
-                    <th className="px-8 py-5">Identity</th>
-                    <th className="px-8 py-5">Privileges</th>
-                    <th className="px-8 py-5">Status</th>
-                    <th className="px-8 py-5">Wallet</th>
-                    <th className="px-8 py-5">Fleet</th>
-                    <th className="px-8 py-5 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50 dark:divide-gray-800/50">
-                  <AnimatePresence>
-                    {filteredUsers.map((u) => (
-                      <motion.tr
-                        layout
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        key={u._id}
-                        className="group hover:bg-gray-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors"
-                      >
-                        <td className="px-8 py-6">
-                          <Link
-                            href={`/admin/users/${u._id}`}
-                            className="group/link block"
-                          >
-                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black">
-                                {u.username?.[0]?.toUpperCase()}
-                              </div>
-                              <div>
-                                <h4 className="font-black text-gray-900 dark:text-white leading-none mb-1.5 group-hover/link:text-indigo-500 transition-colors">
-                                  {u.username}
-                                </h4>
-                                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium lowercase">
-                                  <Mail size={12} className="opacity-50" />
-                                  {u.email}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[1100px]">
+                  <thead>
+                    <tr className="bg-gray-50/50 dark:bg-gray-800/30 text-[11px] uppercase tracking-[0.15em] text-gray-500 font-black">
+                      <th className="px-6 py-5">Identity</th>
+                      <th className="px-6 py-5">Privileges</th>
+                      <th className="px-6 py-5">Status</th>
+                      <th className="px-6 py-5">Wallet</th>
+                      <th className="px-6 py-5">Fleet</th>
+                      <th className="px-6 py-5 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50 dark:divide-gray-800/50">
+                    <AnimatePresence>
+                      {filteredUsers.map((u) => (
+                        <motion.tr
+                          layout
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          key={u._id}
+                          className="group hover:bg-gray-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors"
+                        >
+                          <td className="px-6 py-6">
+                            <Link
+                              href={`/admin/users/${u._id}`}
+                              className="group/link block"
+                            >
+                              <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black">
+                                  {u.username?.[0]?.toUpperCase()}
+                                </div>
+                                <div>
+                                  <h4 className="font-black text-gray-900 dark:text-white leading-none mb-1.5 group-hover/link:text-indigo-500 transition-colors">
+                                    {u.username}
+                                  </h4>
+                                  <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium lowercase">
+                                    <Mail size={12} className="opacity-50" />
+                                    {u.email}
+                                  </div>
                                 </div>
                               </div>
+                            </Link>
+                          </td>
+                          <td className="px-6 py-6">
+                            <div className="relative inline-block">
+                              <select
+                                className="appearance-none bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-none rounded-xl px-4 py-2 pr-8 text-xs font-bold focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                                value={u.role}
+                                onChange={(e) =>
+                                  updateUser(u._id, { role: e.target.value })
+                                }
+                              >
+                                <option value="user">USER</option>
+                                <option value="power_user">POWER</option>
+                                <option value="admin">ADMIN</option>
+                              </select>
+                              <MoreVertical
+                                size={12}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50"
+                              />
                             </div>
-                          </Link>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="relative inline-block">
+                          </td>
+                          <td className="px-6 py-6">
                             <select
-                              className="appearance-none bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-none rounded-xl px-4 py-2 pr-8 text-xs font-bold focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                              value={u.role}
+                              className={`bg-transparent border-none rounded-xl px-3 py-2 text-[10px] font-black tracking-widest uppercase focus:ring-0 cursor-pointer ${
+                                u.accountStatus === "suspended"
+                                  ? "text-red-500"
+                                  : "text-emerald-500"
+                              }`}
+                              value={u.accountStatus || "active"}
                               onChange={(e) =>
-                                updateUser(u._id, { role: e.target.value })
+                                updateUser(u._id, {
+                                  accountStatus: e.target.value,
+                                })
                               }
                             >
-                              <option value="user">USER</option>
-                              <option value="power_user">POWER</option>
-                              <option value="admin">ADMIN</option>
+                              <option value="active">● ACTIVE</option>
+                              <option value="suspended">● SUSPENDED</option>
+                              <option value="deleted">● TRASHED</option>
                             </select>
-                            <MoreVertical
-                              size={12}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50"
-                            />
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <select
-                            className={`bg-transparent border-none rounded-xl px-3 py-2 text-[10px] font-black tracking-widest uppercase focus:ring-0 cursor-pointer ${
-                              u.accountStatus === "suspended"
-                                ? "text-red-500"
-                                : "text-emerald-500"
-                            }`}
-                            value={u.accountStatus || "active"}
-                            onChange={(e) =>
-                              updateUser(u._id, {
-                                accountStatus: e.target.value,
-                              })
-                            }
-                          >
-                            <option value="active">● ACTIVE</option>
-                            <option value="suspended">● SUSPENDED</option>
-                            <option value="deleted">● TRASHED</option>
-                          </select>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-amber-500/10 rounded-lg">
-                              <Coins size={14} className="text-amber-500" />
+                          </td>
+                          <td className="px-6 py-6">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1.5 bg-amber-500/10 rounded-lg">
+                                <Coins size={14} className="text-amber-500" />
+                              </div>
+                              <span className="font-black text-gray-900 dark:text-white text-base tracking-tight">
+                                {Math.round(u.credits || 0)}
+                              </span>
                             </div>
-                            <span className="font-black text-gray-900 dark:text-white text-base tracking-tight">
-                              {Math.round(u.credits || 0)}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-3">
-                            <div className="text-right">
-                              <p className="font-black text-gray-900 dark:text-white leading-none mb-1">
-                                {u.stats?.totalBots || 0}
-                              </p>
-                              <p className="text-[10px] text-gray-400 font-black uppercase">
-                                BOTS
-                              </p>
+                          </td>
+                          <td className="px-6 py-6">
+                            <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                <p className="font-black text-gray-900 dark:text-white leading-none mb-1">
+                                  {u.stats?.totalBots || 0}
+                                </p>
+                                <p className="text-[10px] text-gray-400 font-black uppercase">
+                                  BOTS
+                                </p>
+                              </div>
+                              <div className="w-px h-8 bg-gray-100 dark:bg-gray-800" />
+                              <div>
+                                <p className="font-black text-indigo-500 leading-none mb-1 text-sm">
+                                  {(
+                                    (u.stats?.totalRamUsage || 0) / 1024
+                                  ).toFixed(1)}
+                                  GB
+                                </p>
+                                <p className="text-[10px] text-gray-400 font-black uppercase">
+                                  RAM
+                                </p>
+                              </div>
                             </div>
-                            <div className="w-px h-8 bg-gray-100 dark:bg-gray-800" />
-                            <div>
-                              <p className="font-black text-indigo-500 leading-none mb-1 text-sm">
-                                {((u.stats?.totalRamUsage || 0) / 1024).toFixed(
-                                  1
-                                )}
-                                GB
-                              </p>
-                              <p className="text-[10px] text-gray-400 font-black uppercase">
-                                RAM
-                              </p>
+                          </td>
+                          <td className="px-6 py-6 text-right">
+                            <div className="flex justify-end gap-2">
+                              <ActionButton
+                                icon={Plus}
+                                color="text-emerald-500"
+                                bg="hover:bg-emerald-500/10"
+                                onClick={() => openCreditModal(u, "add")}
+                                title="Grant Credits"
+                              />
+                              <ActionButton
+                                icon={Minus}
+                                color="text-amber-500"
+                                bg="hover:bg-amber-500/10"
+                                onClick={() => openCreditModal(u, "reduce")}
+                                title="Revoke Credits"
+                              />
+                              <ActionButton
+                                icon={Trash2}
+                                color="text-red-500"
+                                bg="hover:bg-red-500/10"
+                                onClick={() => deleteUser(u._id)}
+                                title="Purge Record"
+                              />
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-8 py-6 text-right">
-                          <div className="flex justify-end gap-2">
-                            <ActionButton
-                              icon={Plus}
-                              color="text-emerald-500"
-                              bg="hover:bg-emerald-500/10"
-                              onClick={() => openCreditModal(u, "add")}
-                              title="Grant Credits"
-                            />
-                            <ActionButton
-                              icon={Minus}
-                              color="text-amber-500"
-                              bg="hover:bg-amber-500/10"
-                              onClick={() => openCreditModal(u, "reduce")}
-                              title="Revoke Credits"
-                            />
-                            <ActionButton
-                              icon={Trash2}
-                              color="text-red-500"
-                              bg="hover:bg-red-500/10"
-                              onClick={() => deleteUser(u._id)}
-                              title="Purge Record"
-                            />
-                          </div>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </AnimatePresence>
-                </tbody>
-              </table>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* Mobile Card Layout */}

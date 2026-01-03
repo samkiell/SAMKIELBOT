@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import Head from "next/head";
 import AdminLayout from "../../../components/AdminLayout";
 import { useAuth } from "../../../lib/auth";
 import toast from "react-hot-toast";
@@ -15,8 +16,17 @@ import {
   Minus,
   X,
   Search,
+  User as UserIcon,
+  Crown,
+  UserCheck,
+  AlertTriangle,
+  Mail,
+  Calendar,
+  LayoutGrid,
+  Bot,
+  Zap,
 } from "lucide-react";
-
+import { motion, AnimatePresence } from "framer-motion";
 import { TableSkeleton } from "../../../components/Skeleton";
 
 export default function UserManagement() {
@@ -25,7 +35,6 @@ export default function UserManagement() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // ... rest of state
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [creditAmount, setCreditAmount] = useState("");
@@ -50,9 +59,9 @@ export default function UserManagement() {
         : `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
 
       const res = await fetch(url, {
-        headers: /** @type {Record<string, string>} */ ({
+        headers: {
           Authorization: `Bearer ${token}`,
-        }),
+        },
       });
       const data = await res.json();
       setUsers(data.data || []);
@@ -64,6 +73,7 @@ export default function UserManagement() {
   };
 
   const updateUser = async (id, payload) => {
+    const idToast = toast.loading("Updating user...");
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}`, {
         method: "PUT",
@@ -73,10 +83,10 @@ export default function UserManagement() {
         },
         body: JSON.stringify(payload),
       });
-      toast.success("User updated");
+      toast.success("User updated successfully", { id: idToast });
       fetchUsers();
     } catch (err) {
-      toast.error("Update failed");
+      toast.error("Update failed", { id: idToast });
     }
   };
 
@@ -88,15 +98,16 @@ export default function UserManagement() {
     )
       return;
 
+    const idToast = toast.loading("Deleting user...");
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success("User deleted");
+      toast.success("User purged from system", { id: idToast });
       fetchUsers();
     } catch (err) {
-      toast.error("Delete failed");
+      toast.error("Purge failed", { id: idToast });
     }
   };
 
@@ -116,17 +127,17 @@ export default function UserManagement() {
 
     const amount = parseFloat(creditAmount);
 
-    // If reducing, check if user has enough credits
     if (creditAction === "reduce" && selectedUser.credits < amount) {
       toast.error(
-        `User only has ${Math.round(
+        `Insufficient balance. User has ${Math.round(
           selectedUser.credits
-        )} credits. Cannot reduce by ${amount}.`
+        )} credits.`
       );
       return;
     }
 
     setAddingCredits(true);
+    const idToast = toast.loading("Processing transaction...");
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${selectedUser._id}/credits`,
@@ -141,7 +152,7 @@ export default function UserManagement() {
             reason:
               creditReason ||
               `Admin ${
-                creditAction === "add" ? "added" : "reduced"
+                creditAction === "add" ? "granted" : "revoked"
               } ${amount} credits`,
           }),
         }
@@ -151,280 +162,529 @@ export default function UserManagement() {
 
       if (data.success) {
         toast.success(
-          `${creditAction === "add" ? "Added" : "Reduced"} ${amount} credits ${
-            creditAction === "add" ? "to" : "from"
-          } ${selectedUser.username}`
+          `Successfully ${
+            creditAction === "add" ? "added" : "reduced"
+          } ${amount} credits`,
+          { id: idToast }
         );
         setShowCreditModal(false);
         fetchUsers();
       } else {
-        toast.error(data.message || "Failed to manage credits");
+        toast.error(data.message || "Transaction failed", { id: idToast });
       }
     } catch (err) {
-      toast.error("Failed to manage credits");
+      toast.error("Transaction failed", { id: idToast });
     } finally {
       setAddingCredits(false);
     }
   };
 
+  const filteredUsers = useMemo(() => {
+    if (!searchTerm) return users;
+    const query = searchTerm.toLowerCase();
+    return users.filter(
+      (u) =>
+        u.username?.toLowerCase().includes(query) ||
+        u.email?.toLowerCase().includes(query)
+    );
+  }, [users, searchTerm]);
+
+  const stats = useMemo(() => {
+    return {
+      total: users.length,
+      admins: users.filter((u) => u.role === "admin").length,
+      suspended: users.filter((u) => u.accountStatus === "suspended").length,
+    };
+  }, [users]);
+
   return (
     <AdminLayout>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">User Governance</h1>
-          <div className="text-sm text-gray-500">
-            Total: <span className="font-bold">{users.length}</span>
+      <Head>
+        <title>Users | SAMKIEL ADMIN</title>
+      </Head>
+
+      <div className="mb-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
+          <div>
+            <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">
+              Users
+            </h1>
+            <p className="text-gray-500 mt-1 font-medium">
+              Oversee community access, roles, and platform liquidities.
+            </p>
+          </div>
+
+          <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-2xl">
+            <button className="px-4 py-2 bg-white dark:bg-gray-700 shadow-sm rounded-xl text-sm font-bold">
+              List View
+            </button>
+            <button className="px-4 py-2 text-gray-500 text-sm font-bold">
+              Activity Logs
+            </button>
           </div>
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            fetchUsers(searchTerm);
-          }}
-          className="relative w-full md:w-auto"
-        >
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+          <StatCard
+            title="Total Users"
+            value={stats.total}
+            icon={UserIcon}
+            color="indigo"
+          />
+          <StatCard
+            title="Administrators"
+            value={stats.admins}
+            icon={Crown}
+            color="amber"
+          />
+          <StatCard
+            title="Suspended"
+            value={stats.suspended}
+            icon={AlertTriangle}
+            color="red"
+          />
+        </div>
+
+        {/* Search Bar */}
+        <div className="relative mb-8">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            size={18}
+            className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"
+            size={20}
           />
           <input
             type="text"
-            placeholder="Search users..."
+            placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full md:w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            className="w-full pl-14 pr-6 py-5 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 rounded-[28px] shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none text-lg font-medium transition-all"
           />
-        </form>
-      </div>
+        </div>
 
-      {loading ? (
-        <TableSkeleton rows={8} cols={6} />
-      ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-gray-50 dark:bg-gray-700/50 text-xs uppercase text-gray-500 font-semibold">
-                <tr>
-                  <th className="px-6 py-4">User</th>
-                  <th className="px-6 py-4">Role</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Credits</th>
-                  <th className="px-6 py-4">Bots</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700 text-sm">
-                {users.map((u) => (
-                  <tr
+        {loading ? (
+          <TableSkeleton rows={8} cols={6} />
+        ) : (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden lg:block bg-white dark:bg-[#111827] rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50/50 dark:bg-gray-800/30 text-[11px] uppercase tracking-[0.15em] text-gray-500 font-black">
+                    <th className="px-8 py-5">Identity</th>
+                    <th className="px-8 py-5">Privileges</th>
+                    <th className="px-8 py-5">Status</th>
+                    <th className="px-8 py-5">Wallet</th>
+                    <th className="px-8 py-5">Fleet</th>
+                    <th className="px-8 py-5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50 dark:divide-gray-800/50">
+                  <AnimatePresence>
+                    {filteredUsers.map((u) => (
+                      <motion.tr
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        key={u._id}
+                        className="group hover:bg-gray-50/50 dark:hover:bg-indigo-500/[0.02] transition-colors"
+                      >
+                        <td className="px-8 py-6">
+                          <Link
+                            href={`/admin/users/${u._id}`}
+                            className="group/link block"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black">
+                                {u.username?.[0]?.toUpperCase()}
+                              </div>
+                              <div>
+                                <h4 className="font-black text-gray-900 dark:text-white leading-none mb-1.5 group-hover/link:text-indigo-500 transition-colors">
+                                  {u.username}
+                                </h4>
+                                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium lowercase">
+                                  <Mail size={12} className="opacity-50" />
+                                  {u.email}
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="relative inline-block">
+                            <select
+                              className="appearance-none bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-none rounded-xl px-4 py-2 pr-8 text-xs font-bold focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                              value={u.role}
+                              onChange={(e) =>
+                                updateUser(u._id, { role: e.target.value })
+                              }
+                            >
+                              <option value="user">USER</option>
+                              <option value="power_user">POWER</option>
+                              <option value="admin">ADMIN</option>
+                            </select>
+                            <MoreVertical
+                              size={12}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50"
+                            />
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <select
+                            className={`bg-transparent border-none rounded-xl px-3 py-2 text-[10px] font-black tracking-widest uppercase focus:ring-0 cursor-pointer ${
+                              u.accountStatus === "suspended"
+                                ? "text-red-500"
+                                : "text-emerald-500"
+                            }`}
+                            value={u.accountStatus || "active"}
+                            onChange={(e) =>
+                              updateUser(u._id, {
+                                accountStatus: e.target.value,
+                              })
+                            }
+                          >
+                            <option value="active">● ACTIVE</option>
+                            <option value="suspended">● SUSPENDED</option>
+                            <option value="deleted">● TRASHED</option>
+                          </select>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
+                            <div className="p-1.5 bg-amber-500/10 rounded-lg">
+                              <Coins size={14} className="text-amber-500" />
+                            </div>
+                            <span className="font-black text-gray-900 dark:text-white text-base tracking-tight">
+                              {Math.round(u.credits || 0)}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <p className="font-black text-gray-900 dark:text-white leading-none mb-1">
+                                {u.stats?.totalBots || 0}
+                              </p>
+                              <p className="text-[10px] text-gray-400 font-black uppercase">
+                                BOTS
+                              </p>
+                            </div>
+                            <div className="w-px h-8 bg-gray-100 dark:bg-gray-800" />
+                            <div>
+                              <p className="font-black text-indigo-500 leading-none mb-1 text-sm">
+                                {((u.stats?.totalRamUsage || 0) / 1024).toFixed(
+                                  1
+                                )}
+                                GB
+                              </p>
+                              <p className="text-[10px] text-gray-400 font-black uppercase">
+                                RAM
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6 text-right">
+                          <div className="flex justify-end gap-2">
+                            <ActionButton
+                              icon={Plus}
+                              color="text-emerald-500"
+                              bg="hover:bg-emerald-500/10"
+                              onClick={() => openCreditModal(u, "add")}
+                              title="Grant Credits"
+                            />
+                            <ActionButton
+                              icon={Minus}
+                              color="text-amber-500"
+                              bg="hover:bg-amber-500/10"
+                              onClick={() => openCreditModal(u, "reduce")}
+                              title="Revoke Credits"
+                            />
+                            <ActionButton
+                              icon={Trash2}
+                              color="text-red-500"
+                              bg="hover:bg-red-500/10"
+                              onClick={() => deleteUser(u._id)}
+                              title="Purge Record"
+                            />
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card Layout */}
+            <div className="lg:hidden space-y-4">
+              <AnimatePresence>
+                {filteredUsers.map((u) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     key={u._id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/30"
+                    className="bg-white dark:bg-[#111827] p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm"
                   >
-                    <td className="px-6 py-4">
-                      <Link
-                        href={`/admin/users/${u._id}`}
-                        className="font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
-                      >
-                        {u.username}
-                      </Link>
-                      <div className="text-gray-500 text-xs">{u.email}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <select
-                        className="bg-transparent border border-gray-200 dark:border-gray-600 rounded px-2 py-1 text-xs"
-                        value={u.role}
-                        onChange={(e) =>
-                          updateUser(u._id, { role: e.target.value })
-                        }
-                      >
-                        <option value="user">User</option>
-                        <option value="power_user">Power User</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    </td>
-                    <td className="px-6 py-4">
-                      <select
-                        className={`bg-transparent border border-gray-200 dark:border-gray-600 rounded px-2 py-1 text-xs font-bold ${
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-lg font-black">
+                          {u.username?.[0]?.toUpperCase()}
+                        </div>
+                        <div>
+                          <h4 className="font-black text-gray-900 dark:text-white">
+                            {u.username}
+                          </h4>
+                          <p className="text-xs text-gray-500">{u.email}</p>
+                        </div>
+                      </div>
+                      <div
+                        className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${
                           u.accountStatus === "suspended"
-                            ? "text-red-600"
-                            : "text-green-600"
+                            ? "bg-red-500/10 text-red-500"
+                            : "bg-emerald-500/10 text-emerald-500"
                         }`}
-                        value={u.accountStatus || "active"}
-                        onChange={(e) =>
-                          updateUser(u._id, { accountStatus: e.target.value })
-                        }
                       >
-                        <option value="active">Active</option>
-                        <option value="suspended">Suspended</option>
-                        <option value="deleted">Soft Deleted</option>
-                      </select>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Coins size={16} className="text-yellow-500" />
-                        <span className="font-bold text-yellow-600 dark:text-yellow-400">
-                          {Math.round(u.credits || 0)}
-                        </span>
+                        {u.accountStatus || "ACTIVE"}
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {u.stats?.totalBots || 0} bots
-                      <div className="text-xs text-gray-400">
-                        {(u.stats?.totalRamUsage || 0) / 1024} GB Used
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                          PRIVILEGE
+                        </p>
+                        <select
+                          className="w-full bg-transparent border-none p-0 text-sm font-black text-indigo-500 focus:ring-0"
+                          value={u.role}
+                          onChange={(e) =>
+                            updateUser(u._id, { role: e.target.value })
+                          }
+                        >
+                          <option value="user">USER</option>
+                          <option value="power_user">POWER</option>
+                          <option value="admin">ADMIN</option>
+                        </select>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        {/* Add Credits */}
+                      <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                          WALLET
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Coins size={14} className="text-amber-500" />
+                          <span className="font-black text-gray-900 dark:text-white">
+                            {Math.round(u.credits || 0)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-gray-50 dark:border-gray-800/50 pt-6">
+                      <div className="flex gap-4">
+                        <div className="text-center">
+                          <p className="font-black text-gray-900 dark:text-white">
+                            {u.stats?.totalBots || 0}
+                          </p>
+                          <p className="text-[8px] font-black text-gray-400 uppercase">
+                            BOTS
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <p className="font-black text-indigo-500 text-sm">
+                            {((u.stats?.totalRamUsage || 0) / 1024).toFixed(1)}
+                            GB
+                          </p>
+                          <p className="text-[8px] font-black text-gray-400 uppercase">
+                            RAM
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
                         <button
                           onClick={() => openCreditModal(u, "add")}
-                          className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-colors"
-                          title="Add Credits"
+                          className="p-3 bg-emerald-500/10 text-emerald-500 rounded-2xl"
                         >
-                          <Plus size={16} />
+                          <Plus size={18} />
                         </button>
-                        {/* Reduce Credits */}
                         <button
                           onClick={() => openCreditModal(u, "reduce")}
-                          className="p-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition-colors"
-                          title="Reduce Credits"
+                          className="p-3 bg-amber-500/10 text-amber-500 rounded-2xl"
                         >
-                          <Minus size={16} />
+                          <Minus size={18} />
                         </button>
-                        {/* Hard Delete */}
                         <button
                           onClick={() => deleteUser(u._id)}
-                          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-                          title="Hard Delete"
+                          className="p-3 bg-red-500/10 text-red-500 rounded-2xl"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={18} />
                         </button>
                       </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </motion.div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+              </AnimatePresence>
+            </div>
+
+            {filteredUsers.length === 0 && (
+              <div className="text-center py-20 bg-gray-50 dark:bg-gray-900/50 rounded-[40px] border-2 border-dashed border-gray-200 dark:border-gray-800">
+                <Search className="mx-auto text-gray-300 mb-4" size={48} />
+                <p className="text-xl font-bold text-gray-400">
+                  No users found matching your search.
+                </p>
+              </div>
+            )}
+          </>
+        )}
+      </div>
 
       {/* Credit Modal */}
-      {showCreditModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2
-                className={`text-xl font-bold flex items-center gap-2 ${
-                  creditAction === "add" ? "text-green-600" : "text-orange-600"
-                }`}
-              >
-                <Coins
-                  className={
+      <AnimatePresence>
+        {showCreditModal && selectedUser && (
+          <div className="fixed inset-0 flex items-center justify-center z-[100] p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCreditModal(false)}
+              className="absolute inset-0 bg-[#020617]/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-white dark:bg-[#111827] rounded-[40px] border border-gray-100 dark:border-gray-800 shadow-2xl max-w-md w-full p-8 md:p-10"
+            >
+              <div className="flex justify-between items-center mb-8">
+                <div
+                  className={`p-4 rounded-3xl ${
                     creditAction === "add"
-                      ? "text-green-500"
-                      : "text-orange-500"
-                  }
-                />
-                {creditAction === "add" ? "Add Credits" : "Reduce Credits"}
-              </h2>
-              <button
-                onClick={() => setShowCreditModal(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                {creditAction === "add" ? "Adding" : "Reducing"} credits{" "}
-                {creditAction === "add" ? "to" : "from"}:{" "}
-                <span className="font-bold text-indigo-600 dark:text-indigo-400">
-                  {selectedUser.username}
-                </span>
-              </p>
-              <p className="text-xs text-gray-500">
-                Current balance:{" "}
-                <span className="font-bold text-yellow-600">
-                  {Math.round(selectedUser.credits || 0)} credits
-                </span>
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Credit Amount *
-                </label>
-                <input
-                  type="number"
-                  value={creditAmount}
-                  onChange={(e) => setCreditAmount(e.target.value)}
-                  placeholder="Enter amount"
-                  className={`w-full px-4 py-2 border ${
-                    creditAction === "add"
-                      ? "border-green-300 dark:border-green-600 focus:ring-green-500"
-                      : "border-orange-300 dark:border-orange-600 focus:ring-orange-500"
-                  } rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:border-transparent`}
-                  min="1"
-                  step="1"
-                />
-                {creditAction === "reduce" &&
-                  creditAmount &&
-                  parseFloat(creditAmount) > selectedUser.credits && (
-                    <p className="text-xs text-red-500 mt-1">
-                      ⚠️ User only has {Math.round(selectedUser.credits)}{" "}
-                      credits
-                    </p>
-                  )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Reason (Optional)
-                </label>
-                <textarea
-                  value={creditReason}
-                  onChange={(e) => setCreditReason(e.target.value)}
-                  placeholder={`e.g., ${
-                    creditAction === "add"
-                      ? "Promotional bonus, Compensation"
-                      : "Policy violation, Refund"
-                  }, etc.`}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  rows="3"
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
+                      ? "bg-emerald-500/10 text-emerald-500"
+                      : "bg-amber-500/10 text-amber-500"
+                  }`}
+                >
+                  <Coins size={28} />
+                </div>
                 <button
                   onClick={() => setShowCreditModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  disabled={addingCredits}
+                  className="p-3 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all"
                 >
-                  Cancel
+                  <X size={20} />
                 </button>
+              </div>
+
+              <div className="mb-8">
+                <h2 className="text-2xl font-black mb-2 leading-tight">
+                  {creditAction === "add" ? "Grant Credits" : "Revoke Credits"}
+                </h2>
+                <p className="text-gray-500 font-medium">
+                  Modifying balance for{" "}
+                  <span className="text-indigo-500 font-bold">
+                    {selectedUser.username}
+                  </span>
+                </p>
+                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800/80 rounded-2xl border border-gray-100 dark:border-gray-800">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                    CURRENT BALANCE
+                  </p>
+                  <p className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+                    <Coins size={18} className="text-amber-500" />
+                    {Math.round(selectedUser.credits || 0)}{" "}
+                    <span className="text-xs opacity-50">CREDITS</span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                    TXN AMOUNT
+                  </label>
+                  <div className="relative">
+                    <Coins
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={18}
+                    />
+                    <input
+                      type="number"
+                      value={creditAmount}
+                      onChange={(e) => setCreditAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full pl-12 pr-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 text-lg font-black"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                    AUDIT NOTE
+                  </label>
+                  <textarea
+                    value={creditReason}
+                    onChange={(e) => setCreditReason(e.target.value)}
+                    placeholder="Provide context for this transaction..."
+                    className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 font-medium min-h-[100px]"
+                  />
+                </div>
+
                 <button
                   onClick={manageCredits}
                   disabled={addingCredits || !creditAmount}
-                  className={`flex-1 px-4 py-2 ${
+                  className={`w-full py-5 rounded-[24px] font-black text-lg transition-all active:scale-95 flex items-center justify-center gap-3 shadow-xl ${
                     creditAction === "add"
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-orange-600 hover:bg-orange-700"
-                  } text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                      ? "bg-emerald-600 text-white shadow-emerald-500/20"
+                      : "bg-amber-600 text-white shadow-amber-500/20"
+                  } disabled:opacity-30 disabled:pointer-events-none`}
                 >
-                  {addingCredits
-                    ? "Processing..."
-                    : creditAction === "add"
-                    ? "Add Credits"
-                    : "Reduce Credits"}
+                  {addingCredits ? (
+                    <RefreshCw className="animate-spin" />
+                  ) : (
+                    <>
+                      {creditAction === "add" ? (
+                        <Plus size={20} />
+                      ) : (
+                        <Minus size={20} />
+                      )}
+                      Authorize Transaction
+                    </>
+                  )}
                 </button>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </AdminLayout>
+  );
+}
+
+function StatCard({ title, value, icon: Icon, color }) {
+  const colors = {
+    indigo: "text-indigo-500 bg-indigo-500/10",
+    amber: "text-amber-500 bg-amber-500/10",
+    red: "text-red-500 bg-red-500/10",
+  };
+
+  return (
+    <div className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm flex items-center gap-6">
+      <div className={`p-4 rounded-2xl ${colors[color]}`}>
+        <Icon size={24} />
+      </div>
+      <div>
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+          {title}
+        </p>
+        <p className="text-3xl font-black tracking-tight">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function ActionButton({ icon: Icon, color, bg, onClick, title }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`p-2.5 ${color} ${bg} rounded-xl transition-all active:scale-90`}
+      title={title}
+    >
+      <Icon size={18} />
+    </button>
   );
 }

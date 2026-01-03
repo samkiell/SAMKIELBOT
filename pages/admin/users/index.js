@@ -55,12 +55,13 @@ export default function UserManagement() {
   const fetchLogs = async () => {
     try {
       setLogsLoading(true);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/audit-logs`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+        /\/$/,
+        ""
       );
+      const res = await fetch(`${apiUrl}/admin/audit-logs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
       setLogs(data.data || []);
     } catch (err) {
@@ -80,11 +81,13 @@ export default function UserManagement() {
     if (!token) return;
     try {
       setLoading(true);
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+        /\/$/,
+        ""
+      );
       const url = query
-        ? `${
-            process.env.NEXT_PUBLIC_API_URL
-          }/admin/users?search=${encodeURIComponent(query)}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
+        ? `${apiUrl}/admin/users?search=${encodeURIComponent(query)}`
+        : `${apiUrl}/admin/users`;
 
       const res = await fetch(url, {
         headers: {

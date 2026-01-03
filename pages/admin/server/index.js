@@ -32,7 +32,11 @@ export default function AdminOneServer() {
     if (servers.length === 0) setLoading(true);
     try {
       const endpoint = "/admin/bots/sync-stats";
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
+        /\/$/,
+        ""
+      );
+      const res = await fetch(`${apiUrl}${endpoint}`, {
         method: "POST", // It's a POST now to trigger sync
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -60,11 +60,16 @@ export default function BotControl() {
   const stats = useMemo(() => {
     return {
       total: bots.length,
-      online: bots.filter((b) =>
-        ["running", "online", "active", "connected"].includes(b.status)
+      waActive: bots.filter((b) =>
+        ["online", "active", "connected", "paired"].includes(b.status)
+      ).length,
+      serverIdle: bots.filter(
+        (b) =>
+          b.resources?.state === "running" &&
+          !["online", "active", "connected"].includes(b.status)
       ).length,
       issues: bots.filter((b) =>
-        ["error", "failed", "suspended"].includes(b.status)
+        ["error", "failed", "suspended", "expired"].includes(b.status)
       ).length,
     };
   }, [bots]);
@@ -205,7 +210,7 @@ export default function BotControl() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <StatCard
             title="TOTAL BOTS"
             value={stats.total}
@@ -213,14 +218,20 @@ export default function BotControl() {
             color="indigo"
           />
           <StatCard
-            title="HEARTBEATS ACTIVE"
-            value={stats.online}
+            title="WA ONLINE"
+            value={stats.waActive}
             icon={Activity}
             color="emerald"
             isPulse
           />
           <StatCard
-            title="ATTENTION REQUIRED"
+            title="SERVER IDLE"
+            value={stats.serverIdle}
+            icon={Zap}
+            color="amber"
+          />
+          <StatCard
+            title="ATTENTION"
             value={stats.issues}
             icon={ShieldAlert}
             color="red"
@@ -388,6 +399,7 @@ function StatCard({ title, value, icon: Icon, color, isPulse }) {
     indigo: "text-indigo-500 bg-indigo-500/10",
     emerald: "text-emerald-500 bg-emerald-500/10",
     red: "text-red-500 bg-red-500/10",
+    amber: "text-amber-500 bg-amber-500/10",
   };
 
   return (

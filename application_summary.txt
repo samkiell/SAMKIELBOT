@@ -1,367 +1,110 @@
-# SAMKIEL BOT Application Summary
+# SAMKIEL BOT - Deployment Platform Summary
 
-## Overview
-SAMKIEL BOT is a full-stack web application designed for deploying and managing bots. It provides a user-friendly interface for users to register, login, deploy bots, and manage their deployments through a dashboard. The application simulates bot deployment and version updates, with a focus on secure authentication and a modern dark-themed UI.
+## 🧭 Overview
+**SAMKIEL BOT** is a comprehensive, full-stack web application designed for the deployment, management, and monitoring of WhatsApp bots. It functions as a "Bot Vault," allowing users to deploy isolated instances of the SAMKIEL WhatsApp bot without technical expertise. The platform integrates directly with **Pterodactyl** for containerized hosting and **GitHub** for code versioning.
 
-## Features
-- User authentication (registration and login) with JWT tokens
-- Bot deployment via API with status tracking (pending, running, stopped, failed)
-- Bot version updates from GitHub (simulated)
-- Dashboard for viewing and managing deployed bots 
-- Dark theme UI built with Tailwind CSS
-- Responsive design for various screen sizes
+## 🚀 Key Features
 
-## Tech Stack
-### Frontend
-- Next.js 16.0.0 (React framework)
-- React 18.2.0
-- Tailwind CSS 3.3.6 (styling)
-- Axios 1.6.2 (HTTP client for API calls)
-- jwt-decode 4.0.0 (JWT decoding)
-- react-hot-toast 2.6.0 (toast notifications)
-- react-icons 5.5.0 (icons)
-- Next.js built-in routing
+### 🤖 Bot Deployment & Management
+-   **One-Click Deployment**: Users deploy bots by providing a WhatsApp number and selecting resources (RAM, CPU, Disk).
+-   **Infrastructure Orchestration**: Automated server creation on Pterodactyl nodes.
+    -   **Node Safety Guards**: Deployments are blocked if the target node (Node 3 hardcoded in current logic) exceeds 80% RAM, 85% Disk, or 85% CPU usage.
+    -   **Resource Limits**: Strict validation on allocated resources per tier.
+-   **Dynamic Configuration**: The system generates a custom `settings.js` for each bot, injecting:
+    -   Owner credentials (Number, Name).
+    -   Feature toggles (Anti-delete, Always Online, Auto-Read, etc.).
+    -   Branding (Bot Name, Sticker Pack).
+    -   This config is committed to a unique branch (`bot-[number]`) in the connected GitHub repository (`SAMKIEL-AI`), ensuring isolation.
+-   **Status Monitoring**: Real-time health checks using Socket.IO to track if bots are `running`, `stopped`, `starting`, or `failed`.
+-   **Power Controls**: Users can `start`, `stop`, `restart`, or `kill` their bot instances directly from the dashboard.
 
-### Backend
-- Node.js with Express.js
-- MongoDB with Mongoose 8.0.3 ODM
-- JWT 9.0.2 (JSON Web Tokens) for authentication
-- bcryptjs 2.4.3 for password hashing
-- CORS 2.8.5 for cross-origin requests
-- dotenv 16.3.1 for environment variables
-- Next.js 16.0.0 (for serving the frontend in full-stack setup)
+### 💳 Credit & Payment System
+-   **Economy**: A comprehensive credit-based system where deployments and uptime cost credits.
+-   **Billing**: Paystack integration for purchasing credits.
+-   **Usage Tracking**: Background services calculate "Daily Burn" and deduct credits based on resource consumption.
+-   **Safety**: Users cannot deploy without sufficient credits; deployments are paused/deleted if credits run out (logic in scheduler).
 
-### Database
-- MongoDB (NoSQL database)
+### 👮 Admin Dashboard
+-   **System Intelligence**: Real-time overview of infrastructure health (RAM/CPU/Disk usage).
+-   **User Management**: View, filter, and manage registered users.
+-   **Deployment Control**: Admins can override and manage *any* user's bot (Start/Stop/Delete).
+-   **Activity Logs**: Detailed audit logs for admin actions (e.g., deleting users, force-restarting bots).
+-   **Governance**: Tracking of critical system events.
 
-## Project Structure
-```
+### 📱 User Experience
+-   **Modern UI**: Built with **Next.js**, **Tailwind CSS**, and **Framer Motion** for a premium, dark-themed aesthetic.
+-   **Interactive Elements**:
+    -   Real-time terminal output from bots.
+    -   Toast notifications for actions (Deploying, Error, Success).
+    -   QR Code display for WhatsApp pairing (via Pairing Code or QR).
+
+## 🛠 Technology Stack
+
+### Core
+-   **Framework**: [Next.js 16.0.0](https://nextjs.org/) (React 18)
+-   **Server**: Custom Node.js Express Server (`server.js`) to handle Socket.IO and Next.js pages simultaneously.
+-   **Language**: JavaScript (ES6+)
+
+### Backend & Database
+-   **Runtime**: Node.js
+-   **Database**: MongoDB (Mongoose ODM) - Stores Users, Deployments, Notifications, Audit Logs.
+-   **Real-time**: Socket.IO - Connects frontend to backend services for live status and terminal logs.
+-   **Authentication**: JWT (JSON Web Tokens) customized for Next.js.
+
+### Infrastructure & Services
+-   **Hosting API**: Pterodactyl Client (Node.js) to interface with the game panel API.
+-   **Versioning**: GitHub API (Octokit) for managing bot code branches.
+-   **Payments**: Paystack API.
+
+## 📂 Project Structure
+
+```bash
 samkiel-bot-deployment/
-├── backend/
-│   ├── config/
-│   │   └── db.js (MongoDB connection)
-│   ├── controllers/
-│   │   ├── authController.js (user auth logic)
-│   │   ├── deployController.js (bot deployment logic)
-│   │   └── updateController.js (bot update logic)
-│   ├── models/
-│   │   ├── User.js (user schema)
-│   │   └── Deployment.js (deployment schema)
-│   ├── routes/
-│   │   ├── auth.js (auth routes)
-│   │   ├── deploy.js (deployment routes)
-│   │   └── update.js (update routes)
-│   ├── utils/
-│   │   ├── authMiddleware.js (JWT verification)
-│   │   ├── errorHandler.js (error handling middleware)
-│   │   ├── response.js (standardized API responses)
-│   │   └── logger.js (request logging)
-│   ├── server.js (main server file)
-│   └── package.json
-├── frontend/
-│   ├── components/
-│   │   ├── Navbar.js (navigation bar)
-│   │   ├── Footer.js (footer component)
-│   │   ├── BotCard.js (bot deployment card)
-│   │   └── DeployModal.js (deployment form modal)
-│   ├── lib/
-│   │   └── api.js (API client functions)
-│   ├── pages/
-│   │   ├── _app.js (app wrapper)
-│   │   ├── index.js (home page)
-│   │   ├── dashboard.js (user dashboard)
-│   │   ├── login.js (login page)
-│   │   └── register.js (registration page)
-│   ├── styles/
-│   │   └── globals.css (global styles)
-│   ├── next.config.js
-│   ├── tailwind.config.js
-│   ├── postcss.config.js
-│   └── package.json
-├── .env (environment variables)
-├── .gitignore
-├── package.json (root scripts)
-├── README.md
-└── TODO.md (project checklist)
+├── components/          # React UI components (BotCard, Navbar, Charts)
+├── lib/                 # Core backend logic
+│   ├── admin/           # Admin-specific logic
+│   ├── controllers/     # Application Controllers
+│   │   ├── adminController.js   # Admin dashboard logic
+│   │   ├── authController.js    # User auth (Register/Login)
+│   │   ├── deployController.js  # Deployment orchestration & Pterodactyl interface
+│   │   └── paymentController.js # Paystack integration
+│   ├── services/        # Background Services
+│   │   ├── botHealthService.js  # Polling & Socket updates for bot status
+│   │   ├── creditService.js     # Billing calculations & deductions
+│   │   ├── infraOrchestrator.js # Node health & deployment queue
+│   │   └── githubService.js     # GitHub branch & file management
+│   ├── models/          # Mongoose Schemas (User, Deployment, AuditLog, etc.)
+│   └── utils/           # Helpers (authMiddleware, response, pterodactyl client)
+├── pages/               # Next.js Routes
+│   ├── admin/           # Admin Dashboard routes (/admin/users, /admin/infrastructure)
+│   ├── api/             # API Routes (proxied or handled by server.js)
+│   ├── deploy/          # Deployment wizard & management pages
+│   └── ...              # Public pages (Login, Register, Pricing)
+├── public/              # Static assets
+├── server.js            # Custom Express Server Entry Point
+└── .env                 # Environment Configuration
 ```
 
-## Backend Details
-
-### Server Configuration
-- Runs on port 5000 (configurable via PORT env var)
-- Uses Express.js with middleware for CORS, JSON parsing
-- Connects to MongoDB using Mongoose
-- Integrates Next.js to serve the frontend in a full-stack setup, handling all non-API routes with Next.js
-- Global error handling middleware
-- Routes organized by feature (auth, deploy, update)
-
-### Models
-#### User Model
-- Fields: username, email, password, createdAt
-- Password hashing with bcryptjs
-- Password matching method
-- Unique constraints on username and email
-
-#### Deployment Model
-- Fields: user (reference), botName, version, status, deployedAt, updatedAt
-- Status enum: pending, running, stopped, failed
-- References User model for ownership
-
-### Controllers
-#### Auth Controller
-- register: Creates new user with hashed password
-- login: Authenticates user and returns JWT
-- verifyToken: Verifies JWT and returns user data
-
-#### Deploy Controller
-- deployBot: Creates new deployment
-- getDeployments: Retrieves user's deployments
-- updateDeployment: Updates deployment status
-
-#### Update Controller
-- updateBot: Updates bot version (simulated)
-- getUpdateHistory: Returns deployment data (placeholder for history)
-
-### Utils
-- authMiddleware: Protects routes with JWT verification
-- errorHandler: Centralized error handling with appropriate status codes
-- response: Standardized success/error response format
-- logger: Basic request logging (method and path)
-
-## Frontend Details
-
-### Pages
-- Home (index.js): Landing page with app description and links
-- Dashboard: Displays user's bot deployments in a grid
-- Login: User authentication form
-- Register: User registration form
-
-### Components
-- Navbar: Navigation with conditional links based on auth status
-- Footer: Simple footer with copyright
-- BotCard: Displays deployment info with status indicator and action buttons
-- DeployModal: Form for deploying new bots
-
-### API Integration
-- Axios instance with base URL and JWT interceptor
-- Functions for all backend endpoints
-- Error handling for API calls
-- Token storage in localStorage
-- AuthProvider context for managing authentication state, including custom logout reasons and unique error messages (e.g., Pidgin English for user-friendly errors like "Person don fes u use that Username!")
-
-### Styling
-- Tailwind CSS for utility-first styling
-- Dark theme with gray color palette
-- Responsive grid layouts
-- Custom focus states and hover effects
-
-## API Endpoints
-
-### Authentication
-- POST /api/auth/register: Register new user
-- POST /api/auth/login: User login
-- GET /api/auth/verify: Verify JWT token
-
-### Deployment
-- POST /api/deploy: Deploy new bot
-- GET /api/deploy: Get user's deployments
-- PUT /api/deploy/:id: Update deployment status
-
-### Update
-- POST /api/update: Update bot version
-- GET /api/update/:deploymentId: Get update history
-
-## Environment Variables
-- MONGO_URI: MongoDB connection string
-- JWT_SECRET: Secret key for JWT signing
-- PORT: Backend server port (default 5000)
-- NEXT_PUBLIC_API_URL: Frontend API base URL (default http://localhost:5000/api)
-
-## Setup and Running
-1. Install root dependencies: npm install
-2. Install backend dependencies: cd backend && npm install
-3. Install frontend dependencies: cd ../frontend && npm install
-4. Configure .env file with required variables
-5. Run development mode: npm run dev (starts both backend and frontend concurrently)
-
-## Current Status
-The application is fully implemented with all planned features completed. It includes user authentication, bot deployment simulation, dashboard management, and a responsive UI. The backend provides RESTful APIs with proper error handling and security measures. The frontend offers a complete user experience with forms, modals, and dynamic content updates.
-
-## Future Enhancements
-- Real bot deployment functionality (currently simulated)
-- Actual GitHub integration for version updates
-- WebSocket support for real-time status updates
-- User profile management
-- Admin panel for system-wide bot management
-- Docker containerization
-- Unit and integration tests
-
-idea.md
-Got it ✅
-Here’s a clean documentation draft of your full plan for **𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 Vault**, exactly as we discussed — ready to save and reference when you’re ready to build it later.
-
----
-
-# 📜 **Project Plan: SAMKIEL BOT VAULT**
-
-## 🧠 Overview
-
-**SAMKIEL BOT VAULT** will be a web-based platform that allows users (e.g., students or group leaders) to easily **deploy and manage their own Samkiel WhatsApp bots** — without needing technical knowledge or server access.
-
-It will automate deployment, updates, and scaling for all users under **one Render account**.
-
----
-
-## 🌍 **Project Identity**
-
-* **Bot Name:** 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋
-* **Platform Name:** SAMKIEL VAULT
-* **Primary Host:** `bot.samkiel.dev`
-* **Backend Repository:** Uses existing Samkiel Bot codebase (Node.js + Baileys)
-
----
-
-## 🎯 **Core Goals**
-
-1. Allow anyone to **deploy their own bot instance** (using their WhatsApp number).
-2. Enable easy **self-updates** with `.update` command.
-3. Provide centralized **control, monitoring, and management** from one platform.
-4. Avoid WhatsApp bans by isolating every bot instance.
-5. Introduce **premium plans** for long-term, high-uptime bots.
-
----
-
-## ⚙️ **Architecture**
-
-### 🧩 1. Base Bot
-
-* The main bot (your current Samkiel Bot repo) serves as the **template**.
-* Uses Baileys for WhatsApp connection.
-* Configurations (owner number, bot name, etc.) are handled by `.env`.
-* `.update` command performs a `git pull` + auto-restart for easy updates.
-
----
-
-### 🌐 2. SAMKIEL VAULT (Web Platform)
-
-A full-stack site that acts as the deployment and management center.
-
-**Domain:** `bot.samkiel.dev`
-**Stack Suggestion:**
-
-* **Frontend:** React / Next.js
-* **Backend:** Node.js + Express
-* **Database:** Supabase / Firebase
-* **Payments (optional):** Paystack or Flutterwave
-
-#### 🔧 Features
-
-| Feature                 | Description                                                         |
-| ----------------------- | ------------------------------------------------------------------- |
-| 🧱 Deploy Bot           | User enters WhatsApp number → Vault deploys bot on Render via API   |
-| 📡 Pairing Setup        | Displays pairing code from Render instance for WhatsApp linking     |
-| 🔄 Update System        | `.update` command syncs latest GitHub code                          |
-| 💻 Management Dashboard | View, pause, or delete user bots                                    |
-| 💰 Premium Access       | Paid tier for 24/7 bot uptime or premium features                   |
-| 🕵️ Admin Panel         | Centralized control over all deployments (restart, update, suspend) |
-
----
-
-### ☁️ 3. Render Integration
-
-**Render** will be used to host all bot instances.
-
-#### 🔐 Deployment Model
-
-* Each user bot = **separate Render service**
-* All created under **your main Render account**
-* Managed using **Render API key** (stored securely on Vault backend)
-
-#### 🧠 Flow
-
-1. User requests bot deployment via `bot.samkiel.dev`
-2. Vault backend calls:
-
-   ```bash
-   POST https://api.render.com/v1/services
-   ```
-
-   using your Render API key.
-3. Render deploys bot from GitHub repo.
-4. Vault fetches pairing code from Render logs and shows it to user.
-5. User pairs WhatsApp → bot connects independently.
-
-#### ⚡ Management
-
-* Vault backend can:
-
-  * Start/stop/restart each service
-  * List all deployed bots
-  * Monitor uptime and usage
-  * Delete inactive or expired instances
-
----
-
-### 🧩 4. Auto-Update System
-
-Each bot instance supports the `.update` command:
-
-* Performs `git pull` from main repo.
-* Restarts automatically with new changes.
-
-Future plan:
-Enable global update rollout via Render API → restart all instances after you push new commits.
-
----
-
-### 💸 5. Pricing Model (Optional)
-
-| Tier    | Features                                 | Approx. Cost            |
-| ------- | ---------------------------------------- | ----------------------- |
-| Free    | Limited runtime (suspended after 1 week) | Free (Render free tier) |
-| Premium | 24/7 uptime, access to advanced commands | $5–$10/month            |
-
----
-
-## 🔧 **Technical Notes**
-
-* All credentials (`RENDER_API_KEY`, `GITHUB_REPO`, etc.) are server-side only.
-* Each instance has unique `.env`:
-
-  ```env
-  BOT_NAME=Samkiel PR7 Bot
-  OWNER_NUMBER=2348012345678
-  AUTO_UPDATE=true
-  ```
-* Vault backend automatically injects `.env` variables during deployment.
-* Bots are fully independent — no shared sessions or auth data.
-
----
-
-## 🧱 **Future Add-ons**
-
-* 🔄 Automatic update webhook from GitHub → notify Vault to redeploy bots.
-* 📊 Usage analytics dashboard (active groups, messages handled, uptime).
-* 🔒 Secure OAuth (for premium users / bot owners).
-* 🌙 Sleep mode for inactive bots to save resources.
-* 🗑️ Auto-delete bots after expiration (for trials).
-
----
-
-## ✅ **Summary**
-
-| Component               | Description                                 |
-| ----------------------- | ------------------------------------------- |
-| **Project**             | SAMKIEL BOT VAULT                           |
-| **Domain**              | `bot.samkiel.dev`                           |
-| **Purpose**             | Multi-user WhatsApp bot deployment platform |
-| **Host**                | Render (Node.js + Baileys)                  |
-| **User Setup**          | No Render account required                  |
-| **Deployment**          | Automated via Render API                    |
-| **Update Method**       | `.update` command + future web redeploy     |
-| **Owner Control**       | Centralized via Vault backend               |
-| **Future Monetization** | Premium access plans                        |
-
----
-
-
+## ⚙️ Configuration & Environment
+
+The application relies on several critical environment variables:
+-   **Database**: `MONGO_URI`
+-   **Auth**: `JWT_SECRET`
+-   **Infrastructure**: `PTERODACTYL_HOST`, `PTERODACTYL_API_KEY`
+-   **GitHub**: `GITHUB_TOKEN` (for repo management)
+-   **Payments**: `PAYSTACK_SECRET_KEY`
+-   **App**: `NEXT_PUBLIC_API_URL`
+
+## 🔄 Recent Updates & Status
+-   **Deployment Guards**: Implemented strict checks preventing deployment if Node RAM > 80%.
+-   **Bot Limits**: Users restricted to max 2 bots (configurable).
+-   **Activity Logging**: Enhanced verbose logging for all admin actions.
+-   **Bot Commands**:
+    -   Fixed prefix consistency (`settings.js` priority).
+    -   Fixed group public mode issues.
+    -   Added `.pdf` and `.play` command support in the bot's codebase (managed via the `SAMKIEL-AI` repo updates).
+-   **SEO**: Page titles optimized for "SAMKIEL BOT - Deployment Platform".
+
+## 🔮 Future Roadmap (From Context)
+-   **Node Orchestration**: Expansion to multi-node support (currently effectively hardcoded/simplified).
+-   **Premium Features**: Hard-gating specific bot features based on subscription tiers.

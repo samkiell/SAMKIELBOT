@@ -685,13 +685,57 @@ export default function UserManagement() {
                           📝
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-gray-900 dark:text-gray-100 capitalize">
-                            {(log.action || "").replace(/_/g, " ")}
+                          <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                            {(() => {
+                              const actionMap = {
+                                start: "Started Bot",
+                                stop: "Stopped Bot",
+                                restart: "Restarted Bot",
+                                kill: "Force Killed Bot",
+                                create_deployment: "Deployed Bot",
+                                delete_deployment: "Deleted Bot",
+                                update_user: "Updated Profile",
+                                delete_user: "Deleted User",
+                                suspend: "Suspended Bot",
+                                unsuspend: "Unsuspended Bot",
+                                add_credits: "Credits Added",
+                                deduct_credits: "Credits Deducted",
+                                purchase_credits: "Credits Purchased",
+                              };
+                              return (
+                                actionMap[log.action] ||
+                                (log.action || "").replace(/_/g, " ")
+                              );
+                            })()}
                           </p>
                           <p className="text-[10px] text-gray-500 font-mono mt-0.5">
-                            {typeof log.details === "object"
-                              ? JSON.stringify(log.details)
-                              : log.details}
+                            {(() => {
+                              if (
+                                typeof log.details !== "object" ||
+                                !log.details
+                              )
+                                return log.details || "No details";
+
+                              const d = log.details;
+                              // Bot Actions
+                              if (d.identifier)
+                                return `Instance: ${d.identifier} ${
+                                  d.prevStatus ? `(was ${d.prevStatus})` : ""
+                                }`;
+                              // Credit Actions
+                              if (d.credits)
+                                return `${d.credits} credits ${
+                                  d.reason ? `• ${d.reason}` : ""
+                                }`;
+                              // User Actions
+                              if (d.username || d.email)
+                                return `User: ${d.username || d.email}`;
+                              // Resource Actions
+                              if (d.memory || d.cpu)
+                                return `RAM: ${d.memory}MB • CPU: ${d.cpu}%`;
+
+                              return JSON.stringify(d);
+                            })()}
                           </p>
                         </div>
                       </div>

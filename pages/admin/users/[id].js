@@ -328,10 +328,7 @@ export default function UserDetails() {
                 label="WhatsApp"
                 value={userDetail.whatsappNumber || "Not Linked"}
               />
-              <ProfileInfoRow
-                label="Email"
-                value={userDetail.email || "N/A"}
-              />
+              <ProfileInfoRow label="Email" value={userDetail.email || "N/A"} />
               <ProfileInfoRow
                 label="Username"
                 value={userDetail.username || "N/A"}
@@ -407,6 +404,7 @@ export default function UserDetails() {
               )}
             </div>
           </div>
+        </div>
         <div className="space-y-6">
           <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
             <span className="w-2 h-8 bg-indigo-600 rounded-full" />

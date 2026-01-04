@@ -689,7 +689,9 @@ export default function UserManagement() {
                             {(log.action || "").replace(/_/g, " ")}
                           </p>
                           <p className="text-[10px] text-gray-500 font-mono mt-0.5">
-                            {log.details}
+                            {typeof log.details === "object"
+                              ? JSON.stringify(log.details)
+                              : log.details}
                           </p>
                         </div>
                       </div>

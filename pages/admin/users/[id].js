@@ -317,19 +317,19 @@ export default function UserDetails() {
           {/* Profile Card */}
           <div className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
             <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-              <span className="text-xl">🆔</span> Subject Profile
+              <span className="text-xl">🆔</span> Bio Data
             </h3>
             <div className="space-y-4">
               <ProfileInfoRow
-                label="Legal Name"
+                label="Full Name"
                 value={userDetail.fullName || "Not Provided"}
               />
               <ProfileInfoRow
-                label="Direct Comms"
+                label="WhatsApp"
                 value={userDetail.whatsappNumber || "Not Linked"}
               />
               <ProfileInfoRow
-                label="Email Address"
+                label="Email"
                 value={userDetail.email || "N/A"}
               />
               <ProfileInfoRow
@@ -337,27 +337,25 @@ export default function UserDetails() {
                 value={userDetail.username || "N/A"}
               />
               <ProfileInfoRow
-                label="First Access"
+                label="Joined On"
                 value={new Date(userDetail.createdAt).toLocaleDateString()}
               />
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                    Referred By
+              <div className="flex justify-between items-center py-2">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                  Referred By
+                </span>
+                {userDetail.referredBy ? (
+                  <Link
+                    href={`/admin/users/${userDetail.referredBy._id}`}
+                    className="text-indigo-500 font-bold hover:underline text-sm"
+                  >
+                    @{userDetail.referredBy.username}
+                  </Link>
+                ) : (
+                  <span className="text-sm font-black text-gray-900 dark:text-white">
+                    None
                   </span>
-                  {userDetail.referredBy ? (
-                    <Link
-                      href={`/admin/users/${userDetail.referredBy._id}`}
-                      className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-bold hover:bg-indigo-100 transition-colors"
-                    >
-                      @{userDetail.referredBy.username}
-                    </Link>
-                  ) : (
-                    <span className="text-xs font-mono text-gray-400">
-                      Direct / None
-                    </span>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           </div>

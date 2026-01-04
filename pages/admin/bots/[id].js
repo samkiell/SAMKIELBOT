@@ -436,6 +436,54 @@ export default function AdminBotDetailsPage() {
                 label="CPU Limit"
                 value={`${deployment.resources?.cpuLimit}%`}
               />
+              <div className="pt-4 mt-4 border-t border-gray-100 dark:border-white/5">
+                <DetailRow
+                  label="Command Prefix"
+                  value={deployment.configuration?.prefix || "."}
+                  isCode
+                />
+                <DetailRow
+                  label="Pack Name"
+                  value={deployment.configuration?.packName || "Default"}
+                />
+                <DetailRow
+                  label="Owner Watermark"
+                  value={deployment.configuration?.ownerName || "N/A"}
+                />
+              </div>
+
+              {deployment.configuration?.featureToggles &&
+                Object.keys(deployment.configuration.featureToggles).length >
+                  0 && (
+                  <div className="pt-4 mt-4 border-t border-gray-100 dark:border-white/5">
+                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+                      Enabled Features
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(deployment.configuration.featureToggles)
+                        .filter(
+                          ([_, value]) => value === true || value === "true"
+                        )
+                        .map(([key]) => (
+                          <span
+                            key={key}
+                            className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded capitalize border border-indigo-100 dark:border-indigo-500/20"
+                          >
+                            {key.replace(/_/g, " ").toLowerCase()}
+                          </span>
+                        ))}
+                      {Object.entries(
+                        deployment.configuration.featureToggles
+                      ).filter(
+                        ([_, value]) => value === true || value === "true"
+                      ).length === 0 && (
+                        <span className="text-xs text-gray-400 italic">
+                          No specific features enabled
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
             </div>
           </div>
         </div>
@@ -478,11 +526,17 @@ function StatusBadge({ status }) {
   );
 }
 
-function DetailRow({ label, value }) {
+function DetailRow({ label, value, isCode }) {
   return (
     <div className="flex justify-between items-center text-sm">
       <span className="text-gray-500">{label}</span>
-      <span className="font-mono text-gray-700 dark:text-gray-300">
+      <span
+        className={`font-mono text-gray-700 dark:text-gray-300 ${
+          isCode
+            ? "bg-gray-100 dark:bg-white/10 px-1.5 py-0.5 rounded text-xs"
+            : ""
+        }`}
+      >
         {value}
       </span>
     </div>

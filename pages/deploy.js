@@ -44,7 +44,7 @@ export default function DeployPage() {
         rejectCall: true,
         commandMode: "public",
         antiDelete: true,
-        antiDeleteType: "all",
+        antiDeleteType: "group",
         autoReaction: false,
       },
     },
@@ -60,7 +60,7 @@ export default function DeployPage() {
         rejectCall: true,
         commandMode: "private",
         antiDelete: true,
-        antiDeleteType: "all",
+        antiDeleteType: "dm",
         autoReaction: false,
       },
     },
@@ -76,7 +76,7 @@ export default function DeployPage() {
         rejectCall: false,
         commandMode: "public",
         antiDelete: false,
-        antiDeleteType: "none",
+        antiDeleteType: "group",
         autoReaction: true,
       },
     },
@@ -104,11 +104,9 @@ export default function DeployPage() {
     rejectCall: true,
     commandMode: "private", // "public" | "private"
     antiDelete: true,
-    antiDeleteType: "all", // "all" | "group" | "private"
+    antiDeleteType: "group", // "group" | "dm"
     autoReaction: false,
-    personalMessage: false,
     disableStartMessage: false,
-    ranking: false,
     statusViewEmoji: "👀",
   });
 
@@ -198,9 +196,7 @@ export default function DeployPage() {
         ANTI_DELETE_TYPE: formData.antiDeleteType,
         AUTO_REACTION: formData.autoReaction,
         PACKNAME: formData.packName,
-        PERSONAL_MESSAGE: formData.personalMessage,
         DISABLE_START_MESSAGE: formData.disableStartMessage,
-        RANKING: formData.ranking,
         STATUS_VIEW_EMOJI: formData.statusViewEmoji,
       },
     };
@@ -707,9 +703,8 @@ export default function DeployPage() {
                     onChange={handleChange}
                     className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   >
-                    <option value="all">All Chats</option>
-                    <option value="group">Groups Only</option>
-                    <option value="private">Private Only</option>
+                    <option value="group">Send to Group</option>
+                    <option value="dm">Send to Owner DM</option>
                   </select>
                 </div>
               )}
@@ -797,27 +792,6 @@ export default function DeployPage() {
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                 <div>
                   <span className="block font-medium dark:text-gray-200">
-                    Personal Message
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Enable bot in private chats
-                  </span>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="personalMessage"
-                    checked={formData.personalMessage}
-                    onChange={handleChange}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
-                </label>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
-                <div>
-                  <span className="block font-medium dark:text-gray-200">
                     Disable Start Message
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -833,27 +807,6 @@ export default function DeployPage() {
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-500"></div>
-                </label>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
-                <div>
-                  <span className="block font-medium dark:text-gray-200">
-                    Ranking
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    Enable group participation ranking
-                  </span>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name="ranking"
-                    checked={formData.ranking}
-                    onChange={handleChange}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-yellow-500"></div>
                 </label>
               </div>
 

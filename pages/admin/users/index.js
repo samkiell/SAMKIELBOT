@@ -686,7 +686,7 @@ export default function UserManagement() {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-gray-900 dark:text-gray-100 capitalize">
-                            {log.action.replace(/_/g, " ")}
+                            {(log.action || "").replace(/_/g, " ")}
                           </p>
                           <p className="text-[10px] text-gray-500 font-mono mt-0.5">
                             {log.details}

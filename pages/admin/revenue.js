@@ -202,7 +202,10 @@ export default function AdminRevenue() {
     (acc, s) => acc + s.totalCredits,
     0
   );
-  const totalTransactions = summary.allTime?.reduce(0);
+  const totalTransactions = summary.allTime?.reduce(
+    (acc, s) => acc + s.count,
+    0
+  );
 
   const revenueTodayVal =
     summary.today?.find((s) => s._id === "NGN")?.total || 0;

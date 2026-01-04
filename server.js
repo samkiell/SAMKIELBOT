@@ -60,6 +60,21 @@ app
     // Middleware
     server.use(express.json());
 
+    // Security Headers
+    server.use((req, res, next) => {
+      res.setHeader(
+        "Content-Security-Policy",
+        "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://*.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://res.cloudinary.com data:; font-src 'self' data:; connect-src 'self' https://*.vercel-insights.com https://*.vercel-analytics.com https://apiskeith.vercel.app; frame-src 'self' https://challenges.cloudflare.com; frame-ancestors 'self';"
+      );
+      res.setHeader("X-Frame-Options", "SAMEORIGIN");
+      res.setHeader("X-Content-Type-Options", "nosniff");
+      res.setHeader(
+        "Strict-Transport-Security",
+        "max-age=63072000; includeSubDomains; preload"
+      );
+      next();
+    });
+
     // Socket.IO Event Handlers
     io.on("connection", (socket) => {
       socket.on("join", (room) => {

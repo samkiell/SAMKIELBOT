@@ -296,8 +296,8 @@ export default function UserDetails() {
           </div>
         </div>
 
-        {/* Intelligence Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        {/* Simplified Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           <DetailStatCard
             label="WALLET BALANCE"
             value={Math.round(userDetail.credits || 0)}
@@ -310,189 +310,101 @@ export default function UserDetails() {
             icon="🤖"
             suffix="BOTS"
           />
-          <DetailStatCard
-            label="RESOURCE CEILING"
-            value={userDetail.limits?.maxRam || 512}
-            icon="⚡"
-            suffix="MB RAM"
-          />
-          <DetailStatCard
-            label="NETWORK GROWTH"
-            value={referrals.length}
-            icon="🤝"
-            suffix="REFERRALS"
-          />
         </div>
 
-        {/* Main Content Areas */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-10">
-          {/* Bot Fleet - Wide Column */}
-          <div className="xl:col-span-2 space-y-6">
-            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
-              <span className="w-2 h-8 bg-indigo-600 rounded-full" />
-              Active Deployments
-            </h2>
+        {/* Bot Fleet - Full Width */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+            <span className="w-2 h-8 bg-indigo-600 rounded-full" />
+            Active Deployments
+          </h2>
 
-            {userBots.length === 0 ? (
-              <div className="bg-gray-50 dark:bg-gray-900/50 border border-dashed border-gray-200 dark:border-gray-800 rounded-[32px] p-20 text-center text-gray-400 font-bold">
-                No active bot instances detected.
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {userBots.map((bot) => (
-                  <div
-                    key={bot._id}
-                    className="bg-white dark:bg-[#111827] p-6 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all"
-                  >
-                    <div className="flex flex-col md:flex-row lg:items-center justify-between gap-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-xl">
-                          🤖
-                        </div>
-                        <div>
-                          <Link
-                            href={`/admin/bots/${bot._id}`}
-                            className="text-lg font-black hover:text-indigo-500 transition-colors"
-                          >
-                            {bot.botName || `Bot ${bot.botNumber}`}
-                          </Link>
-                          <div className="text-[10px] font-mono text-gray-400 mt-1 uppercase tracking-wider">
-                            ID: {bot._id}
-                          </div>
-                        </div>
+          {userBots.length === 0 ? (
+            <div className="bg-gray-50 dark:bg-gray-900/50 border border-dashed border-gray-200 dark:border-gray-800 rounded-[32px] p-20 text-center text-gray-400 font-bold">
+              No active bot instances detected.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {userBots.map((bot) => (
+                <div
+                  key={bot._id}
+                  className="bg-white dark:bg-[#111827] p-6 rounded-[24px] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg transition-all"
+                >
+                  <div className="flex flex-col md:flex-row lg:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-xl">
+                        🤖
                       </div>
-
-                      <div className="flex items-center gap-4 flex-wrap">
-                        {getStatusBadge(bot.status)}
-                        <div className="h-6 w-px bg-gray-100 dark:bg-gray-800 hidden md:block" />
-                        <div className="flex items-center gap-2">
-                          <ControlBtn
-                            icon={Play}
-                            color="text-emerald-500"
-                            bg="bg-emerald-500/10"
-                            onClick={() => handlePowerAction(bot._id, "start")}
-                          />
-                          <ControlBtn
-                            icon={Square}
-                            color="text-red-500"
-                            bg="bg-red-500/10"
-                            onClick={() => handlePowerAction(bot._id, "stop")}
-                          />
-                          <ControlBtn
-                            icon={RotateCcw}
-                            color="text-blue-500"
-                            bg="bg-blue-500/10"
-                            onClick={() =>
-                              handlePowerAction(bot._id, "restart")
-                            }
-                          />
-                          <div className="w-px h-6 bg-gray-100 dark:bg-gray-800 mx-1" />
-                          <ControlBtn
-                            icon={PauseCircle}
-                            color="text-amber-500"
-                            bg="bg-amber-500/10"
-                            onClick={() =>
-                              setConfirmModal({
-                                show: true,
-                                action:
-                                  bot.status === "suspended"
-                                    ? "unsuspend"
-                                    : "suspend",
-                                bot,
-                              })
-                            }
-                          />
-                          <ControlBtn
-                            icon={Trash2}
-                            color="text-red-500"
-                            bg="bg-red-500/10"
-                            onClick={() =>
-                              setConfirmModal({
-                                show: true,
-                                action: "delete",
-                                bot,
-                              })
-                            }
-                          />
+                      <div>
+                        <Link
+                          href={`/admin/bots/${bot._id}`}
+                          className="text-lg font-black hover:text-indigo-500 transition-colors"
+                        >
+                          {bot.botName || `Bot ${bot.botNumber}`}
+                        </Link>
+                        <div className="text-[10px] font-mono text-gray-400 mt-1 uppercase tracking-wider">
+                          ID: {bot._id}
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
-          {/* Right Column - Secondary Info */}
-          <div className="space-y-10">
-            {/* Extended Info */}
-            <section className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
-              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">
-                Subject Profile
-              </h3>
-              <div className="space-y-6">
-                <ProfileInfoRow
-                  label="Legal Name"
-                  value={userDetail.fullName || "N/A"}
-                />
-                <ProfileInfoRow
-                  label="Direct Comms"
-                  value={userDetail.whatsappNumber || "N/A"}
-                />
-                <ProfileInfoRow
-                  label="First Access"
-                  value={new Date(userDetail.createdAt).toLocaleDateString()}
-                />
-                {userDetail.referredBy && (
-                  <div className="flex justify-between items-center py-4 border-t border-gray-50 dark:border-gray-800">
-                    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                      Architect
-                    </span>
-                    <Link
-                      href={`/admin/users/${userDetail.referredBy._id}`}
-                      className="text-indigo-500 font-black hover:underline"
-                    >
-                      @{userDetail.referredBy.username}
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Referrals */}
-            <section className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
-              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">
-                Referral Network ({referrals.length})
-              </h3>
-              {referrals.length === 0 ? (
-                <p className="text-gray-400 font-bold text-sm italic">
-                  No network connections.
-                </p>
-              ) : (
-                <div className="space-y-4">
-                  {referrals.map((ref) => (
-                    <Link
-                      key={ref._id}
-                      href={`/admin/users/${ref._id}`}
-                      className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black text-xs">
-                          {ref.username?.[0]?.toUpperCase()}
-                        </div>
-                        <span className="font-bold text-sm group-hover:text-indigo-500 transition-colors truncate max-w-[100px]">
-                          {ref.username}
-                        </span>
+                    <div className="flex items-center gap-4 flex-wrap">
+                      {getStatusBadge(bot.status)}
+                      <div className="h-6 w-px bg-gray-100 dark:bg-gray-800 hidden md:block" />
+                      <div className="flex items-center gap-2">
+                        <ControlBtn
+                          icon={Play}
+                          color="text-emerald-500"
+                          bg="bg-emerald-500/10"
+                          onClick={() => handlePowerAction(bot._id, "start")}
+                        />
+                        <ControlBtn
+                          icon={Square}
+                          color="text-red-500"
+                          bg="bg-red-500/10"
+                          onClick={() => handlePowerAction(bot._id, "stop")}
+                        />
+                        <ControlBtn
+                          icon={RotateCcw}
+                          color="text-blue-500"
+                          bg="bg-blue-500/10"
+                          onClick={() => handlePowerAction(bot._id, "restart")}
+                        />
+                        <div className="w-px h-6 bg-gray-100 dark:bg-gray-800 mx-1" />
+                        <ControlBtn
+                          icon={PauseCircle}
+                          color="text-amber-500"
+                          bg="bg-amber-500/10"
+                          onClick={() =>
+                            setConfirmModal({
+                              show: true,
+                              action:
+                                bot.status === "suspended"
+                                  ? "unsuspend"
+                                  : "suspend",
+                              bot,
+                            })
+                          }
+                        />
+                        <ControlBtn
+                          icon={Trash2}
+                          color="text-red-500"
+                          bg="bg-red-500/10"
+                          onClick={() =>
+                            setConfirmModal({
+                              show: true,
+                              action: "delete",
+                              bot,
+                            })
+                          }
+                        />
                       </div>
-                      <span className="font-mono text-[10px] text-gray-400">
-                        {new Date(ref.createdAt).toLocaleDateString()}
-                      </span>
-                    </Link>
-                  ))}
+                    </div>
+                  </div>
                 </div>
-              )}
-            </section>
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Confirmation Modal */}

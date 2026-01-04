@@ -207,6 +207,19 @@ export default function AdminRevenue() {
     0
   );
 
+  const revenueTodayVal =
+    summary.today?.find((s) => s._id === "NGN")?.total || 0;
+  const revenueYesterdayVal =
+    summary.yesterday?.find((s) => s._id === "NGN")?.total || 0;
+
+  let revenueTrend = 0;
+  if (revenueYesterdayVal > 0) {
+    revenueTrend =
+      ((revenueTodayVal - revenueYesterdayVal) / revenueYesterdayVal) * 100;
+  } else if (revenueTodayVal > 0) {
+    revenueTrend = 100;
+  }
+
   return (
     <AdminLayout>
       <Head>
@@ -268,7 +281,7 @@ export default function AdminRevenue() {
           subValue="Growth vs yesterday"
           icon={TrendingUp}
           color="blue"
-          trend={12}
+          trend={revenueTrend.toFixed(0)}
         />
         <StatItem
           title="Avg. Sale Value"

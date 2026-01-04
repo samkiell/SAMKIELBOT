@@ -18,6 +18,7 @@ import {
   CreditCard,
   AlertTriangle,
   CheckCircle,
+  ChevronDown,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,6 +31,7 @@ export default function DeployPage() {
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [showCreditAlert, setShowCreditAlert] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const templates = [
     {
@@ -332,37 +334,74 @@ export default function DeployPage() {
           </button>
         </div>
 
-        {/* Template Selector */}
-        <div className="mb-10">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <Zap className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-            Quick Start Templates
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-            {templates.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => applyTemplate(t)}
-                className="group relative bg-white dark:bg-gray-800 p-3 md:p-5 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 transition-all text-left shadow-sm hover:shadow-md"
+        {/* Template Selector - Dropdown Style */}
+        <div className="mb-10 relative z-20">
+          <button
+            type="button"
+            onClick={() => setShowTemplates(!showTemplates)}
+            className="w-full flex items-center justify-between p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-indigo-500 hover:shadow-md transition-all text-left group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg text-yellow-600 dark:text-yellow-400 group-hover:scale-110 transition-transform">
+                <Zap size={20} className="fill-current" />
+              </div>
+              <div>
+                <span className="block font-bold text-gray-900 dark:text-white text-lg">
+                  Quick Start Templates
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Click to choose a pre-set configuration
+                </span>
+              </div>
+            </div>
+            <ChevronDown
+              className={`text-gray-400 transition-transform duration-300 ${
+                showTemplates ? "rotate-180" : ""
+              }`}
+              size={24}
+            />
+          </button>
+
+          <AnimatePresence>
+            {showTemplates && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full left-0 right-0 mt-3 p-2 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-2xl grid grid-cols-1 gap-2"
               >
-                <div className="text-2xl md:text-3xl mb-2 md:mb-3">
-                  {t.icon}
-                </div>
-                <h3 className="font-bold text-sm md:text-base text-gray-900 dark:text-white mb-1 group-hover:text-indigo-500 transition-colors">
-                  {t.name}
-                </h3>
-                <p className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 leading-tight">
-                  {t.desc}
-                </p>
-                <div className="absolute top-2 right-2 md:top-4 md:right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="bg-indigo-500 text-white text-[8px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                    APPLY
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
+                {templates.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      applyTemplate(t);
+                      setShowTemplates(false);
+                    }}
+                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:shadow-sm border border-transparent hover:border-indigo-100 dark:hover:border-gray-600 transition-all text-left group/item"
+                  >
+                    <div className="text-3xl bg-gray-50 dark:bg-gray-700 w-12 h-12 flex items-center justify-center rounded-lg group-hover/item:scale-110 transition-transform">
+                      {t.icon}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-bold text-gray-900 dark:text-white group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400 transition-colors">
+                          {t.name}
+                        </h3>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 opacity-0 group-hover/item:opacity-100 transition-opacity bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full">
+                          Apply
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        {t.desc}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Billing Transparency Summary */}

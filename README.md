@@ -1,186 +1,98 @@
-# Samkiel Bot Deployment Platform
+# SAMKIEL BOT - Deployment Platform
 
-## Project Overview
+## High Level Overview
+This platform is a comprehensive, full-stack orchestration system designed to automate the deployment, management, and scaling of containerized WhatsApp agents. It functions as a centralized control plane, abstracting complex infrastructure requirements—such as Docker containerization, version control management, and resource provisioning—behind a streamlined user interface. The system integrates directly with Pterodactyl for node management and GitHub for dynamic configuration injection, providing a robust "Bot Vault" for persistent automation services.
 
-This project is a centralized web platform designed for the deployment, management, and orchestration of WhatsApp bot instances. It serves as a management layer that sits between the end-user and the underlying infrastructure (Pterodactyl).
+## Problem Statement
+Deploying stateful, always-online automation agents requires significant technical overhead. Users typically need to manage virtual private servers (VPS), handle process daemonization (PM2/Docker), and manually configure environment variables for every instance. This complexity creates a barrier to entry and introduces security risks related to credential mismanagement and resource exhaustion. Furthermore, managing the lifecycle of multiple distinct agents across a distributed infrastructure is operationally expensive and error-prone without a centralized management layer.
 
-**Purpose**: To allow users to provision, configure, and manage WhatsApp bots without needing to interact directly with command-line tools, raw servers, or complex git workflows.
-
-**Target Audience**: 
-- Users seeking to run their own WhatsApp automated assistants.
-- Administrators managing a BOT of bot instances.
-
-**Problem Solved**: Abstracts the complexity of server provisioning, git configuration, and application lifecycle management into a user-friendly web dashboard.
-
----
-
-## What This Repository Is / Is Not
-
-**This Repository IS:**
-- A Next.js web application (Frontend & API).
-- An orchestration engine that controls Pterodactyl servers.
-- A user account and credit management system.
-
-**This Repository is NOT:**
-- The WhatsApp bot logic itself.
-- A collection of WhatsApp plugins or commands.
-
-**Separation of Concerns:**
-- **This Platform**: Handles "Meta-operations" (Deploy, Start, Stop, Delete, Billing).
-- **Bot Repository** (`samkiell/SAMKIEL-AI`): Contains the actual application logic that runs inside the containers spawned by this platform.
-
----
-
-## High-Level Architecture
-
-The system follows a typical 3-tier architecture with an additional infrastructure integration layer.
-
-### 1. Frontend (Next.js)
-- Built with React 18 and Tailwind CSS.
-- Provides the User Interface for authentication, dashboard, deployment wizard, and billing.
-- Uses `socket.io-client` for real-time updates (console logs, pairing codes, status changes).
-
-### 2. Backend (Next.js API + Custom Server)
-- **API Routes**: Handle standard CRUD operations (Users, Deployments, Credits).
-- **Custom Express Server**: Hosts the Socket.io instance for real-time communication.
-- **Orchestration Service**: Interacts with external APIs to provision resources.
-
-### 3. Infrastructure Layer
-- **Pterodactyl Panel**: Acts as the container orchestration engine.
-- **GitHub**: Stores user-specific configurations in isolated branches.
-
----
+## Solution Architecture
+The platform solves these challenges by implementing a highly coupled orchestration pipeline.
+1.  **Configuration Injection**: User inputs are sanitized and programmatically injected into a `settings.js` configuration file.
+2.  **Version Control as Middleware**: The system authenticates with GitHub to create unique, isolated branches (e.g., `bot-[id]`) for each deployment. This ensures that every active container pulls a specific, immutable configuration state.
+3.  **Container Orchestration**: The backend interfaces with the Pterodactyl API (Wingman) to provision isolated Docker containers on bare-metal nodes.
+4.  **Real-Time Monitoring**: A custom Express/Socket.IO layer maintains persistent connections to the infrastructure to stream terminal logs and deployment status back to the client in real-time.
 
 ## Core Features
 
-### Authentication & User Management
-- Secure JWT-based authentication.
-- Role-based access control (User vs Admin).
-- Credit-based resource usage system.
+### Infrastructure Orchestration
+*   **Automated Provisioning**: Zero-touch creation of server instances with predefined resource allocations (RAM, CPU, Disk).
+*   **Resource Guardrails**: Intelligent pre-flight checks prevent deployment if target nodes exceed critical thresholds (e.g., >80% RAM usage), ensuring platform stability.
+*   **Lifecycle Management**: Full control over component lifecycle, allowing users to start, stop, restart, or terminate instances via API calls.
 
-### Bot Deployment Flow
-- Automated provisioning of Docker containers.
-- Dynamic generation of configuration files (`settings.js`).
-- Git branch management for user isolation.
+### Dynamic Configuration Engine
+*   **Runtime Injection**: Automates the customization of agent logic by writing owner credentials, feature toggles (security modes, privacy settings), and branding directly into the source code before deployment.
+*   **Branch-Based Isolation**: Utilizes Git branching strategies to separate configurations, preventing cross-contamination between tenants sharing the same base codebase.
 
-### Pairing Workflow
-- Real-time interception of the WhatsApp Pairing Code from the server console.
-- WebSocket push of the code to the frontend UI.
-- Elimination of the need for users to view raw server logs.
+### Administrative Governance
+*   **System Telemetry**: Provides administrators with a high-level view of cluster health, including aggregate resource consumption.
+*   **Sovereign Control**: Enables administrative override for any tenant, allowing for force-termination or restart of rogue processes.
+*   **Audit Logging**: Immutable logging of critical actions, such as user deletion or forced infrastructure adjustments.
 
-### Management Dashboard
-- Real-time status monitoring (Online, Offline, Starting).
-- Power controls (Start, Stop, Restart, Kill).
-- Resource usage monitoring (CPU, RAM, Disk).
+### Economic Model
+*   **Credit-Based Computation**: Implements a billing system where resource uptime equates to credit consumption ("Daily Burn").
+*   **Usage Enforcement**: Background schedulers monitor credit balances, automatically pausing or terminating services for accounts with insufficient funds.
 
----
+## Deployment Lifecycle
+The deployment process follows a strict linear workflow to ensure data integrity and successful initialization:
+1.  **Validation**: The system validates user credits and checks the health of the target infrastructure node.
+2.  **Versioning**: A new branch is created in the central repository derived from the master template.
+3.  **Injection**: Specific configuration files are committed to this branch.
+4.  **Provisioning**: A request is sent to the Pterodactyl API to create a server bound to the newly created branch.
+5.  **Initialization**: The container spins up, installs dependencies, and the backend begins polling for 'online' status.
+6.  **Handover**: Once health checks pass, control is handed over to the user dashboard.
 
-## Deployment Flow (Step by Step)
-
-When a user deploys a bot, the following sequence occurs:
-
-1.  **User Action**: User submits the "Deploy" form with a Bot Name and WhatsApp Number.
-2.  **Validation**: Backend validates user credits and input formats.
-3.  **Configuration (GitHub)**:
-    -   System fetches the template `settings.js` from the Bot Repository.
-    -   System injects the specific `botNumber` and owner configuration.
-    -   System creates a dedicated git branch (e.g., `bot-1234567890`) and commits the config.
-4.  **Infrastructure Provisioning (Pterodactyl)**:
-    -   System requests a new server allocation via Pterodactyl API.
-    -   Server is configured to clone the specific git branch created in Step 3.
-    -   Environment variables (RAM, CPU limits) are applied based on the user's plan.
-5.  **Startup & Monitoring**:
-    -   Server starts and runs `npm install`.
-    -   Backend connects to the server's WebSocket console.
-    -   System scans logs for the regex pattern `Your Pairing Code : XXXX-XXXX`.
-6.  **Result**: The code is delivered to the user's browser via Socket.io. The user enters this code on their phone to link the bot.
-
----
-
-## Tech Stack
+## Technology Stack
 
 ### Frontend
-- **Framework**: Next.js 16 (React 18)
-- **Styling**: Tailwind CSS
-- **State/Effects**: React Context, SWR (implied), Socket.io Client
+*   **Next.js 16.0.0**: React 18-based framework for server-side rendering and static generation.
+*   **Tailwind CSS**: Utility-first styling for a scalable design system.
+*   **Framer Motion**: Library for complex state-based animations.
 
-### Backend
-- **Runtime**: Node.js
-- **Server**: Express (Custom Next.js server entry point)
-- **Database**: MongoDB (Mongoose ODM)
-- **Job Scheduling**: node-cron (Resource usage calculation, maintenance)
+### Backend & Middleware
+*   **Node.js & Express**: Custom server entry point handling API routing and WebSocket upgrades.
+*   **Socket.IO**: Bi-directional event-based communication for live logs and status updates.
+*   **MongoDB & Mongoose**: Document store for user profiles, deployment metadata, and audit trails.
 
-### Infrastructure Integration
-- **Container Platform**: Pterodactyl (Panel & Wings)
-- **Version Control API**: Octokit (GitHub REST API)
-- **WebSocket**: `ws` (For Pterodactyl console streams)
+### Infrastructure Services
+*   **Pterodactyl (Panel & Wings)**: Management interface for Dockerized application containers.
+*   **GitHub API (Octokit)**: Programmatic management of repositories and branches.
+*   **Paystack**: Payment gateway integration for credit transactions.
 
----
+## Security and Isolation Model
+*   **Container Isolation**: Each deployed agent runs in its own Docker container with strict CPU and memory limits, preventing "noisy neighbor" issues.
+*   **Source Code Isolation**: Unique Git branches ensure that configuration leaks between users are impossible at the source level.
+*   **Authentication**: JWT-based stateless authentication protects API routes, with role-based access control (RBAC) strictly separating User and Admin capabilities.
 
-## Environment Variables
+## Scalability and Constraints
+*   **Vertical Scaling**: The current architecture enforces a hard limit of 2 deployments per user to prevent abuse.
+*   **Resource Guardrails**: automated guards prevent scheduling on nodes with >85% Disk or CPU utilization, protecting the physical hardware from saturation.
+*   **Single-Node Tenancy**: Deployments are currently routed to a specific high-performance node (Node 3) to simplify monitoring, with logic in place for future multi-node horizontal scaling.
 
-The application relies on the following environment variables. Do NOT commit values to version control.
+## Project Structure Overview
+```text
+samkiel-bot-deployment/
+├── components/          # Reusable UI elements (Charts, Status Indicators)
+├── lib/                 # Business logic and external adapters
+│   ├── controllers/     # Orchestration logic (Deployment, Auth, Payment)
+│   ├── services/        # Background workers (Health Checks, GitHub Sync)
+│   ├── models/          # Database schemas
+│   └── utils/           # Shared helper functions
+├── pages/               # Routing layer
+│   ├── admin/           # Secured administrative interfaces
+│   ├── api/             # Internal API endpoints
+│   └── deploy/          # Deployment configuration wizard
+├── public/              # Static assets
+└── server.js            # Unified application server
+```
 
-### Application Config
-- `PORT`: Port for the application (default to 3000).
-- `NODE_ENV`: `production` or `development`.
-- `NEXT_PUBLIC_API_URL`: Public URL for frontend API calls.
+## Current State
+The platform is fully operational for production workflows. Users can register, purchase credits, and deploy fully functional instances. The integration with Pterodactyl is stable, and the "Daily Burn" credit logic effectively monetizes the service. Admin oversight tools are active and capable of managing the current user base.
 
-### Database
-- `MONGO_URI`: Connection string for MongoDB.
+## Roadmap
+*   **Horizontal Scaling**: Implementing dynamic node selection to distribute load across multiple physical servers.
+*   **Tiered Feature Gating**: Introducing subscription tiers that unlock advanced bot capabilities (e.g., higher memory limits, priority support).
+*   **Automated Healing**: Enhancing the health check service to automatically attempt restarts on crashed containers without user intervention.
 
-### Authentication
-- `JWT_SECRET`: Secret key for signing JSON Web Tokens.
-
-### GitHub Integration
-- `GITHUB_TOKEN`: Personal Access Token for managing the Bot Repository (Reading/Writing contents and branches).
-
-### Pterodactyl Integration
-- `PTERODACTYL_DOMAIN`: Base URL of the Pterodactyl Panel.
-- `PTERODACTYL_APP_KEY`: Application API Key (Admin) for server creation.
-- `PTERODACTYL_CLIENT_KEY`: Client API Key for user-level interactions.
-- `PTERODACTYL_NEST_ID`: ID of the Nest to deploy into.
-- `PTERODACTYL_EGG_ID`: ID of the Egg (Node.js environment).
-- `PTERODACTYL_NODE_ID`: Technical ID of the node to deploy servers on.
-
-### Payments
-- `PAYSTACK_SECRET_KEY`: Secret key for Paystack payment verification.
-
----
-
-## Security & Isolation Model
-
-### Git Isolation
-Every bot deployment utilizes a unique git branch. This ensures that one user's configuration (custom logic, owner numbers) does not accidentally leak into another user's deployment if they were to pull updates.
-
-### Container Isolation
-Bots run in isolated Docker containers managed by Pterodactyl. Users cannot access the file system or processes of other users.
-
-### Credential Safety
-End-users never see raw API keys or database credentials. The platform acts as a proxy for all sensitive infrastructure operations.
-
----
-
-## Current State vs Future Roadmap
-
-### Implemented
-- [x] User Authentication & Registration.
-- [x] Basic Pterodactyl Server Deployment.
-- [x] Real-time Pairing Code extraction.
-- [x] Power Actions (Start/Stop/Restart).
-- [x] Credit-based billing system foundation.
-
-### Planned / In Progress
-- [ ] Automated recurring subscription billing (vs currently implemented credit top-ups).
-- [ ] Advanced file manager for users to upload custom plugins.
-- [ ] Multi-node load balancing (currently single node targeted).
-- [ ] Automated backup & snapshots.
-
----
-
-## Glossary
-
-- **Deployment**: A single instance of the bot software running in a container.
-- **Pairing**: The process of linking a WhatsApp account to the bot instance using the official MD (Multi-Device) pairing code method.
-- **Egg**: Pterodactyl terminology for a specific software environment configuration (e.g., Node.js 22).
-- **Nest**: A category grouping for Eggs (e.g., "Whatsapp Bots").
+## Author Note
+This project represents a rigorous approach to full-stack engineering, prioritizing system stability and architectural cleanliness over rapid feature expansion. It demonstrates the ability to build complex, integrated platforms that bridge the gap between software development and infrastructure operations.

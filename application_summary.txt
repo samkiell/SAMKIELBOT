@@ -1,0 +1,110 @@
+# SAMKIEL BOT - Deployment Platform Summary
+
+## 🧭 Overview
+**SAMKIEL BOT** is a comprehensive, full-stack web application designed for the deployment, management, and monitoring of WhatsApp bots. It functions as a "Bot Vault," allowing users to deploy isolated instances of the SAMKIEL WhatsApp bot without technical expertise. The platform integrates directly with **Pterodactyl** for containerized hosting and **GitHub** for code versioning.
+
+## 🚀 Key Features
+
+### 🤖 Bot Deployment & Management
+-   **One-Click Deployment**: Users deploy bots by providing a WhatsApp number and selecting resources (RAM, CPU, Disk).
+-   **Infrastructure Orchestration**: Automated server creation on Pterodactyl nodes.
+    -   **Node Safety Guards**: Deployments are blocked if the target node (Node 3 hardcoded in current logic) exceeds 80% RAM, 85% Disk, or 85% CPU usage.
+    -   **Resource Limits**: Strict validation on allocated resources per tier.
+-   **Dynamic Configuration**: The system generates a custom `settings.js` for each bot, injecting:
+    -   Owner credentials (Number, Name).
+    -   Feature toggles (Anti-delete, Always Online, Auto-Read, etc.).
+    -   Branding (Bot Name, Sticker Pack).
+    -   This config is committed to a unique branch (`bot-[number]`) in the connected GitHub repository (`SAMKIEL-AI`), ensuring isolation.
+-   **Status Monitoring**: Real-time health checks using Socket.IO to track if bots are `running`, `stopped`, `starting`, or `failed`.
+-   **Power Controls**: Users can `start`, `stop`, `restart`, or `kill` their bot instances directly from the dashboard.
+
+### 💳 Credit & Payment System
+-   **Economy**: A comprehensive credit-based system where deployments and uptime cost credits.
+-   **Billing**: Paystack integration for purchasing credits.
+-   **Usage Tracking**: Background services calculate "Daily Burn" and deduct credits based on resource consumption.
+-   **Safety**: Users cannot deploy without sufficient credits; deployments are paused/deleted if credits run out (logic in scheduler).
+
+### 👮 Admin Dashboard
+-   **System Intelligence**: Real-time overview of infrastructure health (RAM/CPU/Disk usage).
+-   **User Management**: View, filter, and manage registered users.
+-   **Deployment Control**: Admins can override and manage *any* user's bot (Start/Stop/Delete).
+-   **Activity Logs**: Detailed audit logs for admin actions (e.g., deleting users, force-restarting bots).
+-   **Governance**: Tracking of critical system events.
+
+### 📱 User Experience
+-   **Modern UI**: Built with **Next.js**, **Tailwind CSS**, and **Framer Motion** for a premium, dark-themed aesthetic.
+-   **Interactive Elements**:
+    -   Real-time terminal output from bots.
+    -   Toast notifications for actions (Deploying, Error, Success).
+    -   QR Code display for WhatsApp pairing (via Pairing Code or QR).
+
+## 🛠 Technology Stack
+
+### Core
+-   **Framework**: [Next.js 16.0.0](https://nextjs.org/) (React 18)
+-   **Server**: Custom Node.js Express Server (`server.js`) to handle Socket.IO and Next.js pages simultaneously.
+-   **Language**: JavaScript (ES6+)
+
+### Backend & Database
+-   **Runtime**: Node.js
+-   **Database**: MongoDB (Mongoose ODM) - Stores Users, Deployments, Notifications, Audit Logs.
+-   **Real-time**: Socket.IO - Connects frontend to backend services for live status and terminal logs.
+-   **Authentication**: JWT (JSON Web Tokens) customized for Next.js.
+
+### Infrastructure & Services
+-   **Hosting API**: Pterodactyl Client (Node.js) to interface with the game panel API.
+-   **Versioning**: GitHub API (Octokit) for managing bot code branches.
+-   **Payments**: Paystack API.
+
+## 📂 Project Structure
+
+```bash
+samkiel-bot-deployment/
+├── components/          # React UI components (BotCard, Navbar, Charts)
+├── lib/                 # Core backend logic
+│   ├── admin/           # Admin-specific logic
+│   ├── controllers/     # Application Controllers
+│   │   ├── adminController.js   # Admin dashboard logic
+│   │   ├── authController.js    # User auth (Register/Login)
+│   │   ├── deployController.js  # Deployment orchestration & Pterodactyl interface
+│   │   └── paymentController.js # Paystack integration
+│   ├── services/        # Background Services
+│   │   ├── botHealthService.js  # Polling & Socket updates for bot status
+│   │   ├── creditService.js     # Billing calculations & deductions
+│   │   ├── infraOrchestrator.js # Node health & deployment queue
+│   │   └── githubService.js     # GitHub branch & file management
+│   ├── models/          # Mongoose Schemas (User, Deployment, AuditLog, etc.)
+│   └── utils/           # Helpers (authMiddleware, response, pterodactyl client)
+├── pages/               # Next.js Routes
+│   ├── admin/           # Admin Dashboard routes (/admin/users, /admin/infrastructure)
+│   ├── api/             # API Routes (proxied or handled by server.js)
+│   ├── deploy/          # Deployment wizard & management pages
+│   └── ...              # Public pages (Login, Register, Pricing)
+├── public/              # Static assets
+├── server.js            # Custom Express Server Entry Point
+└── .env                 # Environment Configuration
+```
+
+## ⚙️ Configuration & Environment
+
+The application relies on several critical environment variables:
+-   **Database**: `MONGO_URI`
+-   **Auth**: `JWT_SECRET`
+-   **Infrastructure**: `PTERODACTYL_HOST`, `PTERODACTYL_API_KEY`
+-   **GitHub**: `GITHUB_TOKEN` (for repo management)
+-   **Payments**: `PAYSTACK_SECRET_KEY`
+-   **App**: `NEXT_PUBLIC_API_URL`
+
+## 🔄 Recent Updates & Status
+-   **Deployment Guards**: Implemented strict checks preventing deployment if Node RAM > 80%.
+-   **Bot Limits**: Users restricted to max 2 bots (configurable).
+-   **Activity Logging**: Enhanced verbose logging for all admin actions.
+-   **Bot Commands**:
+    -   Fixed prefix consistency (`settings.js` priority).
+    -   Fixed group public mode issues.
+    -   Added `.pdf` and `.play` command support in the bot's codebase (managed via the `SAMKIEL-AI` repo updates).
+-   **SEO**: Page titles optimized for "SAMKIEL BOT - Deployment Platform".
+
+## 🔮 Future Roadmap (From Context)
+-   **Node Orchestration**: Expansion to multi-node support (currently effectively hardcoded/simplified).
+-   **Premium Features**: Hard-gating specific bot features based on subscription tiers.

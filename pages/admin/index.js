@@ -96,6 +96,21 @@ export default function AdminDashboard() {
     }
   };
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    const toastId = toast.loading("Refreshing dashboard...");
+    try {
+      await Promise.all([fetchStats(), fetchInfra()]);
+      toast.success("Dashboard updated", { id: toastId });
+    } catch (error) {
+      toast.error("Refresh failed", { id: toastId });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   if (loading)
     return (
       <AdminLayout>
@@ -123,10 +138,14 @@ export default function AdminDashboard() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={fetchStats}
-            className="p-3 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="p-3 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:scale-105 transition-transform disabled:opacity-50"
           >
-            <RotateCcw size={20} className="text-gray-500" />
+            <RotateCcw
+              size={20}
+              className={`text-gray-500 ${isRefreshing ? "animate-spin" : ""}`}
+            />
           </button>
           <Link
             href="/admin/settings"

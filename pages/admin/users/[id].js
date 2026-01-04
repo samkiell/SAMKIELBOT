@@ -312,7 +312,99 @@ export default function UserDetails() {
           />
         </div>
 
-        {/* Bot Fleet - Full Width */}
+        {/* User Intelligence Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Profile Card */}
+          <div className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
+            <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+              <span className="text-xl">🆔</span> Bio Data
+            </h3>
+            <div className="space-y-4">
+              <ProfileInfoRow
+                label="Full Name"
+                value={userDetail.fullName || "Not Provided"}
+              />
+              <ProfileInfoRow
+                label="WhatsApp"
+                value={userDetail.whatsappNumber || "Not Linked"}
+              />
+              <ProfileInfoRow label="Email" value={userDetail.email || "N/A"} />
+              <ProfileInfoRow
+                label="Username"
+                value={userDetail.username || "N/A"}
+              />
+              <ProfileInfoRow
+                label="Joined On"
+                value={new Date(userDetail.createdAt).toLocaleDateString()}
+              />
+              <div className="flex justify-between items-center py-2">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                  Referred By
+                </span>
+                {userDetail.referredBy ? (
+                  <Link
+                    href={`/admin/users/${userDetail.referredBy._id}`}
+                    className="text-indigo-500 font-bold hover:underline text-sm"
+                  >
+                    @{userDetail.referredBy.username}
+                  </Link>
+                ) : (
+                  <span className="text-sm font-black text-gray-900 dark:text-white">
+                    None
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Referrals Card */}
+          <div className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col">
+            <div className="flex justify-between items-start mb-6">
+              <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                <span className="text-xl">🤝</span> Referral Network
+              </h3>
+              <span className="bg-emerald-100 text-emerald-600 px-2 py-1 rounded-lg text-xs font-black">
+                {referrals.length} USERS
+              </span>
+            </div>
+
+            <div className="flex-1 overflow-y-auto max-h-[200px] pr-2 space-y-3 custom-scrollbar">
+              {referrals.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-gray-400 opacity-50">
+                  <span className="text-2xl mb-2">🕸️</span>
+                  <span className="text-xs font-bold uppercase tracking-widest">
+                    No Referrals Logged
+                  </span>
+                </div>
+              ) : (
+                referrals.map((ref) => (
+                  <Link
+                    key={ref._id}
+                    href={`/admin/users/${ref._id}`}
+                    className="flex items-center justify-between p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-black text-xs">
+                        {ref.username?.[0]?.toUpperCase()}
+                      </div>
+                      <div>
+                        <span className="block font-bold text-sm group-hover:text-indigo-500 transition-colors">
+                          {ref.username}
+                        </span>
+                        <span className="block text-[10px] text-gray-400">
+                          {ref.email}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="font-mono text-[10px] text-gray-400">
+                      {new Date(ref.createdAt).toLocaleDateString()}
+                    </span>
+                  </Link>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
         <div className="space-y-6">
           <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
             <span className="w-2 h-8 bg-indigo-600 rounded-full" />

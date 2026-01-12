@@ -1,8 +1,5 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/heartbeat",
-      "schedule": "* * * * *"
-    }
-  ]
+  "devCommand": "node server.js",
+  "buildCommand": "next build",
+  "installCommand": "npm install"
 }

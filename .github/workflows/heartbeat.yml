@@ -1,0 +1,25 @@
+name: Bot Heartbeat
+
+on:
+  schedule:
+    # Runs every 5 minutes (GitHub Actions minimum interval)
+    - cron: "*/5 * * * *"
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Heartbeat API
+        run: |
+          # Replace with your actual Vercel deployment URL
+          # We use a secret or a hardcoded URL. 
+          # For now, we assume the user will set the URL secret or edit this file.
+
+          if [ -z "${{ secrets.APP_URL }}" ]; then
+            echo "APP_URL secret is not set. Please set the APP_URL secret in your repository settings."
+            echo "Example: https://your-project.vercel.app"
+            exit 1
+          fi
+
+          curl -X GET "${{ secrets.APP_URL }}/api/cron/heartbeat"

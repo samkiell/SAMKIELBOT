@@ -1,0 +1,5 @@
+{
+  "devCommand": "node server.js",
+  "buildCommand": "next build",
+  "installCommand": "npm install"
+}

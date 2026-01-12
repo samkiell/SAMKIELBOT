@@ -17,21 +17,33 @@ export default async function handler(req, res) {
     await connectDB();
     console.log("[Cron] Starting Bot Heartbeat...");
 
-    // 1. Get all bots that should be monitored
-    const bots = await Deployment.find({
-      status: {
-        $in: [
-          "starting",
-          "active",
-          "online",
-          "degraded",
-          "awaiting_pairing",
-          "paired",
-          "connected",
-        ],
-      },
-      isActive: true,
-    });
+    // 1. Get bots that should be checked
+    const { id } = req.query;
+    let query = {};
+
+    if (id) {
+      // Manual Ping: Check specific bot regardless of current status (to allow recovery)
+      // We only ensure it has been deployed (has server ID)
+      query = { _id: id };
+    } else {
+      // Automated Cron: Only check currently active/running bots
+      query = {
+        status: {
+          $in: [
+            "starting",
+            "active",
+            "online",
+            "degraded",
+            "awaiting_pairing",
+            "paired",
+            "connected",
+          ],
+        },
+        isActive: true,
+      };
+    }
+
+    const bots = await Deployment.find(query);
 
     console.log(`[Cron] Checking ${bots.length} active bots...`);
 

@@ -12,6 +12,7 @@ import {
   User,
   Heart,
   Shield,
+  Zap,
 } from "lucide-react";
 import Snowfall from "../../components/Snowfall";
 import io from "socket.io-client";
@@ -24,9 +25,48 @@ export default function BotsList() {
   const [bots, setBots] = useState([]);
   const [filteredBots, setFilteredBots] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pinging, setPinging] = useState(null); // ID of bot being pinged or 'all'
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all"); // all, online, offline
   const [currentTime, setCurrentTime] = useState(Date.now());
+
+  // ... (existing useEffects)
+
+  // Manual Ping Function
+  const handlePing = async (botId = null) => {
+    setPinging(botId || "all");
+    const toastId = toast.loading(
+      botId ? "Pinging bot..." : "Pinging all active bots..."
+    );
+
+    try {
+      // Call the heartbeat endpoint
+      const url = botId
+        ? `/api/cron/heartbeat?id=${botId}`
+        : "/api/cron/heartbeat";
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success(
+          botId ? "Bot pinged successfully!" : "All bots pinged successfully!",
+          { id: toastId }
+        );
+        // Refresh list to show new status
+        fetchBots();
+      } else {
+        throw new Error(data.error || "Ping failed");
+      }
+    } catch (error) {
+      console.error("Ping error:", error);
+      toast.error(`Ping failed: ${error.message}`, { id: toastId });
+    } finally {
+      setPinging(null);
+    }
+  };
+
+  // ... (rest of code)
 
   // Update current time every second for real-time uptime
   useEffect(() => {
@@ -251,6 +291,18 @@ export default function BotsList() {
               </button>
             ))}
           </div>
+
+          <button
+            onClick={() => handlePing(null)}
+            disabled={pinging === "all"}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Zap
+              size={18}
+              className={pinging === "all" ? "animate-pulse" : ""}
+            />
+            {pinging === "all" ? "Pinging..." : "Ping All"}
+          </button>
         </div>
 
         {/* Grid */}
@@ -320,14 +372,48 @@ export default function BotsList() {
                     </div>
 
                     {bot.isActive ? (
-                      <div className="relative">
-                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                        </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handlePing(bot._id)}
+                          disabled={pinging === bot._id}
+                          className="p-1.5 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-500 hover:text-indigo-500 transition-colors"
+                          title="Ping this bot"
+                        >
+                          <Zap
+                            size={14}
+                            className={
+                              pinging === bot._id
+                                ? "animate-spin text-amber-500"
+                                : ""
+                            }
+                          />
+                        </button>
+                        <div className="relative">
+                          <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                          </span>
+                        </div>
                       </div>
                     ) : (
-                      <div className="h-3 w-3 rounded-full bg-gray-300 dark:bg-slate-600"></div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handlePing(bot._id)}
+                          disabled={pinging === bot._id}
+                          className="p-1.5 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-500 hover:text-indigo-500 transition-colors"
+                          title="Ping this bot (Force Check)"
+                        >
+                          <Zap
+                            size={14}
+                            className={
+                              pinging === bot._id
+                                ? "animate-spin text-amber-500"
+                                : ""
+                            }
+                          />
+                        </button>
+                        <div className="h-3 w-3 rounded-full bg-gray-300 dark:bg-slate-600"></div>
+                      </div>
                     )}
                   </div>
 

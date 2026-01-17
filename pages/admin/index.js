@@ -554,37 +554,81 @@ export default function AdminDashboard() {
         </div>
 
         <div className="space-y-4">
-          {stats?.auditLogs?.map((log, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl hover:translate-x-1 transition-transform border border-transparent hover:border-gray-200 dark:hover:border-gray-800"
-            >
-              <div className="flex items-center gap-4">
-                <div
-                  className={`p-2 rounded-xl bg-indigo-500/10 text-indigo-500`}
-                >
-                  <ShieldCheck size={18} />
+          {stats?.auditLogs?.map((log, i) => {
+            // Get actor role from new format (actor.role) or old format (details.actorRole) or fallback
+            const actorRole =
+              log.actor?.role || log.details?.actorRole || "user";
+            const actorName =
+              log.actor?.username ||
+              log.adminUsername ||
+              log.adminEmail?.split("@")[0] ||
+              "Unknown";
+            const isAdmin = actorRole === "admin";
+            const isSystem =
+              actorRole === "system" ||
+              log.adminEmail === "system@samkielbot.app";
+
+            return (
+              <div
+                key={i}
+                className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl hover:translate-x-1 transition-transform border border-transparent hover:border-gray-200 dark:hover:border-gray-800"
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`p-2 rounded-xl ${
+                      isSystem
+                        ? "bg-gray-500/10 text-gray-500"
+                        : isAdmin
+                          ? "bg-purple-500/10 text-purple-500"
+                          : "bg-indigo-500/10 text-indigo-500"
+                    }`}
+                  >
+                    <ShieldCheck size={18} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                      <span
+                        className={`${
+                          isSystem
+                            ? "text-gray-500"
+                            : isAdmin
+                              ? "text-purple-500"
+                              : "text-indigo-500"
+                        }`}
+                      >
+                        {isSystem ? "System" : isAdmin ? actorName : actorName}
+                      </span>{" "}
+                      <span
+                        className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                          isSystem
+                            ? "bg-gray-500/10 text-gray-400"
+                            : isAdmin
+                              ? "bg-purple-500/10 text-purple-400"
+                              : "bg-blue-500/10 text-blue-400"
+                        }`}
+                      >
+                        {isSystem ? "CRON" : isAdmin ? "ADMIN" : "USER"}
+                      </span>{" "}
+                      <span className="font-medium text-gray-500">
+                        performed
+                      </span>{" "}
+                      {log.action.replace(/_/g, " ")}
+                    </p>
+                    <p className="text-[10px] text-gray-400 font-mono mt-0.5 opacity-60">
+                      ID:{" "}
+                      {log.targetId?.substring(log.targetId.length - 6) ||
+                        "SYSTEM"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                    <span className="text-indigo-500">admin</span>{" "}
-                    <span className="font-medium text-gray-500">performed</span>{" "}
-                    {log.action.replace("_", " ")}
-                  </p>
-                  <p className="text-[10px] text-gray-400 font-mono mt-0.5 opacity-60">
-                    ID:{" "}
-                    {log.targetId?.substring(log.targetId.length - 6) ||
-                      "SYSTEM"}
-                  </p>
-                </div>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  {formatDistanceToNow(new Date(log.timestamp), {
+                    addSuffix: true,
+                  })}
+                </span>
               </div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                {formatDistanceToNow(new Date(log.timestamp), {
-                  addSuffix: true,
-                })}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </AdminLayout>

@@ -34,18 +34,33 @@ export default function AdminDashboard() {
   const [infra, setInfra] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Admin access control - redirect non-admins to dashboard
   useEffect(() => {
-    if (!authLoading && user?.role === "admin" && token) {
-      fetchStats();
-      fetchInfra();
+    if (authLoading) return; // Still loading auth, wait
 
-      const socket = io(process.env.NEXT_PUBLIC_API_URL || "");
-      socket.on("infra:update", (update) => {
-        setInfra(update);
-      });
-
-      return () => socket.disconnect();
+    if (!user || !token) {
+      // Not logged in at all
+      router.push("/login");
+      return;
     }
+
+    if (user.role !== "admin") {
+      // Logged in but not an admin
+      toast.error("Access denied. Admin privileges required.");
+      router.push("/dashboard");
+      return;
+    }
+
+    // User is admin, fetch data
+    fetchStats();
+    fetchInfra();
+
+    const socket = io(process.env.NEXT_PUBLIC_API_URL || "");
+    socket.on("infra:update", (update) => {
+      setInfra(update);
+    });
+
+    return () => socket.disconnect();
   }, [user, token, authLoading]);
 
   const fetchStats = async () => {
@@ -54,7 +69,7 @@ export default function AdminDashboard() {
         `${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       const data = await res.json();
       if (data.success) setStats(data.data);
@@ -71,7 +86,7 @@ export default function AdminDashboard() {
         `${process.env.NEXT_PUBLIC_API_URL}/admin/infrastructure/overview`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       const data = await res.json();
       if (data.success) setInfra(data.data);
@@ -111,7 +126,8 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading)
+  // Show loading while checking auth or fetching data
+  if (authLoading || loading || !user || user.role !== "admin")
     return (
       <AdminLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -473,8 +489,8 @@ export default function AdminDashboard() {
                             node.ramUsage > 80
                               ? "bg-red-500"
                               : node.ramUsage > 60
-                              ? "bg-amber-500"
-                              : "bg-indigo-500"
+                                ? "bg-amber-500"
+                                : "bg-indigo-500"
                           }`}
                         />
                       </div>
@@ -646,8 +662,8 @@ function UsageBar({ label, value, color }) {
             color === "indigo"
               ? "bg-indigo-600 shadow-[0_0_8px_rgba(99,102,241,0.5)]"
               : color === "emerald"
-              ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
-              : "bg-amber-500"
+                ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                : "bg-amber-500"
           }`}
         />
       </div>

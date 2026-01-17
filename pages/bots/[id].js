@@ -105,7 +105,7 @@ export default function BotManagementPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to fetch bot data");
@@ -166,7 +166,7 @@ export default function BotManagementPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ signal }),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to perform action");
@@ -258,7 +258,7 @@ export default function BotManagementPage() {
                   formatUptime(
                     deployment.uptimeStart,
                     deployment.status,
-                    deployment.resources
+                    deployment.resources,
                   ) !== "Starting..." && (
                     <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3 shadow-inner">
                       <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -272,7 +272,7 @@ export default function BotManagementPage() {
                             deployment.status,
                             deployment.resources,
                             deployment.lastHeartbeatAt,
-                            currentTime
+                            currentTime,
                           )}
                         </span>
                       </div>
@@ -364,7 +364,7 @@ export default function BotManagementPage() {
             )}
           </div>
 
-          {/* Billing Snapshot Card */}
+          {/* Enhanced Billing Summary Card (Fix: Issue #2) */}
           <div className="bg-[#161b2c]/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/5 lg:col-span-1 flex flex-col justify-between relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl -mr-16 -mt-16" />
             <div>
@@ -376,17 +376,30 @@ export default function BotManagementPage() {
               </h2>
               <div className="space-y-5">
                 <BillingItem
-                  label="Daily Consumption"
+                  label="Daily Burn Rate"
                   value={formatCredits(deployment.dailyBurn || 5)}
                 />
                 <BillingItem
-                  label="Cumulative Usage"
+                  label="Total Credits Consumed"
                   value={formatCredits(deployment.totalCreditsSpent || 50)}
                 />
                 <BillingItem
-                  label="Next Billing Cycle"
+                  label="Running Days"
+                  value={`${getRunningDays(deployment.deployedAt)} days`}
+                />
+                <BillingItem
+                  label="Expected Credits Used"
+                  value={formatCredits(
+                    getRunningDays(deployment.deployedAt) *
+                      (deployment.dailyBurn || 5) +
+                      (deployment.creationCost || 50),
+                  )}
+                  sub={`(${getRunningDays(deployment.deployedAt)} × ${deployment.dailyBurn || 5}) + ${deployment.creationCost || 50} creation`}
+                />
+                <BillingItem
+                  label="Next Renewal"
                   value={new Date(
-                    deployment.nextRenewalAt || Date.now()
+                    deployment.nextRenewalAt || Date.now(),
                   ).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -395,6 +408,38 @@ export default function BotManagementPage() {
                   sub={getRelativeTime(deployment.nextRenewalAt)}
                 />
               </div>
+
+              {/* Billing Discrepancy Warning */}
+              {(() => {
+                const runningDays = getRunningDays(deployment.deployedAt);
+                const expectedCredits =
+                  runningDays * (deployment.dailyBurn || 5) +
+                  (deployment.creationCost || 50);
+                const actualCredits = deployment.totalCreditsSpent || 50;
+                const discrepancy = expectedCredits - actualCredits;
+
+                if (Math.abs(discrepancy) > 5) {
+                  return (
+                    <div
+                      className={`mt-4 p-3 rounded-xl text-xs ${
+                        discrepancy > 0
+                          ? "bg-green-500/10 border border-green-500/20 text-green-400"
+                          : "bg-amber-500/10 border border-amber-500/20 text-amber-400"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <AlertCircle size={14} />
+                        <span className="font-medium">
+                          {discrepancy > 0
+                            ? `Under-billed by ${discrepancy} credits (expected: ${expectedCredits})`
+                            : `Over-billed by ${Math.abs(discrepancy)} credits (expected: ${expectedCredits})`}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
             <div className="mt-10 pt-8 border-t border-white/5">
               <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">
@@ -404,7 +449,8 @@ export default function BotManagementPage() {
                 {formatCredits(user?.credits || 0)}
               </div>
               <p className="text-xs text-indigo-400 mt-2 font-medium">
-                Auto-renew active
+                Auto-renew{" "}
+                {deployment.billingStatus === "active" ? "active" : "paused"}
               </p>
             </div>
           </div>
@@ -439,7 +485,7 @@ export default function BotManagementPage() {
                   label="Deployment Date"
                   icon={<Clock size={16} />}
                   value={new Date(
-                    deployment.deployedAt || deployment.createdAt || Date.now()
+                    deployment.deployedAt || deployment.createdAt || Date.now(),
                   ).toLocaleDateString("en-US", {
                     month: "long",
                     day: "numeric",
@@ -490,7 +536,7 @@ export default function BotManagementPage() {
                   <div
                     className={`p-4 rounded-2xl shadow-lg transition-all duration-1000 ${
                       ["online", "active", "connected"].includes(
-                        deployment.status
+                        deployment.status,
                       )
                         ? "bg-emerald-500/20 text-emerald-400 shadow-emerald-500/10"
                         : "bg-gray-500/10 text-gray-500"
@@ -501,14 +547,14 @@ export default function BotManagementPage() {
                   <div>
                     <h4 className="font-bold text-xl">
                       {["online", "active", "connected"].includes(
-                        deployment.status
+                        deployment.status,
                       )
                         ? "Tunnel Established"
                         : "Synchronizing..."}
                     </h4>
                     <p className="text-sm text-gray-500 mt-1">
                       {["online", "active", "connected"].includes(
-                        deployment.status
+                        deployment.status,
                       )
                         ? "Securely bridged via Baileys API"
                         : "Waiting for handshake response"}
@@ -632,7 +678,7 @@ function formatUptime(
   status,
   resources,
   lastHeartbeatAt,
-  currentTime
+  currentTime,
 ) {
   if (status === "offline" || status === "stopped") return "Offline";
 
@@ -642,8 +688,8 @@ function formatUptime(
   const lastUpdate = resources?.lastUptimeUpdate
     ? new Date(resources.lastUptimeUpdate).getTime()
     : lastHeartbeatAt
-    ? new Date(lastHeartbeatAt).getTime()
-    : Date.now();
+      ? new Date(lastHeartbeatAt).getTime()
+      : Date.now();
 
   const elapsedSinceUpdate = currentTime - lastUpdate;
 
@@ -682,4 +728,14 @@ function getRelativeTime(date) {
   if (diff < 0) return "Overdue";
   const hours = Math.floor(diff / (1000 * 60 * 60));
   return `in ${hours} hours`;
+}
+
+// Calculate running days for billing (Fix: Issue #2)
+function getRunningDays(deployedAt) {
+  if (!deployedAt) return 0;
+  const deployDate = new Date(deployedAt);
+  const now = new Date();
+  const diffTime = Math.abs(now - deployDate);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 }

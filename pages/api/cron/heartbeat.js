@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       } catch (error) {
         console.error(
           `[Cron] Error checking bot ${bot.botName}:`,
-          error.message
+          error.message,
         );
         results.errors++;
         return { id: bot._id, error: error.message };
@@ -81,10 +81,13 @@ export default async function handler(req, res) {
     await Promise.all(checks);
 
     // 3. Check for stale heartbeats (Clean up dead bots)
-    await botHealthService.checkStaleHeartbeats();
+    // Only run during full cron (ping-all), not single-bot pings (Fix: Issue #1)
+    if (!id) {
+      await botHealthService.checkStaleHeartbeats();
+    }
 
     console.log(
-      `[Cron] Heartbeat complete. Processed ${results.checked} bots.`
+      `[Cron] Heartbeat complete. Processed ${results.checked} bots.`,
     );
 
     return res.status(200).json({

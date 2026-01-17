@@ -36,7 +36,7 @@ export default function BotsList() {
   const handlePing = async (botId = null) => {
     setPinging(botId || "all");
     const toastId = toast.loading(
-      botId ? "Pinging bot..." : "Pinging all active bots..."
+      botId ? "Pinging bot..." : "Pinging all active bots...",
     );
 
     try {
@@ -51,7 +51,7 @@ export default function BotsList() {
       if (res.ok) {
         toast.success(
           botId ? "Bot pinged successfully!" : "All bots pinged successfully!",
-          { id: toastId }
+          { id: toastId },
         );
         // Refresh list to show new status
         fetchBots();
@@ -77,7 +77,7 @@ export default function BotsList() {
     return () => clearInterval(timer);
   }, []);
 
-  // Socket.IO for real-time updates
+  // Socket.IO for real-time updates - SCOPED to prevent isolation leaks (Fix: Issue #1)
   useEffect(() => {
     const socketUrl =
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -85,22 +85,33 @@ export default function BotsList() {
 
     socket.on("connect", () => {
       console.log("[BotsList] Connected to Socket.IO");
+      // Join a dedicated room for community bots updates
+      socket.emit("join", "community-bots");
     });
 
-    socket.on("bot:status_change", () => {
+    // Only refresh after manual ping-all (not on individual bot status changes)
+    socket.on("community:refresh", () => {
       fetchBots();
     });
 
-    socket.on("bot:connected", () => {
-      fetchBots();
-    });
-
-    socket.on("bot:active", () => {
-      fetchBots();
-    });
-
-    socket.on("bot:offline", () => {
-      fetchBots();
+    // For admin dashboard users, also listen to admin room
+    socket.on("bot:status_change", (data) => {
+      // Only update the specific bot in the list, not full refresh
+      if (data.deploymentId && data.newStatus) {
+        setBots((prevBots) =>
+          prevBots.map((bot) =>
+            bot._id === data.deploymentId
+              ? {
+                  ...bot,
+                  status: data.newStatus,
+                  isActive: ["online", "active", "connected"].includes(
+                    data.newStatus,
+                  ),
+                }
+              : bot,
+          ),
+        );
+      }
     });
 
     return () => {
@@ -119,7 +130,7 @@ export default function BotsList() {
       result = result.filter(
         (bot) =>
           bot.botName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          bot.username.toLowerCase().includes(searchTerm.toLowerCase())
+          bot.username.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -159,8 +170,8 @@ export default function BotsList() {
     const lastUpdate = bot.lastUptimeUpdate
       ? new Date(bot.lastUptimeUpdate).getTime()
       : bot.lastActive
-      ? new Date(bot.lastActive).getTime()
-      : Date.now();
+        ? new Date(bot.lastActive).getTime()
+        : Date.now();
 
     const elapsedSinceUpdate = currentTime - lastUpdate;
 
@@ -198,7 +209,7 @@ export default function BotsList() {
   const formatRelativeTime = (timestamp) => {
     if (!timestamp) return "Never";
     const diff = Math.floor(
-      (currentTime - new Date(timestamp).getTime()) / 1000
+      (currentTime - new Date(timestamp).getTime()) / 1000,
     );
 
     if (diff < 5) return "just now";

@@ -270,9 +270,9 @@ export default function BotsList() {
         </div>
 
         {/* Controls Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md p-4 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-lg">
-          {/* Search */}
-          <div className="relative w-full md:w-96 group">
+        <div className="flex flex-col gap-4 mb-10 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md p-4 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-lg">
+          {/* Search - Full width on top */}
+          <div className="relative w-full group">
             <Search
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors"
               size={20}
@@ -286,34 +286,43 @@ export default function BotsList() {
             />
           </div>
 
-          {/* Filters */}
-          <div className="flex bg-white dark:bg-slate-900/50 p-1 rounded-xl border border-gray-200 dark:border-slate-700">
-            {["all", "online", "offline"].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  filter === f
-                    ? "bg-indigo-500 text-white shadow-md"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800"
-                }`}
-              >
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
-          </div>
+          {/* Ping All + Filters - Same row, Ping All on left */}
+          <div className="flex flex-row items-center justify-between gap-3">
+            {/* Ping All - Left side */}
+            <button
+              onClick={() => handlePing(null)}
+              disabled={pinging === "all"}
+              className="flex items-center gap-2 px-4 py-2.5 md:px-6 md:py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base whitespace-nowrap"
+            >
+              <Zap
+                size={16}
+                className={pinging === "all" ? "animate-pulse" : ""}
+              />
+              <span className="hidden sm:inline">
+                {pinging === "all" ? "Pinging..." : "Ping All"}
+              </span>
+              <span className="sm:hidden">
+                {pinging === "all" ? "..." : "Ping"}
+              </span>
+            </button>
 
-          <button
-            onClick={() => handlePing(null)}
-            disabled={pinging === "all"}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Zap
-              size={18}
-              className={pinging === "all" ? "animate-pulse" : ""}
-            />
-            {pinging === "all" ? "Pinging..." : "Ping All"}
-          </button>
+            {/* Filters - Right side */}
+            <div className="flex bg-white dark:bg-slate-900/50 p-1 rounded-xl border border-gray-200 dark:border-slate-700">
+              {["all", "online", "offline"].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-3 py-2 md:px-6 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 ${
+                    filter === f
+                      ? "bg-indigo-500 text-white shadow-md"
+                      : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Grid */}

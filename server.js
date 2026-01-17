@@ -18,7 +18,7 @@ const portIndex =
   args.indexOf("-p") !== -1 ? args.indexOf("-p") : args.indexOf("--port");
 const port = parseInt(
   (portIndex !== -1 && args[portIndex + 1]) || process.env.PORT || "3000",
-  10
+  10,
 );
 
 // Initialize Next.js
@@ -64,13 +64,13 @@ app
     server.use((req, res, next) => {
       res.setHeader(
         "Content-Security-Policy",
-        "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://*.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://res.cloudinary.com data:; font-src 'self' data:; connect-src 'self' https://*.vercel-insights.com https://*.vercel-analytics.com https://apiskeith.vercel.app; frame-src 'self' https://challenges.cloudflare.com; frame-ancestors 'self';"
+        "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://*.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://res.cloudinary.com data:; font-src 'self' data:; connect-src 'self' https://*.vercel-insights.com https://*.vercel-analytics.com https://apiskeith.vercel.app; frame-src 'self' https://challenges.cloudflare.com; frame-ancestors 'self';",
       );
       res.setHeader("X-Frame-Options", "SAMEORIGIN");
       res.setHeader("X-Content-Type-Options", "nosniff");
       res.setHeader(
         "Strict-Transport-Security",
-        "max-age=63072000; includeSubDomains; preload"
+        "max-age=63072000; includeSubDomains; preload",
       );
       next();
     });
@@ -89,7 +89,7 @@ app
           } catch (error) {
             console.error(
               `[Socket.IO] Failed to send terminal command:`,
-              error.message
+              error.message,
             );
             socket.emit("terminal:error", {
               message: "Failed to send command to bot.",
@@ -101,12 +101,16 @@ app
       socket.on("disconnect", () => {});
     });
 
-    // Bot Health Service Event Forwarding
+    // Bot Health Service Event Forwarding - SCOPED (Fix: Issue #1)
+    // Only emit to specific bot rooms to prevent state leakage across instances
     botHealthService.on("bot.status_change", (data) => {
       if (data.deploymentId) {
+        // Emit to the specific bot's room
         io.to(data.deploymentId.toString()).emit("bot:status_change", data);
+        // Emit to admin room for dashboard monitoring (admins join this room)
+        io.to("admin-dashboard").emit("bot:status_change", data);
       }
-      io.emit("bot:status_change", data); // Keep global for dashboard?
+      // REMOVED: io.emit("bot:status_change", data) - This was causing isolation leaks!
     });
 
     botHealthService.on("bot.pairing_code", (data) => {

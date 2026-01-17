@@ -36,7 +36,7 @@ export default function BotsList() {
   const handlePing = async (botId = null) => {
     setPinging(botId || "all");
     const toastId = toast.loading(
-      botId ? "Pinging bot..." : "Pinging all active bots..."
+      botId ? "Pinging bot..." : "Pinging all active bots...",
     );
 
     try {
@@ -51,7 +51,7 @@ export default function BotsList() {
       if (res.ok) {
         toast.success(
           botId ? "Bot pinged successfully!" : "All bots pinged successfully!",
-          { id: toastId }
+          { id: toastId },
         );
         // Refresh list to show new status
         fetchBots();
@@ -77,7 +77,7 @@ export default function BotsList() {
     return () => clearInterval(timer);
   }, []);
 
-  // Socket.IO for real-time updates
+  // Socket.IO for real-time updates - SCOPED to prevent isolation leaks (Fix: Issue #1)
   useEffect(() => {
     const socketUrl =
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -85,22 +85,33 @@ export default function BotsList() {
 
     socket.on("connect", () => {
       console.log("[BotsList] Connected to Socket.IO");
+      // Join a dedicated room for community bots updates
+      socket.emit("join", "community-bots");
     });
 
-    socket.on("bot:status_change", () => {
+    // Only refresh after manual ping-all (not on individual bot status changes)
+    socket.on("community:refresh", () => {
       fetchBots();
     });
 
-    socket.on("bot:connected", () => {
-      fetchBots();
-    });
-
-    socket.on("bot:active", () => {
-      fetchBots();
-    });
-
-    socket.on("bot:offline", () => {
-      fetchBots();
+    // For admin dashboard users, also listen to admin room
+    socket.on("bot:status_change", (data) => {
+      // Only update the specific bot in the list, not full refresh
+      if (data.deploymentId && data.newStatus) {
+        setBots((prevBots) =>
+          prevBots.map((bot) =>
+            bot._id === data.deploymentId
+              ? {
+                  ...bot,
+                  status: data.newStatus,
+                  isActive: ["online", "active", "connected"].includes(
+                    data.newStatus,
+                  ),
+                }
+              : bot,
+          ),
+        );
+      }
     });
 
     return () => {
@@ -119,7 +130,7 @@ export default function BotsList() {
       result = result.filter(
         (bot) =>
           bot.botName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          bot.username.toLowerCase().includes(searchTerm.toLowerCase())
+          bot.username.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -159,8 +170,8 @@ export default function BotsList() {
     const lastUpdate = bot.lastUptimeUpdate
       ? new Date(bot.lastUptimeUpdate).getTime()
       : bot.lastActive
-      ? new Date(bot.lastActive).getTime()
-      : Date.now();
+        ? new Date(bot.lastActive).getTime()
+        : Date.now();
 
     const elapsedSinceUpdate = currentTime - lastUpdate;
 
@@ -198,7 +209,7 @@ export default function BotsList() {
   const formatRelativeTime = (timestamp) => {
     if (!timestamp) return "Never";
     const diff = Math.floor(
-      (currentTime - new Date(timestamp).getTime()) / 1000
+      (currentTime - new Date(timestamp).getTime()) / 1000,
     );
 
     if (diff < 5) return "just now";
@@ -259,9 +270,9 @@ export default function BotsList() {
         </div>
 
         {/* Controls Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md p-4 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-lg">
-          {/* Search */}
-          <div className="relative w-full md:w-96 group">
+        <div className="flex flex-col gap-4 mb-10 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md p-4 rounded-2xl border border-gray-200 dark:border-slate-700/50 shadow-lg">
+          {/* Search - Full width on top */}
+          <div className="relative w-full group">
             <Search
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors"
               size={20}
@@ -275,34 +286,43 @@ export default function BotsList() {
             />
           </div>
 
-          {/* Filters */}
-          <div className="flex bg-white dark:bg-slate-900/50 p-1 rounded-xl border border-gray-200 dark:border-slate-700">
-            {["all", "online", "offline"].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  filter === f
-                    ? "bg-indigo-500 text-white shadow-md"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800"
-                }`}
-              >
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
-          </div>
+          {/* Ping All + Filters - Same row, Ping All on left */}
+          <div className="flex flex-row items-center justify-between gap-3">
+            {/* Ping All - Left side */}
+            <button
+              onClick={() => handlePing(null)}
+              disabled={pinging === "all"}
+              className="flex items-center gap-2 px-4 py-2.5 md:px-6 md:py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base whitespace-nowrap"
+            >
+              <Zap
+                size={16}
+                className={pinging === "all" ? "animate-pulse" : ""}
+              />
+              <span className="hidden sm:inline">
+                {pinging === "all" ? "Pinging..." : "Ping All"}
+              </span>
+              <span className="sm:hidden">
+                {pinging === "all" ? "..." : "Ping"}
+              </span>
+            </button>
 
-          <button
-            onClick={() => handlePing(null)}
-            disabled={pinging === "all"}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Zap
-              size={18}
-              className={pinging === "all" ? "animate-pulse" : ""}
-            />
-            {pinging === "all" ? "Pinging..." : "Ping All"}
-          </button>
+            {/* Filters - Right side */}
+            <div className="flex bg-white dark:bg-slate-900/50 p-1 rounded-xl border border-gray-200 dark:border-slate-700">
+              {["all", "online", "offline"].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-3 py-2 md:px-6 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 ${
+                    filter === f
+                      ? "bg-indigo-500 text-white shadow-md"
+                      : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Grid */}

@@ -31,6 +31,10 @@ import {
   getInfraOverview,
   refreshInfraOverview,
   throttleBot,
+  // Email Broadcast
+  sendEmailBroadcast,
+  getEmailBroadcastHistory,
+  getEmailBroadcastDetails,
 } from "@/lib/controllers/adminController";
 import {
   getTickets,
@@ -370,6 +374,42 @@ export default async function handler(req, res) {
           method === "POST"
         ) {
           return await refreshInfraOverview(req, res);
+        }
+
+        // ========================================
+        // EMAIL BROADCAST ROUTES
+        // ========================================
+
+        // Route: POST /api/admin/email-broadcast (Send broadcast)
+        if (
+          slug &&
+          slug[0] === "email-broadcast" &&
+          !slug[1] &&
+          method === "POST"
+        ) {
+          return await sendEmailBroadcast(req, res);
+        }
+
+        // Route: GET /api/admin/email-broadcast (Get history)
+        if (
+          slug &&
+          slug[0] === "email-broadcast" &&
+          !slug[1] &&
+          method === "GET"
+        ) {
+          return await getEmailBroadcastHistory(req, res);
+        }
+
+        // Route: GET /api/admin/email-broadcast/:id (Get single broadcast)
+        if (
+          slug &&
+          slug[0] === "email-broadcast" &&
+          slug[1] &&
+          !slug[2] &&
+          method === "GET"
+        ) {
+          req.params = { id: slug[1] };
+          return await getEmailBroadcastDetails(req, res);
         }
 
         // Method not allowed

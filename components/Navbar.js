@@ -23,6 +23,7 @@ import {
   BookOpen,
   Activity,
   ChevronDown,
+  History,
   Terminal,
   Sparkles,
 } from "lucide-react";
@@ -211,6 +212,12 @@ export default function Navbar() {
                       className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
                     >
                       Support
+                    </Link>
+                    <Link
+                      href="/changelog"
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                    >
+                      Changelog
                     </Link>
 
                     {isVerified && (
@@ -467,6 +474,13 @@ export default function Navbar() {
             label="Help & Support"
             onClick={() => setMenuOpen(false)}
             active={router.pathname === "/support"}
+          />
+          <MobileNavLink
+            href="/changelog"
+            icon={History}
+            label="Changelog"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/changelog"}
           />
 
           {/* Admin Link */}

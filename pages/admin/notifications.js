@@ -14,6 +14,11 @@ import {
   FaTools,
   FaBullhorn,
   FaTag,
+  FaEnvelope,
+  FaHistory,
+  FaSpinner,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 
 export default function AdminNotifications() {
@@ -29,6 +34,19 @@ export default function AdminNotifications() {
     link: "",
     linkText: "",
   });
+
+  // Email Broadcast State
+  const [activeTab, setActiveTab] = useState("inApp"); // "inApp" or "email"
+  const [emailBroadcastData, setEmailBroadcastData] = useState({
+    subject: "",
+    message: "",
+    announcementType: "general",
+    priority: "normal",
+  });
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailBroadcasts, setEmailBroadcasts] = useState([]);
+  const [emailBroadcastsLoading, setEmailBroadcastsLoading] = useState(false);
+  const [showEmailHistory, setShowEmailHistory] = useState(false);
 
   // Filters
   const [filterType, setFilterType] = useState("all");
@@ -127,6 +145,132 @@ export default function AdminNotifications() {
     }
   };
 
+  // ========================================
+  // EMAIL BROADCAST FUNCTIONS
+  // ========================================
+
+  // Handle Email Broadcast Input Change
+  const handleEmailChange = (e) => {
+    setEmailBroadcastData({
+      ...emailBroadcastData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Fetch Email Broadcast History
+  const fetchEmailBroadcasts = async () => {
+    setEmailBroadcastsLoading(true);
+    try {
+      const res = await fetch("/api/admin/email-broadcast?limit=10", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEmailBroadcasts(data.data.broadcasts || []);
+      }
+    } catch (error) {
+      console.error("Fetch email broadcasts error:", error);
+    } finally {
+      setEmailBroadcastsLoading(false);
+    }
+  };
+
+  // Load email broadcasts when tab is switched or history is shown
+  useEffect(() => {
+    if (activeTab === "email" || showEmailHistory) {
+      fetchEmailBroadcasts();
+    }
+  }, [activeTab, showEmailHistory]);
+
+  // Send Email Broadcast
+  const handleEmailBroadcast = async (e) => {
+    e.preventDefault();
+
+    if (!emailBroadcastData.subject.trim()) {
+      toast.error("Subject is required");
+      return;
+    }
+    if (!emailBroadcastData.message.trim()) {
+      toast.error("Message is required");
+      return;
+    }
+
+    // Confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to send this email to ALL verified users?\n\nSubject: ${emailBroadcastData.subject}\nPriority: ${emailBroadcastData.priority}\n\nThis action cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    setSendingEmail(true);
+    const toastId = toast.loading("Sending emails... This may take a while.");
+
+    try {
+      const res = await fetch("/api/admin/email-broadcast", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(emailBroadcastData),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        const stats = data.data.stats;
+        toast.success(
+          `Email broadcast complete!\n${stats.sent}/${stats.totalRecipients} emails sent (${stats.successRate}% success)`,
+          { id: toastId, duration: 5000 }
+        );
+        setEmailBroadcastData({
+          subject: "",
+          message: "",
+          announcementType: "general",
+          priority: "normal",
+        });
+        fetchEmailBroadcasts(); // Refresh history
+      } else {
+        toast.error(data.message || "Failed to send email broadcast", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      console.error("Email broadcast error:", error);
+      toast.error("Error sending email broadcast", { id: toastId });
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
+  // Get status badge for email broadcasts
+  const getStatusBadge = (status) => {
+    const badges = {
+      completed:
+        "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
+      partial:
+        "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300",
+      failed: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
+      processing:
+        "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
+      pending: "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300",
+    };
+    return badges[status] || badges.pending;
+  };
+
+  // Get priority badge color
+  const getPriorityBadge = (priority) => {
+    const badges = {
+      low: "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400",
+      normal:
+        "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
+      high: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300",
+      urgent: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
+    };
+    return badges[priority] || badges.normal;
+  };
+
   // Delete notification
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this notification?")) return;
@@ -189,80 +333,291 @@ export default function AdminNotifications() {
         {/* Left Column: Broadcast Form */}
         <div className="lg:col-span-1">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-              <FaPaperPlane className="text-indigo-500" /> Send Broadcast
-            </h2>
-            <form onSubmit={handleBroadcast} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Title{" "}
-                  <span className="text-gray-400 font-normal text-xs">
-                    (Optional)
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                  placeholder="e.g. System Maintenance"
-                />
-              </div>
+            {/* Tab Switcher */}
+            <div className="flex mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab("inApp")}
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                  activeTab === "inApp"
+                    ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                }`}
+              >
+                <FaBell size={14} /> In-App
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("email")}
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                  activeTab === "email"
+                    ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                }`}
+              >
+                <FaEnvelope size={14} /> Email
+              </button>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Message
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows="4"
-                  className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                  placeholder="Enter your announcement..."
-                  required
-                ></textarea>
-              </div>
+            {/* In-App Notification Form */}
+            {activeTab === "inApp" && (
+              <>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <FaPaperPlane className="text-indigo-500" /> Send In-App
+                  Broadcast
+                </h2>
+                <form onSubmit={handleBroadcast} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Title{" "}
+                      <span className="text-gray-400 font-normal text-xs">
+                        (Optional)
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                      placeholder="e.g. System Maintenance"
+                    />
+                  </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Type
-                  </label>
-                  <select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Message
+                    </label>
+                    <textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      rows="4"
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                      placeholder="Enter your announcement..."
+                      required
+                    ></textarea>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Type
+                      </label>
+                      <select
+                        name="type"
+                        value={formData.type}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                      >
+                        <option value="info">Info</option>
+                        <option value="success">Success</option>
+                        <option value="warning">Warning</option>
+                        <option value="error">Error</option>
+                        <option value="update">Update</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="alert">Alert</option>
+                        <option value="announcement">Announcement</option>
+                        <option value="offer">Offer</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={sending}
+                      className={`w-full py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
+                        sending
+                          ? "bg-indigo-400 cursor-not-allowed"
+                          : "bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg"
+                      }`}
+                    >
+                      {sending ? "Sending..." : "Send In-App Broadcast"}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+
+            {/* Email Broadcast Form */}
+            {activeTab === "email" && (
+              <>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <FaEnvelope className="text-indigo-500" /> Send Email
+                  Broadcast
+                </h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded border border-yellow-200 dark:border-yellow-800">
+                  ⚠️ This will send an email to ALL verified users. Use
+                  carefully.
+                </p>
+                <form onSubmit={handleEmailBroadcast} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Subject <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="subject"
+                      value={emailBroadcastData.subject}
+                      onChange={handleEmailChange}
+                      maxLength={200}
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                      placeholder="e.g. Important System Update"
+                      required
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      {emailBroadcastData.subject.length}/200
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Message <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="message"
+                      value={emailBroadcastData.message}
+                      onChange={handleEmailChange}
+                      rows="6"
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                      placeholder="Enter your email message..."
+                      required
+                    ></textarea>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Type
+                      </label>
+                      <select
+                        name="announcementType"
+                        value={emailBroadcastData.announcementType}
+                        onChange={handleEmailChange}
+                        className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                      >
+                        <option value="general">General</option>
+                        <option value="update">Update</option>
+                        <option value="maintenance">Maintenance</option>
+                        <option value="security">Security</option>
+                        <option value="feature">New Feature</option>
+                        <option value="policy">Policy</option>
+                        <option value="important">Important</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Priority
+                      </label>
+                      <select
+                        name="priority"
+                        value={emailBroadcastData.priority}
+                        onChange={handleEmailChange}
+                        className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                      >
+                        <option value="low">Low</option>
+                        <option value="normal">Normal</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={sendingEmail}
+                      className={`w-full py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
+                        sendingEmail
+                          ? "bg-indigo-400 cursor-not-allowed"
+                          : "bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg"
+                      }`}
+                    >
+                      {sendingEmail ? (
+                        <>
+                          <FaSpinner className="animate-spin" /> Sending
+                          Emails...
+                        </>
+                      ) : (
+                        <>
+                          <FaEnvelope /> Send Email Broadcast
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+
+                {/* Email Broadcast History Toggle */}
+                <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <button
+                    type="button"
+                    onClick={() => setShowEmailHistory(!showEmailHistory)}
+                    className="w-full flex items-center justify-between text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
                   >
-                    <option value="info">Info</option>
-                    <option value="success">Success</option>
-                    <option value="warning">Warning</option>
-                    <option value="error">Error</option>
-                    <option value="update">Update</option>
-                    <option value="maintenance">Maintenance</option>
-                    <option value="alert">Alert</option>
-                    <option value="announcement">Announcement</option>
-                    <option value="offer">Offer</option>
-                  </select>
-                </div>
-              </div>
+                    <span className="flex items-center gap-2">
+                      <FaHistory /> Recent Email Broadcasts
+                    </span>
+                    {showEmailHistory ? <FaChevronUp /> : <FaChevronDown />}
+                  </button>
 
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={sending}
-                  className={`w-full py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
-                    sending
-                      ? "bg-indigo-400 cursor-not-allowed"
-                      : "bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg"
-                  }`}
-                >
-                  {sending ? "Sending..." : "Send Broadcast"}
-                </button>
-              </div>
-            </form>
+                  {showEmailHistory && (
+                    <div className="mt-4 space-y-3">
+                      {emailBroadcastsLoading ? (
+                        <div className="text-center py-4 text-gray-500">
+                          <FaSpinner className="animate-spin inline mr-2" />{" "}
+                          Loading...
+                        </div>
+                      ) : emailBroadcasts.length === 0 ? (
+                        <p className="text-center py-4 text-gray-500 text-sm">
+                          No email broadcasts yet
+                        </p>
+                      ) : (
+                        emailBroadcasts.map((broadcast) => (
+                          <div
+                            key={broadcast._id}
+                            className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600"
+                          >
+                            <div className="flex items-start justify-between gap-2 mb-1">
+                              <h4 className="font-medium text-sm text-gray-800 dark:text-gray-200 truncate flex-1">
+                                {broadcast.subject}
+                              </h4>
+                              <span
+                                className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusBadge(
+                                  broadcast.status
+                                )}`}
+                              >
+                                {broadcast.status}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                              <span>
+                                {format(
+                                  new Date(broadcast.createdAt),
+                                  "MMM d, HH:mm"
+                                )}
+                              </span>
+                              <span>•</span>
+                              <span>
+                                {broadcast.stats?.sent || 0}/
+                                {broadcast.stats?.totalRecipients || 0} sent
+                              </span>
+                              <span
+                                className={`px-1.5 py-0.5 rounded ${getPriorityBadge(
+                                  broadcast.priority
+                                )}`}
+                              >
+                                {broadcast.priority}
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
 

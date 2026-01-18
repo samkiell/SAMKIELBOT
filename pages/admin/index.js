@@ -34,18 +34,33 @@ export default function AdminDashboard() {
   const [infra, setInfra] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Admin access control - redirect non-admins to dashboard
   useEffect(() => {
-    if (!authLoading && user?.role === "admin" && token) {
-      fetchStats();
-      fetchInfra();
+    if (authLoading) return; // Still loading auth, wait
 
-      const socket = io(process.env.NEXT_PUBLIC_API_URL || "");
-      socket.on("infra:update", (update) => {
-        setInfra(update);
-      });
-
-      return () => socket.disconnect();
+    if (!user || !token) {
+      // Not logged in at all
+      router.push("/login");
+      return;
     }
+
+    if (user.role !== "admin") {
+      // Logged in but not an admin
+      toast.error("Access denied. Admin privileges required.");
+      router.push("/dashboard");
+      return;
+    }
+
+    // User is admin, fetch data
+    fetchStats();
+    fetchInfra();
+
+    const socket = io(process.env.NEXT_PUBLIC_API_URL || "");
+    socket.on("infra:update", (update) => {
+      setInfra(update);
+    });
+
+    return () => socket.disconnect();
   }, [user, token, authLoading]);
 
   const fetchStats = async () => {
@@ -54,7 +69,7 @@ export default function AdminDashboard() {
         `${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       const data = await res.json();
       if (data.success) setStats(data.data);
@@ -71,7 +86,7 @@ export default function AdminDashboard() {
         `${process.env.NEXT_PUBLIC_API_URL}/admin/infrastructure/overview`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       const data = await res.json();
       if (data.success) setInfra(data.data);
@@ -111,7 +126,8 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading)
+  // Show loading while checking auth or fetching data
+  if (authLoading || loading || !user || user.role !== "admin")
     return (
       <AdminLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -473,8 +489,8 @@ export default function AdminDashboard() {
                             node.ramUsage > 80
                               ? "bg-red-500"
                               : node.ramUsage > 60
-                              ? "bg-amber-500"
-                              : "bg-indigo-500"
+                                ? "bg-amber-500"
+                                : "bg-indigo-500"
                           }`}
                         />
                       </div>
@@ -538,37 +554,81 @@ export default function AdminDashboard() {
         </div>
 
         <div className="space-y-4">
-          {stats?.auditLogs?.map((log, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl hover:translate-x-1 transition-transform border border-transparent hover:border-gray-200 dark:hover:border-gray-800"
-            >
-              <div className="flex items-center gap-4">
-                <div
-                  className={`p-2 rounded-xl bg-indigo-500/10 text-indigo-500`}
-                >
-                  <ShieldCheck size={18} />
+          {stats?.auditLogs?.map((log, i) => {
+            // Get actor role from new format (actor.role) or old format (details.actorRole) or fallback
+            const actorRole =
+              log.actor?.role || log.details?.actorRole || "user";
+            const actorName =
+              log.actor?.username ||
+              log.adminUsername ||
+              log.adminEmail?.split("@")[0] ||
+              "Unknown";
+            const isAdmin = actorRole === "admin";
+            const isSystem =
+              actorRole === "system" ||
+              log.adminEmail === "system@samkielbot.app";
+
+            return (
+              <div
+                key={i}
+                className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl hover:translate-x-1 transition-transform border border-transparent hover:border-gray-200 dark:hover:border-gray-800"
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`p-2 rounded-xl ${
+                      isSystem
+                        ? "bg-gray-500/10 text-gray-500"
+                        : isAdmin
+                          ? "bg-purple-500/10 text-purple-500"
+                          : "bg-indigo-500/10 text-indigo-500"
+                    }`}
+                  >
+                    <ShieldCheck size={18} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                      <span
+                        className={`${
+                          isSystem
+                            ? "text-gray-500"
+                            : isAdmin
+                              ? "text-purple-500"
+                              : "text-indigo-500"
+                        }`}
+                      >
+                        {isSystem ? "System" : isAdmin ? actorName : actorName}
+                      </span>{" "}
+                      <span
+                        className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                          isSystem
+                            ? "bg-gray-500/10 text-gray-400"
+                            : isAdmin
+                              ? "bg-purple-500/10 text-purple-400"
+                              : "bg-blue-500/10 text-blue-400"
+                        }`}
+                      >
+                        {isSystem ? "CRON" : isAdmin ? "ADMIN" : "USER"}
+                      </span>{" "}
+                      <span className="font-medium text-gray-500">
+                        performed
+                      </span>{" "}
+                      {log.action.replace(/_/g, " ")}
+                    </p>
+                    <p className="text-[10px] text-gray-400 font-mono mt-0.5 opacity-60">
+                      ID:{" "}
+                      {log.targetId?.substring(log.targetId.length - 6) ||
+                        "SYSTEM"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                    <span className="text-indigo-500">admin</span>{" "}
-                    <span className="font-medium text-gray-500">performed</span>{" "}
-                    {log.action.replace("_", " ")}
-                  </p>
-                  <p className="text-[10px] text-gray-400 font-mono mt-0.5 opacity-60">
-                    ID:{" "}
-                    {log.targetId?.substring(log.targetId.length - 6) ||
-                      "SYSTEM"}
-                  </p>
-                </div>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  {formatDistanceToNow(new Date(log.timestamp), {
+                    addSuffix: true,
+                  })}
+                </span>
               </div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                {formatDistanceToNow(new Date(log.timestamp), {
-                  addSuffix: true,
-                })}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </AdminLayout>
@@ -646,8 +706,8 @@ function UsageBar({ label, value, color }) {
             color === "indigo"
               ? "bg-indigo-600 shadow-[0_0_8px_rgba(99,102,241,0.5)]"
               : color === "emerald"
-              ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
-              : "bg-amber-500"
+                ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                : "bg-amber-500"
           }`}
         />
       </div>

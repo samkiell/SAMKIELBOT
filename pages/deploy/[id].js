@@ -37,6 +37,9 @@ export default function DeploymentSessionPage() {
   const [logs, setLogs] = useState([]);
   const [activeTab, setActiveTab] = useState("logs"); // Default to logs during deployment
   const tabsRef = useRef(null);
+  const [pairingCodeTimestamp, setPairingCodeTimestamp] = useState(null);
+  const [codeExpired, setCodeExpired] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
 
   // Initialize Socket.IO
   useEffect(() => {
@@ -75,6 +78,10 @@ export default function DeploymentSessionPage() {
           status: "awaiting_pairing",
           pairingCode: data.code,
         }));
+        // Reset timer state
+        setPairingCodeTimestamp(Date.now());
+        setCodeExpired(false);
+        setTimeRemaining(300);
         setActiveTab("overview");
         setLoading(false);
         toast.success("Pairing code found! 📱");
@@ -84,6 +91,10 @@ export default function DeploymentSessionPage() {
     socket.on("bot:connected", (data) => {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Bot connected!");
+        // Reset pairing timer state
+        setPairingCodeTimestamp(null);
+        setCodeExpired(false);
+        setTimeRemaining(300);
         fetchDeploymentStatus();
         setActiveTab("overview");
         toast.success("Bot connected successfully! 🚀");
@@ -136,6 +147,37 @@ export default function DeploymentSessionPage() {
       }, 500);
     }
   }, [deployment?.status]);
+
+  // Pairing code expiration timer
+  useEffect(() => {
+    if (!pairingCodeTimestamp || codeExpired) return;
+    if (deployment?.status !== "awaiting_pairing") return;
+
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - pairingCodeTimestamp) / 1000);
+      const remaining = Math.max(0, 300 - elapsed);
+      setTimeRemaining(remaining);
+
+      if (remaining <= 0) {
+        setCodeExpired(true);
+        clearInterval(interval);
+        toast.error("Pairing code expired. Please restart the bot to get a new code.");
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [pairingCodeTimestamp, codeExpired, deployment?.status]);
+
+  // Initialize timer from deployment data when page loads
+  useEffect(() => {
+    if (deployment?.pairingCode && deployment?.status === "awaiting_pairing" && !pairingCodeTimestamp) {
+      // If we have pairingCodeGeneratedAt from backend, use it; otherwise use now
+      const timestamp = deployment.pairingCodeGeneratedAt 
+        ? new Date(deployment.pairingCodeGeneratedAt).getTime() 
+        : Date.now();
+      setPairingCodeTimestamp(timestamp);
+    }
+  }, [deployment?.pairingCode, deployment?.status, pairingCodeTimestamp]);
 
   // Fetch deployment status
   const fetchDeploymentStatus = async () => {
@@ -662,47 +704,76 @@ export default function DeploymentSessionPage() {
               !["online", "active", "connected"].includes(deployment.status) ? (
                 <div className="bg-indigo-500/5 border border-indigo-500/20 p-8 rounded-2xl text-center relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500/30" />
-                  <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-4">
-                    SCAN OR ENTER PAIRING CODE
-                  </p>
-                  <div className="flex items-center justify-center gap-3 sm:gap-5 mb-8">
-                    <div className="text-2xl sm:text-4xl md:text-5xl font-mono font-black tracking-[0.1em] sm:tracking-[0.2em] text-white drop-shadow-[0_0_10px_rgba(99,102,241,0.5)] break-all text-center">
-                      {deployment.pairingCode}
+                  
+                  {/* Expiration Timer */}
+                  <div className={`mb-4 text-sm font-bold ${timeRemaining <= 60 ? 'text-red-400' : 'text-amber-400'}`}>
+                    {codeExpired ? (
+                      <span className="text-red-500">Code Expired</span>
+                    ) : (
+                      <span>
+                        Code expires in: {Math.floor(timeRemaining / 60)}:{String(timeRemaining % 60).padStart(2, '0')}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {codeExpired ? (
+                    <div className="py-8">
+                      <p className="text-red-400 font-bold mb-4">This pairing code has expired</p>
+                      <p className="text-gray-400 text-sm mb-6">Please restart the bot to generate a new pairing code</p>
+                      <button
+                        onClick={() => handlePowerAction("restart")}
+                        disabled={actionLoading}
+                        className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold transition-all"
+                      >
+                        <RotateCw size={16} className="inline mr-2" />
+                        Restart Bot
+                      </button>
                     </div>
-                    <button
-                      onClick={handleCopyCode}
-                      className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-white/60 hover:text-white shrink-0"
-                      title="Copy"
-                    >
-                      <Copy size={20} className="sm:w-6 sm:h-6" />
-                    </button>
-                  </div>
-                  <div className="pt-8 border-t border-white/5 text-left">
-                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-4">
-                      LINKING INSTRUCTIONS
-                    </p>
-                    <ul className="space-y-3 text-xs text-gray-400">
-                      <li className="flex gap-4">
-                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/5 flex items-center justify-center font-bold text-[10px] text-white/40">
-                          1
-                        </span>
-                        Launch WhatsApp on your mobile device.
-                      </li>
-                      <li className="flex gap-4">
-                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/5 flex items-center justify-center font-bold text-[10px] text-white/40">
-                          2
-                        </span>
-                        Navigate to <b>Settings</b> &gt; <b>Linked Devices</b>.
-                      </li>
-                      <li className="flex gap-4">
-                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/5 flex items-center justify-center font-bold text-[10px] text-white/40">
-                          3
-                        </span>
-                        Select <b>Link a Device</b> &gt;{" "}
-                        <b>Link with phone instead</b>.
-                      </li>
-                    </ul>
-                  </div>
+                  ) : (
+                    <>
+                      <p className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-4">
+                        SCAN OR ENTER PAIRING CODE
+                      </p>
+                      <div className="flex items-center justify-center gap-3 sm:gap-5 mb-8">
+                        <div className="text-2xl sm:text-4xl md:text-5xl font-mono font-black tracking-[0.1em] sm:tracking-[0.2em] text-white drop-shadow-[0_0_10px_rgba(99,102,241,0.5)] break-all text-center">
+                          {deployment.pairingCode}
+                        </div>
+                        <button
+                          onClick={handleCopyCode}
+                          className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-white/60 hover:text-white shrink-0"
+                          title="Copy"
+                        >
+                          <Copy size={20} className="sm:w-6 sm:h-6" />
+                        </button>
+                      </div>
+                      <div className="pt-8 border-t border-white/5 text-left">
+                        <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-4">
+                          LINKING INSTRUCTIONS
+                        </p>
+                        <ul className="space-y-3 text-xs text-gray-400">
+                          <li className="flex gap-4">
+                            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/5 flex items-center justify-center font-bold text-[10px] text-white/40">
+                              1
+                            </span>
+                            Launch WhatsApp on your mobile device.
+                          </li>
+                          <li className="flex gap-4">
+                            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/5 flex items-center justify-center font-bold text-[10px] text-white/40">
+                              2
+                            </span>
+                            Navigate to <b>Settings</b> &gt; <b>Linked Devices</b>.
+                          </li>
+                          <li className="flex gap-4">
+                            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/5 flex items-center justify-center font-bold text-[10px] text-white/40">
+                              3
+                            </span>
+                            Select <b>Link a Device</b> &gt;{" "}
+                            <b>Link with phone instead</b>.
+                          </li>
+                        </ul>
+                      </div>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center gap-6 p-6 rounded-2xl bg-white/5">

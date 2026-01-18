@@ -26,6 +26,7 @@ import {
   History,
   Terminal,
   Sparkles,
+  FileText,
 } from "lucide-react";
 
 import NotificationDropdown from "./NotificationDropdown";
@@ -195,6 +196,12 @@ export default function Navbar() {
                 </button>
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden p-1 text-left">
+                    <Link
+                      href="/changelog"
+                      className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
+                    >
+                      Changelog
+                    </Link>
                     <Link
                       href="/status"
                       className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-700 dark:text-gray-200"
@@ -454,6 +461,13 @@ export default function Navbar() {
           />
 
           {/* More Public Mobile Links */}
+          <MobileNavLink
+            href="/changelog"
+            icon={FileText}
+            label="Changelog"
+            onClick={() => setMenuOpen(false)}
+            active={router.pathname === "/changelog"}
+          />
           <MobileNavLink
             href="/status"
             icon={Activity}

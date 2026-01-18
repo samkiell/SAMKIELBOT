@@ -72,6 +72,12 @@ export default function Footer() {
             </h3>
             <div className="flex flex-col space-y-2">
               <Link
+                href="/changelog"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                Changelog
+              </Link>
+              <Link
                 href="/whatsapp-bot"
                 className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
               >

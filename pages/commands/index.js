@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,9 +21,34 @@ import {
 } from "lucide-react";
 import Navbar from "../../components/Navbar";
 import { fetchCommands } from "../../lib/githubService";
+import commandData from "../../lib/data/commandData";
+
+// Fisher-Yates shuffle algorithm
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 export async function getStaticProps() {
-  const commands = await fetchCommands();
+  let commands = await fetchCommands();
+
+  // Enrich commands with descriptions from commandData
+  commands = commands.map((cmd) => {
+    const cmdName = cmd.name.toLowerCase();
+    if (commandData[cmdName]) {
+      return {
+        ...cmd,
+        description: commandData[cmdName].description || cmd.description,
+        usage: commandData[cmdName].usage || cmd.usage,
+        category: commandData[cmdName].category || cmd.category,
+      };
+    }
+    return cmd;
+  });
 
   return {
     props: {
@@ -39,6 +64,12 @@ export default function CommandsPage({ commands, lastUpdated }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCommand, setSelectedCommand] = useState(null);
+  const [shuffledCommands, setShuffledCommands] = useState([]);
+
+  // Shuffle commands on mount (client-side only to avoid hydration mismatch)
+  useEffect(() => {
+    setShuffledCommands(shuffleArray(commands));
+  }, [commands]);
 
   // Extract unique categories
   const categories = useMemo(() => {
@@ -46,9 +77,11 @@ export default function CommandsPage({ commands, lastUpdated }) {
     return ["all", ...Array.from(cats)];
   }, [commands]);
 
-  // Filter commands
+  // Filter commands (use shuffled list)
   const filteredCommands = useMemo(() => {
-    return commands.filter((cmd) => {
+    const sourceCommands =
+      shuffledCommands.length > 0 ? shuffledCommands : commands;
+    return sourceCommands.filter((cmd) => {
       const matchesSearch =
         cmd.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         cmd.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -56,7 +89,7 @@ export default function CommandsPage({ commands, lastUpdated }) {
         selectedCategory === "all" || cmd.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [commands, searchQuery, selectedCategory]);
+  }, [commands, shuffledCommands, searchQuery, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white transition-colors duration-300 font-sans">

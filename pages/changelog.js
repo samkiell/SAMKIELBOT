@@ -185,29 +185,7 @@ export default function ChangelogPage({ commits, latestVersion, error }) {
             </motion.div>
           )}
 
-          {/* Support CTA */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-16 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-700 border border-indigo-200 dark:border-slate-600 rounded-2xl p-8 text-center"
-          >
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-              Want to contribute?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-xl mx-auto">
-              Check out our GitHub repository to see the latest changes and
-              contribute to the project.
-            </p>
-            <a
-              href="https://github.com/samkiell/SAMKIELBOT"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl transition-colors shadow-lg"
-            >
-              View on GitHub
-            </a>
-          </motion.div>
+
         </main>
       </div>
     </Layout>

@@ -33,7 +33,6 @@ import {
   throttleBot,
   // Email Broadcast
   sendEmailBroadcast,
-  sendTestEmailBroadcast,
   getEmailBroadcastHistory,
   getEmailBroadcastDetails,
 } from "@/lib/controllers/adminController";
@@ -380,16 +379,6 @@ export default async function handler(req, res) {
         // ========================================
         // EMAIL BROADCAST ROUTES
         // ========================================
-
-        // Route: POST /api/admin/email-broadcast/test (Send test email)
-        if (
-          slug &&
-          slug[0] === "email-broadcast" &&
-          slug[1] === "test" &&
-          method === "POST"
-        ) {
-          return await sendTestEmailBroadcast(req, res);
-        }
 
         // Route: POST /api/admin/email-broadcast (Send broadcast)
         if (

@@ -44,8 +44,6 @@ export default function AdminNotifications() {
     priority: "normal",
   });
   const [sendingEmail, setSendingEmail] = useState(false);
-  const [sendingTestEmail, setSendingTestEmail] = useState(false);
-  const [testEmail, setTestEmail] = useState("samuelezekiel488@gmail.com");
   const [emailBroadcasts, setEmailBroadcasts] = useState([]);
   const [emailBroadcastsLoading, setEmailBroadcastsLoading] = useState(false);
   const [showEmailHistory, setShowEmailHistory] = useState(false);
@@ -243,50 +241,6 @@ export default function AdminNotifications() {
       toast.error("Error sending email broadcast", { id: toastId });
     } finally {
       setSendingEmail(false);
-    }
-  };
-
-  // Send Test Email
-  const handleSendTestEmail = async () => {
-    if (!emailBroadcastData.subject.trim()) {
-      toast.error("Subject is required");
-      return;
-    }
-    if (!emailBroadcastData.message.trim()) {
-      toast.error("Message is required");
-      return;
-    }
-    if (!testEmail.trim()) {
-      toast.error("Test email address is required");
-      return;
-    }
-
-    setSendingTestEmail(true);
-    try {
-      const res = await fetch("/api/admin/email-broadcast/test", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          testEmail: testEmail.trim(),
-          ...emailBroadcastData,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success(`Test email sent to ${testEmail}!`);
-      } else {
-        toast.error(data.message || "Failed to send test email");
-      }
-    } catch (error) {
-      console.error("Test email error:", error);
-      toast.error("Error sending test email");
-    } finally {
-      setSendingTestEmail(false);
     }
   };
 
@@ -570,40 +524,7 @@ export default function AdminNotifications() {
                     </div>
                   </div>
 
-                  <div className="pt-2 space-y-3">
-                    {/* Test Email Section */}
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
-                        🧪 Test Email First
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="email"
-                          value={testEmail}
-                          onChange={(e) => setTestEmail(e.target.value)}
-                          className="flex-1 px-3 py-2 text-sm bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                          placeholder="test@example.com"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleSendTestEmail}
-                          disabled={sendingTestEmail}
-                          className={`px-4 py-2 text-sm rounded-lg font-medium transition-all ${
-                            sendingTestEmail
-                              ? "bg-gray-300 dark:bg-gray-600 cursor-not-allowed text-gray-500"
-                              : "bg-green-500 hover:bg-green-600 text-white"
-                          }`}
-                        >
-                          {sendingTestEmail ? (
-                            <FaSpinner className="animate-spin" />
-                          ) : (
-                            "Test"
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Send to All Button */}
+                  <div className="pt-2">
                     <button
                       type="submit"
                       disabled={sendingEmail}
@@ -620,7 +541,7 @@ export default function AdminNotifications() {
                         </>
                       ) : (
                         <>
-                          <FaEnvelope /> Send to All Users
+                          <FaEnvelope /> Send Email Broadcast
                         </>
                       )}
                     </button>

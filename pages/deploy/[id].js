@@ -151,7 +151,7 @@ export default function DeploymentSessionPage() {
   // Pairing code expiration timer
   useEffect(() => {
     if (!pairingCodeTimestamp || codeExpired) return;
-    if (!["awaiting_pairing"].includes(deployment?.status)) return;
+    if (deployment?.status !== "awaiting_pairing") return;
 
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - pairingCodeTimestamp) / 1000);

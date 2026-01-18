@@ -108,6 +108,12 @@ export default function Footer() {
                 How Billing Works (Transparency)
               </Link>
               <Link
+                href="/changelog"
+                className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm"
+              >
+                Changelog
+              </Link>
+              <Link
                 href="/support#bug"
                 className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-sm font-medium flex items-center gap-2"
               >

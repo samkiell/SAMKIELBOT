@@ -19,6 +19,8 @@ import {
   FaSpinner,
   FaChevronDown,
   FaChevronUp,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 
 export default function AdminNotifications() {
@@ -52,6 +54,10 @@ export default function AdminNotifications() {
   const [filterType, setFilterType] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [userSearch, setUserSearch] = useState("");
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   // Debounce for search
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -93,7 +99,14 @@ export default function AdminNotifications() {
 
   useEffect(() => {
     fetchNotifications();
+    setCurrentPage(1); // Reset to first page when filters change
   }, [debouncedSearch, filterType, userSearch]); // Re-fetch when filters change (ignoring direct searchQuery to avoid rapid fire)
+
+  // Pagination calculations
+  const totalPages = Math.ceil(notifications.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedNotifications = notifications.slice(startIndex, endIndex);
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -659,7 +672,8 @@ export default function AdminNotifications() {
                 </select>
               </div>
               <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
-                {notifications.length} Found
+                {notifications.length} Found | Page {currentPage} of{" "}
+                {totalPages || 1}
               </span>
             </div>
 
@@ -694,7 +708,7 @@ export default function AdminNotifications() {
                     </tr>
                   </thead>
                   <tbody>
-                    {notifications.map((notif) => (
+                    {paginatedNotifications.map((notif) => (
                       <tr
                         key={notif._id}
                         className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
@@ -744,6 +758,79 @@ export default function AdminNotifications() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            {notifications.length > itemsPerPage && (
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Showing {startIndex + 1} -{" "}
+                  {Math.min(endIndex, notifications.length)} of{" "}
+                  {notifications.length}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    First
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    <FaChevronLeft size={12} />
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`px-3 py-1.5 text-sm rounded-md transition ${
+                            currentPage === pageNum
+                              ? "bg-indigo-600 text-white"
+                              : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    <FaChevronRight size={12} />
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    Last
+                  </button>
+                </div>
               </div>
             )}
           </div>

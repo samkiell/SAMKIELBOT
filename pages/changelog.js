@@ -168,16 +168,6 @@ export default function ChangelogPage({ commits, latestVersion, error }) {
                           </code>
                         </div>
                       </div>
-                      {commit.url && (
-                        <a
-                          href={commit.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 text-sm font-semibold transition-colors"
-                        >
-                          View →
-                        </a>
-                      )}
                     </div>
                   </motion.div>
                 ))}
@@ -261,7 +251,6 @@ export async function getStaticProps() {
       message: commit.commit.message.split("\n")[0], // First line only
       author: commit.commit.author.name,
       date: commit.commit.author.date,
-      url: commit.html_url,
     }));
 
     return {

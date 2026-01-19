@@ -57,7 +57,7 @@ export default function UserManagement() {
       setLogsLoading(true);
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
         /\/$/,
-        ""
+        "",
       );
       const res = await fetch(`${apiUrl}/admin/audit-logs`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -83,7 +83,7 @@ export default function UserManagement() {
       setLoading(true);
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
         /\/$/,
-        ""
+        "",
       );
       const url = query
         ? `${apiUrl}/admin/users?search=${encodeURIComponent(query)}`
@@ -124,7 +124,7 @@ export default function UserManagement() {
   const deleteUser = async (id) => {
     if (
       !confirm(
-        "ARE YOU SURE? This will delete the user and ALL their bots permanently."
+        "ARE YOU SURE? This will delete the user and ALL their bots permanently.",
       )
     )
       return;
@@ -161,8 +161,8 @@ export default function UserManagement() {
     if (creditAction === "reduce" && selectedUser.credits < amount) {
       toast.error(
         `Insufficient balance. User has ${Math.round(
-          selectedUser.credits
-        )} credits.`
+          selectedUser.credits,
+        )} credits.`,
       );
       return;
     }
@@ -186,7 +186,7 @@ export default function UserManagement() {
                 creditAction === "add" ? "granted" : "revoked"
               } ${amount} credits`,
           }),
-        }
+        },
       );
 
       const data = await res.json();
@@ -196,7 +196,7 @@ export default function UserManagement() {
           `Successfully ${
             creditAction === "add" ? "added" : "reduced"
           } ${amount} credits`,
-          { id: idToast }
+          { id: idToast },
         );
         setShowCreditModal(false);
         fetchUsers();
@@ -216,7 +216,7 @@ export default function UserManagement() {
     return users.filter(
       (u) =>
         u.username?.toLowerCase().includes(query) ||
-        u.email?.toLowerCase().includes(query)
+        u.email?.toLowerCase().includes(query),
     );
   }, [users, searchTerm]);
 
@@ -224,6 +224,7 @@ export default function UserManagement() {
     return {
       total: users.length,
       admins: users.filter((u) => u.role === "admin").length,
+      pending: users.filter((u) => u.accountStatus === "pending").length,
       suspended: users.filter((u) => u.accountStatus === "suspended").length,
     };
   }, [users]);
@@ -404,11 +405,21 @@ export default function UserManagement() {
                                     className={`w-2 h-2 rounded-full ${
                                       u.accountStatus === "active"
                                         ? "bg-emerald-500"
-                                        : "bg-red-500"
+                                        : u.accountStatus === "pending"
+                                          ? "bg-amber-500"
+                                          : "bg-red-500"
                                     }`}
                                   />
-                                  <span className="text-[10px] font-black uppercase tracking-widest">
-                                    {u.accountStatus || "ACTIVE"}
+                                  <span
+                                    className={`text-[10px] font-black uppercase tracking-widest ${
+                                      u.accountStatus === "active"
+                                        ? "text-emerald-600"
+                                        : u.accountStatus === "pending"
+                                          ? "text-amber-600"
+                                          : "text-red-600"
+                                    }`}
+                                  >
+                                    {u.accountStatus || "PENDING"}
                                   </span>
                                 </div>
                               </td>
@@ -577,10 +588,12 @@ export default function UserManagement() {
                               className={`text-xs font-bold uppercase ${
                                 u.accountStatus === "active"
                                   ? "text-emerald-500"
-                                  : "text-red-500"
+                                  : u.accountStatus === "pending"
+                                    ? "text-amber-500"
+                                    : "text-red-500"
                               }`}
                             >
-                              {u.accountStatus || "Active"}
+                              {u.accountStatus || "Pending"}
                             </p>
                           </div>
                         </div>

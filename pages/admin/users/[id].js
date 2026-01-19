@@ -49,7 +49,7 @@ export default function UserDetails() {
     try {
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
         /\/$/,
-        ""
+        "",
       );
 
       // Fetch User Details
@@ -71,7 +71,7 @@ export default function UserDetails() {
         `${apiUrl}/admin/users/${id}/referrals`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       const referralsData = await referralsRes.json();
       setReferrals(referralsData.data || []);
@@ -86,7 +86,7 @@ export default function UserDetails() {
     setActionLoading(botId);
     const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
       /\/$/,
-      ""
+      "",
     );
     try {
       const res = await fetch(`${apiUrl}/admin/bots/${botId}/power`, {
@@ -114,7 +114,7 @@ export default function UserDetails() {
     setActionLoading(bot._id);
     const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
       /\/$/,
-      ""
+      "",
     );
     try {
       const res = await fetch(`${apiUrl}/admin/bots/${bot._id}/suspend`, {
@@ -142,7 +142,7 @@ export default function UserDetails() {
     setActionLoading(botId);
     const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
       /\/$/,
-      ""
+      "",
     );
     try {
       const res = await fetch(`${apiUrl}/admin/bots/${botId}`, {
@@ -288,10 +288,12 @@ export default function UserDetails() {
               className={`px-4 py-2 rounded-2xl font-black text-xs uppercase tracking-widest ${
                 userDetail.accountStatus === "active"
                   ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-                  : "bg-red-500/10 text-red-500 border border-red-500/20"
+                  : userDetail.accountStatus === "pending"
+                    ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                    : "bg-red-500/10 text-red-500 border border-red-500/20"
               }`}
             >
-              {userDetail.accountStatus || "ACTIVE"}
+              {userDetail.accountStatus || "PENDING"}
             </div>
           </div>
         </div>

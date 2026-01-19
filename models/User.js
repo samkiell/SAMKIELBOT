@@ -40,8 +40,8 @@ const userSchema = new mongoose.Schema(
     },
     accountStatus: {
       type: String,
-      enum: ["active", "suspended", "deleted"], // deleted = soft delete
-      default: "active",
+      enum: ["pending", "active", "suspended", "deleted"], // pending = awaiting OTP verification, deleted = soft delete
+      default: "pending",
     },
     lastLogin: { type: Date },
     // Credit-Based Billing
@@ -92,7 +92,7 @@ const userSchema = new mongoose.Schema(
       attempts: { type: Number, default: 0 },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Password encryption

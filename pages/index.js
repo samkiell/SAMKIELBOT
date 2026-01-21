@@ -17,7 +17,6 @@ import {
   FaLinkedin,
   FaEnvelope,
 } from "react-icons/fa";
-import Snowfall from "../components/Snowfall";
 import { featuresData } from "../lib/data/features";
 import { FaArrowRight } from "react-icons/fa";
 import ImageViewer from "../components/ImageViewer";
@@ -83,7 +82,6 @@ export default function Home() {
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-      <Snowfall />
       <Head>
         <title>
           SAMKIEL BOT - Deployment Platform | #1 WhatsApp Bot Hosting

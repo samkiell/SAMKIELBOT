@@ -110,6 +110,7 @@ export default function DeployPage() {
     autoReaction: false,
     disableStartMessage: false,
     statusViewEmoji: "👀",
+    voiceChat: false,
   });
 
   useEffect(() => {
@@ -200,6 +201,7 @@ export default function DeployPage() {
         PACKNAME: formData.packName,
         DISABLE_START_MESSAGE: formData.disableStartMessage,
         STATUS_VIEW_EMOJI: formData.statusViewEmoji,
+        VOICE_CHAT: formData.voiceChat,
       },
     };
 
@@ -869,7 +871,28 @@ export default function DeployPage() {
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
                 </label>
               </div>
-            </div>
+782: 
+783:               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+784:                 <div>
+785:                   <span className="block font-medium dark:text-gray-200">
+786:                     Voice Chat (AI)
+787:                   </span>
+788:                   <span className="text-xs text-gray-500 dark:text-gray-400">
+789:                     Enable AI voice responses
+790:                   </span>
+791:                 </div>
+792:                 <label className="relative inline-flex items-center cursor-pointer">
+793:                   <input
+794:                     type="checkbox"
+795:                     name="voiceChat"
+796:                     checked={formData.voiceChat}
+797:                     onChange={handleChange}
+798:                     className="sr-only peer"
+799:                   />
+800:                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-500"></div>
+801:                 </label>
+802:               </div>
+803:             </div>
           </section>
 
           {/* Action Buttons */}

@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import { useAuth } from "../lib/auth";
 import Navbar from "../components/Navbar";
-import Snowfall from "../components/Snowfall";
 import {
   Check,
   Zap,
@@ -31,7 +30,7 @@ export default function Pricing() {
     try {
       // Try fetching from credits API first
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/credits/packages`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/credits/packages`,
       );
       if (res.ok) {
         const data = await res.json();
@@ -87,8 +86,6 @@ export default function Pricing() {
           content="Flexible credit-based pricing for your WhatsApp bots. Pay only for what you use."
         />
       </Head>
-
-      <Snowfall />
 
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">

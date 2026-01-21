@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "../../lib/auth";
 import Navbar from "../../components/Navbar";
-import Snowfall from "../../components/Snowfall";
 import {
   Check,
   Zap,
@@ -51,7 +50,7 @@ export default function BuyCredits() {
         `${process.env.NEXT_PUBLIC_API_URL}/credits/history`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       if (res.ok) {
         const data = await res.json();
@@ -70,7 +69,7 @@ export default function BuyCredits() {
     try {
       // Trying to fetch from the payment packages endpoint
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/payments/packages`
+        `${process.env.NEXT_PUBLIC_API_URL}/payments/packages`,
       );
       if (res.ok) {
         const data = await res.json();
@@ -167,7 +166,6 @@ export default function BuyCredits() {
       </Head>
 
       <Navbar />
-      <Snowfall />
 
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -293,14 +291,14 @@ export default function BuyCredits() {
                       {pkg.currency === "NGN"
                         ? "₦"
                         : pkg.currency === "USD"
-                        ? "$"
-                        : pkg.currency === "ZAR"
-                        ? "R"
-                        : pkg.currency === "GHS"
-                        ? "GH₵"
-                        : pkg.currency === "KES"
-                        ? "KSh"
-                        : ""}
+                          ? "$"
+                          : pkg.currency === "ZAR"
+                            ? "R"
+                            : pkg.currency === "GHS"
+                              ? "GH₵"
+                              : pkg.currency === "KES"
+                                ? "KSh"
+                                : ""}
                       {pkg.price.toLocaleString(undefined, {
                         minimumFractionDigits: pkg.currency === "NGN" ? 0 : 2,
                         maximumFractionDigits: 2,
@@ -453,7 +451,7 @@ export default function BuyCredits() {
                                 month: "short",
                                 day: "numeric",
                                 year: "numeric",
-                              }
+                              },
                             )}
                           </div>
                           <div className="text-[10px] text-gray-600 font-mono mt-1">

@@ -14,7 +14,6 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
-import Snowfall from "../../components/Snowfall";
 import io from "socket.io-client";
 import { CommunityBotSkeleton } from "../../components/Skeleton";
 
@@ -240,7 +239,6 @@ export default function BotsList() {
         <title>Community Bots | SAMKIEL BOT - Deployment Platform</title>
       </Head>
       <Navbar />
-      <Snowfall />
 
       {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none">

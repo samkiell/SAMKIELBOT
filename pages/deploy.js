@@ -48,6 +48,9 @@ export default function DeployPage() {
         antiDelete: true,
         antiDeleteType: "group",
         autoReaction: false,
+        voiceChat: false,
+        personalMessage: false,
+        enableStatusReaction: true,
       },
     },
     {
@@ -110,6 +113,9 @@ export default function DeployPage() {
     autoReaction: false,
     disableStartMessage: false,
     statusViewEmoji: "👀",
+    voiceChat: false,
+    personalMessage: false,
+    enableStatusReaction: true,
   });
 
   useEffect(() => {
@@ -130,7 +136,7 @@ export default function DeployPage() {
       !/^[\d]*$/.test(value)
     ) {
       toast.error(
-        "Please enter only digits. Include country code but leave out the '+' sign."
+        "Please enter only digits. Include country code but leave out the '+' sign.",
       );
       return;
     }
@@ -149,7 +155,7 @@ export default function DeployPage() {
 
     if (!phoneRegex.test(formData.botNumber)) {
       toast.error(
-        "Invalid Bot Number. Please use international format (10-15 digits, no '+')."
+        "Invalid Bot Number. Please use international format (10-15 digits, no '+').",
       );
       setLoading(false);
       return;
@@ -157,7 +163,7 @@ export default function DeployPage() {
 
     if (formData.botNumber.startsWith("0")) {
       toast.error(
-        "Bot Number must include country code. Please remove the leading '0' (e.g., 23481...)."
+        "Bot Number must include country code. Please remove the leading '0' (e.g., 23481...).",
       );
       setLoading(false);
       return;
@@ -166,14 +172,14 @@ export default function DeployPage() {
     if (formData.ownerNumber) {
       if (!phoneRegex.test(formData.ownerNumber)) {
         toast.error(
-          "Invalid Owner Number. Please use international format (10-15 digits, no '+')."
+          "Invalid Owner Number. Please use international format (10-15 digits, no '+').",
         );
         setLoading(false);
         return;
       }
       if (formData.ownerNumber.startsWith("0")) {
         toast.error(
-          "Owner Number must include country code. Please remove the leading '0' (e.g., 23481...)."
+          "Owner Number must include country code. Please remove the leading '0' (e.g., 23481...).",
         );
         setLoading(false);
         return;
@@ -200,6 +206,9 @@ export default function DeployPage() {
         PACKNAME: formData.packName,
         DISABLE_START_MESSAGE: formData.disableStartMessage,
         STATUS_VIEW_EMOJI: formData.statusViewEmoji,
+        VOICE_CHAT: formData.voiceChat,
+        PERSONAL_MESSAGE: formData.personalMessage,
+        ENABLE_STATUS_REACTION: formData.enableStatusReaction,
       },
     };
 
@@ -207,7 +216,7 @@ export default function DeployPage() {
     console.log("🚀 [Deploy Debug] Sending Payload:", payload);
     console.log(
       "🚀 [Deploy Debug] Payload JSON:",
-      JSON.stringify(payload, null, 2)
+      JSON.stringify(payload, null, 2),
     );
 
     try {
@@ -867,6 +876,68 @@ export default function DeployPage() {
                     className="sr-only peer"
                   />
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                <div>
+                  <span className="block font-medium dark:text-gray-200">
+                    Status Reaction
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Automatically react to status updates
+                  </span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="enableStatusReaction"
+                    checked={formData.enableStatusReaction}
+                    onChange={handleChange}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+                </label>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                <div>
+                  <span className="block font-medium dark:text-gray-200">
+                    Personal Message
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Enable personal greeting messages
+                  </span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="personalMessage"
+                    checked={formData.personalMessage}
+                    onChange={handleChange}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-500"></div>
+                </label>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
+                <div>
+                  <span className="block font-medium dark:text-gray-200">
+                    Voice Chat (AI)
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Enable AI voice responses
+                  </span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="voiceChat"
+                    checked={formData.voiceChat}
+                    onChange={handleChange}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-pink-500"></div>
                 </label>
               </div>
             </div>

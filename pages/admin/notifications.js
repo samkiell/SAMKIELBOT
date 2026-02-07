@@ -21,7 +21,18 @@ import {
   FaChevronUp,
   FaChevronLeft,
   FaChevronRight,
+  FaFolderOpen,
+  FaFileAlt,
+  FaExpand,
+  FaCompress,
+  FaPaperclip,
+  FaTimes,
+  FaEye,
 } from "react-icons/fa";
+import dynamic from "next/dynamic";
+
+// Dynamic import for ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function AdminNotifications() {
   const [notifications, setNotifications] = useState([]);
@@ -45,6 +56,10 @@ export default function AdminNotifications() {
     announcementType: "general",
     priority: "normal",
   });
+  const [attachments, setAttachments] = useState([]);
+  const [isEditorExpanded, setIsEditorExpanded] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
   const [sendingEmail, setSendingEmail] = useState(false);
   const [emailBroadcasts, setEmailBroadcasts] = useState([]);
   const [emailBroadcastsLoading, setEmailBroadcastsLoading] = useState(false);
@@ -111,6 +126,47 @@ export default function AdminNotifications() {
   // Handle Input Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle Editor Change
+  const handleEditorChange = (content) => {
+    setEmailBroadcastData((prev) => ({ ...prev, message: content }));
+  };
+
+  // Handle File Attachments
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    // Process files
+    files.forEach((file) => {
+      // Limit file size (2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error(`${file.name} exceeds 2MB limit`);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAttachments((prev) => [
+          ...prev,
+          {
+            filename: file.name,
+            contentType: file.type,
+            content: event.target.result.split(",")[1], // base64 content
+            size: file.size,
+            id: Date.now() + Math.random().toString(),
+          },
+        ]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Reset input
+    e.target.value = null;
+  };
+
+  const removeAttachment = (id) => {
+    setAttachments((prev) => prev.filter((att) => att.id !== id));
   };
 
   // Send Broadcast

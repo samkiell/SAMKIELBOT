@@ -46,11 +46,11 @@
     "react-quill": "^2.0.0",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
+    "@tailwindcss/postcss": "^4.1.18",
     "tailwindcss": "^4.1.18",
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.18",
     "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.1.6",

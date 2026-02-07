@@ -21,7 +21,18 @@ import {
   FaChevronUp,
   FaChevronLeft,
   FaChevronRight,
+  FaFolderOpen,
+  FaFileAlt,
+  FaExpand,
+  FaCompress,
+  FaPaperclip,
+  FaTimes,
+  FaEye,
 } from "react-icons/fa";
+import dynamic from "next/dynamic";
+
+// Dynamic import for ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function AdminNotifications() {
   const [notifications, setNotifications] = useState([]);
@@ -45,6 +56,10 @@ export default function AdminNotifications() {
     announcementType: "general",
     priority: "normal",
   });
+  const [attachments, setAttachments] = useState([]);
+  const [isEditorExpanded, setIsEditorExpanded] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
   const [sendingEmail, setSendingEmail] = useState(false);
   const [emailBroadcasts, setEmailBroadcasts] = useState([]);
   const [emailBroadcastsLoading, setEmailBroadcastsLoading] = useState(false);
@@ -111,6 +126,47 @@ export default function AdminNotifications() {
   // Handle Input Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle Editor Change
+  const handleEditorChange = (content) => {
+    setEmailBroadcastData((prev) => ({ ...prev, message: content }));
+  };
+
+  // Handle File Attachments
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    // Process files
+    files.forEach((file) => {
+      // Limit file size (2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error(`${file.name} exceeds 2MB limit`);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAttachments((prev) => [
+          ...prev,
+          {
+            filename: file.name,
+            contentType: file.type,
+            content: event.target.result.split(",")[1], // base64 content
+            size: file.size,
+            id: Date.now() + Math.random().toString(),
+          },
+        ]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Reset input
+    e.target.value = null;
+  };
+
+  const removeAttachment = (id) => {
+    setAttachments((prev) => prev.filter((att) => att.id !== id));
   };
 
   // Send Broadcast
@@ -226,7 +282,14 @@ export default function AdminNotifications() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(emailBroadcastData),
+        body: JSON.stringify({
+          ...emailBroadcastData,
+          attachments: attachments.map((att) => ({
+            filename: att.filename,
+            content: att.content,
+            contentType: att.contentType,
+          })),
+        }),
       });
 
       const data = await res.json();
@@ -243,6 +306,7 @@ export default function AdminNotifications() {
           announcementType: "general",
           priority: "normal",
         });
+        setAttachments([]); // Clear attachments
         fetchEmailBroadcasts(); // Refresh history
       } else {
         toast.error(data.message || "Failed to send email broadcast", {
@@ -528,18 +592,137 @@ export default function AdminNotifications() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Message <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex justify-between items-center">
+                      <span>
+                        Message <span className="text-red-500">*</span>
+                      </span>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowPreview(true)}
+                          className="text-xs flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline"
+                        >
+                          <FaEye /> Preview
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsEditorExpanded(!isEditorExpanded)}
+                          className="text-xs flex items-center gap-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        >
+                          {isEditorExpanded ? (
+                            <>
+                              <FaCompress /> Collapse
+                            </>
+                          ) : (
+                            <>
+                              <FaExpand /> Expand
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </label>
-                    <textarea
-                      name="message"
-                      value={emailBroadcastData.message}
-                      onChange={handleEmailChange}
-                      rows="6"
-                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      placeholder="Enter your email message..."
-                      required
-                    ></textarea>
+                    <div
+                      className={`${isEditorExpanded ? "fixed inset-0 z-50 bg-white dark:bg-gray-900 p-8 flex flex-col" : "relative"}`}
+                    >
+                      {isEditorExpanded && (
+                        <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
+                          <h3 className="text-xl font-bold dark:text-white">
+                            Email Editor
+                          </h3>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditorExpanded(false)}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+                          >
+                            <FaTimes size={24} />
+                          </button>
+                        </div>
+                      )}
+
+                      <div
+                        className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 ${isEditorExpanded ? "flex-1 flex flex-col" : ""}`}
+                      >
+                        <ReactQuill
+                          theme="snow"
+                          value={emailBroadcastData.message}
+                          onChange={handleEditorChange}
+                          modules={{
+                            toolbar: [
+                              [{ header: [1, 2, 3, false] }],
+                              [
+                                "bold",
+                                "italic",
+                                "underline",
+                                "strike",
+                                "blockquote",
+                              ],
+                              [{ list: "ordered" }, { list: "bullet" }],
+                              ["link", "image"],
+                              [{ color: [] }, { background: [] }],
+                              ["clean"],
+                            ],
+                          }}
+                          className={`h-full ${isEditorExpanded ? "quill-fullscreen" : "quill-normal"}`}
+                          placeholder="Compose your email..."
+                          style={{
+                            height: isEditorExpanded
+                              ? "calc(100% - 42px)"
+                              : "300px",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Attachments Section */}
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <FaPaperclip /> Attachments ({attachments.length})
+                        </label>
+                        <label className="cursor-pointer text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2">
+                          <FaFolderOpen /> Add Files
+                          <input
+                            type="file"
+                            multiple
+                            onChange={handleFileChange}
+                            className="hidden"
+                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                          />
+                        </label>
+                      </div>
+
+                      {attachments.length > 0 && (
+                        <div className="grid grid-cols-1 gap-2 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-gray-200 dark:border-gray-700 max-h-40 overflow-y-auto">
+                          {attachments.map((att) => (
+                            <div
+                              key={att.id}
+                              className="flex items-center justify-between bg-white dark:bg-gray-800 p-2 rounded border border-gray-100 dark:border-gray-700 shadow-sm"
+                            >
+                              <div className="flex items-center gap-3 overflow-hidden">
+                                <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded text-indigo-600 dark:text-indigo-400">
+                                  <FaFileAlt />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium truncate dark:text-gray-200">
+                                    {att.filename}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {(att.size / 1024).toFixed(1)} KB
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeAttachment(att.id)}
+                                className="text-gray-400 hover:text-red-500 p-1 transition-colors"
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -895,6 +1078,30 @@ export default function AdminNotifications() {
           </div>
         </div>
       </div>
+      {/* Email Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col relative w-full h-full max-w-none max-h-none md:max-w-4xl md:max-h-[90vh]">
+            <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 z-10">
+              <h3 className="font-bold text-lg dark:text-white">
+                Email Preview
+              </h3>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <FaTimes size={20} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900">
+              <div
+                className="max-w-2xl mx-auto bg-white rounded-lg shadow p-8 email-content prose dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: emailBroadcastData.message }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

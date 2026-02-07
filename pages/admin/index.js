@@ -644,6 +644,11 @@ function SummaryCard({
   color,
   isPulse,
 }) {
+  const [isHidden, setIsHidden] = useState(
+    title.toLowerCase().includes("revenue") ||
+      title.toLowerCase().includes("sales"),
+  );
+
   const colorStyles = {
     indigo: "bg-[#6366f1]/10 text-indigo-500 shadow-indigo-500/10",
     emerald: "bg-[#10b981]/10 text-emerald-500 shadow-emerald-500/10",
@@ -654,7 +659,8 @@ function SummaryCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-all"
+      onClick={() => setIsHidden(!isHidden)}
+      className="bg-white dark:bg-[#111827] p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-all cursor-pointer"
     >
       <div className="flex justify-between items-start mb-6">
         <div className={`p-4 rounded-3xl ${colorStyles[color]}`}>
@@ -676,7 +682,9 @@ function SummaryCard({
         {title}
       </p>
       <div className="flex items-baseline gap-1">
-        <span className="text-5xl font-black tracking-tighter">{value}</span>
+        <span className="text-5xl font-black tracking-tighter">
+          {isHidden ? "****" : value}
+        </span>
         {total && (
           <span className="text-sm font-bold text-gray-400">/{total}</span>
         )}

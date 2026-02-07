@@ -82,7 +82,7 @@ export default function AdminRevenue() {
 
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "/api").replace(
         /\/$/,
-        ""
+        "",
       );
       const res = await fetch(`${apiUrl}/admin/revenue?${queryParams}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -167,7 +167,7 @@ export default function AdminRevenue() {
     link.setAttribute("href", encodedUri);
     link.setAttribute(
       "download",
-      `revenue_export_${new Date().toISOString().split("T")[0]}.csv`
+      `revenue_export_${new Date().toISOString().split("T")[0]}.csv`,
     );
     document.body.appendChild(link);
     link.click();
@@ -200,11 +200,11 @@ export default function AdminRevenue() {
     summary.allTime?.find((s) => s._id === "NGN")?.totalAmount || 0;
   const totalCreditsSold = summary.allTime?.reduce(
     (acc, s) => acc + s.totalCredits,
-    0
+    0,
   );
   const totalTransactions = summary.allTime?.reduce(
     (acc, s) => acc + s.count,
-    0
+    0,
   );
 
   const revenueTodayVal =
@@ -276,7 +276,7 @@ export default function AdminRevenue() {
           title="Revenue Today"
           value={formatCurrency(
             summary.today?.find((s) => s._id === "NGN")?.total || 0,
-            "NGN"
+            "NGN",
           )}
           subValue="Growth vs yesterday"
           icon={TrendingUp}
@@ -287,7 +287,7 @@ export default function AdminRevenue() {
           title="Avg. Sale Value"
           value={formatCurrency(
             totalTransactions > 0 ? totalRevenueNGN / totalTransactions : 0,
-            "NGN"
+            "NGN",
           )}
           subValue="Per successful transaction"
           icon={ArrowUpRight}
@@ -455,6 +455,11 @@ export default function AdminRevenue() {
 }
 
 function StatItem({ title, value, subValue, icon: Icon, color, trend }) {
+  const [isHidden, setIsHidden] = useState(
+    title.toLowerCase().includes("revenue") ||
+      title.toLowerCase().includes("value"),
+  );
+
   const colors = {
     indigo: "bg-indigo-600 shadow-indigo-600/20",
     emerald: "bg-emerald-600 shadow-emerald-600/20",
@@ -470,7 +475,10 @@ function StatItem({ title, value, subValue, icon: Icon, color, trend }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm transition-all hover:shadow-md">
+    <div
+      onClick={() => setIsHidden(!isHidden)}
+      className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm transition-all hover:shadow-md cursor-pointer"
+    >
       <div className="flex justify-between items-start mb-4">
         <div className={`p-3 rounded-xl ${bgColors[color]}`}>
           <Icon className={`text-${color}-600`} size={24} />
@@ -486,7 +494,7 @@ function StatItem({ title, value, subValue, icon: Icon, color, trend }) {
           {title}
         </p>
         <p className="text-2xl font-black text-gray-900 dark:text-white">
-          {value}
+          {isHidden ? "****" : value}
         </p>
         <p className="text-xs text-gray-500 mt-1 italic">{subValue}</p>
       </div>

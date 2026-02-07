@@ -409,37 +409,21 @@ export default function BotManagementPage() {
                 />
               </div>
 
-              {/* Billing Discrepancy Warning */}
-              {(() => {
-                const runningDays = getRunningDays(deployment.deployedAt);
-                const expectedCredits =
-                  runningDays * (deployment.dailyBurn || 5) +
-                  (deployment.creationCost || 50);
-                const actualCredits = deployment.totalCreditsSpent || 50;
-                const discrepancy = expectedCredits - actualCredits;
-
-                if (Math.abs(discrepancy) > 5) {
-                  return (
-                    <div
-                      className={`mt-4 p-3 rounded-xl text-xs ${
-                        discrepancy > 0
-                          ? "bg-green-500/10 border border-green-500/20 text-green-400"
-                          : "bg-amber-500/10 border border-amber-500/20 text-amber-400"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <AlertCircle size={14} />
-                        <span className="font-medium">
-                          {discrepancy > 0
-                            ? `Under-billed by ${discrepancy} credits (expected: ${expectedCredits})`
-                            : `Over-billed by ${Math.abs(discrepancy)} credits (expected: ${expectedCredits})`}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
+              {/* Billing Info */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center text-sm border-b border-white/5 pb-3">
+                  <span className="text-gray-400">Creation Cost</span>
+                  <span className="font-mono text-white">
+                    {deployment.creationCost || 50} Credits
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm border-b border-white/5 pb-3">
+                  <span className="text-gray-400">Total Spent</span>
+                  <span className="font-mono text-white">
+                    {deployment.totalCreditsSpent || 50} Credits
+                  </span>
+                </div>
+              </div>
             </div>
             <div className="mt-10 pt-8 border-t border-white/5">
               <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">

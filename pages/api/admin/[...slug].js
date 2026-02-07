@@ -33,6 +33,7 @@ import {
   throttleBot,
   // Email Broadcast
   sendEmailBroadcast,
+  resumeEmailBroadcast,
   getEmailBroadcastHistory,
   getEmailBroadcastDetails,
 } from "@/lib/controllers/adminController";
@@ -388,6 +389,16 @@ export default async function handler(req, res) {
           method === "POST"
         ) {
           return await sendEmailBroadcast(req, res);
+        }
+
+        // Route: POST /api/admin/email-broadcast/resume
+        if (
+          slug &&
+          slug[0] === "email-broadcast" &&
+          slug[1] === "resume" &&
+          method === "POST"
+        ) {
+          return await resumeEmailBroadcast(req, res);
         }
 
         // Route: GET /api/admin/email-broadcast (Get history)

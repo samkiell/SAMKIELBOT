@@ -69,14 +69,14 @@ export default function Register() {
     const phoneRegex = /^\d{8,15}$/;
     if (!phoneRegex.test(formData.whatsappNumber)) {
       toast.error(
-        "Please enter a valid WhatsApp number (only digits, 8–15 characters, no '+')."
+        "Please enter a valid WhatsApp number (only digits, 8–15 characters, no '+').",
       );
       return;
     }
 
     if (formData.whatsappNumber.startsWith("0")) {
       toast.error(
-        "Please include your country code and remove the leading '0' (e.g., 23481... instead of 081...)."
+        "Please include your country code and remove the leading '0' (e.g., 23481... instead of 081...).",
       );
       return;
     }
@@ -91,7 +91,7 @@ export default function Register() {
       const result = await register(formData);
       if (result) {
         toast.success(
-          "🎉 Registration successful! An OTP has been sent to your email."
+          "🎉 Registration successful! An OTP has been sent to your email.",
         );
 
         // Clear all flags after successful registration
@@ -109,7 +109,11 @@ export default function Register() {
   return (
     <div className="min-h-screen flex">
       <Head>
-        <title>Register - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <title>Create Your Account | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <meta
+          name="description"
+          content="Join SAMKIEL BOT and start deploying your WhatsApp bots today. Professional bot management platform."
+        />
       </Head>
 
       {/* Left side - Welcome section */}
@@ -237,7 +241,7 @@ export default function Register() {
                     const value = e.target.value;
                     if (value && !/^[\d]*$/.test(value)) {
                       toast.error(
-                        "Please enter only digits. Include country code but leave out the '+' sign."
+                        "Please enter only digits. Include country code but leave out the '+' sign.",
                       );
                       return;
                     }

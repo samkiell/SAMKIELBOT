@@ -11,7 +11,7 @@ const AuthProvider = dynamic(
   () => import("../lib/auth").then((mod) => mod.AuthProvider),
   {
     ssr: false,
-  }
+  },
 );
 
 export default function App({ Component, pageProps }) {
@@ -27,7 +27,7 @@ export default function App({ Component, pageProps }) {
           name="keywords"
           content="WhatsApp bot, bot deployment, SAMKIEL, automation, view once recovery"
         />
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="/logo.png?v=2" />
       </Head>
       <ThemeProvider>
         <AuthProvider>

@@ -212,7 +212,7 @@ export default function AdminNotifications() {
 
     // Confirmation dialog
     const confirmed = window.confirm(
-      `Are you sure you want to send this email to ALL verified users?\n\nSubject: ${emailBroadcastData.subject}\nPriority: ${emailBroadcastData.priority}\n\nThis action cannot be undone.`
+      `Are you sure you want to send this email to ALL verified users?\n\nSubject: ${emailBroadcastData.subject}\nPriority: ${emailBroadcastData.priority}\n\nThis action cannot be undone.`,
     );
     if (!confirmed) return;
 
@@ -235,7 +235,7 @@ export default function AdminNotifications() {
         const stats = data.data.stats;
         toast.success(
           `Email broadcast complete!\n${stats.sent}/${stats.totalRecipients} emails sent (${stats.successRate}% success)`,
-          { id: toastId, duration: 5000 }
+          { id: toastId, duration: 5000 },
         );
         setEmailBroadcastData({
           subject: "",
@@ -252,6 +252,49 @@ export default function AdminNotifications() {
     } catch (error) {
       console.error("Email broadcast error:", error);
       toast.error("Error sending email broadcast", { id: toastId });
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
+  // Resume Email Broadcast
+  const handleResumeEmailBroadcast = async (broadcastId) => {
+    // Confirmation dialog
+    const confirmed = window.confirm(
+      "Are you sure you want to resume this email broadcast? It will only send to users who haven't received it yet.",
+    );
+    if (!confirmed) return;
+
+    setSendingEmail(true);
+    const toastId = toast.loading("Resuming email broadcast...");
+
+    try {
+      const res = await fetch("/api/admin/email-broadcast/resume", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ broadcastId }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        const stats = data.data.stats;
+        toast.success(
+          `Broadcast resumed and finished!\n${stats.sent}/${stats.totalRecipients} total emails sent`,
+          { id: toastId, duration: 5000 },
+        );
+        fetchEmailBroadcasts(); // Refresh history
+      } else {
+        toast.error(data.message || "Failed to resume broadcast", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      console.error("Resume email broadcast error:", error);
+      toast.error("Error resuming broadcast", { id: toastId });
     } finally {
       setSendingEmail(false);
     }
@@ -589,7 +632,7 @@ export default function AdminNotifications() {
                         emailBroadcasts.map((broadcast) => (
                           <div
                             key={broadcast._id}
-                            className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600"
+                            className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600 group"
                           >
                             <div className="flex items-start justify-between gap-2 mb-1">
                               <h4 className="font-medium text-sm text-gray-800 dark:text-gray-200 truncate flex-1">
@@ -597,27 +640,43 @@ export default function AdminNotifications() {
                               </h4>
                               <span
                                 className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusBadge(
-                                  broadcast.status
+                                  broadcast.status,
                                 )}`}
                               >
                                 {broadcast.status}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                              <span>
-                                {format(
-                                  new Date(broadcast.createdAt),
-                                  "MMM d, HH:mm"
+                            <div className="flex items-center justify-between mt-1">
+                              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                                <span>
+                                  {format(
+                                    new Date(broadcast.createdAt),
+                                    "MMM d, HH:mm",
+                                  )}
+                                </span>
+                                <span>•</span>
+                                <span>
+                                  {broadcast.stats?.sent || 0}/
+                                  {broadcast.stats?.totalRecipients || 0} sent
+                                </span>
+                              </div>
+
+                              {broadcast.status === "partial" &&
+                                !sendingEmail && (
+                                  <button
+                                    onClick={() =>
+                                      handleResumeEmailBroadcast(broadcast._id)
+                                    }
+                                    className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  >
+                                    <FaPaperPlane size={8} /> RESUME
+                                  </button>
                                 )}
-                              </span>
-                              <span>•</span>
-                              <span>
-                                {broadcast.stats?.sent || 0}/
-                                {broadcast.stats?.totalRecipients || 0} sent
-                              </span>
+                            </div>
+                            <div className="mt-1">
                               <span
-                                className={`px-1.5 py-0.5 rounded ${getPriorityBadge(
-                                  broadcast.priority
+                                className={`px-1.5 py-0.5 rounded text-[10px] ${getPriorityBadge(
+                                  broadcast.priority,
                                 )}`}
                               >
                                 {broadcast.priority}

@@ -920,7 +920,7 @@ export default function AdminNotifications() {
                         </span>
                         <span className="text-gray-900 dark:text-white font-medium truncate">
                           {emailBroadcastData.senderName || "Samkiel Bot"}{" "}
-                          &lt;no-reply@samkielbot.app&gt;
+                          &lt;info@samkielbot.app&gt;
                         </span>
                       </div>
                     </div>

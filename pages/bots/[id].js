@@ -380,6 +380,10 @@ export default function BotManagementPage() {
                   value={formatCredits(deployment.dailyBurn || 5)}
                 />
                 <BillingItem
+                  label="Creation Cost"
+                  value={formatCredits(deployment.creationCost || 50)}
+                />
+                <BillingItem
                   label="Total Credits Consumed"
                   value={formatCredits(deployment.totalCreditsSpent || 50)}
                 />
@@ -407,22 +411,6 @@ export default function BotManagementPage() {
                   })}
                   sub={getRelativeTime(deployment.nextRenewalAt)}
                 />
-              </div>
-
-              {/* Billing Info */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center text-sm border-b border-white/5 pb-3">
-                  <span className="text-gray-400">Creation Cost</span>
-                  <span className="font-mono text-white">
-                    {deployment.creationCost || 50} Credits
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-sm border-b border-white/5 pb-3">
-                  <span className="text-gray-400">Total Spent</span>
-                  <span className="font-mono text-white">
-                    {deployment.totalCreditsSpent || 50} Credits
-                  </span>
-                </div>
               </div>
             </div>
             <div className="mt-10 pt-8 border-t border-white/5">

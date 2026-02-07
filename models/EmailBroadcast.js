@@ -56,6 +56,13 @@ const emailBroadcastSchema = new mongoose.Schema(
       sent: { type: Number, default: 0 },
       failed: { type: Number, default: 0 },
     },
+    // List of email addresses that have already received this broadcast
+    sentEmails: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
     // Failed email addresses (for debugging/retry)
     failedEmails: [
       {
@@ -73,7 +80,7 @@ const emailBroadcastSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Index for efficient queries

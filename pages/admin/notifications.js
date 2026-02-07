@@ -635,7 +635,9 @@ export default function AdminNotifications() {
                 </h2>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded border border-yellow-200 dark:border-yellow-800">
                   ⚠️ This will send an email to ALL verified users. Use
-                  carefully.
+                  carefully. <br />
+                  <b>Tip:</b> Use <code>@user</code> in the message to
+                  automatically insert the recipient's first name.
                 </p>
                 <form onSubmit={handleEmailBroadcast} className="space-y-4">
                   <div>

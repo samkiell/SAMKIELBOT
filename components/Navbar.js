@@ -48,8 +48,8 @@ const MobileNavLink = ({
       active
         ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
         : variant === "admin"
-        ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
-        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white"
+          ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/30"
+          : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white"
     }`}
   >
     <Icon
@@ -115,7 +115,7 @@ export default function Navbar() {
         >
           <div className="relative">
             <Image
-              src="/logo.png?v=2"
+              src="/logo.png"
               alt="SAMKIEL BOT Logo"
               width={42}
               height={42}
@@ -285,8 +285,8 @@ export default function Navbar() {
                   theme === "light"
                     ? "dark"
                     : theme === "dark"
-                    ? "system"
-                    : "light";
+                      ? "system"
+                      : "light";
                 toggleTheme(next);
               }}
               className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all hover:scale-110"
@@ -327,8 +327,8 @@ export default function Navbar() {
                 theme === "light"
                   ? "dark"
                   : theme === "dark"
-                  ? "system"
-                  : "light";
+                    ? "system"
+                    : "light";
               toggleTheme(next);
             }}
             className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"

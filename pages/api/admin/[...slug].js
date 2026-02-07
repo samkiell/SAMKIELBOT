@@ -9,6 +9,7 @@ import {
   controlBot,
   suspendBot,
   deleteBot,
+  billBotArrears,
   syncNodes,
   getNodes,
   getAuditLogs,
@@ -204,6 +205,18 @@ export default async function handler(req, res) {
         ) {
           req.params = { id: slug[1] };
           return await suspendBot(req, res);
+        }
+
+        // Route: POST /api/admin/bots/:id/bill-arrears
+        if (
+          slug &&
+          slug[0] === "bots" &&
+          slug[1] &&
+          slug[2] === "bill-arrears" &&
+          method === "POST"
+        ) {
+          req.params = { id: slug[1] };
+          return await billBotArrears(req, res);
         }
 
         // Route: POST /api/admin/bots/:id/throttle

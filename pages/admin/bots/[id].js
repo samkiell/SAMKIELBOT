@@ -100,7 +100,7 @@ export default function AdminBotDetailsPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to fetch bot data");
@@ -145,7 +145,7 @@ export default function AdminBotDetailsPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ signal }),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to perform action");
@@ -155,6 +155,37 @@ export default function AdminBotDetailsPage() {
     } catch (err) {
       console.error("Power action error:", err);
       toast.error(`Failed to ${signal} bot`);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleBillDiscrepancy = async (amount) => {
+    if (!token || !deployment.user?._id) return;
+
+    setActionLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/bots/${deployment._id}/bill-arrears`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount,
+          }),
+        },
+      );
+
+      if (!response.ok) throw new Error("Failed to bill user");
+
+      toast.success(`Successfully billed user ${amount} credits!`);
+      fetchDeploymentStatus();
+    } catch (err) {
+      console.error("Billing error:", err);
+      toast.error("Failed to bill user for discrepancy");
     } finally {
       setActionLoading(false);
     }
@@ -241,7 +272,7 @@ export default function AdminBotDetailsPage() {
                       deployment.status,
                       deployment.resources,
                       deployment.lastHeartbeatAt,
-                      currentTime
+                      currentTime,
                     )}
                   </span>
                 </div>
@@ -362,6 +393,49 @@ export default function AdminBotDetailsPage() {
                     {new Date(deployment.nextRenewalAt).toLocaleDateString()}
                   </span>
                 </div>
+
+                {/* Billing Correction Block */}
+                {(() => {
+                  const runningDays = getRunningDays(deployment.deployedAt);
+                  const expectedCredits =
+                    runningDays * (deployment.dailyBurn || 5) +
+                    (deployment.creationCost || 50);
+                  const actualCredits = deployment.totalCreditsSpent || 50;
+                  const discrepancy = expectedCredits - actualCredits;
+
+                  if (discrepancy > 5) {
+                    return (
+                      <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                        <div className="flex items-center gap-2 mb-3 text-red-500">
+                          <AlertCircle size={16} />
+                          <span className="text-xs font-bold uppercase tracking-wider">
+                            Under-billed Detection
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+                          This bot has been running for{" "}
+                          <span className="text-white font-bold">
+                            {runningDays} days
+                          </span>{" "}
+                          but has only consumed{" "}
+                          <span className="text-white font-bold">
+                            {actualCredits} credits
+                          </span>
+                          . Expected: {expectedCredits}.
+                        </p>
+                        <button
+                          onClick={() => handleBillDiscrepancy(discrepancy)}
+                          disabled={actionLoading}
+                          className="w-full py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+                        >
+                          <CreditCard size={14} />
+                          Bill Arrears ({discrepancy} Credits)
+                        </button>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
             </div>
           </div>
@@ -462,7 +536,7 @@ export default function AdminBotDetailsPage() {
                     <div className="flex flex-wrap gap-2">
                       {Object.entries(deployment.configuration.featureToggles)
                         .filter(
-                          ([_, value]) => value === true || value === "true"
+                          ([_, value]) => value === true || value === "true",
                         )
                         .map(([key]) => (
                           <span
@@ -473,9 +547,9 @@ export default function AdminBotDetailsPage() {
                           </span>
                         ))}
                       {Object.entries(
-                        deployment.configuration.featureToggles
+                        deployment.configuration.featureToggles,
                       ).filter(
-                        ([_, value]) => value === true || value === "true"
+                        ([_, value]) => value === true || value === "true",
                       ).length === 0 && (
                         <span className="text-xs text-gray-400 italic">
                           No specific features enabled
@@ -548,7 +622,7 @@ function formatUptime(
   status,
   resources,
   lastHeartbeatAt,
-  currentTime
+  currentTime,
 ) {
   if (status === "offline" || status === "stopped") return "Offline";
 
@@ -558,8 +632,8 @@ function formatUptime(
   const lastUpdate = resources?.lastUptimeUpdate
     ? new Date(resources.lastUptimeUpdate).getTime()
     : lastHeartbeatAt
-    ? new Date(lastHeartbeatAt).getTime()
-    : Date.now();
+      ? new Date(lastHeartbeatAt).getTime()
+      : Date.now();
 
   const elapsedSinceUpdate = currentTime - lastUpdate;
 
@@ -590,4 +664,13 @@ function formatUptime(
   } else {
     return `${seconds}s`;
   }
+}
+
+function getRunningDays(deployedAt) {
+  if (!deployedAt) return 0;
+  const deployDate = new Date(deployedAt);
+  const now = new Date();
+  const diffTime = Math.abs(now - deployDate);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 }

@@ -33,10 +33,10 @@ export default function Privacy() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-800 dark:text-gray-100 py-12 px-6 transition-colors duration-300 font-sans">
       <Head>
-        <title>Privacy Policy | SAMKIEL BOT</title>
+        <title>Privacy Policy | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         <meta
           name="description"
-          content="How we handle your data (Hint: With extreme care and zero spying)."
+          content="Privacy Policy for 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋. Learn how we handle your data with care and transparency."
         />
       </Head>
 

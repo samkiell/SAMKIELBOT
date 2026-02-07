@@ -52,7 +52,7 @@ export default function Support() {
           element.classList.add("ring-4", "ring-indigo-300");
           setTimeout(
             () => element.classList.remove("ring-4", "ring-indigo-300"),
-            2000
+            2000,
           );
         }, 500);
       }
@@ -165,10 +165,10 @@ export default function Support() {
     <>
       <div className="bg-white dark:bg-slate-900 min-h-screen">
         <Head>
-          <title>Support & Help Center | SAMKIEL BOT</title>
+          <title>Support & Help Center | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
           <meta
             name="description"
-            content="Get help with SAMKIEL BOT. Connect with our community, reach out for direct support, or find answers in our FAQ."
+            content="Get help with 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋. Connect with our community, reach out for direct support, or find answers in our FAQ."
           />
         </Head>
 

@@ -79,7 +79,11 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       <Head>
-        <title>Login - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <title>Login | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <meta
+          name="description"
+          content="Sign in to your SAMKIEL BOT account to manage your WhatsApp bots, monitor status, and deploy new instances."
+        />
       </Head>
 
       {/* Left side - Welcome section */}

@@ -73,7 +73,7 @@ export default function Verify() {
                 </a>
               </div>
             ),
-            { duration: null, icon: "📢" }
+            { duration: null, icon: "📢" },
           );
         }, 1000);
         const updatedUser = await refreshUser();
@@ -126,7 +126,11 @@ export default function Verify() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center px-4">
       <Head>
-        <title>Verify Account - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <title>Verify Account | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <meta
+          name="description"
+          content="Verify your account to start deploying WhatsApp bots on 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋."
+        />
       </Head>
 
       <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-8 border border-gray-100 dark:border-gray-700">

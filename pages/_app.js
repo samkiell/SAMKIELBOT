@@ -8,12 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import "react-quill/dist/quill.snow.css";
 
-const AuthProvider = dynamic(
-  () => import("../lib/auth").then((mod) => mod.AuthProvider),
-  {
-    ssr: false,
-  },
-);
+import { AuthProvider } from "../lib/auth";
 
 export default function App({ Component, pageProps }) {
   return (

@@ -749,56 +749,11 @@ export default function AdminNotifications() {
                       </div>
                     </div>
 
-                    {/* Attachments Section */}
+                    {/* Attachments Section - Disabled as per request
                     <div className="mt-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                          <FaPaperclip /> Attachments ({attachments.length})
-                        </label>
-                        <label className="cursor-pointer text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2">
-                          <FaFolderOpen /> Add Files
-                          <input
-                            type="file"
-                            multiple
-                            onChange={handleFileChange}
-                            className="hidden"
-                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                          />
-                        </label>
-                      </div>
-
-                      {attachments.length > 0 && (
-                        <div className="grid grid-cols-1 gap-2 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-gray-200 dark:border-gray-700 max-h-40 overflow-y-auto">
-                          {attachments.map((att) => (
-                            <div
-                              key={att.id}
-                              className="flex items-center justify-between bg-white dark:bg-gray-800 p-2 rounded border border-gray-100 dark:border-gray-700 shadow-sm"
-                            >
-                              <div className="flex items-center gap-3 overflow-hidden">
-                                <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded text-indigo-600 dark:text-indigo-400">
-                                  <FaFileAlt />
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="text-sm font-medium truncate dark:text-gray-200">
-                                    {att.filename}
-                                  </p>
-                                  <p className="text-xs text-gray-500">
-                                    {(att.size / 1024).toFixed(1)} KB
-                                  </p>
-                                </div>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => removeAttachment(att.id)}
-                                className="text-gray-400 hover:text-red-500 p-1 transition-colors"
-                              >
-                                <FaTimes />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      ...
                     </div>
+                    */}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">

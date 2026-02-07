@@ -38,7 +38,7 @@ export default function Dashboard() {
           if (result.success) {
             toast.success(
               `Payment successful! ${result.data.credits} credits added to your account.`,
-              { id: verificationToast, duration: 5000 }
+              { id: verificationToast, duration: 5000 },
             );
 
             // Refresh user data to update credit balance
@@ -55,7 +55,7 @@ export default function Dashboard() {
           console.error("Payment verification error:", error);
           toast.error(
             error.response?.data?.message || "Failed to verify payment",
-            { id: verificationToast }
+            { id: verificationToast },
           );
         } finally {
           setVerifyingPayment(false);
@@ -103,7 +103,7 @@ export default function Dashboard() {
             "starting",
             "awaiting_pairing",
             "paired",
-          ].includes(d.status)
+          ].includes(d.status),
         ).length;
 
         if (activeBotsCount > 0) {
@@ -140,7 +140,7 @@ export default function Dashboard() {
                   border: "1px solid rgba(255,255,255,0.1)",
                   padding: "16px",
                 },
-              }
+              },
             );
           }
         }
@@ -174,7 +174,11 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>Dashboard - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <title>Dashboard | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <meta
+          name="description"
+          content="Manage your WhatsApp bots, monitor status, and deploy new instances from your SAMKIEL BOT dashboard."
+        />
       </Head>
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8 pt-4 md:pt-0 min-h-screen">

@@ -94,10 +94,10 @@ export default function CommandsPage({ commands, lastUpdated }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white transition-colors duration-300 font-sans">
       <Head>
-        <title>Bot Command Reference | SAMKIEL BOT - Deployment Platform</title>
+        <title>Command Reference | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         <meta
           name="description"
-          content={`Explore ${commands.length} powerful commands available on SAMKIEL BOT - Deployment Platform.`}
+          content={`Explore ${commands.length} powerful commands available on the 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 platform. Automated documentation for your WhatsApp bot.`}
         />
       </Head>
 

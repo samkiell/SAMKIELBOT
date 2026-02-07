@@ -449,7 +449,7 @@ export default function AdminNotifications() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column: Broadcast Form */}
         <div className="lg:col-span-1">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
@@ -597,13 +597,7 @@ export default function AdminNotifications() {
                         Message <span className="text-red-500">*</span>
                       </span>
                       <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setShowPreview(true)}
-                          className="text-xs flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline"
-                        >
-                          <FaEye /> Preview
-                        </button>
+                        {/* Preview Button Removed */}
                         <button
                           type="button"
                           onClick={() => setIsEditorExpanded(!isEditorExpanded)}
@@ -876,232 +870,318 @@ export default function AdminNotifications() {
           </div>
         </div>
 
-        {/* Right Column: History Table */}
-        <div className="lg:col-span-2">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Broadcast History
-              </h2>
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                <input
-                  type="text"
-                  placeholder="Search messages..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
-                />
-                <input
-                  type="text"
-                  placeholder="Filter by User (Username/Email)"
-                  value={userSearch}
-                  onChange={(e) => setUserSearch(e.target.value)}
-                  className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
-                />
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
-                >
-                  <option value="all">All Types</option>
-                  <option value="info">Info</option>
-                  <option value="success">Success</option>
-                  <option value="warning">Warning</option>
-                  <option value="error">Error</option>
-                  <option value="update">Update</option>
-                  <option value="maintenance">Maintenance</option>
-                  <option value="announcement">Announcement</option>
-                </select>
-              </div>
-              <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
-                {notifications.length} Found | Page {currentPage} of{" "}
-                {totalPages || 1}
-              </span>
-            </div>
+        {/* Right Column: Live Preview */}
+        <div className="hidden lg:block">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+              <FaEye className="text-indigo-500" /> Live Preview
+            </h2>
 
-            {loading ? (
-              <div className="p-12 text-center text-gray-500">
-                Loading history...
-              </div>
-            ) : notifications.length === 0 ? (
-              <div className="p-12 text-center text-gray-500">
-                No matching notifications found.
+            {activeTab === "email" ? (
+              <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
+                <div className="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-200 dark:border-gray-700 space-y-2">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1 w-full">
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                        <span className="font-medium text-gray-700 dark:text-gray-300 w-16">
+                          Subject:
+                        </span>
+                        <span className="text-gray-900 dark:text-white font-medium truncate">
+                          {emailBroadcastData.subject || "(No Subject)"}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                        <span className="font-medium text-gray-700 dark:text-gray-300 w-16">
+                          To:
+                        </span>
+                        <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
+                          All Verified Users
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Email Body Preview - Always Light Mode specific for Email simulation usually */}
+                <div className="p-6 bg-white min-h-[400px] overflow-y-auto max-h-[600px]">
+                  <div
+                    className="prose max-w-none text-gray-900"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        emailBroadcastData.message ||
+                        "<p class='text-gray-400 italic text-center mt-10'>Start composing your email to see the preview here...</p>",
+                    }}
+                  />
+
+                  {/* Attachments Preview */}
+                  {attachments.length > 0 && (
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                        Attachments
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {attachments.map((att) => (
+                          <div
+                            key={att.id}
+                            className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600"
+                          >
+                            <FaFileAlt className="text-indigo-400" />
+                            <span className="truncate max-w-[150px]">
+                              {att.filename}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                      <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
-                        Type
-                      </th>
-                      <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
-                        Content
-                      </th>
-                      <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
-                        Recipient
-                      </th>
-                      <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
-                        Date
-                      </th>
-                      <th className="p-4 font-semibold text-gray-600 dark:text-gray-300 text-right">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedNotifications.map((notif) => (
-                      <tr
-                        key={notif._id}
-                        className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
-                      >
-                        <td className="p-4 align-top w-24">
-                          <div className="flex flex-col items-center gap-1">
-                            {getIcon(notif.type)}
-                            <span className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">
-                              {notif.type}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="p-4 align-top">
-                          <div className="font-semibold text-gray-800 dark:text-gray-200 mb-1">
-                            {notif.title}
-                          </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
-                            {notif.message}
-                          </p>
-                        </td>
-                        <td className="p-4 align-top text-sm">
-                          {notif.user ? (
-                            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded text-xs font-bold">
-                              {typeof notif.user === "object"
-                                ? notif.user.username
-                                : "User"}
-                            </span>
-                          ) : (
-                            <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded text-xs font-bold">
-                              BROADCAST
-                            </span>
-                          )}
-                        </td>
-                        <td className="p-4 align-top whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 w-32">
-                          {format(new Date(notif.createdAt), "MMM d, HH:mm")}
-                        </td>
-                        <td className="p-4 align-top text-right w-16">
-                          <button
-                            onClick={() => handleDelete(notif._id)}
-                            className="text-gray-400 hover:text-red-500 transition p-1"
-                            title="Delete Log"
-                          >
-                            <FaTrash size={14} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {/* Pagination Controls */}
-            {notifications.length > itemsPerPage && (
-              <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Showing {startIndex + 1} -{" "}
-                  {Math.min(endIndex, notifications.length)} of{" "}
-                  {notifications.length}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setCurrentPage(1)}
-                    disabled={currentPage === 1}
-                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                  >
-                    First
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                  >
-                    <FaChevronLeft size={12} />
-                  </button>
-
-                  {/* Page Numbers */}
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      let pageNum;
-                      if (totalPages <= 5) {
-                        pageNum = i + 1;
-                      } else if (currentPage <= 3) {
-                        pageNum = i + 1;
-                      } else if (currentPage >= totalPages - 2) {
-                        pageNum = totalPages - 4 + i;
-                      } else {
-                        pageNum = currentPage - 2 + i;
-                      }
-                      return (
-                        <button
-                          key={pageNum}
-                          onClick={() => setCurrentPage(pageNum)}
-                          className={`px-3 py-1.5 text-sm rounded-md transition ${
-                            currentPage === pageNum
-                              ? "bg-indigo-600 text-white"
-                              : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      );
-                    })}
+              <div className="space-y-4">
+                <div
+                  className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-100 dark:border-gray-700 border-l-4"
+                  style={{
+                    borderLeftColor:
+                      formData.type === "error"
+                        ? "#ef4444"
+                        : formData.type === "warning"
+                          ? "#f59e0b"
+                          : "#6366f1",
+                  }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-1">{getIcon(formData.type)}</div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
+                        {formData.title || "Notification Title"}
+                      </h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
+                        {formData.message ||
+                          "Notification message content will appear here..."}
+                      </p>
+                      {formData.link && (
+                        <div className="mt-2">
+                          <span className="text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:underline flex items-center gap-1">
+                            {formData.linkText || "Action"}{" "}
+                            <FaChevronRight size={10} />
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-400 whitespace-nowrap">
+                      Just now
+                    </span>
                   </div>
-
-                  <button
-                    onClick={() =>
-                      setCurrentPage((p) => Math.min(totalPages, p + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                  >
-                    <FaChevronRight size={12} />
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage(totalPages)}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                  >
-                    Last
-                  </button>
                 </div>
+                <p className="text-center text-xs text-gray-500">
+                  Preview of how the user will see the notification card.
+                </p>
               </div>
             )}
           </div>
         </div>
       </div>
-      {/* Email Preview Modal */}
-      {showPreview && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col relative w-full h-full max-w-none max-h-none md:max-w-4xl md:max-h-[90vh]">
-            <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 z-10">
-              <h3 className="font-bold text-lg dark:text-white">
-                Email Preview
-              </h3>
-              <button
-                onClick={() => setShowPreview(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                <FaTimes size={20} />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900">
-              <div
-                className="max-w-2xl mx-auto bg-white rounded-lg shadow p-8 email-content prose dark:prose-invert"
-                dangerouslySetInnerHTML={{ __html: emailBroadcastData.message }}
+
+      {/* Broadcast History Table - Moved to Bottom */}
+      <div className="mt-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h2 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+              <FaHistory className="text-indigo-500" /> Broadcast History
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <input
+                type="text"
+                placeholder="Search messages..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
               />
+              <input
+                type="text"
+                placeholder="Filter by User (Username/Email)"
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
+              />
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
+              >
+                <option value="all">All Types</option>
+                <option value="info">Info</option>
+                <option value="success">Success</option>
+                <option value="warning">Warning</option>
+                <option value="error">Error</option>
+                <option value="update">Update</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="announcement">Announcement</option>
+              </select>
             </div>
+            <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+              {notifications.length} Found | Page {currentPage} of{" "}
+              {totalPages || 1}
+            </span>
           </div>
+
+          {loading ? (
+            <div className="p-12 text-center text-gray-500">
+              Loading history...
+            </div>
+          ) : notifications.length === 0 ? (
+            <div className="p-12 text-center text-gray-500">
+              No matching notifications found.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
+                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
+                      Type
+                    </th>
+                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
+                      Content
+                    </th>
+                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
+                      Recipient
+                    </th>
+                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
+                      Date
+                    </th>
+                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300 text-right">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedNotifications.map((notif) => (
+                    <tr
+                      key={notif._id}
+                      className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
+                    >
+                      <td className="p-4 align-top w-24">
+                        <div className="flex flex-col items-center gap-1">
+                          {getIcon(notif.type)}
+                          <span className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">
+                            {notif.type}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-4 align-top">
+                        <div className="font-semibold text-gray-800 dark:text-gray-200 mb-1">
+                          {notif.title}
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
+                          {notif.message}
+                        </p>
+                      </td>
+                      <td className="p-4 align-top text-sm">
+                        {notif.user ? (
+                          <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded text-xs font-bold">
+                            {typeof notif.user === "object"
+                              ? notif.user.username
+                              : "User"}
+                          </span>
+                        ) : (
+                          <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded text-xs font-bold">
+                            BROADCAST
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4 align-top whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 w-32">
+                        {format(new Date(notif.createdAt), "MMM d, HH:mm")}
+                      </td>
+                      <td className="p-4 align-top text-right w-16">
+                        <button
+                          onClick={() => handleDelete(notif._id)}
+                          className="text-gray-400 hover:text-red-500 transition p-1"
+                          title="Delete Log"
+                        >
+                          <FaTrash size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {notifications.length > itemsPerPage && (
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Showing {startIndex + 1} -{" "}
+                {Math.min(endIndex, notifications.length)} of{" "}
+                {notifications.length}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  First
+                </button>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  <FaChevronLeft size={12} />
+                </button>
+
+                {/* Page Numbers */}
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`px-3 py-1.5 text-sm rounded-md transition ${
+                          currentPage === pageNum
+                            ? "bg-indigo-600 text-white"
+                            : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  <FaChevronRight size={12} />
+                </button>
+                <button
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  Last
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </AdminLayout>
   );
 }

@@ -46,7 +46,7 @@ export default function ProfilePage() {
     const { name, value } = e.target;
     if (name === "whatsappNumber" && value && !/^[\d]*$/.test(value)) {
       toast.error(
-        "Please enter only digits. Include country code but leave out the '+' sign."
+        "Please enter only digits. Include country code but leave out the '+' sign.",
       );
       return;
     }
@@ -94,7 +94,7 @@ export default function ProfilePage() {
         {
           method: "POST",
           body: formDataUpload,
-        }
+        },
       );
 
       const data = await response.json();
@@ -126,12 +126,12 @@ export default function ProfilePage() {
     if (formData.whatsappNumber) {
       if (!phoneRegex.test(formData.whatsappNumber.trim())) {
         return toast.error(
-          "Invalid WhatsApp number. Please use international format (10-15 digits, no '+')."
+          "Invalid WhatsApp number. Please use international format (10-15 digits, no '+').",
         );
       }
       if (formData.whatsappNumber.trim().startsWith("0")) {
         return toast.error(
-          "Please include your country code and remove the leading '0' (example: 23481... instead of 081...)."
+          "Please include your country code and remove the leading '0' (example: 23481... instead of 081...).",
         );
       }
     }
@@ -235,7 +235,11 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
       <Head>
-        <title>Profile - </title>
+        <title>Account Profile | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <meta
+          name="description"
+          content="Manage your account profile, update personal information, and change your password on SAMKIEL BOT."
+        />
       </Head>
 
       <main className="container mx-auto px-4 pb-8 md:pb-16 max-w-2xl">

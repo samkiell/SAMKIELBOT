@@ -19,10 +19,10 @@ export default function HowBillingWorks() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white pb-20">
       <Head>
-        <title>How Billing Works - SAMKIEL BOT</title>
+        <title>How Billing Works | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         <meta
           name="description"
-          content="An honest explanation of why credits exist and how they power your WhatsApp bots."
+          content="An honest explanation of why credits exist and how they power your WhatsApp bots on the 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 platform."
         />
       </Head>
 

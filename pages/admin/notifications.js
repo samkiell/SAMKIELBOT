@@ -983,29 +983,29 @@ export default function AdminNotifications() {
               <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
                 <div className="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-200 dark:border-gray-700 space-y-2">
                   <div className="flex justify-between items-start">
-                    <div className="space-y-1 w-full">
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                        <span className="font-medium text-gray-700 dark:text-gray-300 w-16">
+                    <div className="space-y-2 w-full">
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                        <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
                           Subject:
                         </span>
-                        <span className="text-gray-900 dark:text-white font-medium truncate">
+                        <span className="text-gray-900 dark:text-white font-medium break-words flex-1">
                           {emailBroadcastData.subject || "(No Subject)"}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                        <span className="font-medium text-gray-700 dark:text-gray-300 w-16">
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                        <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
                           To:
                         </span>
                         <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
                           All Verified Users
                         </span>
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                        <span className="font-medium text-gray-700 dark:text-gray-300 w-16">
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                        <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
                           From:
                         </span>
-                        <span className="text-gray-900 dark:text-white font-medium truncate">
-                          {emailBroadcastData.senderName || "Samkiel Bot"}{" "}
+                        <span className="text-gray-900 dark:text-white font-medium truncate flex-1">
+                          {emailBroadcastData.senderName || "Ezekiel"}{" "}
                           &lt;info@samkielbot.app&gt;
                         </span>
                       </div>

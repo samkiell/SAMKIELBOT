@@ -191,9 +191,9 @@ app
 
       // Initialize Bot Health Monitoring and Infra Orchestrator in the background after server is live
       setTimeout(() => {
-        botHealthService.initializeAllMonitors().catch((err) => {
-          console.error("[BotHealth] background init error:", err);
-        });
+        // botHealthService.initializeAllMonitors().catch((err) => {
+        //   console.error("[BotHealth] background init error:", err);
+        // });
 
         infraOrchestrator.start().catch((err) => {
           console.error("[InfraOrchestrator] background init error:", err);

@@ -53,6 +53,7 @@ export default function AdminNotifications() {
   const [emailBroadcastData, setEmailBroadcastData] = useState({
     subject: "",
     message: "",
+    senderName: "Ezekiel", // Default Sender Name
     announcementType: "general",
     priority: "normal",
   });
@@ -303,6 +304,7 @@ export default function AdminNotifications() {
         setEmailBroadcastData({
           subject: "",
           message: "",
+          senderName: "Samkiel Bot",
           announcementType: "general",
           priority: "normal",
         });
@@ -589,6 +591,25 @@ export default function AdminNotifications() {
                     <p className="text-xs text-gray-400 mt-1">
                       {emailBroadcastData.subject.length}/200
                     </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Sender Name <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="senderName"
+                      value={emailBroadcastData.senderName}
+                      onChange={handleEmailChange}
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                    >
+                      <option value="Samkiel Bot">Samkiel Bot</option>
+                      <option value="Samkiel">Samkiel</option>
+                      <option value="Jerry from Samkiel Bot">
+                        Jerry from Samkiel Bot
+                      </option>
+                      <option value="Samkiel Support">Samkiel Support</option>
+                    </select>
                   </div>
 
                   <div>
@@ -896,6 +917,15 @@ export default function AdminNotifications() {
                         </span>
                         <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
                           All Verified Users
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                        <span className="font-medium text-gray-700 dark:text-gray-300 w-16">
+                          From:
+                        </span>
+                        <span className="text-gray-900 dark:text-white font-medium truncate">
+                          {emailBroadcastData.senderName || "Samkiel Bot"}{" "}
+                          &lt;no-reply@samkielbot.app&gt;
                         </span>
                       </div>
                     </div>

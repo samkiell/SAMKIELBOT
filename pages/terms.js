@@ -33,10 +33,10 @@ export default function Terms() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-800 dark:text-gray-100 py-12 px-6 transition-colors duration-300">
       <Head>
-        <title>Terms & Conditions | SAMKIEL BOT</title>
+        <title>Terms & Conditions | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         <meta
           name="description"
-          content="The ground rules for using SAMKIEL BOT. Plain English, zero fluff."
+          content="The ground rules for using 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋. Clear terms of service for our users."
         />
       </Head>
 

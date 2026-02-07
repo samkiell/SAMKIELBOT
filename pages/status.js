@@ -177,10 +177,10 @@ export default function StatusPage() {
     <Layout>
       <div className="bg-white dark:bg-slate-900 min-h-screen">
         <Head>
-          <title>System Status | SAMKIEL BOT</title>
+          <title>System Status | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
           <meta
             name="description"
-            content="Real-time status of SAMKIEL BOT platform services and infrastructure."
+            content="Real-time status of 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 platform services and infrastructure."
           />
         </Head>
 

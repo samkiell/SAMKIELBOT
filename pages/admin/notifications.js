@@ -35,6 +35,143 @@ import dynamic from "next/dynamic";
 // Dynamic import for ReactQuill to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
+/* Notification Preview Component */
+const NotificationPreview = ({
+  activeTab,
+  emailBroadcastData,
+  formData,
+  attachments = [],
+}) => {
+  // Helper for icons
+  const getIcon = (type) => {
+    switch (type) {
+      case "success":
+        return <FaCheckCircle className="text-green-500" />;
+      case "warning":
+        return <FaExclamationTriangle className="text-yellow-500" />;
+      case "error":
+        return <FaTimesCircle className="text-red-500" />;
+      case "offer":
+        return <FaTag className="text-emerald-500" />;
+      default:
+        return <FaInfoCircle className="text-blue-500" />;
+    }
+  };
+
+  if (activeTab === "email") {
+    return (
+      <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm h-full flex flex-col">
+        <div className="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-200 dark:border-gray-700 space-y-2 flex-shrink-0">
+          <div className="flex justify-between items-start">
+            <div className="space-y-2 w-full">
+              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
+                  Subject:
+                </span>
+                <span className="text-gray-900 dark:text-white font-medium break-words flex-1">
+                  {emailBroadcastData.subject || "(No Subject)"}
+                </span>
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
+                  To:
+                </span>
+                <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
+                  All Verified Users
+                </span>
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
+                  From:
+                </span>
+                <span className="text-gray-900 dark:text-white font-medium truncate flex-1">
+                  {emailBroadcastData.senderName || "Ezekiel"}{" "}
+                  &lt;info@samkielbot.app&gt;
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Email Body Preview */}
+        <div className="p-6 bg-white flex-1 overflow-y-auto min-h-[400px]">
+          <div
+            className="prose max-w-none text-gray-900"
+            dangerouslySetInnerHTML={{
+              __html:
+                emailBroadcastData.message ||
+                "<p class='text-gray-400 italic text-center mt-10'>Start composing your email to see the preview here...</p>",
+            }}
+          />
+
+          {/* Attachments Preview */}
+          {attachments.length > 0 && (
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                Attachments
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {attachments.map((att) => (
+                  <div
+                    key={att.id}
+                    className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600"
+                  >
+                    <FaFileAlt className="text-indigo-400" />
+                    <span className="truncate max-w-[150px]">
+                      {att.filename}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div
+        className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-100 dark:border-gray-700 border-l-4"
+        style={{
+          borderLeftColor:
+            formData.type === "error"
+              ? "#ef4444"
+              : formData.type === "warning"
+                ? "#f59e0b"
+                : "#6366f1",
+        }}
+      >
+        <div className="flex items-start gap-3">
+          <div className="mt-1">{getIcon(formData.type)}</div>
+          <div className="flex-1">
+            <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
+              {formData.title || "Notification Title"}
+            </h4>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
+              {formData.message ||
+                "Notification message content will appear here..."}
+            </p>
+            {formData.link && (
+              <div className="mt-2">
+                <span className="text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:underline flex items-center gap-1">
+                  {formData.linkText || "Action"} <FaChevronRight size={10} />
+                </span>
+              </div>
+            )}
+          </div>
+          <span className="text-xs text-gray-400 whitespace-nowrap">
+            Just now
+          </span>
+        </div>
+      </div>
+      <p className="text-center text-xs text-gray-500">
+        Preview of how the user will see the notification card.
+      </p>
+    </div>
+  );
+};
+
 export default function AdminNotifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);

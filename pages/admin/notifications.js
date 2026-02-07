@@ -838,23 +838,27 @@ export default function AdminNotifications() {
                       className={`${isEditorExpanded ? "fixed inset-0 z-50 bg-white dark:bg-gray-900 p-8 flex flex-col" : "relative"}`}
                     >
                       {isEditorExpanded && (
-                        <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
-                          <h3 className="text-xl font-bold dark:text-white">
+                        <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-4 flex-shrink-0">
+                          <h3 className="text-xl font-bold dark:text-white flex items-center gap-3">
                             Email Editor
+                            <span className="text-xs font-normal text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full border border-gray-200 dark:border-gray-700">
+                              Fullscreen Mode
+                            </span>
                           </h3>
                           <button
                             type="button"
                             onClick={() => setIsEditorExpanded(false)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
                           >
                             <FaTimes size={24} />
                           </button>
                         </div>
                       )}
 
-                      <div
-                        className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 ${isEditorExpanded ? "flex-1 flex flex-col" : ""}`}
-                      >
+                      <div className={`flex flex-1 gap-8 overflow-hidden`}>
+                        <div
+                          className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 flex flex-col ${isEditorExpanded ? "flex-1 h-full shadow-md" : "w-full"}`}
+                        >
                         <ReactQuill
                           theme="snow"
                           value={emailBroadcastData.message}

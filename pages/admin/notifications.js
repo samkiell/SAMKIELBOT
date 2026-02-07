@@ -282,7 +282,14 @@ export default function AdminNotifications() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(emailBroadcastData),
+        body: JSON.stringify({
+          ...emailBroadcastData,
+          attachments: attachments.map((att) => ({
+            filename: att.filename,
+            content: att.content,
+            contentType: att.contentType,
+          })),
+        }),
       });
 
       const data = await res.json();
@@ -299,6 +306,7 @@ export default function AdminNotifications() {
           announcementType: "general",
           priority: "normal",
         });
+        setAttachments([]); // Clear attachments
         fetchEmailBroadcasts(); // Refresh history
       } else {
         toast.error(data.message || "Failed to send email broadcast", {

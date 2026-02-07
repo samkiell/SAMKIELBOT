@@ -597,19 +597,14 @@ export default function AdminNotifications() {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Sender Name <span className="text-red-500">*</span>
                     </label>
-                    <select
+                    <input
+                      type="text"
                       name="senderName"
                       value={emailBroadcastData.senderName}
                       onChange={handleEmailChange}
                       className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                    >
-                      <option value="Samkiel Bot">Samkiel Bot</option>
-                      <option value="Samkiel">Samkiel</option>
-                      <option value="Jerry from Samkiel Bot">
-                        Jerry from Samkiel Bot
-                      </option>
-                      <option value="Samkiel Support">Samkiel Support</option>
-                    </select>
+                      placeholder="e.g. Samkiel Bot"
+                    />
                   </div>
 
                   <div>

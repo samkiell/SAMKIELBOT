@@ -41,7 +41,7 @@
 ## 🛠 Technology Stack
 
 ### Core
--   **Framework**: [Next.js 16.0.0](https://nextjs.org/) (React 18)
+-   **Framework**: [Next.js 16.1.6](https://nextjs.org/) (React 19)
 -   **Server**: Custom Node.js Express Server (`server.js`) to handle Socket.IO and Next.js pages simultaneously.
 -   **Language**: JavaScript (ES6+)
 

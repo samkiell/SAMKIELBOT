@@ -23,8 +23,6 @@ import Navbar from "../../components/Navbar";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
 
-let socket;
-
 export default function DeploymentSessionPage() {
   const router = useRouter();
   const { id } = router.query;
@@ -37,6 +35,7 @@ export default function DeploymentSessionPage() {
   const [logs, setLogs] = useState([]);
   const [activeTab, setActiveTab] = useState("logs"); // Default to logs during deployment
   const tabsRef = useRef(null);
+  const socketRef = useRef(null);
   const [pairingCodeTimestamp, setPairingCodeTimestamp] = useState(null);
   const [codeExpired, setCodeExpired] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
@@ -47,30 +46,31 @@ export default function DeploymentSessionPage() {
 
     // In a unified app, we connect to the current origin
     const socketUrl = process.env.NEXT_PUBLIC_API_URL || "";
-    socket = io(socketUrl, {
+    const s = io(socketUrl, {
       path: "/socket.io",
       transports: ["websocket", "polling"],
     });
+    socketRef.current = s;
 
-    socket.on("connect", () => {
+    s.on("connect", () => {
       console.log("[Socket.IO] Connected to", socketUrl);
-      socket.emit("join", id);
+      s.emit("join", id);
     });
 
-    socket.on("bot:status_change", (data) => {
+    s.on("bot:status_change", (data) => {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Status change:", data);
         fetchDeploymentStatus();
       }
     });
 
-    socket.on("bot:log", (data) => {
+    s.on("bot:log", (data) => {
       if (data.deploymentId === id) {
         setLogs((prev) => [...prev, data.log].slice(-100)); // Keep last 100 logs
       }
     });
 
-    socket.on("bot:pairing_code", (data) => {
+    s.on("bot:pairing_code", (data) => {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Pairing code received:", data.code);
         setDeployment((prev) => ({
@@ -88,7 +88,7 @@ export default function DeploymentSessionPage() {
       }
     });
 
-    socket.on("bot:connected", (data) => {
+    s.on("bot:connected", (data) => {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Bot connected!");
         // Reset pairing timer state
@@ -103,7 +103,7 @@ export default function DeploymentSessionPage() {
       }
     });
 
-    socket.on("bot:active", (data) => {
+    s.on("bot:active", (data) => {
       if (data.deploymentId === id) {
         console.log("[Socket.IO] Bot is now active!");
         fetchDeploymentStatus();
@@ -113,7 +113,7 @@ export default function DeploymentSessionPage() {
       }
     });
 
-    socket.on("bot:stats", (data) => {
+    s.on("bot:stats", (data) => {
       if (data.deploymentId === id) {
         setDeployment((prev) => {
           if (!prev) return prev;
@@ -131,7 +131,10 @@ export default function DeploymentSessionPage() {
     });
 
     return () => {
-      if (socket) socket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
   }, [id]);
 
@@ -161,7 +164,9 @@ export default function DeploymentSessionPage() {
       if (remaining <= 0) {
         setCodeExpired(true);
         clearInterval(interval);
-        toast.error("Pairing code expired. Please restart the bot to get a new code.");
+        toast.error(
+          "Pairing code expired. Please restart the bot to get a new code.",
+        );
       }
     }, 1000);
 
@@ -170,10 +175,14 @@ export default function DeploymentSessionPage() {
 
   // Initialize timer from deployment data when page loads
   useEffect(() => {
-    if (deployment?.pairingCode && deployment?.status === "awaiting_pairing" && !pairingCodeTimestamp) {
+    if (
+      deployment?.pairingCode &&
+      deployment?.status === "awaiting_pairing" &&
+      !pairingCodeTimestamp
+    ) {
       // If we have pairingCodeGeneratedAt from backend, use it; otherwise use now
-      const timestamp = deployment.pairingCodeGeneratedAt 
-        ? new Date(deployment.pairingCodeGeneratedAt).getTime() 
+      const timestamp = deployment.pairingCodeGeneratedAt
+        ? new Date(deployment.pairingCodeGeneratedAt).getTime()
         : Date.now();
       setPairingCodeTimestamp(timestamp);
     }
@@ -193,7 +202,7 @@ export default function DeploymentSessionPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -207,7 +216,7 @@ export default function DeploymentSessionPage() {
       // Auto-switch to overview if finished or pairing and current tab is still logs
       if (
         ["online", "active", "connected", "awaiting_pairing"].includes(
-          result.data.status
+          result.data.status,
         ) &&
         activeTab === "logs"
       ) {
@@ -245,7 +254,7 @@ export default function DeploymentSessionPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ signal }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -274,7 +283,7 @@ export default function DeploymentSessionPage() {
   const handleDelete = async () => {
     if (
       !confirm(
-        "Are you sure you want to delete this bot? This action cannot be undone."
+        "Are you sure you want to delete this bot? This action cannot be undone.",
       )
     ) {
       return;
@@ -292,7 +301,7 @@ export default function DeploymentSessionPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -565,7 +574,7 @@ export default function DeploymentSessionPage() {
                   disabled={
                     actionLoading ||
                     ["active", "connected", "online"].includes(
-                      deployment.status
+                      deployment.status,
                     )
                   }
                   className="group flex items-center px-8 py-3 bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white border border-green-500/20 hover:border-green-500 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-green-500/5 disabled:opacity-20 disabled:cursor-not-allowed"
@@ -622,7 +631,7 @@ export default function DeploymentSessionPage() {
                   value={
                     deployment.deployedAt || deployment.createdAt
                       ? new Date(
-                          deployment.deployedAt || deployment.createdAt
+                          deployment.deployedAt || deployment.createdAt,
                         ).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
@@ -635,7 +644,7 @@ export default function DeploymentSessionPage() {
 
             <div className="mt-8 pt-6 border-t border-white/5">
               {!["online", "active", "connected"].includes(
-                deployment.status
+                deployment.status,
               ) ? (
                 <div className="font-bold text-amber-400 flex items-center gap-2 text-xs uppercase tracking-widest">
                   <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
@@ -657,7 +666,7 @@ export default function DeploymentSessionPage() {
           className="flex gap-1 mb-8 bg-white/5 p-1 rounded-2xl w-fit border border-white/5"
         >
           {!["online", "active", "connected", "awaiting_pairing"].includes(
-            deployment.status
+            deployment.status,
           ) && (
             <TabButton
               active={activeTab === "logs"}
@@ -681,8 +690,8 @@ export default function DeploymentSessionPage() {
               logs={logs}
               status={deployment?.status}
               onCommand={(command) => {
-                if (socket) {
-                  socket.emit("terminal:command", {
+                if (socketRef.current) {
+                  socketRef.current.emit("terminal:command", {
                     deploymentId: id,
                     command,
                   });
@@ -704,22 +713,29 @@ export default function DeploymentSessionPage() {
               !["online", "active", "connected"].includes(deployment.status) ? (
                 <div className="bg-indigo-500/5 border border-indigo-500/20 p-8 rounded-2xl text-center relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500/30" />
-                  
+
                   {/* Expiration Timer */}
-                  <div className={`mb-4 text-sm font-bold ${timeRemaining <= 60 ? 'text-red-400' : 'text-amber-400'}`}>
+                  <div
+                    className={`mb-4 text-sm font-bold ${timeRemaining <= 60 ? "text-red-400" : "text-amber-400"}`}
+                  >
                     {codeExpired ? (
                       <span className="text-red-500">Code Expired</span>
                     ) : (
                       <span>
-                        Code expires in: {Math.floor(timeRemaining / 60)}:{String(timeRemaining % 60).padStart(2, '0')}
+                        Code expires in: {Math.floor(timeRemaining / 60)}:
+                        {String(timeRemaining % 60).padStart(2, "0")}
                       </span>
                     )}
                   </div>
-                  
+
                   {codeExpired ? (
                     <div className="py-8">
-                      <p className="text-red-400 font-bold mb-4">This pairing code has expired</p>
-                      <p className="text-gray-400 text-sm mb-6">Please restart the bot to generate a new pairing code</p>
+                      <p className="text-red-400 font-bold mb-4">
+                        This pairing code has expired
+                      </p>
+                      <p className="text-gray-400 text-sm mb-6">
+                        Please restart the bot to generate a new pairing code
+                      </p>
                       <button
                         onClick={() => handlePowerAction("restart")}
                         disabled={actionLoading}
@@ -761,7 +777,8 @@ export default function DeploymentSessionPage() {
                             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/5 flex items-center justify-center font-bold text-[10px] text-white/40">
                               2
                             </span>
-                            Navigate to <b>Settings</b> &gt; <b>Linked Devices</b>.
+                            Navigate to <b>Settings</b> &gt;{" "}
+                            <b>Linked Devices</b>.
                           </li>
                           <li className="flex gap-4">
                             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/5 flex items-center justify-center font-bold text-[10px] text-white/40">
@@ -780,7 +797,7 @@ export default function DeploymentSessionPage() {
                   <div
                     className={`p-4 rounded-2xl shadow-lg transition-all duration-1000 ${
                       ["online", "active", "connected"].includes(
-                        deployment.status
+                        deployment.status,
                       )
                         ? "bg-emerald-500/20 text-emerald-400 shadow-emerald-500/10"
                         : "bg-gray-500/10 text-gray-500"
@@ -791,14 +808,14 @@ export default function DeploymentSessionPage() {
                   <div>
                     <h4 className="font-bold text-xl">
                       {["online", "active", "connected"].includes(
-                        deployment.status
+                        deployment.status,
                       )
                         ? "Tunnel Established"
                         : "Synchronizing..."}
                     </h4>
                     <p className="text-sm text-gray-500 mt-1">
                       {["online", "active", "connected"].includes(
-                        deployment.status
+                        deployment.status,
                       )
                         ? "Securely bridged via Baileys API"
                         : "Waiting for handshake response"}
@@ -826,7 +843,7 @@ export default function DeploymentSessionPage() {
                   label="Active Modules"
                   value={`${
                     Object.values(
-                      deployment.configuration?.featureToggles || {}
+                      deployment.configuration?.featureToggles || {},
                     ).filter((v) => v !== "off" && v !== false).length
                   } / Total`}
                 />

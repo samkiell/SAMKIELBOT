@@ -60,7 +60,7 @@ const NotificationPreview = ({
 
   if (activeTab === "email") {
     return (
-      <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm h-full flex flex-col">
+      <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm flex flex-col h-full bg-white">
         <div className="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-200 dark:border-gray-700 space-y-2 flex-shrink-0">
           <div className="flex justify-between items-start">
             <div className="space-y-2 w-full">
@@ -95,7 +95,7 @@ const NotificationPreview = ({
         {/* Email Body Preview */}
         <div className="p-6 bg-white flex-1 overflow-y-auto min-h-[400px]">
           <div
-            className="prose max-w-none text-gray-900"
+            className="prose prose-sm max-w-none text-gray-900"
             dangerouslySetInnerHTML={{
               __html:
                 emailBroadcastData.message ||
@@ -116,7 +116,7 @@ const NotificationPreview = ({
                     className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600"
                   >
                     <FaFileAlt className="text-indigo-400" />
-                    <span className="truncate max-w-[150px]">
+                    <span className="truncate max-w-[120px]">
                       {att.filename}
                     </span>
                   </div>
@@ -652,10 +652,16 @@ export default function AdminNotifications() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div
+        className={`grid grid-cols-1 ${isEditorExpanded ? "lg:grid-cols-1" : "lg:grid-cols-2"} gap-8`}
+      >
         {/* Left Column: Broadcast Form */}
-        <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
+        <div
+          className={`${isEditorExpanded ? "lg:col-span-1" : "lg:col-span-1"}`}
+        >
+          <div
+            className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 ${isEditorExpanded ? "" : "sticky top-8"}`}
+          >
             {/* Tab Switcher */}
             <div className="flex mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
               <button
@@ -835,29 +841,11 @@ export default function AdminNotifications() {
                       </div>
                     </label>
                     <div
-                      className={`${isEditorExpanded ? "fixed inset-0 z-50 bg-white dark:bg-gray-900 p-8 flex flex-col" : "relative"}`}
+                      className={`${isEditorExpanded ? "relative mt-2" : "relative"}`}
                     >
-                      {isEditorExpanded && (
-                        <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-4 flex-shrink-0">
-                          <h3 className="text-xl font-bold dark:text-white flex items-center gap-3">
-                            Email Editor
-                            <span className="text-xs font-normal text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full border border-gray-200 dark:border-gray-700">
-                              Fullscreen Mode
-                            </span>
-                          </h3>
-                          <button
-                            type="button"
-                            onClick={() => setIsEditorExpanded(false)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                          >
-                            <FaTimes size={24} />
-                          </button>
-                        </div>
-                      )}
-
-                      <div className={`flex flex-1 gap-8 overflow-hidden`}>
+                      <div className={`flex flex-col lg:flex-row flex-1 gap-8`}>
                         <div
-                          className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 flex flex-col ${isEditorExpanded ? "flex-1 h-full shadow-md" : "w-full"}`}
+                          className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 flex flex-col ${isEditorExpanded ? "lg:w-1/2 min-h-[500px]" : "w-full"}`}
                         >
                           <ReactQuill
                             theme="snow"
@@ -882,19 +870,14 @@ export default function AdminNotifications() {
                             className={`h-full ${isEditorExpanded ? "quill-fullscreen" : "quill-normal"}`}
                             placeholder="Compose your email..."
                             style={{
-                              height: isEditorExpanded
-                                ? "calc(100% - 42px)"
-                                : "300px",
+                              height: isEditorExpanded ? "500px" : "300px",
                             }}
                           />
                         </div>
 
-                        {/* Preview Column - Only show if expanded */}
+                        {/* Preview Column - Only show if expanded WITHIN this container */}
                         {isEditorExpanded && (
-                          <div className="w-1/2 h-full overflow-y-auto bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hidden lg:block">
-                            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                              <FaEye className="text-indigo-500" /> Live Preview
-                            </h2>
+                          <div className="lg:w-1/2 h-full min-h-[500px] hidden lg:block">
                             <NotificationPreview
                               activeTab={activeTab}
                               emailBroadcastData={emailBroadcastData}
@@ -1130,123 +1113,22 @@ export default function AdminNotifications() {
         </div>
 
         {/* Right Column: Live Preview */}
-        <div className="hidden lg:block">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-              <FaEye className="text-indigo-500" /> Live Preview
-            </h2>
+        {!isEditorExpanded && (
+          <div className="hidden lg:block">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <FaEye className="text-indigo-500" /> Live Preview
+              </h2>
 
-            {activeTab === "email" ? (
-              <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
-                <div className="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-200 dark:border-gray-700 space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2 w-full">
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
-                        <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
-                          Subject:
-                        </span>
-                        <span className="text-gray-900 dark:text-white font-medium break-words flex-1">
-                          {emailBroadcastData.subject || "(No Subject)"}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
-                        <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
-                          To:
-                        </span>
-                        <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
-                          All Verified Users
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
-                        <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
-                          From:
-                        </span>
-                        <span className="text-gray-900 dark:text-white font-medium truncate flex-1">
-                          {emailBroadcastData.senderName || "Ezekiel"}{" "}
-                          &lt;info@samkielbot.app&gt;
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Email Body Preview - Always Light Mode specific for Email simulation usually */}
-                <div className="p-6 bg-white min-h-[400px] overflow-y-auto max-h-[600px]">
-                  <div
-                    className="prose max-w-none text-gray-900"
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        emailBroadcastData.message ||
-                        "<p class='text-gray-400 italic text-center mt-10'>Start composing your email to see the preview here...</p>",
-                    }}
-                  />
-
-                  {/* Attachments Preview */}
-                  {attachments.length > 0 && (
-                    <div className="mt-6 pt-4 border-t border-gray-100">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                        Attachments
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {attachments.map((att) => (
-                          <div
-                            key={att.id}
-                            className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600"
-                          >
-                            <FaFileAlt className="text-indigo-400" />
-                            <span className="truncate max-w-[150px]">
-                              {att.filename}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div
-                  className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-100 dark:border-gray-700 border-l-4"
-                  style={{
-                    borderLeftColor:
-                      formData.type === "error"
-                        ? "#ef4444"
-                        : formData.type === "warning"
-                          ? "#f59e0b"
-                          : "#6366f1",
-                  }}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1">{getIcon(formData.type)}</div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
-                        {formData.title || "Notification Title"}
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
-                        {formData.message ||
-                          "Notification message content will appear here..."}
-                      </p>
-                      {formData.link && (
-                        <div className="mt-2">
-                          <span className="text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:underline flex items-center gap-1">
-                            {formData.linkText || "Action"}{" "}
-                            <FaChevronRight size={10} />
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
-                      Just now
-                    </span>
-                  </div>
-                </div>
-                <p className="text-center text-xs text-gray-500">
-                  Preview of how the user will see the notification card.
-                </p>
-              </div>
-            )}
+              <NotificationPreview
+                activeTab={activeTab}
+                emailBroadcastData={emailBroadcastData}
+                formData={formData}
+                attachments={attachments}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Broadcast History Table - Moved to Bottom */}

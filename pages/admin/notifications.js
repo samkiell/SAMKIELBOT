@@ -859,34 +859,50 @@ export default function AdminNotifications() {
                         <div
                           className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 flex flex-col ${isEditorExpanded ? "flex-1 h-full shadow-md" : "w-full"}`}
                         >
-                        <ReactQuill
-                          theme="snow"
-                          value={emailBroadcastData.message}
-                          onChange={handleEditorChange}
-                          modules={{
-                            toolbar: [
-                              [{ header: [1, 2, 3, false] }],
-                              [
-                                "bold",
-                                "italic",
-                                "underline",
-                                "strike",
-                                "blockquote",
+                          <ReactQuill
+                            theme="snow"
+                            value={emailBroadcastData.message}
+                            onChange={handleEditorChange}
+                            modules={{
+                              toolbar: [
+                                [{ header: [1, 2, 3, false] }],
+                                [
+                                  "bold",
+                                  "italic",
+                                  "underline",
+                                  "strike",
+                                  "blockquote",
+                                ],
+                                [{ list: "ordered" }, { list: "bullet" }],
+                                ["link", "image"],
+                                [{ color: [] }, { background: [] }],
+                                ["clean"],
                               ],
-                              [{ list: "ordered" }, { list: "bullet" }],
-                              ["link", "image"],
-                              [{ color: [] }, { background: [] }],
-                              ["clean"],
-                            ],
-                          }}
-                          className={`h-full ${isEditorExpanded ? "quill-fullscreen" : "quill-normal"}`}
-                          placeholder="Compose your email..."
-                          style={{
-                            height: isEditorExpanded
-                              ? "calc(100% - 42px)"
-                              : "300px",
-                          }}
-                        />
+                            }}
+                            className={`h-full ${isEditorExpanded ? "quill-fullscreen" : "quill-normal"}`}
+                            placeholder="Compose your email..."
+                            style={{
+                              height: isEditorExpanded
+                                ? "calc(100% - 42px)"
+                                : "300px",
+                            }}
+                          />
+                        </div>
+
+                        {/* Preview Column - Only show if expanded */}
+                        {isEditorExpanded && (
+                          <div className="w-1/2 h-full overflow-y-auto bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hidden lg:block">
+                            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                              <FaEye className="text-indigo-500" /> Live Preview
+                            </h2>
+                            <NotificationPreview
+                              activeTab={activeTab}
+                              emailBroadcastData={emailBroadcastData}
+                              formData={formData}
+                              attachments={attachments}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
 

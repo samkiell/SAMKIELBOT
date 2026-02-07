@@ -1,5 +1,13 @@
 import dbConnect from "@/lib/dbConnect";
 import { protect, admin } from "@/lib/utils/authMiddleware";
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "50mb",
+    },
+  },
+};
 import {
   getSystemStats,
   getAllUsers,

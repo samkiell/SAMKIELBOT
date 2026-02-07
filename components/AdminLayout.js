@@ -54,10 +54,12 @@ export default function AdminLayout({ children }) {
       {/* Mobile Top Bar */}
       <div className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm">
         <div className="flex items-center gap-2">
-          <image
-          href="/logo.png"
-          className="text-indigo-600 w-6 h-6" />
-          <span className="font-bold tracking-tight text-sm uppercase">
+          <img
+            src="/logo.png?v=2"
+            alt="SAMKIEL Admin Logo"
+            className="w-7 h-7 rounded-lg"
+          />
+          <span className="font-bold tracking-tight text-sm uppercase text-gray-900 dark:text-white">
             Admin Panel
           </span>
         </div>
@@ -79,11 +81,13 @@ export default function AdminLayout({ children }) {
           {/* Sidebar Header */}
           <div className="hidden md:flex p-6 border-b border-gray-100 dark:border-gray-800 items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">
-                <Shield className="text-white" size={24} />
-              </div>
-              <h1 className="text-lg font-bold tracking-tighter">
-                SAMKIEL ADMIN
+              <img
+                src="/logo.png?v=2"
+                alt="SAMKIEL Admin Logo"
+                className="w-10 h-10 rounded-xl shadow-lg shadow-indigo-500/20"
+              />
+              <h1 className="text-lg font-bold tracking-tighter text-gray-900 dark:text-white">
+                SAMKIEL <span className="text-indigo-600">ADMIN</span>
               </h1>
             </div>
           </div>

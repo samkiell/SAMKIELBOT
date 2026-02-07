@@ -35,24 +35,24 @@
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.548.0",
     "mongoose": "^8.0.3",
-    "next": "^16.0.0",
+    "next": "^16.1.6",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.11",
     "postcss": "^8.4.32",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
     "react-quill": "^2.0.0",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
-    "tailwindcss": "^3.3.6",
+    "tailwindcss": "^4.0.0",
     "ws": "^8.18.3"
   },
   "devDependencies": {
     "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9.0.0",
-    "eslint-config-next": "16.0.0",
+    "eslint-config-next": "16.1.6",
     "nodemon": "^3.0.2"
   }
 }

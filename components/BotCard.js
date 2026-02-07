@@ -5,8 +5,6 @@ import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
 
-let socket;
-
 import Sparkline from "./Sparkline";
 
 export default function BotCard({ deployment, refreshData }) {
@@ -25,38 +23,38 @@ export default function BotCard({ deployment, refreshData }) {
   // Socket.IO for real-time updates
   useEffect(() => {
     const socketUrl = process.env.NEXT_PUBLIC_API_URL || "";
-    socket = io(socketUrl, {
+    const s = io(socketUrl, {
       path: "/socket.io",
       transports: ["websocket", "polling"],
       reconnectionAttempts: 5,
     });
 
-    socket.on("bot:status_change", (data) => {
+    s.on("bot:status_change", (data) => {
       if (data.deploymentId === deployment._id) {
         if (refreshData) refreshData();
       }
     });
 
-    socket.on("bot:connected", (data) => {
+    s.on("bot:connected", (data) => {
       if (data.deploymentId === deployment._id) {
         if (refreshData) refreshData();
       }
     });
 
-    socket.on("bot:active", (data) => {
+    s.on("bot:active", (data) => {
       if (data.deploymentId === deployment._id) {
         if (refreshData) refreshData();
       }
     });
 
-    socket.on("bot:offline", (data) => {
+    s.on("bot:offline", (data) => {
       if (data.deploymentId === deployment._id) {
         if (refreshData) refreshData();
       }
     });
 
     return () => {
-      if (socket) socket.disconnect();
+      s.disconnect();
     };
   }, [deployment._id, refreshData]);
 
@@ -112,8 +110,8 @@ export default function BotCard({ deployment, refreshData }) {
     const lastUpdate = deployment.resources?.lastUptimeUpdate
       ? new Date(deployment.resources.lastUptimeUpdate).getTime()
       : deployment.lastHeartbeatAt
-      ? new Date(deployment.lastHeartbeatAt).getTime()
-      : Date.now();
+        ? new Date(deployment.lastHeartbeatAt).getTime()
+        : Date.now();
 
     const elapsedSinceUpdate = currentTime - lastUpdate;
 
@@ -164,7 +162,7 @@ export default function BotCard({ deployment, refreshData }) {
   const handleDelete = async () => {
     if (
       !window.confirm(
-        "Are you sure you want to delete this bot? This action cannot be undone."
+        "Are you sure you want to delete this bot? This action cannot be undone.",
       )
     )
       return;
@@ -191,7 +189,7 @@ export default function BotCard({ deployment, refreshData }) {
           </Link>
           <span
             className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
-              deployment.status
+              deployment.status,
             )}`}
           >
             {getStatusConfig(deployment.status).label}
@@ -210,7 +208,7 @@ export default function BotCard({ deployment, refreshData }) {
             <span className="font-medium">Deployed:</span>
             <span>
               {new Date(
-                deployment.deployedAt || deployment.createdAt || Date.now()
+                deployment.deployedAt || deployment.createdAt || Date.now(),
               ).toLocaleDateString(undefined, {
                 year: "numeric",
                 month: "short",
@@ -243,9 +241,9 @@ export default function BotCard({ deployment, refreshData }) {
                   (deployment.resources?.ramLimit || 300) * 0.9
                     ? "bg-red-500"
                     : (deployment.resources?.usedRam || 0) >
-                      (deployment.resources?.ramLimit || 300) * 0.75
-                    ? "bg-amber-500"
-                    : "bg-green-500"
+                        (deployment.resources?.ramLimit || 300) * 0.75
+                      ? "bg-amber-500"
+                      : "bg-green-500"
                 }`}
               ></div>
               RAM Usage
@@ -288,7 +286,7 @@ export default function BotCard({ deployment, refreshData }) {
         {/* Helper values for logic */}
         {(() => {
           const isBusy = ["creating", "installing", "pending"].includes(
-            deployment.status
+            deployment.status,
           );
           const isActive =
             deployment.isActive ||
@@ -303,7 +301,7 @@ export default function BotCard({ deployment, refreshData }) {
             ].includes(deployment.status);
           // Start: Show if stopped or failed
           const showStart = ["stopped", "failed", "offline"].includes(
-            deployment.status
+            deployment.status,
           );
           // Stop: Show if active (running, starting, waiting)
           const showStop = isActive;

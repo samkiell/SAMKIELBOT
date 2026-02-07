@@ -23,6 +23,7 @@ import {
   FaChevronRight,
   FaFolderOpen,
   FaFileAlt,
+  FaFlask,
   FaExpand,
   FaCompress,
   FaPaperclip,
@@ -33,6 +34,143 @@ import dynamic from "next/dynamic";
 
 // Dynamic import for ReactQuill to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+/* Notification Preview Component */
+const NotificationPreview = ({
+  activeTab,
+  emailBroadcastData,
+  formData,
+  attachments = [],
+}) => {
+  // Helper for icons
+  const getIcon = (type) => {
+    switch (type) {
+      case "success":
+        return <FaCheckCircle className="text-green-500" />;
+      case "warning":
+        return <FaExclamationTriangle className="text-yellow-500" />;
+      case "error":
+        return <FaTimesCircle className="text-red-500" />;
+      case "offer":
+        return <FaTag className="text-emerald-500" />;
+      default:
+        return <FaInfoCircle className="text-blue-500" />;
+    }
+  };
+
+  if (activeTab === "email") {
+    return (
+      <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm flex flex-col h-full bg-white">
+        <div className="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-200 dark:border-gray-700 space-y-2 flex-shrink-0">
+          <div className="flex justify-between items-start">
+            <div className="space-y-2 w-full">
+              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
+                  Subject:
+                </span>
+                <span className="text-gray-900 dark:text-white font-medium break-words flex-1">
+                  {emailBroadcastData.subject || "(No Subject)"}
+                </span>
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
+                  To:
+                </span>
+                <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
+                  All Verified Users
+                </span>
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
+                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
+                  From:
+                </span>
+                <span className="text-gray-900 dark:text-white font-medium truncate flex-1">
+                  {emailBroadcastData.senderName || "Ezekiel"}{" "}
+                  &lt;info@samkielbot.app&gt;
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Email Body Preview */}
+        <div className="p-6 bg-white flex-1 overflow-y-auto min-h-[400px]">
+          <div
+            className="prose prose-sm max-w-none text-gray-900"
+            dangerouslySetInnerHTML={{
+              __html:
+                emailBroadcastData.message ||
+                "<p class='text-gray-400 italic text-center mt-10'>Start composing your email to see the preview here...</p>",
+            }}
+          />
+
+          {/* Attachments Preview */}
+          {attachments.length > 0 && (
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                Attachments
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {attachments.map((att) => (
+                  <div
+                    key={att.id}
+                    className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600"
+                  >
+                    <FaFileAlt className="text-indigo-400" />
+                    <span className="truncate max-w-[120px]">
+                      {att.filename}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div
+        className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-100 dark:border-gray-700 border-l-4"
+        style={{
+          borderLeftColor:
+            formData.type === "error"
+              ? "#ef4444"
+              : formData.type === "warning"
+                ? "#f59e0b"
+                : "#6366f1",
+        }}
+      >
+        <div className="flex items-start gap-3">
+          <div className="mt-1">{getIcon(formData.type)}</div>
+          <div className="flex-1">
+            <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
+              {formData.title || "Notification Title"}
+            </h4>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
+              {formData.message ||
+                "Notification message content will appear here..."}
+            </p>
+            {formData.link && (
+              <div className="mt-2">
+                <span className="text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:underline flex items-center gap-1">
+                  {formData.linkText || "Action"} <FaChevronRight size={10} />
+                </span>
+              </div>
+            )}
+          </div>
+          <span className="text-xs text-gray-400 whitespace-nowrap">
+            Just now
+          </span>
+        </div>
+      </div>
+      <p className="text-center text-xs text-gray-500">
+        Preview of how the user will see the notification card.
+      </p>
+    </div>
+  );
+};
 
 export default function AdminNotifications() {
   const [notifications, setNotifications] = useState([]);
@@ -53,6 +191,7 @@ export default function AdminNotifications() {
   const [emailBroadcastData, setEmailBroadcastData] = useState({
     subject: "",
     message: "",
+    senderName: "Ezekiel", // Default Sender Name
     announcementType: "general",
     priority: "normal",
   });
@@ -64,6 +203,9 @@ export default function AdminNotifications() {
   const [emailBroadcasts, setEmailBroadcasts] = useState([]);
   const [emailBroadcastsLoading, setEmailBroadcastsLoading] = useState(false);
   const [showEmailHistory, setShowEmailHistory] = useState(false);
+  const [showTestEmailModal, setShowTestEmailModal] = useState(false);
+  const [testEmailAddress, setTestEmailAddress] = useState("");
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
 
   // Filters
   const [filterType, setFilterType] = useState("all");
@@ -303,6 +445,7 @@ export default function AdminNotifications() {
         setEmailBroadcastData({
           subject: "",
           message: "",
+          senderName: "Samkiel Bot",
           announcementType: "general",
           priority: "normal",
         });
@@ -361,6 +504,66 @@ export default function AdminNotifications() {
       toast.error("Error resuming broadcast", { id: toastId });
     } finally {
       setSendingEmail(false);
+    }
+  };
+
+  // Send Test Email
+  const handleTestEmail = async (e) => {
+    e.preventDefault();
+
+    if (!testEmailAddress || !testEmailAddress.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (!emailBroadcastData.subject.trim()) {
+      toast.error("Subject is required for test email");
+      return;
+    }
+    if (!emailBroadcastData.message.trim()) {
+      toast.error("Message is required for test email");
+      return;
+    }
+
+    setSendingTestEmail(true);
+    const toastId = toast.loading("Sending test email...");
+
+    try {
+      const res = await fetch("/api/admin/email-broadcast/test", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          ...emailBroadcastData,
+          testEmail: testEmailAddress,
+          attachments: attachments.map((att) => ({
+            filename: att.filename,
+            content: att.content,
+            contentType: att.contentType,
+          })),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success(`Test email sent to ${testEmailAddress}!`, {
+          id: toastId,
+        });
+        setShowTestEmailModal(false);
+        setTestEmailAddress("");
+      } else {
+        toast.error(data.message || "Failed to send test email", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      console.error("Test email error:", error);
+      toast.error("Error sending test email", { id: toastId });
+    } finally {
+      setSendingTestEmail(false);
     }
   };
 
@@ -449,10 +652,16 @@ export default function AdminNotifications() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div
+        className={`grid grid-cols-1 ${isEditorExpanded ? "lg:grid-cols-1" : "lg:grid-cols-2"} gap-8`}
+      >
         {/* Left Column: Broadcast Form */}
-        <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
+        <div
+          className={`${isEditorExpanded ? "lg:col-span-1" : "lg:col-span-1"}`}
+        >
+          <div
+            className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 ${isEditorExpanded ? "" : "sticky top-8"}`}
+          >
             {/* Tab Switcher */}
             <div className="flex mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
               <button
@@ -569,7 +778,9 @@ export default function AdminNotifications() {
                 </h2>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded border border-yellow-200 dark:border-yellow-800">
                   ⚠️ This will send an email to ALL verified users. Use
-                  carefully.
+                  carefully. <br />
+                  <b>Tip:</b> Use <code>@user</code> in the message to
+                  automatically insert the recipient's first name.
                 </p>
                 <form onSubmit={handleEmailBroadcast} className="space-y-4">
                   <div>
@@ -589,6 +800,20 @@ export default function AdminNotifications() {
                     <p className="text-xs text-gray-400 mt-1">
                       {emailBroadcastData.subject.length}/200
                     </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Sender Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="senderName"
+                      value={emailBroadcastData.senderName}
+                      onChange={handleEmailChange}
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                      placeholder="e.g. Samkiel Bot"
+                    />
                   </div>
 
                   <div>
@@ -616,107 +841,59 @@ export default function AdminNotifications() {
                       </div>
                     </label>
                     <div
-                      className={`${isEditorExpanded ? "fixed inset-0 z-50 bg-white dark:bg-gray-900 p-8 flex flex-col" : "relative"}`}
+                      className={`${isEditorExpanded ? "relative mt-2" : "relative"}`}
                     >
-                      {isEditorExpanded && (
-                        <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
-                          <h3 className="text-xl font-bold dark:text-white">
-                            Email Editor
-                          </h3>
-                          <button
-                            type="button"
-                            onClick={() => setIsEditorExpanded(false)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
-                          >
-                            <FaTimes size={24} />
-                          </button>
-                        </div>
-                      )}
-
-                      <div
-                        className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 ${isEditorExpanded ? "flex-1 flex flex-col" : ""}`}
-                      >
-                        <ReactQuill
-                          theme="snow"
-                          value={emailBroadcastData.message}
-                          onChange={handleEditorChange}
-                          modules={{
-                            toolbar: [
-                              [{ header: [1, 2, 3, false] }],
-                              [
-                                "bold",
-                                "italic",
-                                "underline",
-                                "strike",
-                                "blockquote",
+                      <div className={`flex flex-col lg:flex-row flex-1 gap-8`}>
+                        <div
+                          className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 flex flex-col ${isEditorExpanded ? "lg:w-1/2 min-h-[500px]" : "w-full"}`}
+                        >
+                          <ReactQuill
+                            theme="snow"
+                            value={emailBroadcastData.message}
+                            onChange={handleEditorChange}
+                            modules={{
+                              toolbar: [
+                                [{ header: [1, 2, 3, false] }],
+                                [
+                                  "bold",
+                                  "italic",
+                                  "underline",
+                                  "strike",
+                                  "blockquote",
+                                ],
+                                [{ list: "ordered" }, { list: "bullet" }],
+                                ["link", "image"],
+                                [{ color: [] }, { background: [] }],
+                                ["clean"],
                               ],
-                              [{ list: "ordered" }, { list: "bullet" }],
-                              ["link", "image"],
-                              [{ color: [] }, { background: [] }],
-                              ["clean"],
-                            ],
-                          }}
-                          className={`h-full ${isEditorExpanded ? "quill-fullscreen" : "quill-normal"}`}
-                          placeholder="Compose your email..."
-                          style={{
-                            height: isEditorExpanded
-                              ? "calc(100% - 42px)"
-                              : "300px",
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Attachments Section */}
-                    <div className="mt-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                          <FaPaperclip /> Attachments ({attachments.length})
-                        </label>
-                        <label className="cursor-pointer text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2">
-                          <FaFolderOpen /> Add Files
-                          <input
-                            type="file"
-                            multiple
-                            onChange={handleFileChange}
-                            className="hidden"
-                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                            }}
+                            className={`h-full ${isEditorExpanded ? "quill-fullscreen" : "quill-normal"}`}
+                            placeholder="Compose your email..."
+                            style={{
+                              height: isEditorExpanded ? "500px" : "300px",
+                            }}
                           />
-                        </label>
-                      </div>
-
-                      {attachments.length > 0 && (
-                        <div className="grid grid-cols-1 gap-2 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-gray-200 dark:border-gray-700 max-h-40 overflow-y-auto">
-                          {attachments.map((att) => (
-                            <div
-                              key={att.id}
-                              className="flex items-center justify-between bg-white dark:bg-gray-800 p-2 rounded border border-gray-100 dark:border-gray-700 shadow-sm"
-                            >
-                              <div className="flex items-center gap-3 overflow-hidden">
-                                <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded text-indigo-600 dark:text-indigo-400">
-                                  <FaFileAlt />
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="text-sm font-medium truncate dark:text-gray-200">
-                                    {att.filename}
-                                  </p>
-                                  <p className="text-xs text-gray-500">
-                                    {(att.size / 1024).toFixed(1)} KB
-                                  </p>
-                                </div>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => removeAttachment(att.id)}
-                                className="text-gray-400 hover:text-red-500 p-1 transition-colors"
-                              >
-                                <FaTimes />
-                              </button>
-                            </div>
-                          ))}
                         </div>
-                      )}
+
+                        {/* Preview Column - Only show if expanded WITHIN this container */}
+                        {isEditorExpanded && (
+                          <div className="lg:w-1/2 h-full min-h-[500px] hidden lg:block">
+                            <NotificationPreview
+                              activeTab={activeTab}
+                              emailBroadcastData={emailBroadcastData}
+                              formData={formData}
+                              attachments={attachments}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
+
+                    {/* Attachments Section - Disabled as per request
+                    <div className="mt-4">
+                      ...
+                    </div>
+                    */}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -757,11 +934,19 @@ export default function AdminNotifications() {
                     </div>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-2 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowTestEmailModal(true)}
+                      disabled={sendingEmail || sendingTestEmail}
+                      className="flex-1 py-2.5 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <FaFlask /> Test Email
+                    </button>
                     <button
                       type="submit"
-                      disabled={sendingEmail}
-                      className={`w-full py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
+                      disabled={sendingEmail || sendingTestEmail}
+                      className={`flex-[2] py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
                         sendingEmail
                           ? "bg-indigo-400 cursor-not-allowed"
                           : "bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg"
@@ -769,17 +954,74 @@ export default function AdminNotifications() {
                     >
                       {sendingEmail ? (
                         <>
-                          <FaSpinner className="animate-spin" /> Sending
-                          Emails...
+                          <FaSpinner className="animate-spin" /> Sending...
                         </>
                       ) : (
                         <>
-                          <FaEnvelope /> Send Email Broadcast
+                          <FaEnvelope /> Send Broadcast
                         </>
                       )}
                     </button>
                   </div>
                 </form>
+
+                {/* Test Email Modal */}
+                {showTestEmailModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <FaFlask className="text-indigo-500" /> Send Test Email
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                        Enter an email address to receive a test copy of this
+                        broadcast.
+                      </p>
+                      <form onSubmit={handleTestEmail}>
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Recipient Email
+                          </label>
+                          <input
+                            type="email"
+                            value={testEmailAddress}
+                            onChange={(e) =>
+                              setTestEmailAddress(e.target.value)
+                            }
+                            className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                            placeholder="your@email.com"
+                            autoFocus
+                            required
+                          />
+                        </div>
+                        <div className="flex justify-end gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setShowTestEmailModal(false)}
+                            className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={sendingTestEmail}
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors flex items-center gap-2"
+                          >
+                            {sendingTestEmail ? (
+                              <>
+                                <FaSpinner className="animate-spin" />{" "}
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <FaPaperPlane /> Send Test
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
 
                 {/* Email Broadcast History Toggle */}
                 <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -871,114 +1113,22 @@ export default function AdminNotifications() {
         </div>
 
         {/* Right Column: Live Preview */}
-        <div className="hidden lg:block">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-              <FaEye className="text-indigo-500" /> Live Preview
-            </h2>
+        {!isEditorExpanded && (
+          <div className="hidden lg:block">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <FaEye className="text-indigo-500" /> Live Preview
+              </h2>
 
-            {activeTab === "email" ? (
-              <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
-                <div className="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-200 dark:border-gray-700 space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1 w-full">
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                        <span className="font-medium text-gray-700 dark:text-gray-300 w-16">
-                          Subject:
-                        </span>
-                        <span className="text-gray-900 dark:text-white font-medium truncate">
-                          {emailBroadcastData.subject || "(No Subject)"}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                        <span className="font-medium text-gray-700 dark:text-gray-300 w-16">
-                          To:
-                        </span>
-                        <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
-                          All Verified Users
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Email Body Preview - Always Light Mode specific for Email simulation usually */}
-                <div className="p-6 bg-white min-h-[400px] overflow-y-auto max-h-[600px]">
-                  <div
-                    className="prose max-w-none text-gray-900"
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        emailBroadcastData.message ||
-                        "<p class='text-gray-400 italic text-center mt-10'>Start composing your email to see the preview here...</p>",
-                    }}
-                  />
-
-                  {/* Attachments Preview */}
-                  {attachments.length > 0 && (
-                    <div className="mt-6 pt-4 border-t border-gray-100">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                        Attachments
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {attachments.map((att) => (
-                          <div
-                            key={att.id}
-                            className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600"
-                          >
-                            <FaFileAlt className="text-indigo-400" />
-                            <span className="truncate max-w-[150px]">
-                              {att.filename}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div
-                  className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-100 dark:border-gray-700 border-l-4"
-                  style={{
-                    borderLeftColor:
-                      formData.type === "error"
-                        ? "#ef4444"
-                        : formData.type === "warning"
-                          ? "#f59e0b"
-                          : "#6366f1",
-                  }}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1">{getIcon(formData.type)}</div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
-                        {formData.title || "Notification Title"}
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
-                        {formData.message ||
-                          "Notification message content will appear here..."}
-                      </p>
-                      {formData.link && (
-                        <div className="mt-2">
-                          <span className="text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:underline flex items-center gap-1">
-                            {formData.linkText || "Action"}{" "}
-                            <FaChevronRight size={10} />
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
-                      Just now
-                    </span>
-                  </div>
-                </div>
-                <p className="text-center text-xs text-gray-500">
-                  Preview of how the user will see the notification card.
-                </p>
-              </div>
-            )}
+              <NotificationPreview
+                activeTab={activeTab}
+                emailBroadcastData={emailBroadcastData}
+                formData={formData}
+                attachments={attachments}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Broadcast History Table - Moved to Bottom */}

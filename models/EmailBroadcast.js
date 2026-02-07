@@ -12,6 +12,11 @@ const emailBroadcastSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    // Sender name override
+    senderName: {
+      type: String,
+      default: "Samkiel Bot",
+    },
     // Email content
     subject: {
       type: String,

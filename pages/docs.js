@@ -496,10 +496,10 @@ export default function DocsPage() {
     <Layout>
       <div className="bg-white dark:bg-slate-900 min-h-screen">
         <Head>
-          <title>Documentation & Help | SAMKIEL BOT</title>
+          <title>Documentation & Help | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
           <meta
             name="description"
-            content="Complete guide to deploying and managing your WhatsApp bot on SAMKIEL BOT platform."
+            content="Complete guide to deploying and managing your WhatsApp bot on the 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋 platform."
           />
         </Head>
 
@@ -538,7 +538,7 @@ export default function DocsPage() {
                 >
                   <div
                     className={`p-2 rounded-lg ${getColorClasses(
-                      section.color
+                      section.color,
                     )}`}
                   >
                     <Icon size={20} />
@@ -568,7 +568,7 @@ export default function DocsPage() {
                   <div className="flex items-center gap-4 mb-6">
                     <div
                       className={`p-3 rounded-xl ${getColorClasses(
-                        section.color
+                        section.color,
                       )}`}
                     >
                       <Icon size={24} />

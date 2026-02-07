@@ -80,10 +80,10 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white transition-colors duration-300">
       <Head>
-        <title>Pricing & Credits - SAMKIEL BOT</title>
+        <title>Pricing & Credits | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         <meta
           name="description"
-          content="Flexible credit-based pricing for your WhatsApp bots. Pay only for what you use."
+          content="Flexible credit-based pricing for your WhatsApp bots. Pay only for what you use with 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋."
         />
       </Head>
 

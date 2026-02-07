@@ -27,13 +27,13 @@ export default function FeaturesPage() {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const topCapabilities = featuresData.filter(
-    (f) => f.category === FEATURE_CATEGORIES.TOP
+    (f) => f.category === FEATURE_CATEGORIES.TOP,
   );
   const aiMediaTools = featuresData.filter(
-    (f) => f.category === FEATURE_CATEGORIES.AI_MEDIA
+    (f) => f.category === FEATURE_CATEGORIES.AI_MEDIA,
   );
   const productivityTools = featuresData.filter(
-    (f) => f.category === FEATURE_CATEGORIES.PRODUCTIVITY_FUN
+    (f) => f.category === FEATURE_CATEGORIES.PRODUCTIVITY_FUN,
   );
 
   const featureImages = {
@@ -48,10 +48,10 @@ export default function FeaturesPage() {
   return (
     <div className="bg-gray-50 dark:bg-[#0f172a] min-h-screen text-gray-800 dark:text-gray-100">
       <Head>
-        <title>Features | SAMKIEL BOT - Deployment Platform</title>
+        <title>Powerful Features | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         <meta
           name="description"
-          content="Explore the powerful features of SAMKIEL BOT - Deployment Platform. From View Once recovery and video downloading to AI tools and group moderation, everything works directly inside WhatsApp."
+          content="Explore the powerful features of 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋. From View Once recovery and video downloading to AI tools and group moderation, everything works directly inside WhatsApp."
         />
       </Head>
 

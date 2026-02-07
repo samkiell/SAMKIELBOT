@@ -15,6 +15,8 @@ import {
   X,
   Bug,
   DollarSign,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../lib/auth";
@@ -23,6 +25,7 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
   const { logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const links = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -73,14 +76,18 @@ export default function AdminLayout({ children }) {
 
       {/* Sidebar / Slider */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-[#111827] shadow-2xl md:shadow-none transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) border-r border-gray-100 dark:border-gray-800 md:relative md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 bg-white dark:bg-[#111827] shadow-2xl md:shadow-none transform transition-all duration-300 ease-in-out border-r border-gray-100 dark:border-gray-800 md:relative md:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } ${isCollapsed ? "md:w-20" : "md:w-72"} w-72`}
       >
         <div className="flex flex-col h-full overflow-y-auto">
           {/* Sidebar Header */}
-          <div className="hidden md:flex p-6 border-b border-gray-100 dark:border-gray-800 items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div
+            className={`hidden md:flex p-4 border-b border-gray-100 dark:border-gray-800 items-center transition-all ${isCollapsed ? "flex-col gap-4 py-6" : "justify-between"}`}
+          >
+            <div
+              className={`flex items-center gap-3 ${isCollapsed ? "hidden" : "flex"}`}
+            >
               <img
                 src="/logo.png"
                 alt="SAMKIEL Admin Logo"
@@ -90,6 +97,25 @@ export default function AdminLayout({ children }) {
                 SAMKIEL <span className="text-indigo-600">ADMIN</span>
               </h1>
             </div>
+
+            {isCollapsed && (
+              <img
+                src="/logo.png"
+                alt="SAMKIEL Admin Logo"
+                className="w-8 h-8 rounded-lg shadow-lg shadow-indigo-500/20"
+              />
+            )}
+
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className={`p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${isCollapsed ? "" : ""}`}
+            >
+              {isCollapsed ? (
+                <ChevronRight size={20} />
+              ) : (
+                <ChevronLeft size={20} />
+              )}
+            </button>
           </div>
 
           {/* Navigation Links */}
@@ -105,7 +131,8 @@ export default function AdminLayout({ children }) {
                     active
                       ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
                       : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white"
-                  }`}
+                  } ${isCollapsed ? "justify-center px-2" : ""}`}
+                  title={isCollapsed ? link.label : ""}
                 >
                   <link.icon
                     size={20}
@@ -115,7 +142,9 @@ export default function AdminLayout({ children }) {
                         : "group-hover:scale-110 transition-transform"
                     }
                   />
-                  <span className="font-medium text-sm">{link.label}</span>
+                  {!isCollapsed && (
+                    <span className="font-medium text-sm">{link.label}</span>
+                  )}
                 </Link>
               );
             })}
@@ -123,37 +152,45 @@ export default function AdminLayout({ children }) {
             <div className="pt-4 mt-6 border-t border-gray-100 dark:border-gray-800 space-y-1">
               <Link
                 href="/dashboard"
-                className="flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white rounded-xl transition-all"
+                className={`flex items-center gap-3 px-4 py-3 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white rounded-xl transition-all ${isCollapsed ? "justify-center px-2" : ""}`}
+                title={isCollapsed ? "Return to Site" : ""}
               >
                 <Home size={18} />
-                <span className="font-medium text-sm">Return to Site</span>
+                {!isCollapsed && (
+                  <span className="font-medium text-sm">Return to Site</span>
+                )}
               </Link>
               <button
                 onClick={() => logout()}
-                className="flex items-center gap-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
+                className={`flex items-center gap-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all ${isCollapsed ? "justify-center px-2" : ""}`}
+                title={isCollapsed ? "Logout" : ""}
               >
                 <LogOut size={18} />
-                <span className="font-medium text-sm">Logout</span>
+                {!isCollapsed && (
+                  <span className="font-medium text-sm">Logout</span>
+                )}
               </button>
             </div>
           </nav>
 
           {/* Sidebar Footer */}
-          <div className="p-4 mt-auto">
-            <div className="bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 p-4 rounded-2xl flex items-start gap-3">
-              <div className="p-1.5 bg-orange-500 rounded-lg">
-                <AlertTriangle className="text-white" size={14} />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-widest leading-none mb-1">
-                  Live Terminal
-                </p>
-                <p className="text-[10px] text-orange-500/80 leading-tight">
-                  Proceed with extreme caution. All updates are immediate.
-                </p>
+          {!isCollapsed && (
+            <div className="p-4 mt-auto">
+              <div className="bg-orange-50 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 p-4 rounded-2xl flex items-start gap-3">
+                <div className="p-1.5 bg-orange-500 rounded-lg">
+                  <AlertTriangle className="text-white" size={14} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-widest leading-none mb-1">
+                    Live Terminal
+                  </p>
+                  <p className="text-[10px] text-orange-500/80 leading-tight">
+                    Proceed with extreme caution. All updates are immediate.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </aside>
 

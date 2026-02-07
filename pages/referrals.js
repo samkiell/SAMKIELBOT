@@ -63,7 +63,7 @@ export default function ReferralsPage() {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] transition-colors duration-300">
         <Head>
-          <title>Referrals - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+          <title>Refer & Earn | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
         </Head>
         <main className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="mb-8">
@@ -89,7 +89,8 @@ export default function ReferralsPage() {
   return (
     <>
       <Head>
-        <title>Referrals - 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <title>Refer & Earn | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <meta name="description" content="Share SAMKIEL BOT with your friends and earn free credits for every successful referral. Grow the community and get rewarded." />
       </Head>
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">

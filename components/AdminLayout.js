@@ -55,7 +55,7 @@ export default function AdminLayout({ children }) {
       <div className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm">
         <div className="flex items-center gap-2">
           <image
-          href="/"
+          href="/logo.png"
           className="text-indigo-600 w-6 h-6" />
           <span className="font-bold tracking-tight text-sm uppercase">
             Admin Panel

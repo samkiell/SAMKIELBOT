@@ -28,7 +28,7 @@ export default function SuggestFeature() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ title, message }),
-        }
+        },
       );
 
       if (res.ok) {
@@ -48,7 +48,11 @@ export default function SuggestFeature() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
       <Head>
-        <title>Suggest Feature - SAMKIEL BOT</title>
+        <title>Suggest a Feature | 𝕊𝔸𝕄𝕂𝕀𝔼𝕃 𝔹𝕆𝕋</title>
+        <meta
+          name="description"
+          content="Share your ideas to improve SAMKIEL BOT. We value community feedback and read every feature suggestion."
+        />
       </Head>
 
       <main className="max-w-2xl mx-auto px-4 py-8">

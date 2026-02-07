@@ -23,6 +23,7 @@ import {
   FaChevronRight,
   FaFolderOpen,
   FaFileAlt,
+  FaFlask,
   FaExpand,
   FaCompress,
   FaPaperclip,
@@ -65,6 +66,9 @@ export default function AdminNotifications() {
   const [emailBroadcasts, setEmailBroadcasts] = useState([]);
   const [emailBroadcastsLoading, setEmailBroadcastsLoading] = useState(false);
   const [showEmailHistory, setShowEmailHistory] = useState(false);
+  const [showTestEmailModal, setShowTestEmailModal] = useState(false);
+  const [testEmailAddress, setTestEmailAddress] = useState("");
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
 
   // Filters
   const [filterType, setFilterType] = useState("all");
@@ -363,6 +367,66 @@ export default function AdminNotifications() {
       toast.error("Error resuming broadcast", { id: toastId });
     } finally {
       setSendingEmail(false);
+    }
+  };
+
+  // Send Test Email
+  const handleTestEmail = async (e) => {
+    e.preventDefault();
+
+    if (!testEmailAddress || !testEmailAddress.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (!emailBroadcastData.subject.trim()) {
+      toast.error("Subject is required for test email");
+      return;
+    }
+    if (!emailBroadcastData.message.trim()) {
+      toast.error("Message is required for test email");
+      return;
+    }
+
+    setSendingTestEmail(true);
+    const toastId = toast.loading("Sending test email...");
+
+    try {
+      const res = await fetch("/api/admin/email-broadcast/test", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          ...emailBroadcastData,
+          testEmail: testEmailAddress,
+          attachments: attachments.map((att) => ({
+            filename: att.filename,
+            content: att.content,
+            contentType: att.contentType,
+          })),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success(`Test email sent to ${testEmailAddress}!`, {
+          id: toastId,
+        });
+        setShowTestEmailModal(false);
+        setTestEmailAddress("");
+      } else {
+        toast.error(data.message || "Failed to send test email", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+      console.error("Test email error:", error);
+      toast.error("Error sending test email", { id: toastId });
+    } finally {
+      setSendingTestEmail(false);
     }
   };
 
@@ -773,11 +837,19 @@ export default function AdminNotifications() {
                     </div>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-2 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowTestEmailModal(true)}
+                      disabled={sendingEmail || sendingTestEmail}
+                      className="flex-1 py-2.5 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <FaFlask /> Test Email
+                    </button>
                     <button
                       type="submit"
-                      disabled={sendingEmail}
-                      className={`w-full py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
+                      disabled={sendingEmail || sendingTestEmail}
+                      className={`flex-[2] py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
                         sendingEmail
                           ? "bg-indigo-400 cursor-not-allowed"
                           : "bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg"
@@ -785,17 +857,74 @@ export default function AdminNotifications() {
                     >
                       {sendingEmail ? (
                         <>
-                          <FaSpinner className="animate-spin" /> Sending
-                          Emails...
+                          <FaSpinner className="animate-spin" /> Sending...
                         </>
                       ) : (
                         <>
-                          <FaEnvelope /> Send Email Broadcast
+                          <FaEnvelope /> Send Broadcast
                         </>
                       )}
                     </button>
                   </div>
                 </form>
+
+                {/* Test Email Modal */}
+                {showTestEmailModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <FaFlask className="text-indigo-500" /> Send Test Email
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                        Enter an email address to receive a test copy of this
+                        broadcast.
+                      </p>
+                      <form onSubmit={handleTestEmail}>
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Recipient Email
+                          </label>
+                          <input
+                            type="email"
+                            value={testEmailAddress}
+                            onChange={(e) =>
+                              setTestEmailAddress(e.target.value)
+                            }
+                            className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
+                            placeholder="your@email.com"
+                            autoFocus
+                            required
+                          />
+                        </div>
+                        <div className="flex justify-end gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setShowTestEmailModal(false)}
+                            className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={sendingTestEmail}
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors flex items-center gap-2"
+                          >
+                            {sendingTestEmail ? (
+                              <>
+                                <FaSpinner className="animate-spin" />{" "}
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <FaPaperPlane /> Send Test
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
 
                 {/* Email Broadcast History Toggle */}
                 <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">

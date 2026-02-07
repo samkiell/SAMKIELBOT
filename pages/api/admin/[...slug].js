@@ -34,6 +34,7 @@ import {
   throttleBot,
   // Email Broadcast
   sendEmailBroadcast,
+  sendTestEmailBroadcast,
   resumeEmailBroadcast,
   getEmailBroadcastHistory,
   getEmailBroadcastDetails,
@@ -402,6 +403,16 @@ export default async function handler(req, res) {
           method === "POST"
         ) {
           return await sendEmailBroadcast(req, res);
+        }
+
+        // Route: POST /api/admin/email-broadcast/test
+        if (
+          slug &&
+          slug[0] === "email-broadcast" &&
+          slug[1] === "test" &&
+          method === "POST"
+        ) {
+          return await sendTestEmailBroadcast(req, res);
         }
 
         // Route: POST /api/admin/email-broadcast/resume

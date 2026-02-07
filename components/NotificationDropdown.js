@@ -23,7 +23,7 @@ export default function NotificationDropdown() {
         `${process.env.NEXT_PUBLIC_API_URL}/notifications`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       const data = await res.json();
       if (data.success) {
@@ -76,7 +76,7 @@ export default function NotificationDropdown() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (res.ok) {
@@ -188,7 +188,13 @@ export default function NotificationDropdown() {
 
       {/* Overlay to close dropdown */}
       {isOpen && (
-        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+        <div
+          className="fixed inset-0 z-40 bg-black/5 backdrop-blur-[1px] cursor-default"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsOpen(false);
+          }}
+        />
       )}
     </div>
   );

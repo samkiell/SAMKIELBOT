@@ -55,7 +55,7 @@ export default function AdminLayout({ children }) {
       <div className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm">
         <div className="flex items-center gap-2">
           <img
-            src="/logo.png?v=2"
+            src="/logo.png"
             alt="SAMKIEL Admin Logo"
             className="w-7 h-7 rounded-lg"
           />
@@ -82,7 +82,7 @@ export default function AdminLayout({ children }) {
           <div className="hidden md:flex p-6 border-b border-gray-100 dark:border-gray-800 items-center justify-between">
             <div className="flex items-center gap-3">
               <img
-                src="/logo.png?v=2"
+                src="/logo.png"
                 alt="SAMKIEL Admin Logo"
                 className="w-10 h-10 rounded-xl shadow-lg shadow-indigo-500/20"
               />

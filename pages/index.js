@@ -104,12 +104,12 @@ export default function Home() {
           property="og:description"
           content="Professional WhatsApp bot deployment and hosting platform. Automate your chats and groups easily with SAMKIEL BOT."
         />
-        <meta property="og:image" content="/og-image.png?v=2" />
+        <meta property="og:image" content="/og-image.png" />
         <meta property="og:url" content="https://samkielbot.app" />
         <meta property="og:type" content="website" />
-        <link rel="icon" href="/logo.png?v=2" />
-        <link rel="shortcut icon" href="/logo.png?v=2" />
-        <link rel="apple-touch-icon" href="/logo.png?v=2" />
+        <link rel="icon" href="/logo.png" />
+        <link rel="shortcut icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

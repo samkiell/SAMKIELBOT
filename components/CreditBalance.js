@@ -39,20 +39,24 @@ export default function CreditBalance({ showBuyButton = true }) {
     );
   }
 
+  const [isHidden, setIsHidden] = useState(true);
+
   const isLow = credits < 50;
 
   return (
     <div className="flex items-center gap-1.5 md:gap-3">
       <div
-        className={`flex items-center justify-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-xl transition-all duration-200 shadow-lg border border-white/10 min-w-[90px] md:min-w-[120px] ${
+        onClick={() => setIsHidden(!isHidden)}
+        className={`flex items-center justify-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-xl transition-all duration-200 shadow-lg border border-white/10 min-w-[90px] md:min-w-[120px] cursor-pointer hover:scale-105 active:scale-95 ${
           isLow
             ? "bg-gradient-to-r from-red-600 to-rose-700 text-white"
             : "bg-gradient-to-r from-yellow-500 to-orange-600 text-white"
         }`}
+        title={isHidden ? "Click to reveal balance" : "Click to hide balance"}
       >
         <FaCoins className="text-white text-sm md:text-lg" />
-        <span className="font-bold text-white text-[13px] md:text-base whitespace-nowrap">
-          {Math.round(credits)}{" "}
+        <span className="font-bold text-white text-[13px] md:text-base whitespace-nowrap font-mono">
+          {isHidden ? "****" : Math.round(credits)}{" "}
           <span className="hidden sm:inline">Credits</span>
         </span>
       </div>

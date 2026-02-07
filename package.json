@@ -50,6 +50,7 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
+    "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9.0.0",
     "eslint-config-next": "16.0.0",
     "nodemon": "^3.0.2"

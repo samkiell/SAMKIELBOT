@@ -80,7 +80,7 @@ export default function AdminLayout({ children }) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } ${isCollapsed ? "md:w-20" : "md:w-72"} w-72`}
       >
-        <div className="flex flex-col h-full overflow-y-auto">
+        <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
           {/* Sidebar Header */}
           <div
             className={`hidden md:flex p-4 border-b border-gray-100 dark:border-gray-800 items-center transition-all ${isCollapsed ? "flex-col gap-4 py-6" : "justify-between"}`}

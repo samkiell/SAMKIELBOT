@@ -592,18 +592,137 @@ export default function AdminNotifications() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Message <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex justify-between items-center">
+                      <span>
+                        Message <span className="text-red-500">*</span>
+                      </span>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowPreview(true)}
+                          className="text-xs flex items-center gap-1 text-indigo-600 dark:text-indigo-400 hover:underline"
+                        >
+                          <FaEye /> Preview
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsEditorExpanded(!isEditorExpanded)}
+                          className="text-xs flex items-center gap-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        >
+                          {isEditorExpanded ? (
+                            <>
+                              <FaCompress /> Collapse
+                            </>
+                          ) : (
+                            <>
+                              <FaExpand /> Expand
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </label>
-                    <textarea
-                      name="message"
-                      value={emailBroadcastData.message}
-                      onChange={handleEmailChange}
-                      rows="6"
-                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      placeholder="Enter your email message..."
-                      required
-                    ></textarea>
+                    <div
+                      className={`${isEditorExpanded ? "fixed inset-0 z-50 bg-white dark:bg-gray-900 p-8 flex flex-col" : "relative"}`}
+                    >
+                      {isEditorExpanded && (
+                        <div className="flex justify-between items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
+                          <h3 className="text-xl font-bold dark:text-white">
+                            Email Editor
+                          </h3>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditorExpanded(false)}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+                          >
+                            <FaTimes size={24} />
+                          </button>
+                        </div>
+                      )}
+
+                      <div
+                        className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 ${isEditorExpanded ? "flex-1 flex flex-col" : ""}`}
+                      >
+                        <ReactQuill
+                          theme="snow"
+                          value={emailBroadcastData.message}
+                          onChange={handleEditorChange}
+                          modules={{
+                            toolbar: [
+                              [{ header: [1, 2, 3, false] }],
+                              [
+                                "bold",
+                                "italic",
+                                "underline",
+                                "strike",
+                                "blockquote",
+                              ],
+                              [{ list: "ordered" }, { list: "bullet" }],
+                              ["link", "image"],
+                              [{ color: [] }, { background: [] }],
+                              ["clean"],
+                            ],
+                          }}
+                          className={`h-full ${isEditorExpanded ? "quill-fullscreen" : "quill-normal"}`}
+                          placeholder="Compose your email..."
+                          style={{
+                            height: isEditorExpanded
+                              ? "calc(100% - 42px)"
+                              : "300px",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Attachments Section */}
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                          <FaPaperclip /> Attachments ({attachments.length})
+                        </label>
+                        <label className="cursor-pointer text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2">
+                          <FaFolderOpen /> Add Files
+                          <input
+                            type="file"
+                            multiple
+                            onChange={handleFileChange}
+                            className="hidden"
+                            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                          />
+                        </label>
+                      </div>
+
+                      {attachments.length > 0 && (
+                        <div className="grid grid-cols-1 gap-2 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-gray-200 dark:border-gray-700 max-h-40 overflow-y-auto">
+                          {attachments.map((att) => (
+                            <div
+                              key={att.id}
+                              className="flex items-center justify-between bg-white dark:bg-gray-800 p-2 rounded border border-gray-100 dark:border-gray-700 shadow-sm"
+                            >
+                              <div className="flex items-center gap-3 overflow-hidden">
+                                <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded text-indigo-600 dark:text-indigo-400">
+                                  <FaFileAlt />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium truncate dark:text-gray-200">
+                                    {att.filename}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {(att.size / 1024).toFixed(1)} KB
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeAttachment(att.id)}
+                                className="text-gray-400 hover:text-red-500 p-1 transition-colors"
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">

@@ -266,7 +266,7 @@ export default function Navbar() {
                   </Link>
                   <Link
                     href="/register"
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl transition-all font-bold shadow-lg shadow-indigo-500/20"
+                    className="ml-4 px-4 py-2 rounded-full bg-indigo-600 text-white !text-white hover:bg-indigo-700 transition-colors font-medium"
                   >
                     Register
                   </Link>

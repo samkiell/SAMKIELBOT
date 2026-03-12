@@ -191,25 +191,9 @@ export default function Home() {
               </span>
             </div>
 
-            <div className="flex flex-col items-center">
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <Link
-                  href="/register"
-                  className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl font-bold transition-all duration-200 transform hover:-translate-y-1 shadow-lg shadow-indigo-600/30"
-                >
-                  Start Deploying Free
-                </Link>
-                <Link
-                  href="/bots"
-                  className="w-full sm:w-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 px-8 py-4 rounded-xl font-semibold transition-all duration-200 transform hover:-translate-y-1 shadow-sm"
-                >
-                  View Community Bots
-                </Link>
-              </div>
-              <p className="mt-4 text-xs md:text-sm text-gray-500 dark:text-gray-400">
-                No credit card required • 3-minute setup
-              </p>
-            </div>
+            <p className="mt-4 text-xs md:text-sm text-gray-500 dark:text-gray-400">
+              No credit card required • 3-minute setup
+            </p>
           </motion.div>
         </div>
         {/* Animated shapes */}

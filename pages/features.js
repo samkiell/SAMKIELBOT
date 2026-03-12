@@ -86,7 +86,7 @@ export default function FeaturesPage() {
           >
             <Link
               href="/register"
-              className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 !text-white px-10 py-4 rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
             >
               Start Free Deployment <FaArrowRight className="text-sm" />
             </Link>

@@ -731,55 +731,65 @@ export default function AdminNotifications() {
               </button>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden">
-              <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                      <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
-                          <tr className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-                              <th className="px-8 py-5">Type</th>
-                              <th className="px-8 py-5">Content</th>
-                              <th className="px-8 py-5">Sent At</th>
-                              <th className="px-8 py-5 text-right">Actions</th>
-                          </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-                          {notifications.map((n) => (
-                              <tr key={n._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                  <td className="px-8 py-6">
-                                      <div className="flex items-center gap-3">
-                                          {getInAppIcon(n.type)}
-                                          <span className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">{n.type}</span>
-                                      </div>
-                                  </td>
-                                  <td className="px-8 py-6">
-                                      <div className="max-w-md">
-                                          <h5 className="font-bold text-gray-900 dark:text-white text-sm">{n.title || "No Title"}</h5>
-                                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{n.message}</p>
-                                      </div>
-                                  </td>
-                                  <td className="px-8 py-6">
-                                      <span className="text-xs text-gray-500 font-medium">{format(new Date(n.createdAt), "MMM d, HH:mm")}</span>
-                                  </td>
-                                  <td className="px-8 py-6 text-right">
-                                      <button 
-                                        onClick={() => handleDelete(n._id)}
-                                        className="p-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
-                                      >
-                                          <FaTrash size={14} />
-                                      </button>
-                                  </td>
-                              </tr>
-                          ))}
-                          {notifications.length === 0 && (
-                              <tr>
-                                  <td colSpan="4" className="px-8 py-20 text-center text-gray-400 italic font-medium">
-                                      No in-app broadcasts found in history.
-                                  </td>
-                              </tr>
-                          )}
-                      </tbody>
-                  </table>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {notifications.map((n) => (
+                  <div 
+                    key={n._id} 
+                    className="group bg-white dark:bg-gray-800 rounded-[2.5rem] p-8 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 p-6 flex gap-2">
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${
+                             n.type === "error" ? "bg-red-50 text-red-600 border-red-100" :
+                             n.type === "success" ? "bg-green-50 text-green-600 border-green-100" :
+                             n.type === "warning" ? "bg-yellow-50 text-yellow-600 border-yellow-100" :
+                             "bg-gray-50 text-gray-600 border-gray-100"
+                        }`}>
+                            {n.type}
+                        </span>
+                        <button 
+                            onClick={() => handleDelete(n._id)}
+                            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                        >
+                            <FaTrash size={10} />
+                        </button>
+                    </div>
+
+                    <div className="flex items-start gap-4 mb-6">
+                        <div className="mt-1 transform scale-110">
+                            {getInAppIcon(n.type)}
+                        </div>
+                        <div>
+                            <h4 className="text-lg font-bold text-gray-900 dark:text-white pr-10 line-clamp-1">{n.title || "Internal Alert"}</h4>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">
+                                {format(new Date(n.createdAt), "MMM d, HH:mm")}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-50 dark:bg-gray-900/30 rounded-2xl p-5 min-h-[100px]">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-4">
+                            {n.message}
+                        </p>
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-between text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        <span>Ready in User Center</span>
+                        <div className="flex -space-x-2">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                     <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${n._id}${i}`} alt="avatar" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                  </div>
+              ))}
+              {notifications.length === 0 && (
+                  <div className="col-span-full py-20 text-center bg-gray-50 dark:bg-gray-900/30 rounded-[2.5rem] border-2 border-dashed border-gray-100 dark:border-gray-700">
+                      <FaBell className="mx-auto text-4xl text-gray-200 mb-4" />
+                      <p className="text-gray-400 italic font-medium">No in-app broadcasts found in history.</p>
+                  </div>
+              )}
           </div>
       </div>
 

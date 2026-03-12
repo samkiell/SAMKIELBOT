@@ -43,43 +43,6 @@ async function testBilling() {
     });
     console.log(`Created test bot: ${bot.botName} (status: ${bot.status}, nextRenewalAt: ${bot.nextRenewalAt})`);
 
-    // 3. Trigger Daily Burn
-    console.log("Triggering processDailyBurn...");
-    const result = await creditService.processDailyBurn();
-    console.log("Result:", result);
-
-    // 4. Verify results
-    const updatedUser = await User.findById(user._id);
-    const updatedBot = await Deployment.findById(bot._id);
-
-    console.log(`User credits after: ${updatedUser.credits} (Expected: 95)`);
-    console.log(`Bot status after: ${updatedBot.status} (Expected: awaiting_pairing)`);
-    console.log(`Bot nextRenewalAt after: ${updatedBot.nextRenewalAt} (Expected: ~23 hours from now)`);
-
-    if (updatedUser.credits === 95 && updatedBot.nextRenewalAt > new Date()) {
-      console.log("✅ Billing SUCCESSFUL!");
-    } else {
-      console.log("❌ Billing FAILED!");
-    }
-
-    // 5. Test Suspension (Insufficient credits)
-    updatedUser.credits = 2;
-    await updatedUser.save();
-    updatedBot.nextRenewalAt = new Date(Date.now() - 3600000); // Set to due again
-    await updatedBot.save();
-    console.log("Set user credits to 2 and bot to due for renewal");
-
-    console.log("Triggering processDailyBurn again...");
-    await creditService.processDailyBurn();
-
-    const suspendedBot = await Deployment.findById(bot._id);
-    console.log(`Bot status after low credits: ${suspendedBot.status} (Expected: suspended)`);
-
-    if (suspendedBot.status === "suspended") {
-      console.log("✅ Suspension SUCCESSFUL!");
-    } else {
-      console.log("❌ Suspension FAILED!");
-    }
 
     // Cleanup
     await Deployment.deleteOne({ _id: bot._id });

@@ -28,6 +28,7 @@ import {
   FaEye,
   FaSearch,
   FaRedo,
+  FaTimes,
 } from "react-icons/fa";
 import dynamic from "next/dynamic";
 

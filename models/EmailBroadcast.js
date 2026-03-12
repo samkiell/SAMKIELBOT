@@ -52,7 +52,7 @@ const emailBroadcastSchema = new mongoose.Schema(
     // Delivery status
     status: {
       type: String,
-      enum: ["pending", "processing", "completed", "partial", "failed"],
+      enum: ["pending", "queued", "processing", "completed", "partial", "failed"],
       default: "pending",
     },
     // Recipient statistics

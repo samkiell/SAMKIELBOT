@@ -34,6 +34,7 @@ const { successResponse } = require("./lib/utils/response");
 const initScheduler = require("./lib/utils/scheduler");
 const botHealthService = require("./lib/services/botHealthService");
 const infraOrchestrator = require("./lib/services/infraOrchestrator");
+const broadcastWorker = require("./lib/services/broadcastWorker");
 
 app
   .prepare()
@@ -197,6 +198,10 @@ app
 
         infraOrchestrator.start().catch((err) => {
           console.error("[InfraOrchestrator] background init error:", err);
+        });
+
+        broadcastWorker.startWorker().catch((err) => {
+          console.error("[BroadcastWorker] background start error:", err);
         });
       }, 2000);
     });

@@ -1,4 +1,14 @@
 import "../styles/globals.css";
+import ReactDOM from "react-dom";
+
+// React 19 findDOMNode shim for legacy library compatibility (like react-quill)
+if (typeof window !== "undefined" && !ReactDOM.findDOMNode) {
+  ReactDOM.findDOMNode = (instance) => {
+    if (!instance) return null;
+    if (instance instanceof HTMLElement) return instance;
+    return instance.current || null;
+  };
+}
 import { Toaster } from "react-hot-toast";
 import dynamic from "next/dynamic";
 import Layout from "../components/Layout";

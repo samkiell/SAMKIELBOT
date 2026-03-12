@@ -36,17 +36,55 @@ async function testBilling() {
       user: user._id,
       botName: "Billing Test Bot",
       botNumber: "1234567890",
-      status: "awaiting_pairing", // One of the newly added statuses
+      status: "awaiting_pairing", 
       billingStatus: "active",
-      nextRenewalAt: new Date(Date.now() - 3600000), // 1 hour ago (due)
+      nextRenewalAt: new Date(Date.now() - 3600000), 
       dailyBurn: 5
     });
     console.log(`Created test bot: ${bot.botName} (status: ${bot.status}, nextRenewalAt: ${bot.nextRenewalAt})`);
 
+    // 3. Trigger Daily Burn - First time
+    console.log("Triggering processDailyBurn (First time)...");
+    await creditService.processDailyBurn();
+
+    // 4. Verify results
+    let updatedUser = await User.findById(user._id);
+    let updatedBot = await Deployment.findById(bot._id);
+
+    console.log(`User credits after: ${updatedUser.credits} (Expected: 95)`);
+    console.log(`Bot status after: ${updatedBot.status} (Expected: awaiting_pairing)`);
+
+    if (updatedUser.credits === 95 && updatedBot.nextRenewalAt > new Date()) {
+      console.log("✅ First Billing SUCCESSFUL!");
+    } else {
+      console.log("❌ First Billing FAILED!");
+    }
+
+    // 5. Test Suspension (Insufficient credits)
+    // Clear lastBurnDate to allow another burn in the same period for testing
+    updatedBot.lastBurnDate = null;
+    updatedBot.nextRenewalAt = new Date(Date.now() - 3600000); 
+    await updatedBot.save();
+    
+    updatedUser.credits = 2;
+    await updatedUser.save();
+    
+    console.log("Set user credits to 2 and reset bot for second burn");
+
+    console.log("Triggering processDailyBurn (Second time)...");
+    await creditService.processDailyBurn();
+
+    const suspendedBot = await Deployment.findById(bot._id);
+    console.log(`Bot status after low credits: ${suspendedBot.status} (Expected: suspended)`);
+
+    if (suspendedBot.status === "suspended") {
+      console.log("✅ Suspension SUCCESSFUL!");
+    } else {
+      console.log("❌ Suspension FAILED!");
+    }
 
     // Cleanup
     await Deployment.deleteOne({ _id: bot._id });
-    // Keep user for future tests or delete: await User.deleteOne({ _id: user._id });
 
     process.exit(0);
   } catch (err) {

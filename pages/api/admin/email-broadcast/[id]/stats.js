@@ -1,6 +1,6 @@
-const { successResponse, errorResponse } = require("../../../../lib/utils/response");
-const emailBroadcastService = require("../../../../lib/services/emailBroadcastService");
-const { verifyAdmin } = require("../../../../lib/auth");
+const { successResponse, errorResponse } = require("../../../../../lib/utils/response");
+const emailBroadcastService = require("../../../../../lib/services/emailBroadcastService");
+const { verifyAdmin } = require("../../../../../lib/auth");
 
 export default async function handler(req, res) {
   try {

@@ -422,6 +422,56 @@ export default function AdminNotifications() {
     setSending(false);
   };
 
+  const handleSendInApp = async (e) => {
+    e.preventDefault();
+    if (!formData.message) return toast.error("Message is required");
+    setSending(true);
+    try {
+      const res = await fetch("/api/admin/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Broadcast sent!");
+        setFormData({ title: "", message: "", type: "info" });
+        fetchInApp();
+      } else {
+        toast.error(data.message || "Failed");
+      }
+    } catch (err) { toast.error("Error"); }
+    setSending(false);
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Delete this broadcast log?")) return;
+    try {
+      const res = await fetch(`/api/admin/notifications/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Deleted");
+        setNotifications(notifications.filter((n) => n._id !== id));
+      }
+    } catch (err) { toast.error("Error"); }
+  };
+
+  const getInAppIcon = (type) => {
+    switch (type) {
+      case "success": return <FaCheckCircle className="text-green-500" />;
+      case "warning": return <FaExclamationTriangle className="text-yellow-500" />;
+      case "error": return <FaTimesCircle className="text-red-500" />;
+      case "update": return <FaSync className="text-indigo-500" />;
+      case "maintenance": return <FaTools className="text-orange-500" />;
+      case "announcement": return <FaBullhorn className="text-purple-500" />;
+      case "offer": return <FaTag className="text-emerald-500" />;
+      default: return <FaInfoCircle className="text-blue-500" />;
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="mb-8">
@@ -462,7 +512,7 @@ export default function AdminNotifications() {
 
             <div className="p-8">
               {activeTab === "inApp" ? (
-                <form className="space-y-5">
+                <form onSubmit={handleSendInApp} className="space-y-5">
                    <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Title</label>
                     <input 
@@ -663,6 +713,73 @@ export default function AdminNotifications() {
                     </div>
                   </div>
               ))}
+          </div>
+      </div>
+
+      {/* In-App Notification History */}
+      <div className="mt-16 space-y-8 pb-20">
+          <div className="flex items-end justify-between px-2">
+              <div>
+                <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">In-App Broadcast Logs</h2>
+                <p className="text-sm text-gray-500 font-medium">History of all alerts sent to users' notification centers</p>
+              </div>
+              <button 
+                onClick={fetchInApp} 
+                className="p-3 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all"
+              >
+                <FaSync className={loading ? "animate-spin" : ""} />
+              </button>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                      <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
+                          <tr className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                              <th className="px-8 py-5">Type</th>
+                              <th className="px-8 py-5">Content</th>
+                              <th className="px-8 py-5">Sent At</th>
+                              <th className="px-8 py-5 text-right">Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
+                          {notifications.map((n) => (
+                              <tr key={n._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                  <td className="px-8 py-6">
+                                      <div className="flex items-center gap-3">
+                                          {getInAppIcon(n.type)}
+                                          <span className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">{n.type}</span>
+                                      </div>
+                                  </td>
+                                  <td className="px-8 py-6">
+                                      <div className="max-w-md">
+                                          <h5 className="font-bold text-gray-900 dark:text-white text-sm">{n.title || "No Title"}</h5>
+                                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{n.message}</p>
+                                      </div>
+                                  </td>
+                                  <td className="px-8 py-6">
+                                      <span className="text-xs text-gray-500 font-medium">{format(new Date(n.createdAt), "MMM d, HH:mm")}</span>
+                                  </td>
+                                  <td className="px-8 py-6 text-right">
+                                      <button 
+                                        onClick={() => handleDelete(n._id)}
+                                        className="p-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
+                                      >
+                                          <FaTrash size={14} />
+                                      </button>
+                                  </td>
+                              </tr>
+                          ))}
+                          {notifications.length === 0 && (
+                              <tr>
+                                  <td colSpan="4" className="px-8 py-20 text-center text-gray-400 italic font-medium">
+                                      No in-app broadcasts found in history.
+                                  </td>
+                              </tr>
+                          )}
+                      </tbody>
+                  </table>
+              </div>
           </div>
       </div>
 

@@ -28,18 +28,18 @@ const broadcastRecipientSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "sending", "sent", "failed"],
+      enum: ["pending", "processing", "sent", "failed"],
       default: "pending",
       index: true,
     },
-    retryCount: {
+    attempts: {
       type: Number,
       default: 0,
     },
-    error: {
+    lastError: {
       type: String,
     },
-    processedAt: {
+    sentAt: {
       type: Date,
     },
   },
@@ -48,8 +48,9 @@ const broadcastRecipientSchema = new mongoose.Schema(
   }
 );
 
-// Compound index for efficient batching
+// Compound index for efficient batching and filtering
 broadcastRecipientSchema.index({ broadcast: 1, status: 1 });
+broadcastRecipientSchema.index({ broadcast: 1, email: 1 });
 
 module.exports =
   mongoose.models.BroadcastRecipient ||

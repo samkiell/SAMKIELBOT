@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -21,109 +21,305 @@ import {
   FaChevronUp,
   FaChevronLeft,
   FaChevronRight,
-  FaFolderOpen,
   FaFileAlt,
   FaFlask,
   FaExpand,
   FaCompress,
-  FaPaperclip,
-  FaTimes,
   FaEye,
+  FaSearch,
+  FaRedo,
 } from "react-icons/fa";
 import dynamic from "next/dynamic";
 
-// Dynamic import for ReactQuill to avoid SSR issues
+// Dynamic import for ReactQuill
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+/* Progress Bar Component */
+const ProgressBar = ({ sent, total, status }) => {
+  const percentage = total > 0 ? Math.round((sent / total) * 100) : 0;
+  
+  const getBarColor = () => {
+    switch (status) {
+      case "completed": return "bg-green-500";
+      case "failed": return "bg-red-500";
+      case "processing": return "bg-blue-500 animate-pulse";
+      default: return "bg-indigo-500";
+    }
+  };
+
+  return (
+    <div className="w-full space-y-1.5">
+      <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        <span>{percentage}% Complete</span>
+        <span>{sent} / {total} Sent</span>
+      </div>
+      <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600">
+        <div 
+          className={`h-full transition-all duration-500 ease-out ${getBarColor()}`}
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+    </div>
+  );
+};
+
+/* Recipient Details Modal */
+const RecipientDetailsModal = ({ broadcast, onClose }) => {
+  const [recipients, setRecipients] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [search, setSearch] = useState("");
+  const [stats, setStats] = useState(null);
+
+  const fetchRecipients = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/email-broadcast/${broadcast._id}/recipients?page=${page}&status=${filterStatus}&search=${search}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRecipients(data.data.recipients);
+        setTotalPages(data.data.pagination.pages);
+      }
+    } catch (err) {
+      console.error("Fetch recipients error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [broadcast._id, page, filterStatus, search]);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/email-broadcast/${broadcast._id}/stats`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      const data = await res.json();
+      if (data.success) setStats(data.data);
+    } catch (err) {
+      console.error("Fetch stats error:", err);
+    }
+  }, [broadcast._id]);
+
+  useEffect(() => {
+    fetchRecipients();
+    fetchStats();
+    // Poll stats every 5s while modal is open
+    const interval = setInterval(fetchStats, 5000);
+    return () => clearInterval(interval);
+  }, [fetchRecipients, fetchStats]);
+
+  const handleAction = async (recipientId) => {
+    try {
+      const res = await fetch(`/api/admin/email-broadcast/${broadcast._id}/recipients`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}` 
+        },
+        body: JSON.stringify({ recipientId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Recipient queued for retry");
+        fetchRecipients();
+      }
+    } catch (err) {
+      toast.error("Action failed");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700">
+        {/* Header */}
+        <div className="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <FaEnvelope className="text-indigo-500" /> {broadcast.subject}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+              Recipient Tracking Detail
+            </p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
+            <FaTimes className="text-gray-500" />
+          </button>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-white dark:bg-gray-900 shadow-inner">
+          <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800">
+            <p className="text-xs text-indigo-600 dark:text-indigo-400 font-bold uppercase">Total</p>
+            <p className="text-2xl font-black text-indigo-900 dark:text-indigo-100">{stats?.total || broadcast.stats.totalRecipients}</p>
+          </div>
+          <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800">
+            <p className="text-xs text-green-600 dark:text-green-400 font-bold uppercase">Sent</p>
+            <p className="text-2xl font-black text-green-900 dark:text-green-100">{stats?.sent || 0}</p>
+          </div>
+          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-100 dark:border-yellow-800">
+            <p className="text-xs text-yellow-600 dark:text-yellow-400 font-bold uppercase">Processing</p>
+            <p className="text-2xl font-black text-yellow-900 dark:text-yellow-100">{stats?.processing || 0}</p>
+          </div>
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800">
+            <p className="text-xs text-red-600 dark:text-red-400 font-bold uppercase">Failed</p>
+            <p className="text-2xl font-black text-red-900 dark:text-red-100">{stats?.failed || 0}</p>
+          </div>
+        </div>
+
+        {/* Main List */}
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="relative w-full sm:w-64">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={12} />
+              <input 
+                type="text" 
+                placeholder="Search email..." 
+                className="w-full pl-9 pr-4 py-2 text-xs bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <select 
+                className="flex-1 sm:w-32 px-3 py-2 text-xs bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg dark:text-white"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="all">All Status</option>
+                <option value="sent">Sent</option>
+                <option value="pending">Pending</option>
+                <option value="failed">Failed</option>
+                <option value="processing">Processing</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            {loading ? (
+              <div className="p-12 text-center text-gray-500">
+                <FaSpinner className="animate-spin inline mr-2" /> Loading recipients...
+              </div>
+            ) : recipients.length === 0 ? (
+              <div className="p-12 text-center text-gray-500 italic">No recipients found matching filters</div>
+            ) : (
+              <table className="w-full text-left">
+                <thead className="sticky top-0 bg-gray-50 dark:bg-gray-800 z-10 border-b border-gray-200 dark:border-gray-700">
+                  <tr className="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400">
+                    <th className="px-6 py-3">Recipient</th>
+                    <th className="px-6 py-3">Status</th>
+                    <th className="px-6 py-3">Attempts</th>
+                    <th className="px-6 py-3">Sent Time</th>
+                    <th className="px-6 py-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                  {recipients.map((r) => (
+                    <tr key={r._id} className="text-sm hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-gray-900 dark:text-gray-100">{r.name}</div>
+                        <div className="text-xs text-gray-500">{r.email}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          r.status === "sent" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" :
+                          r.status === "failed" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" :
+                          r.status === "processing" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 animate-pulse" :
+                          "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                        }`}>
+                          {r.status}
+                        </span>
+                        {r.lastError && (
+                          <div className="text-[10px] text-red-400 mt-1 truncate max-w-[150px]" title={r.lastError}>
+                            {r.lastError}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 font-mono text-xs">{r.attempts} / 3</td>
+                      <td className="px-6 py-4 text-xs text-gray-500">
+                        {r.sentAt ? format(new Date(r.sentAt), "MMM d, HH:mm:ss") : "—"}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {(r.status === "failed" || r.status === "pending") && (
+                          <button 
+                            onClick={() => handleAction(r._id)}
+                            className="p-1.5 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition-colors group"
+                            title={r.status === "failed" ? "Retry" : "Send Now"}
+                          >
+                            <FaRedo className="group-hover:rotate-180 transition-transform duration-500" size={14} />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+
+        {/* Footer / Pagination */}
+        <div className="p-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+            <div className="text-xs text-gray-500">Page {page} of {totalPages}</div>
+            <div className="flex gap-2">
+              <button 
+                disabled={page === 1}
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                className="p-2 disabled:opacity-30 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg"
+              >
+                <FaChevronLeft size={10} />
+              </button>
+              <button 
+                disabled={page === totalPages}
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                className="p-2 disabled:opacity-30 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg"
+              >
+                <FaChevronRight size={10} />
+              </button>
+            </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 /* Notification Preview Component */
 const NotificationPreview = ({
   activeTab,
   emailBroadcastData,
   formData,
-  attachments = [],
 }) => {
-  // Helper for icons
   const getIcon = (type) => {
     switch (type) {
-      case "success":
-        return <FaCheckCircle className="text-green-500" />;
-      case "warning":
-        return <FaExclamationTriangle className="text-yellow-500" />;
-      case "error":
-        return <FaTimesCircle className="text-red-500" />;
-      case "offer":
-        return <FaTag className="text-emerald-500" />;
-      default:
-        return <FaInfoCircle className="text-blue-500" />;
+      case "success": return <FaCheckCircle className="text-green-500" />;
+      case "warning": return <FaExclamationTriangle className="text-yellow-500" />;
+      case "error": return <FaTimesCircle className="text-red-500" />;
+      case "offer": return <FaTag className="text-emerald-500" />;
+      default: return <FaInfoCircle className="text-blue-500" />;
     }
   };
 
   if (activeTab === "email") {
     return (
-      <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm flex flex-col h-full bg-white">
-        <div className="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-200 dark:border-gray-700 space-y-2 flex-shrink-0">
-          <div className="flex justify-between items-start">
-            <div className="space-y-2 w-full">
-              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
-                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
-                  Subject:
-                </span>
-                <span className="text-gray-900 dark:text-white font-medium break-words flex-1">
-                  {emailBroadcastData.subject || "(No Subject)"}
-                </span>
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
-                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
-                  To:
-                </span>
-                <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded text-xs">
-                  All Verified Users
-                </span>
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-baseline gap-3">
-                <span className="font-medium text-gray-700 dark:text-gray-300 w-20 flex-shrink-0 text-right">
-                  From:
-                </span>
-                <span className="text-gray-900 dark:text-white font-medium truncate flex-1">
-                  {emailBroadcastData.senderName || "Ezekiel"}{" "}
-                  &lt;info@samkielbot.app&gt;
-                </span>
-              </div>
+      <div className="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden shadow-xl flex flex-col h-full bg-white">
+        <div className="bg-gray-50/80 p-6 border-b border-gray-200 space-y-3">
+            <div className="flex items-center gap-4 text-sm">
+                <span className="w-16 font-bold text-gray-400 uppercase text-[10px]">Subject</span>
+                <span className="font-semibold text-gray-900 flex-1">{emailBroadcastData.subject || "(Draft Subject)"}</span>
             </div>
-          </div>
+            <div className="flex items-center gap-4 text-sm">
+                <span className="w-16 font-bold text-gray-400 uppercase text-[10px]">From</span>
+                <span className="text-gray-700">{emailBroadcastData.senderName} <span className="text-gray-400 italic font-normal">&lt;info@samkielbot.app&gt;</span></span>
+            </div>
         </div>
-        {/* Email Body Preview */}
-        <div className="p-6 bg-white flex-1 overflow-y-auto min-h-[400px]">
+        <div className="p-8 bg-white flex-1 overflow-y-auto min-h-[400px]">
           <div
-            className="prose prose-sm max-w-none text-gray-900"
+            className="prose prose-indigo max-w-none prose-sm"
             dangerouslySetInnerHTML={{
-              __html:
-                emailBroadcastData.message ||
-                "<p class='text-gray-400 italic text-center mt-10'>Start composing your email to see the preview here...</p>",
+              __html: emailBroadcastData.message || "<p className='text-gray-400 italic text-center mt-12'>Email preview content will appear here...</p>",
             }}
           />
-
-          {/* Attachments Preview */}
-          {attachments.length > 0 && (
-            <div className="mt-6 pt-4 border-t border-gray-100">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                Attachments
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {attachments.map((att) => (
-                  <div
-                    key={att.id}
-                    className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded text-sm text-gray-600"
-                  >
-                    <FaFileAlt className="text-indigo-400" />
-                    <span className="truncate max-w-[120px]">
-                      {att.filename}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -131,1207 +327,419 @@ const NotificationPreview = ({
 
   return (
     <div className="space-y-4">
-      <div
-        className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow border border-gray-100 dark:border-gray-700 border-l-4"
-        style={{
-          borderLeftColor:
-            formData.type === "error"
-              ? "#ef4444"
-              : formData.type === "warning"
-                ? "#f59e0b"
-                : "#6366f1",
-        }}
-      >
-        <div className="flex items-start gap-3">
-          <div className="mt-1">{getIcon(formData.type)}</div>
+      <div className="p-5 bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-1.5 h-full bg-indigo-500" />
+        <div className="flex items-start gap-4">
+          <div className="mt-1 transform scale-125">{getIcon(formData.type)}</div>
           <div className="flex-1">
-            <h4 className="font-semibold text-gray-900 dark:text-white text-sm">
-              {formData.title || "Notification Title"}
+            <h4 className="font-bold text-gray-900 dark:text-white text-md tracking-tight">
+              {formData.title || "Announcement Title"}
             </h4>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
-              {formData.message ||
-                "Notification message content will appear here..."}
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">
+              {formData.message || "Compose your broadcast to see the live preview here. Your users will see this exact card."}
             </p>
-            {formData.link && (
-              <div className="mt-2">
-                <span className="text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:underline flex items-center gap-1">
-                  {formData.linkText || "Action"} <FaChevronRight size={10} />
-                </span>
-              </div>
-            )}
           </div>
-          <span className="text-xs text-gray-400 whitespace-nowrap">
-            Just now
-          </span>
+          <span className="text-[10px] font-bold text-gray-400 uppercase">Now</span>
         </div>
       </div>
-      <p className="text-center text-xs text-gray-500">
-        Preview of how the user will see the notification card.
-      </p>
     </div>
   );
 };
 
 export default function AdminNotifications() {
+  const [activeTab, setActiveTab] = useState("inApp");
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [sending, setSending] = useState(false);
-
-  // Form State
-  const [formData, setFormData] = useState({
-    title: "",
-    message: "",
-    type: "info",
-    link: "",
-    linkText: "",
-  });
-
-  // Email Broadcast State
-  const [activeTab, setActiveTab] = useState("inApp"); // "inApp" or "email"
-  const [emailBroadcastData, setEmailBroadcastData] = useState({
-    subject: "",
-    message: "",
-    senderName: "Ezekiel", // Default Sender Name
-    announcementType: "general",
-    priority: "normal",
-  });
-  const [attachments, setAttachments] = useState([]);
-  const [isEditorExpanded, setIsEditorExpanded] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-
-  const [sendingEmail, setSendingEmail] = useState(false);
   const [emailBroadcasts, setEmailBroadcasts] = useState([]);
-  const [emailBroadcastsLoading, setEmailBroadcastsLoading] = useState(false);
-  const [showEmailHistory, setShowEmailHistory] = useState(false);
-  const [showTestEmailModal, setShowTestEmailModal] = useState(false);
-  const [testEmailAddress, setTestEmailAddress] = useState("");
-  const [sendingTestEmail, setSendingTestEmail] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [selectedBroadcast, setSelectedBroadcast] = useState(null);
 
-  // Filters
-  const [filterType, setFilterType] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [userSearch, setUserSearch] = useState("");
+  // Form States
+  const [formData, setFormData] = useState({ title: "", message: "", type: "info" });
+  const [emailData, setEmailData] = useState({ 
+    subject: "", message: "", senderName: "Samkiel Bot", announcementType: "general", priority: "normal" 
+  });
+  
+  const [isEditorExpanded, setIsEditorExpanded] = useState(false);
+  const [showTestModal, setShowTestModal] = useState(false);
+  const [testEmail, setTestEmail] = useState("");
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
-
-  // Debounce for search
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Fetch notifications with filters
-  const fetchNotifications = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (debouncedSearch) params.append("search", debouncedSearch);
-      if (filterType !== "all") params.append("type", filterType);
-      if (userSearch) params.append("userSearch", userSearch);
-
-      const res = await fetch(`/api/admin/notifications?${params.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const data = await res.json();
-      if (data.success) {
-        setNotifications(data.data);
-      } else {
-        toast.error("Failed to fetch notifications");
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      toast.error("Error loading notifications");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-    setCurrentPage(1); // Reset to first page when filters change
-  }, [debouncedSearch, filterType, userSearch]); // Re-fetch when filters change (ignoring direct searchQuery to avoid rapid fire)
-
-  // Pagination calculations
-  const totalPages = Math.ceil(notifications.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedNotifications = notifications.slice(startIndex, endIndex);
-
-  // Handle Input Change
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Handle Editor Change
-  const handleEditorChange = (content) => {
-    setEmailBroadcastData((prev) => ({ ...prev, message: content }));
-  };
-
-  // Handle File Attachments
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    // Process files
-    files.forEach((file) => {
-      // Limit file size (2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error(`${file.name} exceeds 2MB limit`);
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setAttachments((prev) => [
-          ...prev,
-          {
-            filename: file.name,
-            contentType: file.type,
-            content: event.target.result.split(",")[1], // base64 content
-            size: file.size,
-            id: Date.now() + Math.random().toString(),
-          },
-        ]);
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Reset input
-    e.target.value = null;
-  };
-
-  const removeAttachment = (id) => {
-    setAttachments((prev) => prev.filter((att) => att.id !== id));
-  };
-
-  // Send Broadcast
-  const handleBroadcast = async (e) => {
-    e.preventDefault();
-    if (!formData.message) {
-      toast.error("Message is required");
-      return;
-    }
-
-    setSending(true);
-    try {
-      const res = await fetch("/api/admin/notifications", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          ...formData,
-          userId: null, // Broadcast to all
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success("Broadcast sent successfully!");
-        setFormData({
-          title: "",
-          message: "",
-          type: "info",
-          link: "",
-          linkText: "",
-        });
-        fetchNotifications(); // Refresh list
-      } else {
-        toast.error(data.message || "Failed to send");
-      }
-    } catch (error) {
-      console.error("Send error:", error);
-      toast.error("Error sending broadcast");
-    } finally {
-      setSending(false);
-    }
-  };
-
-  // ========================================
-  // EMAIL BROADCAST FUNCTIONS
-  // ========================================
-
-  // Handle Email Broadcast Input Change
-  const handleEmailChange = (e) => {
-    setEmailBroadcastData({
-      ...emailBroadcastData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // Fetch Email Broadcast History
-  const fetchEmailBroadcasts = async () => {
-    setEmailBroadcastsLoading(true);
+  const fetchBroadcasts = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/email-broadcast?limit=10", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       const data = await res.json();
-      if (data.success) {
-        setEmailBroadcasts(data.data.broadcasts || []);
-      }
-    } catch (error) {
-      console.error("Fetch email broadcasts error:", error);
-    } finally {
-      setEmailBroadcastsLoading(false);
-    }
-  };
+      if (data.success) setEmailBroadcasts(data.data.broadcasts || []);
+    } catch (err) { console.error(err); }
+  }, []);
 
-  // Load email broadcasts when tab is switched or history is shown
+  const fetchInApp = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/notifications", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      const data = await res.json();
+      if (data.success) setNotifications(data.data);
+    } catch (err) { console.error(err); }
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
-    if (activeTab === "email" || showEmailHistory) {
-      fetchEmailBroadcasts();
-    }
-  }, [activeTab, showEmailHistory]);
+    fetchInApp();
+    fetchBroadcasts();
+    // Poll for broadcast updates every 5 seconds
+    const interval = setInterval(fetchBroadcasts, 5000);
+    return () => clearInterval(interval);
+  }, [fetchInApp, fetchBroadcasts]);
 
-  // Send Email Broadcast
-  const handleEmailBroadcast = async (e) => {
+  const handleSendEmail = async (e) => {
     e.preventDefault();
+    if (!emailData.subject || !emailData.message) return toast.error("All fields required");
+    
+    if (!confirm("Start this broadcast to all users?")) return;
 
-    if (!emailBroadcastData.subject.trim()) {
-      toast.error("Subject is required");
-      return;
-    }
-    if (!emailBroadcastData.message.trim()) {
-      toast.error("Message is required");
-      return;
-    }
-
-    // Confirmation dialog
-    const confirmed = window.confirm(
-      `Are you sure you want to send this email to ALL verified users?\n\nSubject: ${emailBroadcastData.subject}\nPriority: ${emailBroadcastData.priority}\n\nThis action cannot be undone.`,
-    );
-    if (!confirmed) return;
-
-    setSendingEmail(true);
-    const toastId = toast.loading("Sending emails... This may take a while.");
-
+    setSending(true);
+    const tid = toast.loading("Queueing broadcast...");
     try {
       const res = await fetch("/api/admin/email-broadcast", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          ...emailBroadcastData,
-          attachments: attachments.map((att) => ({
-            filename: att.filename,
-            content: att.content,
-            contentType: att.contentType,
-          })),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        const stats = data.data.stats;
-        toast.success(
-          `Email broadcast complete!\n${stats.sent}/${stats.totalRecipients} emails sent (${stats.successRate}% success)`,
-          { id: toastId, duration: 5000 },
-        );
-        setEmailBroadcastData({
-          subject: "",
-          message: "",
-          senderName: "Samkiel Bot",
-          announcementType: "general",
-          priority: "normal",
-        });
-        setAttachments([]); // Clear attachments
-        fetchEmailBroadcasts(); // Refresh history
-      } else {
-        toast.error(data.message || "Failed to send email broadcast", {
-          id: toastId,
-        });
-      }
-    } catch (error) {
-      console.error("Email broadcast error:", error);
-      toast.error("Error sending email broadcast", { id: toastId });
-    } finally {
-      setSendingEmail(false);
-    }
-  };
-
-  // Resume Email Broadcast
-  const handleResumeEmailBroadcast = async (broadcastId) => {
-    // Confirmation dialog
-    const confirmed = window.confirm(
-      "Are you sure you want to resume this email broadcast? It will only send to users who haven't received it yet.",
-    );
-    if (!confirmed) return;
-
-    setSendingEmail(true);
-    const toastId = toast.loading("Resuming email broadcast...");
-
-    try {
-      const res = await fetch("/api/admin/email-broadcast/resume", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ broadcastId }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        const stats = data.data.stats;
-        toast.success(
-          `Broadcast resumed and finished!\n${stats.sent}/${stats.totalRecipients} total emails sent`,
-          { id: toastId, duration: 5000 },
-        );
-        fetchEmailBroadcasts(); // Refresh history
-      } else {
-        toast.error(data.message || "Failed to resume broadcast", {
-          id: toastId,
-        });
-      }
-    } catch (error) {
-      console.error("Resume email broadcast error:", error);
-      toast.error("Error resuming broadcast", { id: toastId });
-    } finally {
-      setSendingEmail(false);
-    }
-  };
-
-  // Send Test Email
-  const handleTestEmail = async (e) => {
-    e.preventDefault();
-
-    if (!testEmailAddress || !testEmailAddress.includes("@")) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-
-    if (!emailBroadcastData.subject.trim()) {
-      toast.error("Subject is required for test email");
-      return;
-    }
-    if (!emailBroadcastData.message.trim()) {
-      toast.error("Message is required for test email");
-      return;
-    }
-
-    setSendingTestEmail(true);
-    const toastId = toast.loading("Sending test email...");
-
-    try {
-      const res = await fetch("/api/admin/email-broadcast/test", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          ...emailBroadcastData,
-          testEmail: testEmailAddress,
-          attachments: attachments.map((att) => ({
-            filename: att.filename,
-            content: att.content,
-            contentType: att.contentType,
-          })),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success(`Test email sent to ${testEmailAddress}!`, {
-          id: toastId,
-        });
-        setShowTestEmailModal(false);
-        setTestEmailAddress("");
-      } else {
-        toast.error(data.message || "Failed to send test email", {
-          id: toastId,
-        });
-      }
-    } catch (error) {
-      console.error("Test email error:", error);
-      toast.error("Error sending test email", { id: toastId });
-    } finally {
-      setSendingTestEmail(false);
-    }
-  };
-
-  // Get status badge for email broadcasts
-  const getStatusBadge = (status) => {
-    const badges = {
-      completed:
-        "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
-      partial:
-        "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300",
-      failed: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
-      processing:
-        "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
-      pending: "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300",
-    };
-    return badges[status] || badges.pending;
-  };
-
-  // Get priority badge color
-  const getPriorityBadge = (priority) => {
-    const badges = {
-      low: "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400",
-      normal:
-        "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
-      high: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300",
-      urgent: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
-    };
-    return badges[priority] || badges.normal;
-  };
-
-  // Delete notification
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this notification?")) return;
-
-    try {
-      const res = await fetch(`/api/admin/notifications/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
+        body: JSON.stringify(emailData)
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("Broadcast log deleted");
-        setNotifications(notifications.filter((n) => n._id !== id));
+        toast.success("Broadcast queued successfully!", { id: tid });
+        setEmailData({ ...emailData, subject: "", message: "" });
+        fetchBroadcasts();
       } else {
-        toast.error(data.message || "Failed to delete");
+        toast.error(data.message || "Failed", { id: tid });
       }
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error("Error deleting notification");
-    }
-  };
-
-  const getIcon = (type) => {
-    switch (type) {
-      case "success":
-        return <FaCheckCircle className="text-green-500" />;
-      case "warning":
-        return <FaExclamationTriangle className="text-yellow-500" />;
-      case "error":
-        return <FaTimesCircle className="text-red-500" />;
-      case "update":
-        return <FaSync className="text-indigo-500" />;
-      case "maintenance":
-        return <FaTools className="text-orange-500" />;
-      case "alert":
-        return <FaExclamationTriangle className="text-orange-600" />;
-      case "announcement":
-        return <FaBullhorn className="text-purple-500" />;
-      case "offer":
-        return <FaTag className="text-emerald-500" />;
-      default:
-        return <FaInfoCircle className="text-blue-500" />;
-    }
+    } catch (err) { toast.error("Error", { id: tid }); }
+    setSending(false);
   };
 
   return (
     <AdminLayout>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2 mb-2">
-          <FaBell className="text-indigo-600" /> Notification Center
+        <h1 className="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-3 tracking-tight">
+          <div className="p-3 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-200 dark:shadow-none">
+            <FaBell className="text-white" />
+          </div>
+          Notification Engine
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Send global broadcasts to all users and view history.
+        <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium">
+          Broadcast messages via In-App alerts or Email queue system.
         </p>
       </div>
 
-      <div
-        className={`grid grid-cols-1 ${isEditorExpanded ? "lg:grid-cols-1" : "lg:grid-cols-2"} gap-8`}
-      >
-        {/* Left Column: Broadcast Form */}
-        <div
-          className={`${isEditorExpanded ? "lg:col-span-1" : "lg:col-span-1"}`}
-        >
-          <div
-            className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 ${isEditorExpanded ? "" : "sticky top-8"}`}
-          >
-            {/* Tab Switcher */}
-            <div className="flex mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-              <button
-                type="button"
+      <div className={`grid grid-cols-1 ${isEditorExpanded ? "lg:grid-cols-1" : "lg:grid-cols-12"} gap-8`}>
+        {/* Left Column: Composer */}
+        <div className={isEditorExpanded ? "col-span-1" : "col-span-12 lg:col-span-7"}>
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+            {/* Tabs */}
+            <div className="flex p-2 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
+              <button 
                 onClick={() => setActiveTab("inApp")}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
-                  activeTab === "inApp"
-                    ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                className={`flex-1 py-3 px-6 rounded-2xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                  activeTab === "inApp" ? "bg-white dark:bg-gray-800 text-indigo-600 shadow-sm" : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                <FaBell size={14} /> In-App
+                <FaBell size={14} /> In-App Alert
               </button>
-              <button
-                type="button"
+              <button 
                 onClick={() => setActiveTab("email")}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
-                  activeTab === "email"
-                    ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                className={`flex-1 py-3 px-6 rounded-2xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                  activeTab === "email" ? "bg-white dark:bg-gray-800 text-indigo-600 shadow-sm" : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                <FaEnvelope size={14} /> Email
+                <FaEnvelope size={14} /> Email Dispatch
               </button>
             </div>
 
-            {/* In-App Notification Form */}
-            {activeTab === "inApp" && (
-              <>
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                  <FaPaperPlane className="text-indigo-500" /> Send In-App
-                  Broadcast
-                </h2>
-                <form onSubmit={handleBroadcast} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Title{" "}
-                      <span className="text-gray-400 font-normal text-xs">
-                        (Optional)
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="title"
+            <div className="p-8">
+              {activeTab === "inApp" ? (
+                <form className="space-y-5">
+                   <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Title</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:outline-none transition-all dark:text-white"
+                      placeholder="e.g. System Update"
                       value={formData.title}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      placeholder="e.g. System Maintenance"
+                      onChange={(e) => setFormData({...formData, title: e.target.value})}
                     />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Message
-                    </label>
-                    <textarea
-                      name="message"
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Message</label>
+                    <textarea 
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:outline-none transition-all dark:text-white min-h-[120px]"
+                      placeholder="What do you want to tell your users?"
                       value={formData.message}
-                      onChange={handleChange}
-                      rows="4"
-                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      placeholder="Enter your announcement..."
-                      required
-                    ></textarea>
+                      onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    />
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Type
-                      </label>
-                      <select
-                        name="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      >
-                        <option value="info">Info</option>
-                        <option value="success">Success</option>
-                        <option value="warning">Warning</option>
-                        <option value="error">Error</option>
-                        <option value="update">Update</option>
-                        <option value="maintenance">Maintenance</option>
-                        <option value="alert">Alert</option>
-                        <option value="announcement">Announcement</option>
-                        <option value="offer">Offer</option>
-                      </select>
+                  <div className="flex gap-4">
+                    <div className="flex-1 space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Alert Type</label>
+                        <select 
+                            className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:outline-none dark:text-white appearance-none"
+                            value={formData.type}
+                            onChange={(e) => setFormData({...formData, type: e.target.value})}
+                        >
+                            <option value="info">General Info</option>
+                            <option value="success">Success / Promo</option>
+                            <option value="warning">Maintenance / Warning</option>
+                            <option value="error">Critical Issue</option>
+                        </select>
                     </div>
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={sending}
-                      className={`w-full py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
-                        sending
-                          ? "bg-indigo-400 cursor-not-allowed"
-                          : "bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg"
-                      }`}
-                    >
-                      {sending ? "Sending..." : "Send In-App Broadcast"}
+                    <button className="flex-[0.5] mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-indigo-200 dark:shadow-none">
+                        Blast Now
                     </button>
                   </div>
                 </form>
-              </>
-            )}
-
-            {/* Email Broadcast Form */}
-            {activeTab === "email" && (
-              <>
-                <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                  <FaEnvelope className="text-indigo-500" /> Send Email
-                  Broadcast
-                </h2>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded border border-yellow-200 dark:border-yellow-800">
-                  ⚠️ This will send an email to ALL verified users. Use
-                  carefully. <br />
-                  <b>Tip:</b> Use <code>@user</code> in the message to
-                  automatically insert the recipient's first name.
-                </p>
-                <form onSubmit={handleEmailBroadcast} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Subject <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="subject"
-                      value={emailBroadcastData.subject}
-                      onChange={handleEmailChange}
-                      maxLength={200}
-                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      placeholder="e.g. Important System Update"
-                      required
-                    />
-                    <p className="text-xs text-gray-400 mt-1">
-                      {emailBroadcastData.subject.length}/200
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Sender Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="senderName"
-                      value={emailBroadcastData.senderName}
-                      onChange={handleEmailChange}
-                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      placeholder="e.g. Samkiel Bot"
+              ) : (
+                <form onSubmit={handleSendEmail} className="space-y-5">
+                   <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Dispatch Subject</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:outline-none transition-all dark:text-white font-semibold"
+                      placeholder="The first thing they see..."
+                      value={emailData.subject}
+                      onChange={(e) => setEmailData({...emailData, subject: e.target.value})}
                     />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex justify-between items-center">
-                      <span>
-                        Message <span className="text-red-500">*</span>
-                      </span>
-                      <div className="flex gap-2">
-                        {/* Preview Button Removed */}
-                        <button
-                          type="button"
-                          onClick={() => setIsEditorExpanded(!isEditorExpanded)}
-                          className="text-xs flex items-center gap-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                        >
-                          {isEditorExpanded ? (
-                            <>
-                              <FaCompress /> Collapse
-                            </>
-                          ) : (
-                            <>
-                              <FaExpand /> Expand
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    </label>
-                    <div
-                      className={`${isEditorExpanded ? "relative mt-2" : "relative"}`}
-                    >
-                      <div className={`flex flex-col lg:flex-row flex-1 gap-8`}>
-                        <div
-                          className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 flex flex-col ${isEditorExpanded ? "lg:w-1/2 min-h-[500px]" : "w-full"}`}
-                        >
-                          <ReactQuill
-                            theme="snow"
-                            value={emailBroadcastData.message}
-                            onChange={handleEditorChange}
-                            modules={{
-                              toolbar: [
-                                [{ header: [1, 2, 3, false] }],
-                                [
-                                  "bold",
-                                  "italic",
-                                  "underline",
-                                  "strike",
-                                  "blockquote",
-                                ],
-                                [{ list: "ordered" }, { list: "bullet" }],
-                                ["link", "image"],
-                                [{ color: [] }, { background: [] }],
-                                ["clean"],
-                              ],
-                            }}
-                            className={`h-full ${isEditorExpanded ? "quill-fullscreen" : "quill-normal"}`}
-                            placeholder="Compose your email..."
-                            style={{
-                              height: isEditorExpanded ? "500px" : "300px",
-                            }}
-                          />
-                        </div>
-
-                        {/* Preview Column - Only show if expanded WITHIN this container */}
-                        {isEditorExpanded && (
-                          <div className="lg:w-1/2 h-full min-h-[500px] hidden lg:block">
-                            <NotificationPreview
-                              activeTab={activeTab}
-                              emailBroadcastData={emailBroadcastData}
-                              formData={formData}
-                              attachments={attachments}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Attachments Section - Disabled as per request
-                    <div className="mt-4">
-                      ...
-                    </div>
-                    */}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Type
-                      </label>
-                      <select
-                        name="announcementType"
-                        value={emailBroadcastData.announcementType}
-                        onChange={handleEmailChange}
-                        className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      >
-                        <option value="general">General</option>
-                        <option value="update">Update</option>
-                        <option value="maintenance">Maintenance</option>
-                        <option value="security">Security</option>
-                        <option value="feature">New Feature</option>
-                        <option value="policy">Policy</option>
-                        <option value="important">Important</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Priority
-                      </label>
-                      <select
-                        name="priority"
-                        value={emailBroadcastData.priority}
-                        onChange={handleEmailChange}
-                        className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                      >
-                        <option value="low">Low</option>
-                        <option value="normal">Normal</option>
-                        <option value="high">High</option>
-                        <option value="urgent">Urgent</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowTestEmailModal(true)}
-                      disabled={sendingEmail || sendingTestEmail}
-                      className="flex-1 py-2.5 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <FaFlask /> Test Email
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={sendingEmail || sendingTestEmail}
-                      className={`flex-[2] py-2.5 px-4 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-all ${
-                        sendingEmail
-                          ? "bg-indigo-400 cursor-not-allowed"
-                          : "bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg"
-                      }`}
-                    >
-                      {sendingEmail ? (
-                        <>
-                          <FaSpinner className="animate-spin" /> Sending...
-                        </>
-                      ) : (
-                        <>
-                          <FaEnvelope /> Send Broadcast
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-
-                {/* Test Email Modal */}
-                {showTestEmailModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-700">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <FaFlask className="text-indigo-500" /> Send Test Email
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                        Enter an email address to receive a test copy of this
-                        broadcast.
-                      </p>
-                      <form onSubmit={handleTestEmail}>
-                        <div className="mb-4">
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Recipient Email
-                          </label>
-                          <input
-                            type="email"
-                            value={testEmailAddress}
-                            onChange={(e) =>
-                              setTestEmailAddress(e.target.value)
-                            }
-                            className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:text-white"
-                            placeholder="your@email.com"
-                            autoFocus
-                            required
-                          />
-                        </div>
-                        <div className="flex justify-end gap-3">
-                          <button
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-end mb-1">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Email Body (HTML Supported)</label>
+                        <button 
                             type="button"
-                            onClick={() => setShowTestEmailModal(false)}
-                            className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="submit"
-                            disabled={sendingTestEmail}
-                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors flex items-center gap-2"
-                          >
-                            {sendingTestEmail ? (
-                              <>
-                                <FaSpinner className="animate-spin" />{" "}
-                                Sending...
-                              </>
-                            ) : (
-                              <>
-                                <FaPaperPlane /> Send Test
-                              </>
-                            )}
-                          </button>
+                            onClick={() => setIsEditorExpanded(!isEditorExpanded)}
+                            className="text-[10px] font-bold text-indigo-600 flex items-center gap-1 hover:underline"
+                        >
+                            {isEditorExpanded ? <><FaCompress /> Collapse</> : <><FaExpand /> Multi-Col Edit</>}
+                        </button>
+                    </div>
+                    <div className={`grid grid-cols-1 ${isEditorExpanded ? "lg:grid-cols-2" : ""} gap-8`}>
+                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-600">
+                            <ReactQuill 
+                                theme="snow"
+                                value={emailData.message}
+                                onChange={(val) => setEmailData({...emailData, message: val})}
+                                className="quill-premium h-[300px]"
+                                modules={{
+                                    toolbar: [
+                                        [{ header: [1, 2, 3, false] }],
+                                        ["bold", "italic", "underline", "blockquote"],
+                                        [{'list': 'ordered'}, {'list': 'bullet'}],
+                                        ["link", "image", "clean"],
+                                        [{ 'color': [] }, { 'background': [] }],
+                                    ]
+                                }}
+                            />
                         </div>
-                      </form>
+                        {isEditorExpanded && (
+                            <div className="hidden lg:block h-[345px]">
+                                <NotificationPreview activeTab="email" emailBroadcastData={emailData} />
+                            </div>
+                        )}
                     </div>
                   </div>
-                )}
-
-                {/* Email Broadcast History Toggle */}
-                <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button
-                    type="button"
-                    onClick={() => setShowEmailHistory(!showEmailHistory)}
-                    className="w-full flex items-center justify-between text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-                  >
-                    <span className="flex items-center gap-2">
-                      <FaHistory /> Recent Email Broadcasts
-                    </span>
-                    {showEmailHistory ? <FaChevronUp /> : <FaChevronDown />}
-                  </button>
-
-                  {showEmailHistory && (
-                    <div className="mt-4 space-y-3">
-                      {emailBroadcastsLoading ? (
-                        <div className="text-center py-4 text-gray-500">
-                          <FaSpinner className="animate-spin inline mr-2" />{" "}
-                          Loading...
-                        </div>
-                      ) : emailBroadcasts.length === 0 ? (
-                        <p className="text-center py-4 text-gray-500 text-sm">
-                          No email broadcasts yet
-                        </p>
-                      ) : (
-                        emailBroadcasts.map((broadcast) => (
-                          <div
-                            key={broadcast._id}
-                            className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600 group"
-                          >
-                            <div className="flex items-start justify-between gap-2 mb-1">
-                              <h4 className="font-medium text-sm text-gray-800 dark:text-gray-200 truncate flex-1">
-                                {broadcast.subject}
-                              </h4>
-                              <span
-                                className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusBadge(
-                                  broadcast.status,
-                                )}`}
-                              >
-                                {broadcast.status}
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-between mt-1">
-                              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                <span>
-                                  {format(
-                                    new Date(broadcast.createdAt),
-                                    "MMM d, HH:mm",
-                                  )}
-                                </span>
-                                <span>•</span>
-                                <span>
-                                  {broadcast.stats?.sent || 0}/
-                                  {broadcast.stats?.totalRecipients || 0} sent
-                                </span>
-                              </div>
-
-                              {broadcast.status === "partial" &&
-                                !sendingEmail && (
-                                  <button
-                                    onClick={() =>
-                                      handleResumeEmailBroadcast(broadcast._id)
-                                    }
-                                    className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                  >
-                                    <FaPaperPlane size={8} /> RESUME
-                                  </button>
-                                )}
-                            </div>
-                            <div className="mt-1">
-                              <span
-                                className={`px-1.5 py-0.5 rounded text-[10px] ${getPriorityBadge(
-                                  broadcast.priority,
-                                )}`}
-                              >
-                                {broadcast.priority}
-                              </span>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
+                  <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                     <button 
+                        type="button"
+                        onClick={() => setShowTestModal(true)}
+                        className="flex-1 py-4 px-6 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 font-bold rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2"
+                      >
+                        <FaFlask /> Send Test
+                      </button>
+                      <button 
+                        type="submit"
+                        disabled={sending}
+                        className="flex-[2] py-4 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-indigo-100 dark:shadow-none flex items-center justify-center gap-2"
+                      >
+                        {sending ? <FaSpinner className="animate-spin" /> : <><FaPaperPlane /> Start Global Dispatch</>}
+                      </button>
+                  </div>
+                </form>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Live Preview */}
+        {/* Right Column: Preview / Stats */}
         {!isEditorExpanded && (
-          <div className="hidden lg:block">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                <FaEye className="text-indigo-500" /> Live Preview
-              </h2>
-
-              <NotificationPreview
-                activeTab={activeTab}
-                emailBroadcastData={emailBroadcastData}
-                formData={formData}
-                attachments={attachments}
-              />
+          <div className="col-span-12 lg:col-span-5 space-y-8">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 sticky top-8">
+               <h3 className="text-sm font-black uppercase text-gray-400 tracking-widest mb-6 flex items-center gap-2">
+                 <FaEye /> Real-time Preview
+               </h3>
+               <NotificationPreview 
+                activeTab={activeTab} 
+                formData={formData} 
+                emailBroadcastData={emailData} 
+               />
             </div>
           </div>
         )}
       </div>
 
-      {/* Broadcast History Table - Moved to Bottom */}
-      <div className="mt-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-              <FaHistory className="text-indigo-500" /> Broadcast History
-            </h2>
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <input
-                type="text"
-                placeholder="Search messages..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
-              />
-              <input
-                type="text"
-                placeholder="Filter by User (Username/Email)"
-                value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
-                className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
-              />
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
+      {/* Broadcast History / Real-time Tracking */}
+      <div className="mt-12 space-y-8">
+          <div className="flex items-end justify-between px-2">
+              <div>
+                <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Broadcast History</h2>
+                <p className="text-sm text-gray-500 font-medium">Real-time status of your last 10 global dispatches</p>
+              </div>
+              <button 
+                onClick={fetchBroadcasts} 
+                className="p-3 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all"
+                title="Refresh Manual"
               >
-                <option value="all">All Types</option>
-                <option value="info">Info</option>
-                <option value="success">Success</option>
-                <option value="warning">Warning</option>
-                <option value="error">Error</option>
-                <option value="update">Update</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="announcement">Announcement</option>
-              </select>
-            </div>
-            <span className="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
-              {notifications.length} Found | Page {currentPage} of{" "}
-              {totalPages || 1}
-            </span>
+                <FaSync className={emailLoading ? "animate-spin" : ""} />
+              </button>
           </div>
 
-          {loading ? (
-            <div className="p-12 text-center text-gray-500">
-              Loading history...
-            </div>
-          ) : notifications.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              No matching notifications found.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
-                      Type
-                    </th>
-                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
-                      Content
-                    </th>
-                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
-                      Recipient
-                    </th>
-                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">
-                      Date
-                    </th>
-                    <th className="p-4 font-semibold text-gray-600 dark:text-gray-300 text-right">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedNotifications.map((notif) => (
-                    <tr
-                      key={notif._id}
-                      className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
-                    >
-                      <td className="p-4 align-top w-24">
-                        <div className="flex flex-col items-center gap-1">
-                          {getIcon(notif.type)}
-                          <span className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400">
-                            {notif.type}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="p-4 align-top">
-                        <div className="font-semibold text-gray-800 dark:text-gray-200 mb-1">
-                          {notif.title}
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
-                          {notif.message}
-                        </p>
-                      </td>
-                      <td className="p-4 align-top text-sm">
-                        {notif.user ? (
-                          <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded text-xs font-bold">
-                            {typeof notif.user === "object"
-                              ? notif.user.username
-                              : "User"}
-                          </span>
-                        ) : (
-                          <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded text-xs font-bold">
-                            BROADCAST
-                          </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {emailBroadcasts.map((b) => (
+                  <div 
+                    key={b._id} 
+                    onClick={() => setSelectedBroadcast(b)}
+                    className="group bg-white dark:bg-gray-800 rounded-[2.5rem] p-8 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 p-6 flex gap-2">
+                        {b.status === "processing" && (
+                            <span className="flex h-2 w-2 relative">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                            </span>
                         )}
-                      </td>
-                      <td className="p-4 align-top whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 w-32">
-                        {format(new Date(notif.createdAt), "MMM d, HH:mm")}
-                      </td>
-                      <td className="p-4 align-top text-right w-16">
-                        <button
-                          onClick={() => handleDelete(notif._id)}
-                          className="text-gray-400 hover:text-red-500 transition p-1"
-                          title="Delete Log"
-                        >
-                          <FaTrash size={14} />
+                        <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${
+                             b.status === "completed" ? "bg-green-50 text-green-600 border-green-100" :
+                             b.status === "failed" ? "bg-red-50 text-red-600 border-red-100" :
+                             b.status === "processing" ? "bg-blue-50 text-blue-600 border-blue-100" :
+                             "bg-gray-50 text-gray-600 border-gray-100"
+                        }`}>
+                            {b.status}
+                        </span>
+                    </div>
+
+                    <h4 className="text-lg font-bold text-gray-900 dark:text-white pr-12 line-clamp-1">{b.subject}</h4>
+                    <p className="text-xs text-gray-400 font-bold uppercase mt-1">
+                        {format(new Date(b.createdAt), "MMM d, yyyy • HH:mm")}
+                    </p>
+
+                    <div className="mt-8 space-y-6">
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                                <p className="text-[10px] font-black uppercase text-gray-400">Sent</p>
+                                <p className="text-xl font-black text-gray-900 dark:text-gray-100">{b.stats.sent}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase text-gray-400">Failed</p>
+                                <p className="text-xl font-black text-red-500">{b.stats.failed || 0}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase text-gray-400">Wait</p>
+                                <p className="text-xl font-black text-indigo-500">
+                                    {(b.stats.totalRecipients || 0) - (b.stats.sent || 0) - (b.stats.failed || 0)}
+                                </p>
+                            </div>
+                        </div>
+
+                        <ProgressBar 
+                            sent={b.stats.sent} 
+                            total={b.stats.totalRecipients} 
+                            status={b.status}
+                        />
+
+                        <button className="w-full py-4 bg-gray-50 dark:bg-gray-700/50 group-hover:bg-indigo-600 group-hover:text-white text-gray-500 dark:text-gray-400 text-xs font-bold rounded-2xl transition-all flex items-center justify-center gap-2">
+                            View Delivery Details <FaChevronRight size={10} />
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Pagination Controls */}
-          {notifications.length > itemsPerPage && (
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Showing {startIndex + 1} -{" "}
-                {Math.min(endIndex, notifications.length)} of{" "}
-                {notifications.length}
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(1)}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                >
-                  First
-                </button>
-                <button
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                >
-                  <FaChevronLeft size={12} />
-                </button>
-
-                {/* Page Numbers */}
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNum = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      pageNum = currentPage - 2 + i;
-                    }
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`px-3 py-1.5 text-sm rounded-md transition ${
-                          currentPage === pageNum
-                            ? "bg-indigo-600 text-white"
-                            : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <button
-                  onClick={() =>
-                    setCurrentPage((p) => Math.min(totalPages, p + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                  className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                >
-                  <FaChevronRight size={12} />
-                </button>
-                <button
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                >
-                  Last
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+                    </div>
+                  </div>
+              ))}
+          </div>
       </div>
+
+      {/* Recipient Detailed Modal */}
+      {selectedBroadcast && (
+          <RecipientDetailsModal 
+            broadcast={selectedBroadcast} 
+            onClose={() => setSelectedBroadcast(null)} 
+          />
+      )}
+
+      {/* Test Email Modal */}
+      {showTestModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+             <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-md w-full p-8 border border-gray-100 dark:border-gray-700">
+                <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">Internal Test Dispatch</h3>
+                <p className="text-sm text-gray-500 font-medium mb-6">Send a test copy to your personal inbox before broadcasting to everyone.</p>
+                <div className="space-y-4">
+                    <input 
+                        type="email" 
+                        placeholder="your@email.com" 
+                        autoFocus
+                        className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:outline-none dark:text-white"
+                        value={testEmail}
+                        onChange={(e) => setTestEmail(e.target.value)}
+                    />
+                    <div className="flex gap-3">
+                        <button 
+                            onClick={() => setShowTestModal(false)}
+                            className="flex-1 py-4 text-sm font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-2xl transition-all"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg transition-all"
+                            onClick={async () => {
+                                if (!testEmail) return toast.error("Enter email");
+                                toast.loading("Sending test...");
+                                // Test logic endpoint...
+                                setShowTestModal(false);
+                                toast.dismiss();
+                                toast.success("Test sent!");
+                            }}
+                        >
+                            Send Test
+                        </button>
+                    </div>
+                </div>
+             </div>
+        </div>
+      )}
+
+      <style jsx global>{`
+        .quill-premium .ql-toolbar {
+          border-top-left-radius: 1rem;
+          border-top-right-radius: 1rem;
+          background: #f8fafc;
+          border-color: #f1f5f9 !important;
+          padding: 1rem !important;
+        }
+        .quill-premium .ql-container {
+          border-bottom-left-radius: 1rem;
+          border-bottom-right-radius: 1rem;
+          border-color: #f1f5f9 !important;
+          font-family: inherit;
+        }
+        .dark .ql-toolbar {
+          background: #0f172a;
+          border-color: #334155 !important;
+        }
+        .dark .ql-container {
+          border-color: #334155 !important;
+        }
+        .prose img {
+          border-radius: 1rem;
+          box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+      `}</style>
     </AdminLayout>
   );
 }

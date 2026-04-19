@@ -311,7 +311,7 @@ const NotificationPreview = ({
             </div>
             <div className="flex items-center gap-4 text-sm">
                 <span className="w-16 font-bold text-gray-400 uppercase text-[10px]">From</span>
-                <span className="text-gray-700">{emailBroadcastData.senderName} <span className="text-gray-400 italic font-normal">&lt;info@samkielbot.app&gt;</span></span>
+                <span className="text-gray-700">{emailBroadcastData.senderName} <span className="text-gray-400 italic font-normal">&lt;noreply@samkielbot.app&gt;</span></span>
             </div>
         </div>
         <div className="p-8 bg-white flex-1 overflow-y-auto min-h-[400px] text-gray-900" style={{ fontFamily: 'Arial, sans-serif' }}>

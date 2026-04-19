@@ -314,9 +314,9 @@ const NotificationPreview = ({
                 <span className="text-gray-700">{emailBroadcastData.senderName} <span className="text-gray-400 italic font-normal">&lt;info@samkielbot.app&gt;</span></span>
             </div>
         </div>
-        <div className="p-8 bg-white flex-1 overflow-y-auto min-h-[400px]">
+        <div className="p-8 bg-white flex-1 overflow-y-auto min-h-[400px] text-gray-900">
           <div
-            className="prose prose-indigo max-w-none prose-sm"
+            className="prose prose-indigo max-w-none prose-sm !text-gray-900"
             dangerouslySetInnerHTML={{
               __html: emailBroadcastData.message || "<p className='text-gray-400 italic text-center mt-12'>Email preview content will appear here...</p>",
             }}

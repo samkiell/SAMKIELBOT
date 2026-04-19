@@ -46,6 +46,9 @@ import {
   resumeEmailBroadcast,
   getEmailBroadcastHistory,
   getEmailBroadcastDetails,
+  getBroadcastStats,
+  getBroadcastRecipients,
+  manualRecipientAction,
 } from "@/lib/controllers/adminController";
 import {
   getTickets,
@@ -454,6 +457,43 @@ export default async function handler(req, res) {
         ) {
           req.params = { id: slug[1] };
           return await getEmailBroadcastDetails(req, res);
+        }
+
+        // Route: GET /api/admin/email-broadcast/:id/stats
+        if (
+          slug &&
+          slug[0] === "email-broadcast" &&
+          slug[1] &&
+          slug[2] === "stats" &&
+          method === "GET"
+        ) {
+          req.params = { id: slug[1] };
+          return await getBroadcastStats(req, res);
+        }
+
+        // Route: GET /api/admin/email-broadcast/:id/recipients
+        if (
+          slug &&
+          slug[0] === "email-broadcast" &&
+          slug[1] &&
+          slug[2] === "recipients" &&
+          method === "GET"
+        ) {
+          req.params = { id: slug[1] };
+          return await getBroadcastRecipients(req, res);
+        }
+
+        // Route: POST /api/admin/email-broadcast/:id/recipients (Manual retry)
+        if (
+          slug &&
+          slug[0] === "email-broadcast" &&
+          slug[1] &&
+          slug[2] === "recipients" &&
+          method === "POST"
+        ) {
+          req.params = { id: slug[1] };
+          // The controller expects recipientId in body
+          return await manualRecipientAction(req, res);
         }
 
         // Method not allowed

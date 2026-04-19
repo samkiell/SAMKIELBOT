@@ -897,7 +897,7 @@ export default function AdminNotifications() {
         }
         .prose p {
           margin-top: 0 !important;
-          margin-bottom: 1.5em !important;
+          margin-bottom: 0.75em !important;
         }
         .prose h1, .prose h2, .prose h3 {
           margin-top: 1.5em !important;

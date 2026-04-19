@@ -391,10 +391,27 @@ export default function AdminNotifications() {
   useEffect(() => {
     fetchInApp();
     fetchBroadcasts();
+    
     // Poll for broadcast updates every 5 seconds
-    const interval = setInterval(fetchBroadcasts, 5000);
+    const interval = setInterval(() => {
+      fetchInApp();
+      fetchBroadcasts();
+
+      // [Hobby Processor] If any broadcast is active, kickstart the batch processor
+      const hasActiveBroadcast = emailBroadcasts.some(b => 
+        b.status === "processing" || b.status === "queued"
+      );
+
+      if (hasActiveBroadcast) {
+        fetch("/api/cron/process-broadcast", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        }).catch(err => console.error("[Broadcaster] UI Worker Error:", err));
+      }
+    }, 5000);
+    
     return () => clearInterval(interval);
-  }, [fetchInApp, fetchBroadcasts]);
+  }, [fetchInApp, fetchBroadcasts, emailBroadcasts.length]); // Use .length to avoid over-triggering
+
 
   const handleSendEmail = async (e) => {
     e.preventDefault();

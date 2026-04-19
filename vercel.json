@@ -1,12 +1,7 @@
 {
   "devCommand": "node server.js",
   "buildCommand": "next build",
-  "installCommand": "npm install",
-  "crons": [
-    {
-      "path": "/api/cron/process-broadcast",
-      "schedule": "* * * * *"
-    }
-  ]
+  "installCommand": "npm install"
 }
+
 

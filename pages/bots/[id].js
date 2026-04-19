@@ -374,14 +374,10 @@ export default function BotManagementPage() {
                 </div>
                 Billing Summary
               </h2>
-              <div className="space-y-5">
+              <div className="space-y-6">
                 <BillingItem
                   label="Daily Burn Rate"
                   value={formatCredits(deployment.dailyBurn || 5)}
-                />
-                <BillingItem
-                  label="Creation Cost"
-                  value={formatCredits(deployment.creationCost || 50)}
                 />
                 <BillingItem
                   label="Total Credits Consumed"
@@ -392,13 +388,8 @@ export default function BotManagementPage() {
                   value={`${getRunningDays(deployment.deployedAt)} days`}
                 />
                 <BillingItem
-                  label="Expected Credits Used"
-                  value={formatCredits(
-                    getRunningDays(deployment.deployedAt) *
-                      (deployment.dailyBurn || 5) +
-                      (deployment.creationCost || 50),
-                  )}
-                  sub={`(${getRunningDays(deployment.deployedAt)} × ${deployment.dailyBurn || 5}) + ${deployment.creationCost || 50} creation`}
+                  label="Estimated Remaining"
+                  value={`${Math.floor((user?.credits || 0) / (deployment.dailyBurn || 5))} days`}
                 />
                 <BillingItem
                   label="Next Renewal"

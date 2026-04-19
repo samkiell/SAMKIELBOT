@@ -816,12 +816,30 @@ export default function AdminNotifications() {
                         <button 
                             className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg transition-all"
                             onClick={async () => {
-                                if (!testEmail) return toast.error("Enter email");
-                                toast.loading("Sending test...");
-                                // Test logic endpoint...
-                                setShowTestModal(false);
-                                toast.dismiss();
-                                toast.success("Test sent!");
+                                if (!testEmail) return toast.error("Enter email address");
+                                const tid = toast.loading("Sending test dispatch...");
+                                try {
+                                    const res = await fetch("/api/admin/email-broadcast/test", {
+                                        method: "POST",
+                                        headers: { 
+                                            "Content-Type": "application/json",
+                                            Authorization: `Bearer ${localStorage.getItem("token")}`
+                                        },
+                                        body: JSON.stringify({
+                                            testEmail,
+                                            ...emailData
+                                        })
+                                    });
+                                    const data = await res.json();
+                                    if (data.success) {
+                                        toast.success("Test email delivered successfully!", { id: tid });
+                                        setShowTestModal(false);
+                                    } else {
+                                        toast.error(data.message || "Failed to send test email", { id: tid });
+                                    }
+                                } catch (err) {
+                                    toast.error("Network error during test dispatch", { id: tid });
+                                }
                             }}
                         >
                             Send Test

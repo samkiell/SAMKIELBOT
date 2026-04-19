@@ -314,9 +314,9 @@ const NotificationPreview = ({
                 <span className="text-gray-700">{emailBroadcastData.senderName} <span className="text-gray-400 italic font-normal">&lt;info@samkielbot.app&gt;</span></span>
             </div>
         </div>
-        <div className="p-8 bg-white flex-1 overflow-y-auto min-h-[400px] text-gray-900">
+        <div className="p-8 bg-white flex-1 overflow-y-auto min-h-[400px] text-gray-900" style={{ fontFamily: 'Arial, sans-serif' }}>
           <div
-            className="prose prose-indigo max-w-none prose-sm !text-gray-900"
+            className="prose prose-indigo max-w-none !text-gray-900"
             dangerouslySetInnerHTML={{
               __html: (emailBroadcastData.message || "<p className='text-gray-400 italic text-center mt-12'>Email preview content will appear here...</p>").replace(/@user/gi, "<b class='text-indigo-600'>Samuel</b>"),
             }}
@@ -889,6 +889,20 @@ export default function AdminNotifications() {
         .prose img {
           border-radius: 1rem;
           box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+        .prose {
+          line-height: 1.6 !important;
+          font-size: 15px !important;
+          color: #4b5563 !important;
+        }
+        .prose p {
+          margin-top: 0 !important;
+          margin-bottom: 1.5em !important;
+        }
+        .prose h1, .prose h2, .prose h3 {
+          margin-top: 1.5em !important;
+          margin-bottom: 0.5em !important;
+          color: #1f2937 !important;
         }
       `}</style>
     </AdminLayout>

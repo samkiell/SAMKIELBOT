@@ -318,7 +318,7 @@ const NotificationPreview = ({
           <div
             className="prose prose-indigo max-w-none prose-sm !text-gray-900"
             dangerouslySetInnerHTML={{
-              __html: (emailBroadcastData.message || "<p className='text-gray-400 italic text-center mt-12'>Email preview content will appear here...</p>").replace(/@user/g, "<b class='text-indigo-600'>Samuel</b>"),
+              __html: (emailBroadcastData.message || "<p className='text-gray-400 italic text-center mt-12'>Email preview content will appear here...</p>").replace(/@user/gi, "<b class='text-indigo-600'>Samuel</b>"),
             }}
           />
         </div>

@@ -318,7 +318,7 @@ const NotificationPreview = ({
           <div
             className="prose prose-indigo max-w-none prose-sm !text-gray-900"
             dangerouslySetInnerHTML={{
-              __html: emailBroadcastData.message || "<p className='text-gray-400 italic text-center mt-12'>Email preview content will appear here...</p>",
+              __html: (emailBroadcastData.message || "<p className='text-gray-400 italic text-center mt-12'>Email preview content will appear here...</p>").replace(/@user/g, "<b class='text-indigo-600'>Samuel</b>"),
             }}
           />
         </div>
@@ -553,19 +553,34 @@ export default function AdminNotifications() {
                 </form>
               ) : (
                 <form onSubmit={handleSendEmail} className="space-y-5">
-                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Dispatch Subject</label>
-                    <input 
-                      type="text" 
-                      className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:outline-none transition-all dark:text-white font-semibold"
-                      placeholder="The first thing they see..."
-                      value={emailData.subject}
-                      onChange={(e) => setEmailData({...emailData, subject: e.target.value})}
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Sender Name</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:outline-none transition-all dark:text-white font-semibold"
+                        placeholder="e.g. Samuel (CEO)"
+                        value={emailData.senderName}
+                        onChange={(e) => setEmailData({...emailData, senderName: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Dispatch Subject</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:outline-none transition-all dark:text-white font-semibold"
+                        placeholder="The first thing they see..."
+                        value={emailData.subject}
+                        onChange={(e) => setEmailData({...emailData, subject: e.target.value})}
+                      />
+                    </div>
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-end mb-1">
-                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Email Body (HTML Supported)</label>
+                        <div className="flex flex-col">
+                            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Email Body (HTML Supported)</label>
+                            <p className="text-[9px] text-gray-400 ml-1 font-medium italic">Tip: Use <code className="text-indigo-500 font-bold">@user</code> to insert the recipient's first name.</p>
+                        </div>
                         <button 
                             type="button"
                             onClick={() => setIsEditorExpanded(!isEditorExpanded)}

@@ -149,6 +149,16 @@ export default function DeployPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    if (isMaintenance) {
+      toast.error(
+        "We're currently on maintenance. Please contact support for any queries.",
+        { duration: 8000 },
+      );
+      setLoading(false);
+      return;
+    }
+
     // client-side validation
     // Enforce international format without + or spaces or special chars
     const phoneRegex = /^\d{10,15}$/;
@@ -246,8 +256,32 @@ export default function DeployPage() {
     }
   };
 
-  const [botCount, setBotCount] = useState(0);
   const [isAtLimit, setIsAtLimit] = useState(false);
+  const [isMaintenance, setIsMaintenance] = useState(false);
+
+  useEffect(() => {
+    async function checkMaintenanceStatus() {
+      try {
+        const res = await fetch("/api/system/status");
+        if (res.ok) {
+          const data = await res.json();
+          setIsMaintenance(!!data?.maintenance);
+        }
+      } catch (err) {
+        console.error("Error checking maintenance status:", err);
+      }
+    }
+    checkMaintenanceStatus();
+  }, []);
+
+  useEffect(() => {
+    if (isMaintenance) {
+      toast.error(
+        "We're currently on maintenance. Please contact support for any queries.",
+        { duration: 8000 },
+      );
+    }
+  }, [isMaintenance]);
 
   useEffect(() => {
     async function checkBotLimit() {
@@ -953,9 +987,9 @@ export default function DeployPage() {
             </Link>
             <button
               type="submit"
-              disabled={loading || isAtLimit}
+              disabled={loading || isAtLimit || isMaintenance}
               className={`flex-2 w-full px-6 py-4 rounded-xl font-bold transition-all shadow-lg flex justify-center items-center gap-2 ${
-                isAtLimit
+                isAtLimit || isMaintenance
                   ? "bg-gray-400 cursor-not-allowed shadow-none"
                   : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-indigo-500/30"
               }`}
@@ -968,6 +1002,10 @@ export default function DeployPage() {
               ) : isAtLimit ? (
                 <>
                   <Lock size={20} /> Limit Reached
+                </>
+              ) : isMaintenance ? (
+                <>
+                  <AlertTriangle size={20} /> Under Maintenance
                 </>
               ) : (
                 <>

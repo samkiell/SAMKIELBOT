@@ -257,7 +257,7 @@ export default function DeployPage() {
   };
 
   const [isAtLimit, setIsAtLimit] = useState(false);
-  const [isMaintenance, setIsMaintenance] = useState(false);
+  const [isMaintenance, setIsMaintenance] = useState(true);
 
   useEffect(() => {
     async function checkMaintenanceStatus() {
@@ -265,10 +265,11 @@ export default function DeployPage() {
         const res = await fetch("/api/system/status");
         if (res.ok) {
           const data = await res.json();
-          setIsMaintenance(!!data?.maintenance);
+          setIsMaintenance(data?.maintenance !== undefined ? data.maintenance : true);
         }
       } catch (err) {
         console.error("Error checking maintenance status:", err);
+        setIsMaintenance(true);
       }
     }
     checkMaintenanceStatus();
@@ -987,10 +988,10 @@ export default function DeployPage() {
             </Link>
             <button
               type="submit"
-              disabled={loading || isAtLimit || isMaintenance}
+              disabled={loading || isAtLimit}
               className={`flex-2 w-full px-6 py-4 rounded-xl font-bold transition-all shadow-lg flex justify-center items-center gap-2 ${
                 isAtLimit || isMaintenance
-                  ? "bg-gray-400 cursor-not-allowed shadow-none"
+                  ? "bg-gray-400 shadow-none"
                   : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-indigo-500/30"
               }`}
             >

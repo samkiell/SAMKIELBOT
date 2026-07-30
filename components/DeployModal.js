@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { deployBot } from "../lib/api";
 
 export default function DeployModal({ onClose }) {
@@ -21,14 +22,11 @@ export default function DeployModal({ onClose }) {
     setLoading(true);
     setError("");
 
-    try {
-      await deployBot(formData);
-      onClose();
-    } catch (error) {
-      setError(error.response?.data?.error || "Deployment failed");
-    } finally {
-      setLoading(false);
-    }
+    toast.error(
+      "We're currently on maintenance. Please contact support for any queries.",
+      { duration: 8000 },
+    );
+    setLoading(false);
   };
 
   return (

@@ -156,11 +156,19 @@ export default function Home() {
         <div className="absolute inset-0 bg-grid-slate-200 [mask-image:linear-gradient(0deg,#fff,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]"></div>
         <div className="relative z-10">
           <motion.div {...fadeUp}>
-            <div className="flex flex-col items-center gap-4 mb-6">
-              <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-500/30 shadow-sm">
-                <span className="text-indigo-600 dark:text-indigo-300 font-bold text-xs md:text-sm tracking-wide uppercase">
-                  🚀 V2 Stable Release Now Live
+            {/* Zox Transformation Banner */}
+            <div className="mb-6 max-w-xl mx-auto p-3.5 md:p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-pink-500/10 dark:from-purple-500/20 dark:via-indigo-500/20 dark:to-pink-500/20 border border-purple-500/30 dark:border-purple-400/30 shadow-lg backdrop-blur-md">
+              <div className="flex items-center justify-center gap-3 text-center">
+                <span className="flex h-3 w-3 relative flex-shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
                 </span>
+                <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">
+                  <span className="text-purple-600 dark:text-purple-400 font-extrabold uppercase tracking-wider text-[10px] md:text-xs mr-2 px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-900/50 border border-purple-200 dark:border-purple-700/50">
+                    Next Era
+                  </span>
+                  We're transforming into <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 dark:from-purple-400 dark:via-indigo-300 dark:to-pink-400">Zox</span> — Autonomous AI Agent 🤖✨
+                </p>
               </div>
             </div>
 

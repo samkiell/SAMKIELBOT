@@ -152,7 +152,7 @@ export default function DeployPage() {
 
     if (isMaintenance) {
       toast.error(
-        "We're currently on maintenance. Please contact support for any queries.",
+        "We're currently on maintenance. Anticipate then join community to stay updated.",
         { duration: 8000 },
       );
       setLoading(false);
@@ -278,7 +278,7 @@ export default function DeployPage() {
   useEffect(() => {
     if (isMaintenance) {
       toast.error(
-        "We're currently on maintenance. Please contact support for any queries.",
+        "We're currently on maintenance. Anticipate then join community to stay updated.",
         { duration: 8000 },
       );
     }

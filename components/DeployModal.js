@@ -23,7 +23,7 @@ export default function DeployModal({ onClose }) {
     setError("");
 
     toast.error(
-      "We're currently on maintenance. Please contact support for any queries.",
+      "We're currently on maintenance. Anticipate then join community to stay updated.",
       { duration: 8000 },
     );
     setLoading(false);

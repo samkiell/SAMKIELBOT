@@ -157,19 +157,18 @@ export default function Home() {
         <div className="relative z-10">
           <motion.div {...fadeUp}>
             {/* Zox Transformation Banner */}
-            <div className="mb-6 max-w-xl mx-auto p-3.5 md:p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-pink-500/10 dark:from-purple-500/20 dark:via-indigo-500/20 dark:to-pink-500/20 border border-purple-500/30 dark:border-purple-400/30 shadow-lg backdrop-blur-md">
-              <div className="flex items-center justify-center gap-3 text-center">
-                <span className="flex h-3 w-3 relative flex-shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
-                </span>
-                <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">
-                  <span className="text-purple-600 dark:text-purple-400 font-extrabold uppercase tracking-wider text-[10px] md:text-xs mr-2 px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-900/50 border border-purple-200 dark:border-purple-700/50">
-                    Next Era
-                  </span>
-                  We're transforming into <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 dark:from-purple-400 dark:via-indigo-300 dark:to-pink-400">Zox</span> — Autonomous AI Agent 🤖✨
-                </p>
-              </div>
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 mb-8 rounded-full bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800 shadow-sm backdrop-blur-sm transition-all hover:border-slate-300 dark:hover:border-slate-700">
+              <span className="flex h-2 w-2 relative flex-shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+              </span>
+              <span className="text-xs md:text-sm text-slate-600 dark:text-slate-300 font-medium">
+                Evolving into <span className="font-semibold text-slate-900 dark:text-white">Zox</span>
+              </span>
+              <span className="text-slate-300 dark:text-slate-700 text-xs">•</span>
+              <span className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-normal flex items-center gap-1">
+                Autonomous Platform <FaArrowRight className="w-2.5 h-2.5 text-slate-400 dark:text-slate-500" />
+              </span>
             </div>
 
             <h1 className="text-4xl md:text-7xl font-extrabold mb-6 text-gray-900 dark:text-white tracking-tight drop-shadow-sm leading-tight">
